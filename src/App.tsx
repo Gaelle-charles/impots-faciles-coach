@@ -5,6 +5,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
+import { RedirectIfAuth } from "@/components/RedirectIfAuth";
 import { AppLayout } from "@/components/AppLayout";
 
 import Index from "./pages/Index";
@@ -33,7 +34,7 @@ const App = () => (
           <Routes>
             {/* Public routes */}
             <Route path="/" element={<Index />} />
-            <Route path="/connexion" element={<Connexion />} />
+            <Route path="/connexion" element={<RedirectIfAuth><Connexion /></RedirectIfAuth>} />
             <Route path="/verifier-email" element={<VerifierEmail />} />
             <Route path="/reset-password" element={<ResetPassword />} />
             <Route path="/tarifs" element={<Tarifs />} />
@@ -45,10 +46,14 @@ const App = () => (
               <Route path="/simulateur" element={<Simulateur />} />
               <Route path="/simulateur-de-frais" element={<SimulateurFrais />} />
               <Route path="/fiche-metier/:id" element={<FicheMetier />} />
+            </Route>
+
+            {/* Admin route */}
+            <Route element={<ProtectedRoute adminOnly><AppLayout /></ProtectedRoute>}>
               <Route path="/admin" element={<Admin />} />
             </Route>
 
-            {/* Quizz has its own layout (collapsed sidebar) */}
+            {/* Quizz has its own layout */}
             <Route path="/quizz/:id" element={<ProtectedRoute><Quizz /></ProtectedRoute>} />
 
             <Route path="*" element={<NotFound />} />
