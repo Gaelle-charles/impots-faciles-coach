@@ -1,22 +1,13 @@
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { ArrowRight } from 'lucide-react';
+import { Header } from '@/components/Header';
+import { Footer } from '@/components/Footer';
 
 const Index = () => {
   return (
     <div className="min-h-screen bg-background">
-      {/* Header */}
-      <header className="flex items-center justify-between border-b border-border px-8 py-4">
-        <h1 className="font-heading text-xl font-bold text-primary">Impôts Facile</h1>
-        <nav className="flex items-center gap-6">
-          <Link to="/tarifs" className="text-sm text-muted-foreground hover:text-foreground">
-            Tarifs
-          </Link>
-          <Link to="/connexion">
-            <Button variant="outline" size="sm">Se connecter</Button>
-          </Link>
-        </nav>
-      </header>
+      <Header />
 
       {/* Hero */}
       <section className="flex flex-col items-center px-4 py-24 text-center">
@@ -58,13 +49,7 @@ const Index = () => {
         </div>
       </section>
 
-      {/* Footer */}
-      <footer className="bg-primary px-8 py-10 text-primary-foreground">
-        <div className="mx-auto flex max-w-content items-center justify-between">
-          <span className="font-heading text-sm font-semibold">Impôts Facile</span>
-          <span className="text-xs opacity-70">© 2026 Tous droits réservés</span>
-        </div>
-      </footer>
+      <Footer />
     </div>
   );
 };
