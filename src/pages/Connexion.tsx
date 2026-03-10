@@ -7,6 +7,8 @@ import { useNavigate, Link } from 'react-router-dom';
 const Connexion = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [nom, setNom] = useState('');
+  const [prenom, setPrenom] = useState('');
   const [isSignUp, setIsSignUp] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -20,13 +22,20 @@ const Connexion = () => {
     setMessage('');
 
     if (isSignUp) {
-      const { error } = await supabase.auth.signUp({
+      const { data, error } = await supabase.auth.signUp({
         email,
         password,
         options: { emailRedirectTo: window.location.origin },
       });
-      if (error) setError(error.message);
-      else navigate('/verifier-email');
+      if (error) {
+        setError(error.message);
+      } else {
+        // Update profile with nom/prenom
+        if (data.user) {
+          await supabase.from('profiles').update({ nom, prenom }).eq('id', data.user.id);
+        }
+        navigate('/verifier-email');
+      }
     } else {
       const { error } = await supabase.auth.signInWithPassword({ email, password });
       if (error) setError(error.message);
@@ -61,6 +70,30 @@ const Connexion = () => {
         </p>
 
         <form onSubmit={handleSubmit} className="mt-6 space-y-4">
+          {isSignUp && (
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="text-sm font-semibold text-foreground">Prénom</label>
+                <Input
+                  value={prenom}
+                  onChange={(e) => setPrenom(e.target.value)}
+                  placeholder="Jean"
+                  required
+                  className="mt-1"
+                />
+              </div>
+              <div>
+                <label className="text-sm font-semibold text-foreground">Nom</label>
+                <Input
+                  value={nom}
+                  onChange={(e) => setNom(e.target.value)}
+                  placeholder="Dupont"
+                  required
+                  className="mt-1"
+                />
+              </div>
+            </div>
+          )}
           <div>
             <label className="text-sm font-semibold text-foreground">Email</label>
             <Input
