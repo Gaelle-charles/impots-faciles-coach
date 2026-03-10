@@ -26,7 +26,7 @@ const Connexion = () => {
         options: { emailRedirectTo: window.location.origin },
       });
       if (error) setError(error.message);
-      else setMessage('Vérifiez votre email pour confirmer votre inscription.');
+      else navigate('/verifier-email');
     } else {
       const { error } = await supabase.auth.signInWithPassword({ email, password });
       if (error) setError(error.message);
