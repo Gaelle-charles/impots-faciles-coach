@@ -70,6 +70,30 @@ const Connexion = () => {
         </p>
 
         <form onSubmit={handleSubmit} className="mt-6 space-y-4">
+          {isSignUp && (
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="text-sm font-semibold text-foreground">Prénom</label>
+                <Input
+                  value={prenom}
+                  onChange={(e) => setPrenom(e.target.value)}
+                  placeholder="Jean"
+                  required
+                  className="mt-1"
+                />
+              </div>
+              <div>
+                <label className="text-sm font-semibold text-foreground">Nom</label>
+                <Input
+                  value={nom}
+                  onChange={(e) => setNom(e.target.value)}
+                  placeholder="Dupont"
+                  required
+                  className="mt-1"
+                />
+              </div>
+            </div>
+          )}
           <div>
             <label className="text-sm font-semibold text-foreground">Email</label>
             <Input
