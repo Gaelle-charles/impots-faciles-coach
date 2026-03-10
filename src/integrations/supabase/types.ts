@@ -58,6 +58,24 @@ export type Database = {
           },
         ]
       }
+      metiers: {
+        Row: {
+          created_at: string
+          id: string
+          nom: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          nom: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          nom?: string
+        }
+        Relationships: []
+      }
       modules: {
         Row: {
           accessibilite: string[]
@@ -96,6 +114,50 @@ export type Database = {
           total_step?: number
         }
         Relationships: []
+      }
+      profiles: {
+        Row: {
+          created_at: string
+          date_paiement: string | null
+          email: string | null
+          id: string
+          metier_id: string | null
+          nom: string | null
+          plan: string
+          prenom: string | null
+          role: string
+        }
+        Insert: {
+          created_at?: string
+          date_paiement?: string | null
+          email?: string | null
+          id: string
+          metier_id?: string | null
+          nom?: string | null
+          plan?: string
+          prenom?: string | null
+          role?: string
+        }
+        Update: {
+          created_at?: string
+          date_paiement?: string | null
+          email?: string | null
+          id?: string
+          metier_id?: string | null
+          nom?: string | null
+          plan?: string
+          prenom?: string | null
+          role?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "profiles_metier_id_fkey"
+            columns: ["metier_id"]
+            isOneToOne: false
+            referencedRelation: "metiers"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       progressions: {
         Row: {
