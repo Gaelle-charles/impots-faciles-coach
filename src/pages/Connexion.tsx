@@ -22,13 +22,20 @@ const Connexion = () => {
     setMessage('');
 
     if (isSignUp) {
-      const { error } = await supabase.auth.signUp({
+      const { data, error } = await supabase.auth.signUp({
         email,
         password,
         options: { emailRedirectTo: window.location.origin },
       });
-      if (error) setError(error.message);
-      else navigate('/verifier-email');
+      if (error) {
+        setError(error.message);
+      } else {
+        // Update profile with nom/prenom
+        if (data.user) {
+          await supabase.from('profiles').update({ nom, prenom }).eq('id', data.user.id);
+        }
+        navigate('/verifier-email');
+      }
     } else {
       const { error } = await supabase.auth.signInWithPassword({ email, password });
       if (error) setError(error.message);
