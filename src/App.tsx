@@ -9,6 +9,7 @@ import { AppLayout } from "@/components/AppLayout";
 
 import Index from "./pages/Index";
 import Connexion from "./pages/Connexion";
+import VerifierEmail from "./pages/VerifierEmail";
 import ResetPassword from "./pages/ResetPassword";
 import Tarifs from "./pages/Tarifs";
 import Dashboard from "./pages/Dashboard";
