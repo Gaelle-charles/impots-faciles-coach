@@ -9,6 +9,7 @@ import { AppLayout } from "@/components/AppLayout";
 
 import Index from "./pages/Index";
 import Connexion from "./pages/Connexion";
+import VerifierEmail from "./pages/VerifierEmail";
 import ResetPassword from "./pages/ResetPassword";
 import Tarifs from "./pages/Tarifs";
 import Dashboard from "./pages/Dashboard";
@@ -33,6 +34,7 @@ const App = () => (
             {/* Public routes */}
             <Route path="/" element={<Index />} />
             <Route path="/connexion" element={<Connexion />} />
+            <Route path="/verifier-email" element={<VerifierEmail />} />
             <Route path="/reset-password" element={<ResetPassword />} />
             <Route path="/tarifs" element={<Tarifs />} />
 
