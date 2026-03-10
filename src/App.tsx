@@ -3,8 +3,22 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
-import Index from "./pages/Index.tsx";
-import NotFound from "./pages/NotFound.tsx";
+import { AuthProvider } from "@/contexts/AuthContext";
+import { ProtectedRoute } from "@/components/ProtectedRoute";
+import { AppLayout } from "@/components/AppLayout";
+
+import Index from "./pages/Index";
+import Connexion from "./pages/Connexion";
+import ResetPassword from "./pages/ResetPassword";
+import Tarifs from "./pages/Tarifs";
+import Dashboard from "./pages/Dashboard";
+import Module from "./pages/Module";
+import Quizz from "./pages/Quizz";
+import Simulateur from "./pages/Simulateur";
+import SimulateurFrais from "./pages/SimulateurFrais";
+import FicheMetier from "./pages/FicheMetier";
+import Admin from "./pages/Admin";
+import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
 
@@ -14,11 +28,30 @@ const App = () => (
       <Toaster />
       <Sonner />
       <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Index />} />
-          {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-          <Route path="*" element={<NotFound />} />
-        </Routes>
+        <AuthProvider>
+          <Routes>
+            {/* Public routes */}
+            <Route path="/" element={<Index />} />
+            <Route path="/connexion" element={<Connexion />} />
+            <Route path="/reset-password" element={<ResetPassword />} />
+            <Route path="/tarifs" element={<Tarifs />} />
+
+            {/* Protected routes with sidebar layout */}
+            <Route element={<ProtectedRoute><AppLayout /></ProtectedRoute>}>
+              <Route path="/dashboard" element={<Dashboard />} />
+              <Route path="/module/:id" element={<Module />} />
+              <Route path="/simulateur" element={<Simulateur />} />
+              <Route path="/simulateur-de-frais" element={<SimulateurFrais />} />
+              <Route path="/fiche-metier/:id" element={<FicheMetier />} />
+              <Route path="/admin" element={<Admin />} />
+            </Route>
+
+            {/* Quizz has its own layout (collapsed sidebar) */}
+            <Route path="/quizz/:id" element={<ProtectedRoute><Quizz /></ProtectedRoute>} />
+
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </AuthProvider>
       </BrowserRouter>
     </TooltipProvider>
   </QueryClientProvider>

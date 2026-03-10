@@ -13,12 +13,20 @@ export default {
       },
     },
     extend: {
+      fontFamily: {
+        heading: ["'Source Sans 3'", "sans-serif"],
+        body: ["'Inter'", "sans-serif"],
+      },
       colors: {
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
+        "violet-deep": "hsl(var(--violet-deep))",
+        "yellow-vivid": "hsl(var(--yellow-vivid))",
+        "rose-dynamic": "hsl(var(--rose-dynamic))",
+        "rose-light": "hsl(var(--rose-light))",
         primary: {
           DEFAULT: "hsl(var(--primary))",
           foreground: "hsl(var(--primary-foreground))",
@@ -56,6 +64,7 @@ export default {
           "accent-foreground": "hsl(var(--sidebar-accent-foreground))",
           border: "hsl(var(--sidebar-border))",
           ring: "hsl(var(--sidebar-ring))",
+          muted: "hsl(var(--sidebar-muted))",
         },
       },
       borderRadius: {
@@ -63,27 +72,35 @@ export default {
         md: "calc(var(--radius) - 2px)",
         sm: "calc(var(--radius) - 4px)",
       },
+      maxWidth: {
+        content: "800px",
+      },
+      width: {
+        sidebar: "280px",
+      },
       keyframes: {
         "accordion-down": {
-          from: {
-            height: "0",
-          },
-          to: {
-            height: "var(--radix-accordion-content-height)",
-          },
+          from: { height: "0" },
+          to: { height: "var(--radix-accordion-content-height)" },
         },
         "accordion-up": {
-          from: {
-            height: "var(--radix-accordion-content-height)",
-          },
-          to: {
-            height: "0",
-          },
+          from: { height: "var(--radix-accordion-content-height)" },
+          to: { height: "0" },
+        },
+        "sidebar-collapse": {
+          from: { width: "280px" },
+          to: { width: "20px" },
+        },
+        "sidebar-expand": {
+          from: { width: "20px" },
+          to: { width: "280px" },
         },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
+        "sidebar-collapse": "sidebar-collapse 0.4s ease-in-out forwards",
+        "sidebar-expand": "sidebar-expand 0.4s ease-in-out forwards",
       },
     },
   },
