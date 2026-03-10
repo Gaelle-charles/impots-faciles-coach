@@ -14,7 +14,203 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      contenus: {
+        Row: {
+          contenu: string | null
+          created_at: string
+          id: string
+          image_url: string | null
+          module_id: string
+          ordre: number
+          texte_2: string | null
+          titre: string
+          type_contenu: string | null
+        }
+        Insert: {
+          contenu?: string | null
+          created_at?: string
+          id?: string
+          image_url?: string | null
+          module_id: string
+          ordre?: number
+          texte_2?: string | null
+          titre: string
+          type_contenu?: string | null
+        }
+        Update: {
+          contenu?: string | null
+          created_at?: string
+          id?: string
+          image_url?: string | null
+          module_id?: string
+          ordre?: number
+          texte_2?: string | null
+          titre?: string
+          type_contenu?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "contenus_module_id_fkey"
+            columns: ["module_id"]
+            isOneToOne: false
+            referencedRelation: "modules"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      modules: {
+        Row: {
+          accessibilite: string[]
+          created_at: string
+          id: string
+          module_slug: string
+          order: number
+          text_resultat_expert: string | null
+          text_resultat_faible: string | null
+          text_resultat_moyen: string | null
+          titre: string
+          total_step: number
+        }
+        Insert: {
+          accessibilite?: string[]
+          created_at?: string
+          id?: string
+          module_slug: string
+          order?: number
+          text_resultat_expert?: string | null
+          text_resultat_faible?: string | null
+          text_resultat_moyen?: string | null
+          titre: string
+          total_step?: number
+        }
+        Update: {
+          accessibilite?: string[]
+          created_at?: string
+          id?: string
+          module_slug?: string
+          order?: number
+          text_resultat_expert?: string | null
+          text_resultat_faible?: string | null
+          text_resultat_moyen?: string | null
+          titre?: string
+          total_step?: number
+        }
+        Relationships: []
+      }
+      progressions: {
+        Row: {
+          completion_date: string | null
+          created_at: string
+          id: string
+          module_id: string
+          step: number
+          user_id: string
+        }
+        Insert: {
+          completion_date?: string | null
+          created_at?: string
+          id?: string
+          module_id: string
+          step?: number
+          user_id: string
+        }
+        Update: {
+          completion_date?: string | null
+          created_at?: string
+          id?: string
+          module_id?: string
+          step?: number
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "progressions_module_id_fkey"
+            columns: ["module_id"]
+            isOneToOne: false
+            referencedRelation: "modules"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      quizz: {
+        Row: {
+          bonne_reponse: string
+          created_at: string
+          explication: string | null
+          id: string
+          module_id: string
+          nom_quizz: string | null
+          options: string[]
+          question: string
+        }
+        Insert: {
+          bonne_reponse: string
+          created_at?: string
+          explication?: string | null
+          id?: string
+          module_id: string
+          nom_quizz?: string | null
+          options?: string[]
+          question: string
+        }
+        Update: {
+          bonne_reponse?: string
+          created_at?: string
+          explication?: string | null
+          id?: string
+          module_id?: string
+          nom_quizz?: string | null
+          options?: string[]
+          question?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "quizz_module_id_fkey"
+            columns: ["module_id"]
+            isOneToOne: false
+            referencedRelation: "modules"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      resultat_quiz: {
+        Row: {
+          date_quiz: string
+          id: string
+          module_id: string
+          pourcentage: number
+          score: number
+          score_max: number
+          user_id: string
+        }
+        Insert: {
+          date_quiz?: string
+          id?: string
+          module_id: string
+          pourcentage?: number
+          score?: number
+          score_max?: number
+          user_id: string
+        }
+        Update: {
+          date_quiz?: string
+          id?: string
+          module_id?: string
+          pourcentage?: number
+          score?: number
+          score_max?: number
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "resultat_quiz_module_id_fkey"
+            columns: ["module_id"]
+            isOneToOne: false
+            referencedRelation: "modules"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
