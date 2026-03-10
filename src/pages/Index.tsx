@@ -3,6 +3,35 @@ import { Button } from '@/components/ui/button';
 import { ArrowRight } from 'lucide-react';
 import { Header } from '@/components/Header';
 import { Footer } from '@/components/Footer';
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from '@/components/ui/accordion';
+
+const faqItems = [
+  {
+    question: 'Qu\'est-ce que les frais professionnels réels ?',
+    answer: 'Les frais professionnels réels sont les dépenses que vous engagez dans le cadre de votre activité salariée (transport, repas, formation, matériel…). Au lieu de la déduction forfaitaire de 10 %, vous pouvez choisir de déclarer le montant exact de ces frais pour réduire votre revenu imposable.',
+  },
+  {
+    question: 'Comment fonctionne la déduction de frais ?',
+    answer: 'Par défaut, l\'administration fiscale applique un abattement forfaitaire de 10 % sur vos revenus. Si vos dépenses professionnelles dépassent ce montant, vous avez intérêt à opter pour la déduction des frais réels : vous listez et justifiez chaque dépense, et le total vient diminuer votre revenu imposable.',
+  },
+  {
+    question: 'Qui peut bénéficier de la déduction des frais réels ?',
+    answer: 'Tous les salariés peuvent opter pour les frais réels, quelle que soit leur profession. C\'est particulièrement avantageux pour ceux qui ont de longs trajets domicile-travail, qui utilisent leur véhicule personnel, ou qui engagent des frais de formation ou de double résidence.',
+  },
+  {
+    question: 'Quels justificatifs dois-je conserver ?',
+    answer: 'Vous devez conserver tous les justificatifs de vos dépenses : factures, tickets de péage, attestations kilométriques, notes de frais de repas, etc. L\'administration peut vous les demander pendant 3 ans après la déclaration.',
+  },
+  {
+    question: 'La plateforme est-elle gratuite ?',
+    answer: 'Impôts Facile propose une formule Découverte gratuite avec accès à un module, un quizz et un simulateur basique. Des formules payantes donnent accès à l\'ensemble des contenus, simulateurs avancés et fiches métier.',
+  },
+];
 
 const Index = () => {
   return (
