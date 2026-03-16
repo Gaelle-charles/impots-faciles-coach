@@ -23,6 +23,7 @@ import Simulateur from "./pages/Simulateur";
 import SimulateurFrais from "./pages/SimulateurFrais";
 import FicheMetier from "./pages/FicheMetier";
 import Profil from "./pages/Profil";
+import MesModules from "./pages/MesModules";
 import Admin from "./pages/Admin";
 import AdminLogin from "./pages/AdminLogin";
 import AdminUsers from "./pages/AdminUsers";
