@@ -140,7 +140,7 @@ const AdminModuleContenus = () => {
     texte_2: '',
     image_url: '',
   });
-  const [previewTab, setPreviewTab] = useState<string>('edit');
+  
   const [saving, setSaving] = useState(false);
 
   // Delete
