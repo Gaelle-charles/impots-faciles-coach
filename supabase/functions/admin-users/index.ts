@@ -52,8 +52,9 @@ Deno.serve(async (req) => {
     const body = await req.json();
     const { action } = body;
 
-    // Determine the app URL for redirects
-    const siteUrl = body.siteUrl || supabaseUrl.replace('.supabase.co', '.lovable.app');
+    // Determine the app URL for redirects — must be passed by the client
+    const origin = req.headers.get("origin") || req.headers.get("referer") || "";
+    const siteUrl = body.siteUrl || (origin ? new URL(origin).origin : "https://impots-faciles-coach.lovable.app");
 
     switch (action) {
       case "create_user": {

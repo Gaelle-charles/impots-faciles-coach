@@ -7,31 +7,41 @@ const AuthCallback = () => {
   const [status, setStatus] = useState('Vérification en cours…');
 
   useEffect(() => {
-    const handleCallback = async () => {
-      // Wait for Supabase to process the URL hash (token exchange)
-      const { data: { session }, error } = await supabase.auth.getSession();
+    // Listen for the auth state change triggered by hash token exchange
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      async (event, session) => {
+        if (event === 'SIGNED_IN' && session) {
+          const { data: profile } = await supabase
+            .from('profiles')
+            .select('role')
+            .eq('id', session.user.id)
+            .maybeSingle();
 
-      if (error || !session) {
+          if (profile?.role === 'admin') {
+            navigate('/admin', { replace: true });
+          } else {
+            navigate('/dashboard', { replace: true });
+          }
+        } else if (event === 'PASSWORD_RECOVERY') {
+          // User clicked a password reset link
+          navigate('/reset-password', { replace: true });
+        }
+      }
+    );
+
+    // Fallback: if no event fires within 5s, check session manually
+    const timeout = setTimeout(async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
         setStatus('Session invalide. Redirection…');
         setTimeout(() => navigate('/connexion', { replace: true }), 1500);
-        return;
       }
+    }, 5000);
 
-      // Check role to decide where to redirect
-      const { data: profile } = await supabase
-        .from('profiles')
-        .select('role')
-        .eq('id', session.user.id)
-        .maybeSingle();
-
-      if (profile?.role === 'admin') {
-        navigate('/admin', { replace: true });
-      } else {
-        navigate('/dashboard', { replace: true });
-      }
+    return () => {
+      subscription.unsubscribe();
+      clearTimeout(timeout);
     };
-
-    handleCallback();
   }, [navigate]);
 
   return (

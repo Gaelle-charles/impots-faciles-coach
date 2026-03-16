@@ -264,6 +264,8 @@ const AdminUsers = () => {
         nom: createForm.nom,
         plan: createForm.plan,
         role: createForm.role,
+        sendActivationEmail: createForm.role === 'admin',
+        siteUrl: window.location.origin,
       },
     });
     if (error || data?.error) {
