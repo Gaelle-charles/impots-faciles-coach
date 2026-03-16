@@ -90,6 +90,7 @@ function SortableModuleRow({
   onDelete: () => void;
   onToggle: (checked: boolean) => void;
 }) {
+  const navigate = useNavigate();
   const {
     attributes,
     listeners,
