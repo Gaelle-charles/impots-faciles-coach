@@ -373,7 +373,17 @@ const AdminQuiz = () => {
             </div>
             <div className="space-y-1.5">
               <Label>Bonne réponse *</Label>
-              <Input value={form.bonne_reponse} onChange={e => setForm(p => ({ ...p, bonne_reponse: e.target.value }))} placeholder="Doit correspondre exactement à une option" />
+              <Select
+                value={form.bonne_reponse}
+                onValueChange={v => setForm(p => ({ ...p, bonne_reponse: v }))}
+              >
+                <SelectTrigger><SelectValue placeholder="Sélectionnez la bonne réponse" /></SelectTrigger>
+                <SelectContent>
+                  {form.options.filter(o => o.trim()).map((opt, i) => (
+                    <SelectItem key={i} value={opt.trim()}>{opt.trim()}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
             <div className="space-y-1.5">
               <Label>Explication (optionnel)</Label>
