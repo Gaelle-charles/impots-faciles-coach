@@ -7,7 +7,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
-import { Textarea } from '@/components/ui/textarea';
+import { RichTextEditor } from '@/components/admin/RichTextEditor';
 import {
   Table, TableBody, TableCell, TableHead, TableHeader, TableRow,
 } from '@/components/ui/table';
@@ -267,7 +267,7 @@ const AdminContenus = () => {
 
       {/* Add/Edit Modal */}
       <Dialog open={isAdd || !!editItem} onOpenChange={open => { if (!open) closeModal(); }}>
-        <DialogContent className="max-w-lg max-h-[85vh] overflow-y-auto">
+        <DialogContent className="max-w-3xl max-h-[85vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle className="font-heading">{isAdd ? '➕ Nouveau contenu' : '✏️ Modifier le contenu'}</DialogTitle>
           </DialogHeader>
@@ -302,11 +302,11 @@ const AdminContenus = () => {
             </div>
             <div className="space-y-1.5">
               <Label>Contenu principal</Label>
-              <Textarea value={form.contenu} onChange={e => setForm(p => ({ ...p, contenu: e.target.value }))} rows={5} />
+              <RichTextEditor value={form.contenu} onChange={v => setForm(p => ({ ...p, contenu: v }))} placeholder="Rédigez le contenu principal…" minHeight={250} />
             </div>
             <div className="space-y-1.5">
               <Label>Texte secondaire</Label>
-              <Textarea value={form.texte_2} onChange={e => setForm(p => ({ ...p, texte_2: e.target.value }))} rows={3} />
+              <RichTextEditor value={form.texte_2} onChange={v => setForm(p => ({ ...p, texte_2: v }))} placeholder="Texte secondaire (optionnel)…" minHeight={150} />
             </div>
             <div className="space-y-1.5">
               <Label>URL de l'image</Label>
