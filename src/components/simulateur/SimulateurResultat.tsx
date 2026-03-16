@@ -264,10 +264,13 @@ Taux de prélèvement : ${result.tauxPrelevement}%${result.pfuMontant > 0 ? `\nP
         <div className="flex flex-col gap-2">
           <div className="flex gap-2">
             <Button variant="outline" className="flex-1" onClick={handleCopy}>
-              <Copy className="h-4 w-4 mr-1" /> Copier le résumé
+              <Copy className="h-4 w-4 mr-1" /> Copier
+            </Button>
+            <Button variant="outline" className="flex-1" onClick={handleExportPDF}>
+              <FileDown className="h-4 w-4 mr-1" /> PDF
             </Button>
             <Button variant="outline" className="flex-1" onClick={onReset}>
-              <RotateCcw className="h-4 w-4 mr-1" /> Réinitialiser
+              <RotateCcw className="h-4 w-4 mr-1" /> Reset
             </Button>
           </div>
           <Button className="w-full" onClick={() => setSaveOpen(true)}>
