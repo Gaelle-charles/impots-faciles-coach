@@ -84,9 +84,14 @@ const Quizz = () => {
   useEffect(() => { fetchData(); }, [fetchData]);
 
   const handleValidate = () => {
-    if (!selectedOption) return;
+    if (!selectedOption || !question) return;
+    const correct = selectedOption === question.bonne_reponse;
     setValidated(true);
-    if (selectedOption === question.bonne_reponse) setScore((s) => s + 1);
+    if (correct) setScore((s) => s + 1);
+    setReponsesUtilisateur((prev) => [
+      ...prev,
+      { question_id: question.id, reponse_donnee: selectedOption, correct },
+    ]);
   };
 
   const handleNext = () => {
