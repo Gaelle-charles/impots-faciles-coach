@@ -39,9 +39,12 @@ const Connexion = () => {
         navigate('/verifier-email');
       }
     } else {
-      const { error } = await supabase.auth.signInWithPassword({ email, password });
+      const { data: signInData, error } = await supabase.auth.signInWithPassword({ email, password });
       if (error) setError(error.message);
-      else navigate('/dashboard');
+      else if (signInData.user) {
+        const path = await getPostLoginRedirect(signInData.user.id);
+        navigate(path);
+      }
     }
 
     setLoading(false);

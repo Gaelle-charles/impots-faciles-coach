@@ -1,29 +1,19 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
+import { getPostLoginRedirect } from '@/lib/auth-redirect';
 
 const AuthCallback = () => {
   const navigate = useNavigate();
   const [status, setStatus] = useState('Vérification en cours…');
 
   useEffect(() => {
-    // Listen for the auth state change triggered by hash token exchange
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
         if (event === 'SIGNED_IN' && session) {
-          const { data: profile } = await supabase
-            .from('profiles')
-            .select('role')
-            .eq('id', session.user.id)
-            .maybeSingle();
-
-          if (profile?.role === 'admin') {
-            navigate('/admin', { replace: true });
-          } else {
-            navigate('/dashboard', { replace: true });
-          }
+          const path = await getPostLoginRedirect(session.user.id);
+          navigate(path, { replace: true });
         } else if (event === 'PASSWORD_RECOVERY') {
-          // User clicked a password reset link
           navigate('/reset-password', { replace: true });
         }
       }
