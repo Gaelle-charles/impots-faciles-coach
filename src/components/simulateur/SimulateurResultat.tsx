@@ -5,11 +5,13 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
-import { Copy, RotateCcw, ArrowRight, Save } from "lucide-react";
+import { Copy, RotateCcw, ArrowRight, Save, FileDown } from "lucide-react";
 import { toast } from "sonner";
 import { Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
+import jsPDF from "jspdf";
+import autoTable from "jspdf-autotable";
 
 const fmt = (n: number) =>
   n.toLocaleString("fr-FR", { maximumFractionDigits: 0 });
