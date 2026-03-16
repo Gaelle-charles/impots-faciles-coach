@@ -7,16 +7,16 @@ import { Card, CardContent } from '@/components/ui/card';
 /* ─── Data ─── */
 
 const problemCards = [
-  { emoji: '😰', title: 'La déclaration, c'est du chinois', text: 'Tranches, parts fiscales, cases à remplir… tu ne sais pas par où commencer.' },
-  { emoji: '💸', title: 'Tu rates peut-être des économies', text: "Frais réels, crédits d'impôt, réductions… des centaines d'euros peuvent t'échapper chaque année." },
-  { emoji: '⏰', title: 'Tu attends la dernière minute', text: 'Parce que tu ne sais pas vraiment quoi faire, tu repousses… jusqu'au stress de juin.' },
+  { emoji: '😰', title: "La déclaration, c'est du chinois", text: "Tranches, parts fiscales, cases à remplir… tu ne sais pas par où commencer." },
+  { emoji: '💸', title: "Tu rates peut-être des économies", text: "Frais réels, crédits d'impôt, réductions… des centaines d'euros peuvent t'échapper chaque année." },
+  { emoji: '⏰', title: "Tu attends la dernière minute", text: "Parce que tu ne sais pas vraiment quoi faire, tu repousses… jusqu'au stress de juin." },
 ];
 
 const steps = [
-  { num: '01', icon: '👤', title: 'Tu crées ton compte en 30 secondes', text: 'Prénom, email, mot de passe. C'est tout.\nPas de carte bancaire requise pour commencer.' },
-  { num: '02', icon: '📚', title: 'Tu suis les modules à ton rythme', text: '8 modules progressifs couvrent tout : revenus, frais déductibles, crédits d'impôt, profils spécifiques… Chaque module prend 10 à 20 minutes. Tu reprends exactement où tu t'es arrêté.' },
-  { num: '03', icon: '❓', title: 'Tu valides avec des quiz interactifs', text: 'À la fin de chaque module, un quiz te permet de tester ce que tu as retenu. Tu reçois un score, des explications pour chaque bonne réponse, et un message personnalisé selon ton niveau.' },
-  { num: '04', icon: '🎯', title: 'Tu déclares en toute confiance', text: 'Grâce à ton parcours personnalisé, tu sais exactement quoi remplir, où et pourquoi. Plus de stress, plus d'erreurs, plus d'oublis.' },
+  { num: '01', icon: '👤', title: "Tu crées ton compte en 30 secondes", text: "Prénom, email, mot de passe. C'est tout.\nPas de carte bancaire requise pour commencer." },
+  { num: '02', icon: '📚', title: "Tu suis les modules à ton rythme", text: "8 modules progressifs couvrent tout : revenus, frais déductibles, crédits d'impôt, profils spécifiques… Chaque module prend 10 à 20 minutes. Tu reprends exactement où tu t'es arrêté." },
+  { num: '03', icon: '❓', title: "Tu valides avec des quiz interactifs", text: "À la fin de chaque module, un quiz te permet de tester ce que tu as retenu. Tu reçois un score, des explications pour chaque bonne réponse, et un message personnalisé selon ton niveau." },
+  { num: '04', icon: '🎯', title: "Tu déclares en toute confiance", text: "Grâce à ton parcours personnalisé, tu sais exactement quoi remplir, où et pourquoi. Plus de stress, plus d'erreurs, plus d'oublis." },
 ];
 
 const modules = [
