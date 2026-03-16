@@ -8,7 +8,7 @@ export function ProtectedRoute({ children, adminOnly = false }: { children: Reac
   const { user, loading } = useAuth();
   const location = useLocation();
   const [role, setRole] = useState<string | null>(null);
-  const [roleLoading, setRoleLoading] = useState(false);
+  const [roleLoading, setRoleLoading] = useState(adminOnly);
 
   useEffect(() => {
     if (!user || !adminOnly) return;
