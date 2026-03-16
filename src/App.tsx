@@ -56,6 +56,7 @@ const App = () => (
             {/* Admin route */}
             <Route element={<ProtectedRoute adminOnly><AppLayout /></ProtectedRoute>}>
               <Route path="/admin" element={<Admin />} />
+              <Route path="/admin/users" element={<AdminUsers />} />
             </Route>
 
             {/* Quizz has its own layout */}
