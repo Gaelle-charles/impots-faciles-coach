@@ -48,6 +48,93 @@ export default function SimulateurResultat({ result, formData, onReset, onSimula
       onSimulationSaved?.();
     }
   };
+
+
+  const handleExportPDF = () => {
+    const doc = new jsPDF();
+    const date = new Date().toLocaleDateString("fr-FR");
+
+    // Title
+    doc.setFontSize(18);
+    doc.text("Estimation impot 2025", 14, 20);
+    doc.setFontSize(10);
+    doc.setTextColor(100);
+    doc.text(`Revenus 2024 - Genere le ${date}`, 14, 27);
+    doc.text("Impots Facile - Outil pedagogique", 14, 32);
+
+    // Revenue section
+    doc.setTextColor(0);
+    doc.setFontSize(13);
+    doc.text("Synthese des revenus", 14, 44);
+
+    autoTable(doc, {
+      startY: 48,
+      theme: "grid",
+      headStyles: { fillColor: [79, 70, 229] },
+      body: [
+        ["Revenu brut total", `${fmt(result.revenuBrut)} EUR`],
+        ["Abattement(s)", `- ${fmt(result.abattements)} EUR`],
+        ["Deductions", `- ${fmt(result.deductions)} EUR`],
+        ["Revenu net imposable", `${fmt(result.revenuNetImposable)} EUR`],
+        ["Nombre de parts", `${result.nbParts}`],
+        ["Quotient familial", `${fmt(result.quotientFamilial)} EUR`],
+      ],
+    });
+
+    // Tranches table
+    const afterRevenu = (doc as any).lastAutoTable?.finalY ?? 100;
+    doc.setFontSize(13);
+    doc.text("Detail par tranche", 14, afterRevenu + 10);
+
+    autoTable(doc, {
+      startY: afterRevenu + 14,
+      theme: "grid",
+      headStyles: { fillColor: [79, 70, 229] },
+      head: [["Tranche", "Taux", "Montant impose", "Impot"]],
+      body: result.tranches.map((t) => [
+        t.label,
+        `${Math.round(t.taux * 100)}%`,
+        `${fmt(t.montantImpose)} EUR`,
+        `${fmt(t.impot)} EUR`,
+      ]),
+    });
+
+    // Result section
+    const afterTranches = (doc as any).lastAutoTable?.finalY ?? 160;
+    doc.setFontSize(13);
+    doc.text("Resultat", 14, afterTranches + 10);
+
+    autoTable(doc, {
+      startY: afterTranches + 14,
+      theme: "grid",
+      headStyles: { fillColor: [79, 70, 229] },
+      body: [
+        ["Impot brut", `${fmt(result.impotBrut)} EUR`],
+        ...(result.reductions > 0 ? [["Reductions d'impot", `- ${fmt(result.reductions)} EUR`]] : []),
+        ...(result.credits > 0 ? [["Credits d'impot", `- ${fmt(result.credits)} EUR`]] : []),
+        ["Impot net estime", `${fmt(result.impotNet)} EUR`],
+        ...(result.remboursement > 0 ? [["Remboursement estime", `${fmt(result.remboursement)} EUR`]] : []),
+        ...(result.pfuMontant > 0 ? [["PFU (flat tax 30%)", `${fmt(result.pfuMontant)} EUR`]] : []),
+        ["Taux moyen", `${result.tauxMoyen}%`],
+        ["Taux marginal", `${result.tauxMarginal}%`],
+        ["Taux de prelevement estime", `${result.tauxPrelevement}%`],
+      ],
+    });
+
+    // Footer
+    const pageHeight = doc.internal.pageSize.height;
+    doc.setFontSize(8);
+    doc.setTextColor(150);
+    doc.text(
+      "Ce document est une estimation pedagogique. Pour votre declaration reelle, rendez-vous sur impots.gouv.fr",
+      14,
+      pageHeight - 10
+    );
+
+    doc.save(`simulation-impot-${date.replace(/\//g, "-")}.pdf`);
+    toast.success("PDF téléchargé ✓");
+  };
+
   const handleCopy = () => {
     const text = `Estimation impôt 2025 (revenus 2024)
 Revenu brut : ${fmt(result.revenuBrut)} €
