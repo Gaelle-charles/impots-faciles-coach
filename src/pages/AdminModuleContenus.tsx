@@ -202,7 +202,6 @@ const AdminModuleContenus = () => {
   const openAdd = () => {
     setIsAdd(true);
     setEditStep(null);
-    setPreviewTab('edit');
     setForm({ titre: '', contenu: '', texte_2: '', image_url: '' });
   };
 
