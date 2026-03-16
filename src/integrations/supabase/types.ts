@@ -121,6 +121,7 @@ export type Database = {
           date_paiement: string | null
           email: string | null
           id: string
+          is_active: boolean
           metier_id: string | null
           nom: string | null
           plan: string
@@ -132,6 +133,7 @@ export type Database = {
           date_paiement?: string | null
           email?: string | null
           id: string
+          is_active?: boolean
           metier_id?: string | null
           nom?: string | null
           plan?: string
@@ -143,6 +145,7 @@ export type Database = {
           date_paiement?: string | null
           email?: string | null
           id?: string
+          is_active?: boolean
           metier_id?: string | null
           nom?: string | null
           plan?: string
