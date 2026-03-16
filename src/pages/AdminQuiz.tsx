@@ -197,7 +197,7 @@ const AdminQuiz = () => {
           <SelectTrigger className="w-full sm:w-56"><SelectValue /></SelectTrigger>
           <SelectContent>
             <SelectItem value="Tous">Tous les modules</SelectItem>
-            {modules.map(m => <SelectItem key={m.id} value={m.id}>{m.titre}</SelectItem>)}
+            {modules.map(m => <SelectItem key={m.id} value={m.id}>Module {m.order} — {m.titre}</SelectItem>)}
           </SelectContent>
         </Select>
       </div>
