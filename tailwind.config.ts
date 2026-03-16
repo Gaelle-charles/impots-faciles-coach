@@ -65,7 +65,8 @@ export default {
           border: "hsl(var(--sidebar-border))",
           ring: "hsl(var(--sidebar-ring))",
           muted: "hsl(var(--sidebar-muted))",
-        },
+        "dashboard-bg": "hsl(var(--dashboard-bg))",
+      },
       },
       borderRadius: {
         lg: "var(--radius)",
