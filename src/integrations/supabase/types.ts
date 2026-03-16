@@ -127,9 +127,13 @@ export type Database = {
           is_active: boolean
           metier_id: string | null
           nom: string | null
+          onboarding_done: boolean
           plan: string
+          premiere_declaration: boolean | null
           prenom: string | null
           role: string
+          situation_famille: string | null
+          situation_pro: string | null
         }
         Insert: {
           created_at?: string
@@ -139,9 +143,13 @@ export type Database = {
           is_active?: boolean
           metier_id?: string | null
           nom?: string | null
+          onboarding_done?: boolean
           plan?: string
+          premiere_declaration?: boolean | null
           prenom?: string | null
           role?: string
+          situation_famille?: string | null
+          situation_pro?: string | null
         }
         Update: {
           created_at?: string
@@ -151,9 +159,13 @@ export type Database = {
           is_active?: boolean
           metier_id?: string | null
           nom?: string | null
+          onboarding_done?: boolean
           plan?: string
+          premiere_declaration?: boolean | null
           prenom?: string | null
           role?: string
+          situation_famille?: string | null
+          situation_pro?: string | null
         }
         Relationships: [
           {

@@ -12,6 +12,7 @@ import { AdminLayout } from "@/components/AdminLayout";
 import Index from "./pages/Index";
 import Connexion from "./pages/Connexion";
 import Inscription from "./pages/Inscription";
+import Onboarding from "./pages/Onboarding";
 import VerifierEmail from "./pages/VerifierEmail";
 import ResetPassword from "./pages/ResetPassword";
 import Tarifs from "./pages/Tarifs";
@@ -55,6 +56,7 @@ const App = () => (
             <Route path="/reset-password" element={<ResetPassword />} />
             <Route path="/tarifs" element={<Tarifs />} />
             <Route path="/auth/callback" element={<AuthCallback />} />
+            <Route path="/onboarding" element={<ProtectedRoute><Onboarding /></ProtectedRoute>} />
 
             {/* Protected routes with sidebar layout */}
             <Route element={<ProtectedRoute><AppLayout /></ProtectedRoute>}>
