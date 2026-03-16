@@ -208,7 +208,6 @@ const AdminQuiz = () => {
           <TableHeader>
             <TableRow>
               <TableHead>Question</TableHead>
-              <TableHead className="hidden md:table-cell">Module</TableHead>
               <TableHead className="text-center">Options</TableHead>
               <TableHead className="hidden lg:table-cell">Bonne réponse</TableHead>
               <TableHead className="w-20" />
