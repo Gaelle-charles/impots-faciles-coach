@@ -19,6 +19,7 @@ import Quizz from "./pages/Quizz";
 import Simulateur from "./pages/Simulateur";
 import SimulateurFrais from "./pages/SimulateurFrais";
 import FicheMetier from "./pages/FicheMetier";
+import Profil from "./pages/Profil";
 import Admin from "./pages/Admin";
 import NotFound from "./pages/NotFound";
 
@@ -45,6 +46,7 @@ const App = () => (
               <Route path="/simulateur" element={<Simulateur />} />
               <Route path="/simulateur-de-frais" element={<SimulateurFrais />} />
               <Route path="/fiche-metier/:id" element={<FicheMetier />} />
+              <Route path="/profil" element={<Profil />} />
             </Route>
 
             {/* Module has its own layout */}
