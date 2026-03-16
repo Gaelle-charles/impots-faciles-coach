@@ -12,6 +12,7 @@ const fmt = (n: number) =>
 
 interface Props {
   result: SimulateurResult;
+  formData: SimulateurFormData;
   onReset: () => void;
 }
 
