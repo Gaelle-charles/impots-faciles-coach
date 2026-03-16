@@ -120,7 +120,7 @@ function SortableStepRow({
 const AdminModuleContenus = () => {
   const { id: moduleId } = useParams<{ id: string }>();
   const { user } = useAuth();
-  const isMobile = useIsMobile();
+  
 
   const [loading, setLoading] = useState(true);
   const [moduleInfo, setModuleInfo] = useState<ModuleInfo | null>(null);
