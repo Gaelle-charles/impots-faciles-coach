@@ -7,6 +7,7 @@ import { AuthProvider } from "@/contexts/AuthContext";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
 import { RedirectIfAuth } from "@/components/RedirectIfAuth";
 import { AppLayout } from "@/components/AppLayout";
+import { AdminLayout } from "@/components/AdminLayout";
 
 import Index from "./pages/Index";
 import Connexion from "./pages/Connexion";
