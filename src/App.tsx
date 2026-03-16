@@ -22,6 +22,7 @@ import SimulateurFrais from "./pages/SimulateurFrais";
 import FicheMetier from "./pages/FicheMetier";
 import Profil from "./pages/Profil";
 import Admin from "./pages/Admin";
+import AdminLogin from "./pages/AdminLogin";
 import AdminUsers from "./pages/AdminUsers";
 import AdminModules from "./pages/AdminModules";
 import NotFound from "./pages/NotFound";
@@ -55,7 +56,10 @@ const App = () => (
             {/* Module has its own layout */}
             <Route path="/module/:id" element={<ProtectedRoute><Module /></ProtectedRoute>} />
 
-            {/* Admin route */}
+            {/* Admin login (public) */}
+            <Route path="/admin/login" element={<AdminLogin />} />
+
+            {/* Admin routes */}
             <Route element={<ProtectedRoute adminOnly><AdminLayout /></ProtectedRoute>}>
               <Route path="/admin" element={<Admin />} />
               <Route path="/admin/users" element={<AdminUsers />} />
