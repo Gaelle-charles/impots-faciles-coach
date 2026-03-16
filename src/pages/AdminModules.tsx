@@ -160,6 +160,14 @@ function SortableModuleRow({
             checked={mod.is_published}
             onCheckedChange={onToggle}
           />
+          <Button
+            variant="outline"
+            size="sm"
+            className="h-8 gap-1.5 text-xs"
+            onClick={() => navigate(`/admin/modules/${mod.id}/contenus`)}
+          >
+            <Library className="h-3.5 w-3.5" /> Contenus
+          </Button>
           <Button variant="outline" size="icon" className="h-8 w-8" onClick={onEdit}>
             <Pencil className="h-3.5 w-3.5" />
           </Button>
