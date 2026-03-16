@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { lovable } from '@/integrations/lovable/index';
+import { getPostLoginRedirect } from '@/lib/auth-redirect';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useNavigate, Link } from 'react-router-dom';
@@ -38,9 +39,12 @@ const Connexion = () => {
         navigate('/verifier-email');
       }
     } else {
-      const { error } = await supabase.auth.signInWithPassword({ email, password });
+      const { data: signInData, error } = await supabase.auth.signInWithPassword({ email, password });
       if (error) setError(error.message);
-      else navigate('/dashboard');
+      else if (signInData.user) {
+        const path = await getPostLoginRedirect(signInData.user.id);
+        navigate(path);
+      }
     }
 
     setLoading(false);
