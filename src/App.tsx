@@ -25,6 +25,12 @@ import Admin from "./pages/Admin";
 import AdminLogin from "./pages/AdminLogin";
 import AdminUsers from "./pages/AdminUsers";
 import AdminModules from "./pages/AdminModules";
+import AdminStats from "./pages/AdminStats";
+import AdminQuiz from "./pages/AdminQuiz";
+import AdminContenus from "./pages/AdminContenus";
+import AdminSubscriptions from "./pages/AdminSubscriptions";
+import AdminEmails from "./pages/AdminEmails";
+import AdminSettings from "./pages/AdminSettings";
 import AuthCallback from "./pages/AuthCallback";
 import NotFound from "./pages/NotFound";
 
@@ -66,6 +72,12 @@ const App = () => (
               <Route path="/admin" element={<Admin />} />
               <Route path="/admin/users" element={<AdminUsers />} />
               <Route path="/admin/modules" element={<AdminModules />} />
+              <Route path="/admin/stats" element={<AdminStats />} />
+              <Route path="/admin/quiz" element={<AdminQuiz />} />
+              <Route path="/admin/contenus" element={<AdminContenus />} />
+              <Route path="/admin/subscriptions" element={<AdminSubscriptions />} />
+              <Route path="/admin/emails" element={<AdminEmails />} />
+              <Route path="/admin/settings" element={<AdminSettings />} />
             </Route>
 
             {/* Quizz has its own layout */}
