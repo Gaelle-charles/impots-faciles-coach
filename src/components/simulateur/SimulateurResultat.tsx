@@ -152,6 +152,51 @@ Taux de prélèvement : ${result.tauxPrelevement}%${result.pfuMontant > 0 ? `\nP
           </Button>
         </div>
       </Card>
+
+      {/* Bloc pédagogique */}
+      {(result.revenuBrut > 0 || result.impotNet > 0 || result.remboursement > 0) && (
+        <Card className="bg-background border border-border rounded-xl p-5 space-y-3">
+          <h3 className="font-heading text-base font-bold text-foreground">💡 Ce que ça signifie pour toi</h3>
+          <div className="text-sm text-muted-foreground space-y-2">
+            {result.remboursement > 0 && (
+              <p>🎉 Vous devriez recevoir un remboursement de l'État. Vérifiez bien que vous avez déclaré tous vos crédits d'impôt.</p>
+            )}
+            {result.impotNet === 0 && result.remboursement === 0 && result.revenuBrut > 0 && (
+              <p>Vous n'êtes pas imposable. Pensez quand même à déclarer vos crédits d'impôt (garde d'enfant, emploi à domicile) — vous pouvez être remboursé !</p>
+            )}
+            {result.tauxMarginal === 11 && (
+              <p>Tu es dans la 2ème tranche d'imposition. Pense à vérifier si tes frais réels dépassent 10% de ton salaire — si oui, les déclarer peut réduire ton impôt.</p>
+            )}
+            {result.tauxMarginal === 30 && (
+              <p>Tu es dans la 3ème tranche. Les versements sur un PER peuvent réduire ton revenu imposable et te faire descendre dans une tranche inférieure.</p>
+            )}
+          </div>
+        </Card>
+      )}
+
+      {/* Bloc modules suggérés */}
+      {(formData.fraisReels || result.credits > 0 || formData.fonciers > 0) && (
+        <Card className="bg-secondary/50 border border-border rounded-xl p-5 space-y-3">
+          <h3 className="font-heading text-base font-bold text-foreground">📚 Pour aller plus loin</h3>
+          <div className="text-sm space-y-2">
+            {formData.fraisReels && (
+              <Link to="/module/module-4" className="flex items-center gap-2 text-primary hover:underline font-medium">
+                Revoir le Module 4 : Frais déductibles <ArrowRight className="h-4 w-4" />
+              </Link>
+            )}
+            {result.credits > 0 && (
+              <Link to="/module/module-5" className="flex items-center gap-2 text-primary hover:underline font-medium">
+                Revoir le Module 5 : Crédits d'impôt <ArrowRight className="h-4 w-4" />
+              </Link>
+            )}
+            {formData.fonciers > 0 && (
+              <Link to="/module/module-3" className="flex items-center gap-2 text-primary hover:underline font-medium">
+                Revoir le Module 3 : Revenus à déclarer <ArrowRight className="h-4 w-4" />
+              </Link>
+            )}
+          </div>
+        </Card>
+      )}
     </div>
   );
 }
