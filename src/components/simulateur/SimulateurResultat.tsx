@@ -21,7 +21,31 @@ interface Props {
   onSimulationSaved?: () => void;
 }
 
-export default function SimulateurResultat({ result, formData, onReset }: Props) {
+export default function SimulateurResultat({ result, formData, onReset, onSimulationSaved }: Props) {
+  const { user } = useAuth();
+  const [saveOpen, setSaveOpen] = useState(false);
+  const [saveName, setSaveName] = useState("Estimation 2024");
+  const [saving, setSaving] = useState(false);
+
+  const handleSave = async () => {
+    if (!user) return;
+    setSaving(true);
+    const { error } = await supabase.from("simulations" as any).insert({
+      user_id: user.id,
+      nom: saveName,
+      donnees: formData as any,
+      impot_net: result.impotNet,
+      taux_moyen: result.tauxMoyen,
+    });
+    setSaving(false);
+    if (error) {
+      toast.error("Erreur lors de la sauvegarde");
+    } else {
+      toast.success("Simulation sauvegardée ✓");
+      setSaveOpen(false);
+      onSimulationSaved?.();
+    }
+  };
   const handleCopy = () => {
     const text = `Estimation impôt 2025 (revenus 2024)
 Revenu brut : ${fmt(result.revenuBrut)} €
