@@ -22,12 +22,14 @@ import { toast } from '@/hooks/use-toast';
 import {
   Library,
   Plus,
-  Pencil,
   Trash2,
   GripVertical,
   Save,
   X,
   AlertTriangle,
+  Settings,
+  FileText,
+  HelpCircle,
 } from 'lucide-react';
 import {
   DndContext,
