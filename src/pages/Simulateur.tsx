@@ -292,11 +292,19 @@ const Simulateur = () => {
               </AccordionContent>
             </AccordionItem>
           </Accordion>
+
+          {/* Mes simulations sauvegardées */}
+          <MesSimulations onLoad={(data) => setForm(data)} refreshKey={refreshKey} />
         </div>
 
         {/* Right: Results */}
         <div className="lg:w-[40%]">
-          <SimulateurResultat result={result} formData={form} onReset={handleReset} />
+          <SimulateurResultat
+            result={result}
+            formData={form}
+            onReset={handleReset}
+            onSimulationSaved={() => setRefreshKey((k) => k + 1)}
+          />
         </div>
       </div>
     </div>
