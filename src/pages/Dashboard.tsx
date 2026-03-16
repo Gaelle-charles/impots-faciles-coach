@@ -141,7 +141,77 @@ const Dashboard = () => {
         </p>
       </div>
 
-      {/* Stats */}
+      {/* Reprendre block */}
+      {(() => {
+        const inProgress = progressions.filter((p) => !p.completion_date);
+        const allCompleted = modules.length > 0 && completedCount >= modules.length;
+
+        if (modules.length === 0) return null;
+
+        // CAS 3: Tous terminés
+        if (allCompleted) {
+          return (
+            <Card className="border-border bg-background shadow-sm">
+              <CardContent className="flex flex-col items-center gap-3 p-8 text-center">
+                <span className="text-5xl">🏆</span>
+                <h2 className="font-heading text-xl font-bold text-foreground">
+                  Félicitations ! Tu as tout complété.
+                </h2>
+                <Button onClick={() => navigate('/simulateur')} className="gap-2">
+                  🧮 Essaie le simulateur →
+                </Button>
+              </CardContent>
+            </Card>
+          );
+        }
+
+        // CAS 2: Module(s) en cours
+        if (inProgress.length > 0) {
+          const latest = inProgress[0]; // already sorted or pick first
+          const mod = modules.find((m) => m.id === latest.module_id);
+          if (mod) {
+            const totalStep = mod.total_step || 1;
+            const pct = Math.min(Math.round((latest.step / totalStep) * 100), 100);
+            return (
+              <Card className="border-border bg-secondary shadow-sm">
+                <CardContent className="p-6 space-y-4">
+                  <h2 className="font-heading text-lg font-bold text-foreground">
+                    Reprends là où tu t'es arrêté 👇
+                  </h2>
+                  <div className="rounded-lg bg-background p-4 space-y-3">
+                    <h3 className="font-heading text-base font-semibold text-foreground">{mod.titre}</h3>
+                    <Progress value={pct} className="h-2" />
+                    <p className="text-xs text-muted-foreground">
+                      Étape {latest.step} sur {mod.total_step}
+                    </p>
+                  </div>
+                  <Button onClick={() => navigate(`/module/${mod.module_slug}`)} className="gap-2">
+                    ▶️ Continuer →
+                  </Button>
+                </CardContent>
+              </Card>
+            );
+          }
+        }
+
+        // CAS 1: Aucun module commencé
+        const firstMod = modules[0];
+        return (
+          <div className="rounded-xl bg-gradient-to-r from-[hsl(263,70%,58%)] to-[hsl(234,68%,52%)] p-6 text-white shadow-md">
+            <h2 className="font-heading text-xl font-bold">Prêt à comprendre ta déclaration ?</h2>
+            <p className="mt-1 text-sm text-white/80">
+              Commence par le Module 1 — environ 15 minutes suffisent.
+            </p>
+            <Button
+              className="mt-4 bg-white text-primary hover:bg-white/90 font-heading font-bold"
+              onClick={() => navigate(`/module/${firstMod.module_slug}`)}
+            >
+              📚 Commencer le Module 1 →
+            </Button>
+          </div>
+        );
+      })()}
+
       <div className="grid gap-4 grid-cols-2 lg:grid-cols-4">
         {stats.map((s) => (
           <Card key={s.label} className="border-border bg-background shadow-sm">
