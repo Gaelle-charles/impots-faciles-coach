@@ -1,11 +1,15 @@
-import { SimulateurResult } from "@/hooks/useSimulateurFiscal";
-import { SimulateurFormData } from "@/hooks/useSimulateurFiscal";
+import { useState } from "react";
+import { SimulateurResult, SimulateurFormData } from "@/hooks/useSimulateurFiscal";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Copy, RotateCcw, ArrowRight } from "lucide-react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
+import { Copy, RotateCcw, ArrowRight, Save } from "lucide-react";
 import { toast } from "sonner";
 import { Link } from "react-router-dom";
+import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/contexts/AuthContext";
 
 const fmt = (n: number) =>
   n.toLocaleString("fr-FR", { maximumFractionDigits: 0 });
