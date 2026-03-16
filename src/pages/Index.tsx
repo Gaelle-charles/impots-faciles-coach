@@ -44,7 +44,7 @@ const Index = () => {
         className="relative flex flex-col items-center px-4 py-24 text-center bg-cover bg-center"
         style={{ backgroundImage: `url(${heroBg})` }}
       >
-        <div className="absolute inset-0 bg-primary/70" />
+        <div className="absolute inset-0 bg-[#2C1338]/80" />
         <div className="relative z-10">
           <h2 className="max-w-2xl font-heading text-5xl font-bold leading-tight text-primary-foreground">
             La fiscalité, enfin accessible.
