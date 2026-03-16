@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
+import logo from '@/assets/logo.png';
 import { lovable } from '@/integrations/lovable/index';
 import { getPostLoginRedirect } from '@/lib/auth-redirect';
 import { Button } from '@/components/ui/button';
