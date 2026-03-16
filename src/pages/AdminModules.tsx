@@ -22,12 +22,14 @@ import { toast } from '@/hooks/use-toast';
 import {
   Library,
   Plus,
-  Pencil,
   Trash2,
   GripVertical,
   Save,
   X,
   AlertTriangle,
+  Settings,
+  FileText,
+  HelpCircle,
 } from 'lucide-react';
 import {
   DndContext,
@@ -155,7 +157,7 @@ function SortableModuleRow({
       </span>
 
       {!reorderMode && (
-        <div className="flex items-center gap-2 shrink-0">
+        <div className="flex items-center gap-2 shrink-0 flex-wrap">
           <Switch
             checked={mod.is_published}
             onCheckedChange={onToggle}
@@ -164,12 +166,25 @@ function SortableModuleRow({
             variant="outline"
             size="sm"
             className="h-8 gap-1.5 text-xs"
+            onClick={onEdit}
+          >
+            <Settings className="h-3.5 w-3.5" /> Métadonnées
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            className="h-8 gap-1.5 text-xs bg-blue-50 text-blue-700 border-blue-200 hover:bg-blue-100 dark:bg-blue-950 dark:text-blue-300 dark:border-blue-800 dark:hover:bg-blue-900"
             onClick={() => navigate(`/admin/modules/${mod.id}/contenus`)}
           >
-            <Library className="h-3.5 w-3.5" /> Contenus
+            <FileText className="h-3.5 w-3.5" /> Étapes ({mod.total_step})
           </Button>
-          <Button variant="outline" size="icon" className="h-8 w-8" onClick={onEdit}>
-            <Pencil className="h-3.5 w-3.5" />
+          <Button
+            variant="outline"
+            size="sm"
+            className="h-8 gap-1.5 text-xs bg-purple-50 text-purple-700 border-purple-200 hover:bg-purple-100 dark:bg-purple-950 dark:text-purple-300 dark:border-purple-800 dark:hover:bg-purple-900"
+            onClick={() => navigate(`/admin/modules/${mod.id}/quiz`)}
+          >
+            <HelpCircle className="h-3.5 w-3.5" /> Quiz ({mod.quizCount})
           </Button>
           <Button
             variant="outline"
