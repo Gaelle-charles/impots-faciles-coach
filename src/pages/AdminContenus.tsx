@@ -267,7 +267,7 @@ const AdminContenus = () => {
 
       {/* Add/Edit Modal */}
       <Dialog open={isAdd || !!editItem} onOpenChange={open => { if (!open) closeModal(); }}>
-        <DialogContent className="max-w-lg max-h-[85vh] overflow-y-auto">
+        <DialogContent className="max-w-3xl max-h-[85vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle className="font-heading">{isAdd ? '➕ Nouveau contenu' : '✏️ Modifier le contenu'}</DialogTitle>
           </DialogHeader>
