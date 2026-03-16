@@ -120,11 +120,15 @@ const AdminContenus = () => {
       }));
   }, [filtered, moduleMap]);
 
+  const getNextOrdreForModule = (moduleId: string) => {
+    const moduleContenus = contenus.filter(c => c.module_id === moduleId);
+    return moduleContenus.length > 0 ? Math.max(...moduleContenus.map(c => c.ordre)) + 1 : 1;
+  };
+
   const openAdd = () => {
     setIsAdd(true);
     setEditItem(null);
-    const maxOrdre = contenus.length > 0 ? Math.max(...contenus.map(c => c.ordre)) + 1 : 1;
-    setForm({ module_id: modules[0]?.id ?? '', titre: '', ordre: maxOrdre, type_contenu: 'texte', contenu: '', texte_2: '', image_url: '' });
+    setForm({ module_id: '', titre: '', ordre: 0, type_contenu: 'texte', contenu: '', texte_2: '', image_url: '' });
   };
 
   const openEdit = (c: ContenuRow) => {
