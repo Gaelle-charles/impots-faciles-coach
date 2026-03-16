@@ -17,7 +17,9 @@ import {
   SheetContent,
   SheetTrigger,
 } from '@/components/ui/sheet';
-import { Loader2, Menu } from 'lucide-react';
+import { Loader2, Menu, RefreshCw } from 'lucide-react';
+import { Skeleton } from '@/components/ui/skeleton';
+import { toast } from '@/hooks/use-toast';
 import type { Tables } from '@/integrations/supabase/types';
 
 import { ModuleSidebarContent } from '@/components/module/ModuleSidebarContent';
@@ -37,64 +39,100 @@ const Module = () => {
   const [contenus, setContenus] = useState<ContenuRow[]>([]);
   const [progression, setProgression] = useState<ProgressionRow | null>(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [showCompletion, setShowCompletion] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const currentStep = progression?.step ?? 0;
   const totalSteps = contenus.length;
-  const progressPercent = totalSteps > 0 ? ((currentStep + 1) / totalSteps) * 100 : 0;
+  const progressPercent = module?.total_step && module.total_step > 0
+    ? (currentStep / module.total_step) * 100
+    : totalSteps > 0
+      ? (currentStep / totalSteps) * 100
+      : 0;
   const isLastStep = currentStep === totalSteps - 1;
   const currentContenu = contenus[currentStep] ?? null;
 
-  useEffect(() => {
+  const fetchData = useCallback(async () => {
     if (!slug || !user) return;
 
-    const fetchData = async () => {
-      setLoading(true);
+    setLoading(true);
+    setError(null);
 
-      const { data: mod } = await supabase
-        .from('modules')
-        .select('*')
-        .eq('module_slug', slug)
-        .single();
+    // 1. Fetch module first (needed for module_id)
+    const { data: mod, error: modError } = await supabase
+      .from('modules')
+      .select('*')
+      .eq('module_slug', slug)
+      .maybeSingle();
 
-      if (!mod) {
-        setLoading(false);
-        return;
-      }
-      setModule(mod);
+    if (modError) {
+      setError('Erreur lors du chargement du module.');
+      setLoading(false);
+      return;
+    }
 
-      const { data: cont } = await supabase
+    if (!mod) {
+      toast({ title: 'Module introuvable', description: 'Ce module n\'existe pas.', variant: 'destructive' });
+      navigate('/dashboard', { replace: true });
+      return;
+    }
+
+    setModule(mod);
+
+    // 2. Fetch contenus + progression in parallel
+    const [contRes, progRes] = await Promise.all([
+      supabase
         .from('contenus')
         .select('*')
         .eq('module_id', mod.id)
-        .order('ordre', { ascending: true });
-
-      setContenus(cont ?? []);
-
-      const { data: prog } = await supabase
+        .order('ordre', { ascending: true }),
+      supabase
         .from('progressions')
         .select('*')
         .eq('module_id', mod.id)
         .eq('user_id', user.id)
-        .maybeSingle();
+        .maybeSingle(),
+    ]);
 
-      if (prog) {
-        setProgression(prog);
-      } else {
-        const { data: newProg } = await supabase
-          .from('progressions')
-          .insert({ module_id: mod.id, user_id: user.id, step: 0 })
-          .select()
-          .single();
-        setProgression(newProg);
-      }
-
+    if (contRes.error) {
+      setError('Erreur lors du chargement des contenus.');
       setLoading(false);
-    };
+      return;
+    }
 
+    setContenus(contRes.data ?? []);
+
+    if (progRes.error) {
+      setError('Erreur lors du chargement de la progression.');
+      setLoading(false);
+      return;
+    }
+
+    if (progRes.data) {
+      setProgression(progRes.data);
+    } else {
+      // Create initial progression
+      const { data: newProg, error: insertErr } = await supabase
+        .from('progressions')
+        .insert({ module_id: mod.id, user_id: user.id, step: 0 })
+        .select()
+        .single();
+
+      if (insertErr) {
+        setError('Erreur lors de la création de la progression.');
+        setLoading(false);
+        return;
+      }
+      setProgression(newProg);
+    }
+
+    setLoading(false);
+  }, [slug, user, navigate]);
+
+  useEffect(() => {
     fetchData();
-  }, [slug, user]);
+  }, [fetchData]);
 
   const updateStep = useCallback(
     async (newStep: number) => {
@@ -136,24 +174,45 @@ const Module = () => {
     setSidebarOpen(false);
   };
 
-  if (loading) {
-    return (
-      <div className="flex h-screen items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin text-primary" />
-      </div>
-    );
-  }
-
-  if (!module) {
+  // Error state
+  if (error) {
     return (
       <div className="flex h-screen flex-col items-center justify-center gap-4">
-        <h1 className="font-heading text-2xl font-bold text-foreground">Module introuvable</h1>
-        <Button variant="outline" onClick={() => navigate('/dashboard')}>
-          Retour au dashboard
+        <p className="text-destructive font-medium">{error}</p>
+        <Button variant="outline" onClick={fetchData} className="gap-2">
+          <RefreshCw className="h-4 w-4" />
+          Réessayer
         </Button>
       </div>
     );
   }
+
+  // Loading skeleton
+  if (loading) {
+    return (
+      <div className="flex h-screen overflow-hidden bg-background">
+        {!isMobile && (
+          <aside className="hidden w-[280px] shrink-0 border-r border-border bg-background shadow-sm md:flex md:flex-col p-5 gap-4">
+            <Skeleton className="h-4 w-24" />
+            <Skeleton className="h-5 w-full" />
+            <Skeleton className="h-px w-full" />
+            {Array.from({ length: 4 }).map((_, i) => (
+              <Skeleton key={i} className="h-10 w-full" />
+            ))}
+          </aside>
+        )}
+        <div className="flex flex-1 flex-col p-6 lg:p-10 gap-6">
+          <Skeleton className="h-4 w-48" />
+          <Skeleton className="h-1.5 w-full" />
+          <Skeleton className="h-8 w-72" />
+          <Skeleton className="h-40 w-full max-w-[720px]" />
+          <Skeleton className="h-24 w-full max-w-[720px]" />
+        </div>
+      </div>
+    );
+  }
+
+  if (!module) return null;
 
   const sidebarContent = (
     <ModuleSidebarContent
@@ -168,14 +227,12 @@ const Module = () => {
 
   return (
     <div className="flex h-screen overflow-hidden bg-background">
-      {/* Desktop sidebar */}
       {!isMobile && (
         <aside className="hidden w-[280px] shrink-0 border-r border-border bg-background shadow-sm md:flex md:flex-col">
           {sidebarContent}
         </aside>
       )}
 
-      {/* Mobile header + sheet */}
       {isMobile && (
         <Sheet open={sidebarOpen} onOpenChange={setSidebarOpen}>
           <SheetTrigger asChild>
@@ -194,7 +251,6 @@ const Module = () => {
         </Sheet>
       )}
 
-      {/* Main content */}
       <div className="flex flex-1 flex-col overflow-y-auto">
         {isMobile && <div className="h-14" />}
         <ModuleContent
@@ -208,7 +264,6 @@ const Module = () => {
         />
       </div>
 
-      {/* Completion dialog */}
       <Dialog open={showCompletion} onOpenChange={setShowCompletion}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
