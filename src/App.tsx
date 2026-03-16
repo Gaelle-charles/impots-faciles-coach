@@ -19,6 +19,7 @@ import Quizz from "./pages/Quizz";
 import Simulateur from "./pages/Simulateur";
 import SimulateurFrais from "./pages/SimulateurFrais";
 import FicheMetier from "./pages/FicheMetier";
+import Profil from "./pages/Profil";
 import Admin from "./pages/Admin";
 import NotFound from "./pages/NotFound";
 
