@@ -85,19 +85,26 @@ export function ModuleContent({
           Retour
         </Button>
 
-        <Button onClick={onNext} className="gap-2">
-          {isLastStep ? (
-            <>
-              Terminer le module
-              <CheckCircle2 className="h-4 w-4" />
-            </>
-          ) : (
-            <>
-              Suivant
-              <ChevronRight className="h-4 w-4" />
-            </>
-          )}
-        </Button>
+        {isCompleted ? (
+          <Button disabled className="gap-2 opacity-60">
+            Module terminé
+            <CheckCircle2 className="h-4 w-4" />
+          </Button>
+        ) : (
+          <Button onClick={onNext} className="gap-2">
+            {isLastStep ? (
+              <>
+                Terminer le module
+                <CheckCircle2 className="h-4 w-4" />
+              </>
+            ) : (
+              <>
+                Suivant
+                <ChevronRight className="h-4 w-4" />
+              </>
+            )}
+          </Button>
+        )}
       </div>
     </div>
   );
