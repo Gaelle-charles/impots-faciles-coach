@@ -242,6 +242,46 @@ const Profil = () => {
           </CardContent>
         </Card>
       </div>
+
+      {/* Password change */}
+      <Card className="border-border bg-background shadow-sm">
+        <CardHeader className="pb-3">
+          <CardTitle className="font-heading text-lg flex items-center gap-2">
+            <Lock className="h-4 w-4" />
+            Changer le mot de passe
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="grid gap-4 sm:grid-cols-2 max-w-lg">
+            <div className="space-y-2">
+              <Label htmlFor="new-password">Nouveau mot de passe</Label>
+              <Input
+                id="new-password"
+                type="password"
+                value={newPassword}
+                onChange={(e) => setNewPassword(e.target.value)}
+                placeholder="Min. 6 caractères"
+                maxLength={128}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="confirm-password">Confirmer</Label>
+              <Input
+                id="confirm-password"
+                type="password"
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                placeholder="Répète le mot de passe"
+                maxLength={128}
+              />
+            </div>
+          </div>
+          <Button onClick={handlePasswordChange} disabled={savingPassword} variant="outline" className="gap-2">
+            <Lock className="h-4 w-4" />
+            {savingPassword ? 'Modification...' : 'Modifier le mot de passe'}
+          </Button>
+        </CardContent>
+      </Card>
     </div>
   );
 };
