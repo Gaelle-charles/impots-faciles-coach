@@ -302,11 +302,11 @@ const AdminContenus = () => {
             </div>
             <div className="space-y-1.5">
               <Label>Contenu principal</Label>
-              <Textarea value={form.contenu} onChange={e => setForm(p => ({ ...p, contenu: e.target.value }))} rows={5} />
+              <RichTextEditor value={form.contenu} onChange={v => setForm(p => ({ ...p, contenu: v }))} placeholder="Rédigez le contenu principal…" minHeight={250} />
             </div>
             <div className="space-y-1.5">
               <Label>Texte secondaire</Label>
-              <Textarea value={form.texte_2} onChange={e => setForm(p => ({ ...p, texte_2: e.target.value }))} rows={3} />
+              <RichTextEditor value={form.texte_2} onChange={v => setForm(p => ({ ...p, texte_2: v }))} placeholder="Texte secondaire (optionnel)…" minHeight={150} />
             </div>
             <div className="space-y-1.5">
               <Label>URL de l'image</Label>
