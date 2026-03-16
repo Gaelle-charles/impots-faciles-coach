@@ -60,13 +60,7 @@ const Dashboard = () => {
     fetchData();
   }, [user, location.key]);
 
-  // Scroll to hash anchor after loading
-  useEffect(() => {
-    if (!loading && location.hash) {
-      const el = document.querySelector(location.hash);
-      if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }
-  }, [loading, location.hash]);
+
 
   // Refresh data when user returns to this tab
   useEffect(() => {
@@ -236,81 +230,7 @@ const Dashboard = () => {
         ))}
       </div>
 
-      {/* Modules */}
-      <section id="modules">
-        <h2 className="font-heading text-2xl font-bold text-foreground mb-5">Mes modules</h2>
-        <div className="grid gap-4 sm:grid-cols-2">
-          {modules.map((mod, idx) => {
-            const prog = progMap.get(mod.id);
-            const lastQuiz = lastResultMap.get(mod.id);
-            const isCompleted = !!prog?.completion_date;
-            const step = prog?.step ?? 0;
-            const totalStep = mod.total_step || 1;
-            const progressPct = isCompleted ? 100 : Math.min(Math.round((step / totalStep) * 100), 100);
 
-            let statusLabel: string;
-            let statusColor: string;
-            let btnLabel: string;
-            let btnVariant: 'default' | 'outline';
-
-            if (isCompleted) {
-              statusLabel = 'Terminé ✓';
-              statusColor = 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200';
-              btnLabel = 'Revoir';
-              btnVariant = 'outline';
-            } else if (prog) {
-              statusLabel = 'En cours';
-              statusColor = 'bg-primary/10 text-primary';
-              btnLabel = 'Continuer';
-              btnVariant = 'default';
-            } else {
-              statusLabel = 'Non commencé';
-              statusColor = 'bg-muted text-muted-foreground';
-              btnLabel = 'Commencer';
-              btnVariant = 'default';
-            }
-
-            return (
-              <Card key={mod.id} className="border-border bg-background shadow-sm">
-                <CardContent className="p-5 space-y-3">
-                  <div className="flex items-start justify-between gap-2">
-                    <h3 className="font-heading text-base font-semibold text-foreground leading-snug">
-                      <span className="text-muted-foreground mr-1">{idx + 1}.</span>
-                      {mod.titre}
-                    </h3>
-                    <Badge className={`shrink-0 text-xs ${statusColor}`}>
-                      {statusLabel}
-                    </Badge>
-                  </div>
-
-                  <Progress value={progressPct} className="h-2" />
-                  <p className="text-xs text-muted-foreground">
-                    {step}/{totalStep} étapes complétées
-                  </p>
-
-                  {lastQuiz && (
-                    <button
-                      className="text-xs text-muted-foreground hover:text-primary transition-colors cursor-pointer text-left"
-                      onClick={() => navigate(`/quizz/${mod.module_slug}`)}
-                    >
-                      🎯 Quiz : <span className="font-semibold text-foreground">{Math.round(Number(lastQuiz.pourcentage))}%</span>
-                    </button>
-                  )}
-
-                  <Button
-                    size="sm"
-                    className="w-full"
-                    variant={btnVariant}
-                    onClick={() => navigate(`/module/${mod.module_slug}`)}
-                  >
-                    {btnLabel}
-                  </Button>
-                </CardContent>
-              </Card>
-            );
-          })}
-        </div>
-      </section>
 
       {/* Quiz results */}
       <section id="resultats">
