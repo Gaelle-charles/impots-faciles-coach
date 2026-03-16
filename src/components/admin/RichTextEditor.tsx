@@ -1,6 +1,18 @@
 // @ts-nocheck
 import { useEditor, EditorContent } from '@tiptap/react';
-import StarterKit from '@tiptap/starter-kit';
+import Document from '@tiptap/extension-document';
+import Paragraph from '@tiptap/extension-paragraph';
+import Text from '@tiptap/extension-text';
+import Bold from '@tiptap/extension-bold';
+import Italic from '@tiptap/extension-italic';
+import Strike from '@tiptap/extension-strike';
+import Heading from '@tiptap/extension-heading';
+import BulletList from '@tiptap/extension-bullet-list';
+import OrderedList from '@tiptap/extension-ordered-list';
+import ListItem from '@tiptap/extension-list-item';
+import Blockquote from '@tiptap/extension-blockquote';
+import CodeBlock from '@tiptap/extension-code-block';
+import History from '@tiptap/extension-history';
 import Table from '@tiptap/extension-table';
 import TableRow from '@tiptap/extension-table-row';
 import TableCell from '@tiptap/extension-table-cell';
@@ -13,14 +25,34 @@ import Placeholder from '@tiptap/extension-placeholder';
 import { useEffect, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
 import {
-  Bold, Italic, Underline as UnderlineIcon, Strikethrough,
-  Heading2, Heading3, List, ListOrdered, Quote, Code,
-  Link2, Image as ImageIcon, Minus, Table as TableIcon,
-  AlignLeft, AlignCenter, AlignRight, Undo2, Redo2,
-  Plus, Trash2, RowsIcon, ColumnsIcon,
+  Bold as BoldIcon,
+  Italic as ItalicIcon,
+  Underline as UnderlineIcon,
+  Strikethrough,
+  Heading2,
+  Heading3,
+  List,
+  ListOrdered,
+  Quote,
+  Code,
+  Link2,
+  Image as ImageIcon,
+  Table as TableIcon,
+  AlignLeft,
+  AlignCenter,
+  AlignRight,
+  Undo2,
+  Redo2,
+  Plus,
+  Trash2,
+  RowsIcon,
+  ColumnsIcon,
 } from 'lucide-react';
 import {
-  DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger,
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 
 interface RichTextEditorProps {
@@ -30,15 +62,33 @@ interface RichTextEditorProps {
   minHeight?: number;
 }
 
-export function RichTextEditor({ value, onChange, placeholder = 'Commencez à écrire…', minHeight = 300 }: RichTextEditorProps) {
+export function RichTextEditor({
+  value,
+  onChange,
+  placeholder = 'Commencez à écrire…',
+  minHeight = 300,
+}: RichTextEditorProps) {
   const editor = useEditor({
     extensions: [
-      StarterKit.configure({
-        heading: { levels: [2, 3, 4] },
-      }),
+      Document,
+      Paragraph,
+      Text,
+      Bold,
+      Italic,
+      Strike,
       Underline,
+      Heading.configure({ levels: [2, 3, 4] }),
+      BulletList,
+      OrderedList,
+      ListItem,
+      Blockquote,
+      CodeBlock,
+      History,
       TextAlign.configure({ types: ['heading', 'paragraph'] }),
-      Link.configure({ openOnClick: false, HTMLAttributes: { class: 'text-primary underline cursor-pointer' } }),
+      Link.configure({
+        openOnClick: false,
+        HTMLAttributes: { class: 'text-primary underline cursor-pointer' },
+      }),
       Image.configure({ HTMLAttributes: { class: 'rounded-md max-w-full' } }),
       Table.configure({ resizable: true, HTMLAttributes: { class: 'border-collapse w-full' } }),
       TableRow,
@@ -47,9 +97,7 @@ export function RichTextEditor({ value, onChange, placeholder = 'Commencez à é
       Placeholder.configure({ placeholder }),
     ],
     content: value || '',
-    onUpdate: ({ editor }) => {
-      onChange(editor.getHTML());
-    },
+    onUpdate: ({ editor }) => onChange(editor.getHTML()),
     editorProps: {
       attributes: {
         class: 'prose prose-sm max-w-none focus:outline-none px-4 py-3 text-foreground',
@@ -58,7 +106,6 @@ export function RichTextEditor({ value, onChange, placeholder = 'Commencez à é
     },
   });
 
-  // Sync external value changes
   useEffect(() => {
     if (editor && value !== editor.getHTML()) {
       editor.commands.setContent(value || '', false);
@@ -81,9 +128,24 @@ export function RichTextEditor({ value, onChange, placeholder = 'Commencez à é
     }
   }, [editor]);
 
+  const insertSeparator = useCallback(() => {
+    if (!editor) return;
+    editor.chain().focus().insertContent('<p>──────────</p>').run();
+  }, [editor]);
+
   if (!editor) return null;
 
-  const ToolBtn = ({ onClick, active, children, title }: { onClick: () => void; active?: boolean; children: React.ReactNode; title: string }) => (
+  const ToolBtn = ({
+    onClick,
+    active,
+    children,
+    title,
+  }: {
+    onClick: () => void;
+    active?: boolean;
+    children: React.ReactNode;
+    title: string;
+  }) => (
     <Button
       type="button"
       variant="ghost"
@@ -97,8 +159,7 @@ export function RichTextEditor({ value, onChange, placeholder = 'Commencez à é
   );
 
   return (
-    <div className="rounded-md border border-border overflow-hidden">
-      {/* Toolbar */}
+    <div className="rounded-md border border-border overflow-hidden bg-background">
       <div className="flex flex-wrap gap-0.5 border-b border-border bg-muted/40 px-2 py-1.5">
         <ToolBtn title="Annuler" onClick={() => editor.chain().focus().undo().run()}>
           <Undo2 className="h-3.5 w-3.5" />
@@ -107,13 +168,13 @@ export function RichTextEditor({ value, onChange, placeholder = 'Commencez à é
           <Redo2 className="h-3.5 w-3.5" />
         </ToolBtn>
 
-        <div className="w-px h-5 bg-border mx-1 self-center" />
+        <div className="mx-1 h-5 w-px self-center bg-border" />
 
         <ToolBtn title="Gras" active={editor.isActive('bold')} onClick={() => editor.chain().focus().toggleBold().run()}>
-          <Bold className="h-3.5 w-3.5" />
+          <BoldIcon className="h-3.5 w-3.5" />
         </ToolBtn>
         <ToolBtn title="Italique" active={editor.isActive('italic')} onClick={() => editor.chain().focus().toggleItalic().run()}>
-          <Italic className="h-3.5 w-3.5" />
+          <ItalicIcon className="h-3.5 w-3.5" />
         </ToolBtn>
         <ToolBtn title="Souligné" active={editor.isActive('underline')} onClick={() => editor.chain().focus().toggleUnderline().run()}>
           <UnderlineIcon className="h-3.5 w-3.5" />
@@ -122,7 +183,7 @@ export function RichTextEditor({ value, onChange, placeholder = 'Commencez à é
           <Strikethrough className="h-3.5 w-3.5" />
         </ToolBtn>
 
-        <div className="w-px h-5 bg-border mx-1 self-center" />
+        <div className="mx-1 h-5 w-px self-center bg-border" />
 
         <ToolBtn title="Titre H2" active={editor.isActive('heading', { level: 2 })} onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}>
           <Heading2 className="h-3.5 w-3.5" />
@@ -131,7 +192,7 @@ export function RichTextEditor({ value, onChange, placeholder = 'Commencez à é
           <Heading3 className="h-3.5 w-3.5" />
         </ToolBtn>
 
-        <div className="w-px h-5 bg-border mx-1 self-center" />
+        <div className="mx-1 h-5 w-px self-center bg-border" />
 
         <ToolBtn title="Liste à puces" active={editor.isActive('bulletList')} onClick={() => editor.chain().focus().toggleBulletList().run()}>
           <List className="h-3.5 w-3.5" />
@@ -146,7 +207,7 @@ export function RichTextEditor({ value, onChange, placeholder = 'Commencez à é
           <Code className="h-3.5 w-3.5" />
         </ToolBtn>
 
-        <div className="w-px h-5 bg-border mx-1 self-center" />
+        <div className="mx-1 h-5 w-px self-center bg-border" />
 
         <ToolBtn title="Aligner à gauche" active={editor.isActive({ textAlign: 'left' })} onClick={() => editor.chain().focus().setTextAlign('left').run()}>
           <AlignLeft className="h-3.5 w-3.5" />
@@ -158,7 +219,7 @@ export function RichTextEditor({ value, onChange, placeholder = 'Commencez à é
           <AlignRight className="h-3.5 w-3.5" />
         </ToolBtn>
 
-        <div className="w-px h-5 bg-border mx-1 self-center" />
+        <div className="mx-1 h-5 w-px self-center bg-border" />
 
         <ToolBtn title="Lien" active={editor.isActive('link')} onClick={addLink}>
           <Link2 className="h-3.5 w-3.5" />
@@ -166,43 +227,48 @@ export function RichTextEditor({ value, onChange, placeholder = 'Commencez à é
         <ToolBtn title="Image" onClick={addImage}>
           <ImageIcon className="h-3.5 w-3.5" />
         </ToolBtn>
-        <ToolBtn title="Séparateur" onClick={() => editor.chain().focus().setHorizontalRule().run()}>
-          <Minus className="h-3.5 w-3.5" />
+        <ToolBtn title="Séparateur" onClick={insertSeparator}>
+          <span className="text-xs font-bold text-foreground">—</span>
         </ToolBtn>
 
-        <div className="w-px h-5 bg-border mx-1 self-center" />
+        <div className="mx-1 h-5 w-px self-center bg-border" />
 
-        {/* Table dropdown */}
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button type="button" variant="ghost" size="sm" className={`h-7 px-1.5 gap-1 text-xs ${editor.isActive('table') ? 'bg-accent text-accent-foreground' : ''}`} title="Tableau">
+            <Button
+              type="button"
+              variant="ghost"
+              size="sm"
+              className={`h-7 gap-1 px-1.5 text-xs ${editor.isActive('table') ? 'bg-accent text-accent-foreground' : ''}`}
+              title="Tableau"
+            >
               <TableIcon className="h-3.5 w-3.5" />
               <span className="hidden sm:inline">Tableau</span>
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="start">
             <DropdownMenuItem onClick={() => editor.chain().focus().insertTable({ rows: 3, cols: 3, withHeaderRow: true }).run()}>
-              <Plus className="h-3.5 w-3.5 mr-2" /> Insérer un tableau 3×3
+              <Plus className="mr-2 h-3.5 w-3.5" /> Insérer un tableau 3×3
             </DropdownMenuItem>
             <DropdownMenuItem onClick={() => editor.chain().focus().insertTable({ rows: 4, cols: 4, withHeaderRow: true }).run()}>
-              <Plus className="h-3.5 w-3.5 mr-2" /> Insérer un tableau 4×4
+              <Plus className="mr-2 h-3.5 w-3.5" /> Insérer un tableau 4×4
             </DropdownMenuItem>
             {editor.isActive('table') && (
               <>
                 <DropdownMenuItem onClick={() => editor.chain().focus().addColumnAfter().run()}>
-                  <ColumnsIcon className="h-3.5 w-3.5 mr-2" /> Ajouter une colonne
+                  <ColumnsIcon className="mr-2 h-3.5 w-3.5" /> Ajouter une colonne
                 </DropdownMenuItem>
                 <DropdownMenuItem onClick={() => editor.chain().focus().addRowAfter().run()}>
-                  <RowsIcon className="h-3.5 w-3.5 mr-2" /> Ajouter une ligne
+                  <RowsIcon className="mr-2 h-3.5 w-3.5" /> Ajouter une ligne
                 </DropdownMenuItem>
                 <DropdownMenuItem onClick={() => editor.chain().focus().deleteColumn().run()}>
-                  <Trash2 className="h-3.5 w-3.5 mr-2" /> Supprimer la colonne
+                  <Trash2 className="mr-2 h-3.5 w-3.5" /> Supprimer la colonne
                 </DropdownMenuItem>
                 <DropdownMenuItem onClick={() => editor.chain().focus().deleteRow().run()}>
-                  <Trash2 className="h-3.5 w-3.5 mr-2" /> Supprimer la ligne
+                  <Trash2 className="mr-2 h-3.5 w-3.5" /> Supprimer la ligne
                 </DropdownMenuItem>
                 <DropdownMenuItem onClick={() => editor.chain().focus().deleteTable().run()} className="text-destructive">
-                  <Trash2 className="h-3.5 w-3.5 mr-2" /> Supprimer le tableau
+                  <Trash2 className="mr-2 h-3.5 w-3.5" /> Supprimer le tableau
                 </DropdownMenuItem>
               </>
             )}
@@ -210,10 +276,8 @@ export function RichTextEditor({ value, onChange, placeholder = 'Commencez à é
         </DropdownMenu>
       </div>
 
-      {/* Editor content */}
       <EditorContent editor={editor} />
 
-      {/* Table styles */}
       <style>{`
         .ProseMirror table {
           border-collapse: collapse;
