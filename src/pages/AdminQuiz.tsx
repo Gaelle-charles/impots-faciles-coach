@@ -46,23 +46,29 @@ interface ModuleRow {
   order: number;
 }
 
+const LETTERS = ['A', 'B', 'C', 'D', 'E', 'F'];
+const getAnswerLetter = (q: QuizRow) => {
+  const idx = q.options.findIndex(o => o === q.bonne_reponse);
+  return idx >= 0 ? LETTERS[idx] : '?';
+};
+
 // Sortable row component
 const SortableQuizRow = ({ q, onEdit, onDelete }: { q: QuizRow; onEdit: (q: QuizRow) => void; onDelete: (q: QuizRow) => void }) => {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: q.id });
   const style = { transform: CSS.Transform.toString(transform), transition, opacity: isDragging ? 0.5 : 1 };
   return (
     <TableRow ref={setNodeRef} style={style} className={isDragging ? 'bg-muted' : ''}>
-      <TableCell className="w-8 px-2">
+      <TableCell className="w-8 px-1">
         <button {...attributes} {...listeners} className="cursor-grab active:cursor-grabbing p-1 text-muted-foreground hover:text-foreground">
           <GripVertical className="h-4 w-4" />
         </button>
       </TableCell>
-      <TableCell className="text-sm font-medium max-w-[400px] truncate">{q.question}</TableCell>
+      <TableCell className="text-sm font-medium truncate max-w-[350px]">{q.question}</TableCell>
+      <TableCell className="text-center text-sm text-muted-foreground">{q.options.length}</TableCell>
       <TableCell className="text-center">
-        <Badge variant="outline" className="text-xs">{q.options.length} opt.</Badge>
+        <Badge variant="outline" className="text-xs font-mono text-green-700 border-green-300">{getAnswerLetter(q)}</Badge>
       </TableCell>
-      <TableCell className="hidden lg:table-cell text-sm text-green-700 truncate max-w-[180px]">{q.bonne_reponse}</TableCell>
-      <TableCell>
+      <TableCell className="px-1">
         <div className="flex gap-1">
           <Button variant="outline" size="icon" className="h-7 w-7" onClick={() => onEdit(q)}>
             <Pencil className="h-3.5 w-3.5" />
@@ -288,8 +294,8 @@ const AdminQuiz = () => {
             <TableRow>
               <TableHead className="w-10" />
               <TableHead>Question</TableHead>
-              <TableHead className="text-center">Options</TableHead>
-              <TableHead className="hidden lg:table-cell">Bonne réponse</TableHead>
+              <TableHead className="text-center w-16">Opt.</TableHead>
+              <TableHead className="text-center w-16">Rép.</TableHead>
               <TableHead className="w-20" />
             </TableRow>
           </TableHeader>
