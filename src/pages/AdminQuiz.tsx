@@ -1,4 +1,4 @@
-import { useEffect, useState, useMemo, useCallback } from 'react';
+import React, { useEffect, useState, useMemo, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { Card } from '@/components/ui/card';
@@ -33,6 +33,7 @@ interface QuizRow {
 interface ModuleRow {
   id: string;
   titre: string;
+  order: number;
 }
 
 const AdminQuiz = () => {
@@ -61,7 +62,7 @@ const AdminQuiz = () => {
     setLoading(true);
     const [qRes, mRes] = await Promise.all([
       supabase.from('quizz').select('*'),
-      supabase.from('modules').select('id, titre').order('order', { ascending: true }),
+      supabase.from('modules').select('id, titre, order').order('order', { ascending: true }),
     ]);
     setQuizzes(qRes.data ?? []);
     setModules(mRes.data ?? []);
@@ -76,6 +77,12 @@ const AdminQuiz = () => {
     return m;
   }, [modules]);
 
+  const moduleOrderMap = useMemo(() => {
+    const m = new Map<string, number>();
+    modules.forEach(mod => m.set(mod.id, mod.order));
+    return m;
+  }, [modules]);
+
   const filtered = useMemo(() => {
     let list = quizzes;
     if (moduleFilter !== 'Tous') list = list.filter(q => q.module_id === moduleFilter);
@@ -85,6 +92,18 @@ const AdminQuiz = () => {
     }
     return list;
   }, [quizzes, moduleFilter, search]);
+
+  // Group filtered questions by module, sorted by module order
+  const groupedByModule = useMemo(() => {
+    const groups = new Map<string, QuizRow[]>();
+    filtered.forEach(q => {
+      if (!groups.has(q.module_id)) groups.set(q.module_id, []);
+      groups.get(q.module_id)!.push(q);
+    });
+    return [...groups.entries()].sort((a, b) => {
+      return (moduleOrderMap.get(a[0]) ?? 999) - (moduleOrderMap.get(b[0]) ?? 999);
+    });
+  }, [filtered, moduleOrderMap]);
 
   const openAdd = () => {
     setIsAdd(true);
@@ -178,7 +197,7 @@ const AdminQuiz = () => {
           <SelectTrigger className="w-full sm:w-56"><SelectValue /></SelectTrigger>
           <SelectContent>
             <SelectItem value="Tous">Tous les modules</SelectItem>
-            {modules.map(m => <SelectItem key={m.id} value={m.id}>{m.titre}</SelectItem>)}
+            {modules.map(m => <SelectItem key={m.id} value={m.id}>Module {m.order} — {m.titre}</SelectItem>)}
           </SelectContent>
         </Select>
       </div>
@@ -189,40 +208,53 @@ const AdminQuiz = () => {
           <TableHeader>
             <TableRow>
               <TableHead>Question</TableHead>
-              <TableHead className="hidden md:table-cell">Module</TableHead>
               <TableHead className="text-center">Options</TableHead>
               <TableHead className="hidden lg:table-cell">Bonne réponse</TableHead>
               <TableHead className="w-20" />
             </TableRow>
           </TableHeader>
           <TableBody>
-            {filtered.map(q => (
-              <TableRow key={q.id}>
-                <TableCell className="text-sm font-medium max-w-[300px] truncate">{q.question}</TableCell>
-                <TableCell className="hidden md:table-cell text-sm text-muted-foreground truncate max-w-[200px]">
-                  {moduleTitleMap.get(q.module_id) ?? '—'}
-                </TableCell>
-                <TableCell className="text-center">
-                  <Badge variant="outline" className="text-xs">{q.options.length}</Badge>
-                </TableCell>
-                <TableCell className="hidden lg:table-cell text-sm text-green-700 truncate max-w-[180px]">{q.bonne_reponse}</TableCell>
-                <TableCell>
-                  <div className="flex gap-1">
-                    <Button variant="outline" size="icon" className="h-7 w-7" onClick={() => openEdit(q)}>
-                      <Pencil className="h-3.5 w-3.5" />
-                    </Button>
-                    <Button variant="outline" size="icon" className="h-7 w-7 text-destructive" onClick={() => setDeleteQuiz(q)}>
-                      <Trash2 className="h-3.5 w-3.5" />
-                    </Button>
-                  </div>
-                </TableCell>
-              </TableRow>
-            ))}
-            {filtered.length === 0 && (
+            {groupedByModule.length === 0 && (
               <TableRow>
-                <TableCell colSpan={5} className="text-center text-muted-foreground py-10">Aucune question trouvée.</TableCell>
+                <TableCell colSpan={4} className="text-center text-muted-foreground py-10">Aucune question trouvée.</TableCell>
               </TableRow>
             )}
+            {groupedByModule.map(([moduleId, questions]) => {
+              const moduleOrder = moduleOrderMap.get(moduleId) ?? 0;
+              const moduleTitle = moduleTitleMap.get(moduleId) ?? '—';
+              return (
+                <React.Fragment key={moduleId}>
+                  <TableRow className="bg-muted/60 hover:bg-muted/60">
+                    <TableCell colSpan={4} className="py-2.5">
+                      <span className="font-heading text-sm font-bold text-foreground flex items-center gap-2">
+                        <Badge variant="secondary" className="text-xs font-mono">{moduleOrder}</Badge>
+                        {moduleTitle}
+                        <span className="text-muted-foreground font-normal ml-1">({questions.length} question{questions.length > 1 ? 's' : ''})</span>
+                      </span>
+                    </TableCell>
+                  </TableRow>
+                  {questions.map(q => (
+                    <TableRow key={q.id}>
+                      <TableCell className="text-sm font-medium max-w-[400px] truncate pl-8">{q.question}</TableCell>
+                      <TableCell className="text-center">
+                        <Badge variant="outline" className="text-xs">{q.options.length} opt.</Badge>
+                      </TableCell>
+                      <TableCell className="hidden lg:table-cell text-sm text-green-700 truncate max-w-[180px]">{q.bonne_reponse}</TableCell>
+                      <TableCell>
+                        <div className="flex gap-1">
+                          <Button variant="outline" size="icon" className="h-7 w-7" onClick={() => openEdit(q)}>
+                            <Pencil className="h-3.5 w-3.5" />
+                          </Button>
+                          <Button variant="outline" size="icon" className="h-7 w-7 text-destructive" onClick={() => setDeleteQuiz(q)}>
+                            <Trash2 className="h-3.5 w-3.5" />
+                          </Button>
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </React.Fragment>
+              );
+            })}
           </TableBody>
         </Table>
       </Card>
