@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { useSimulateurFiscal, defaultFormData, type SimulateurFormData } from "@/hooks/useSimulateurFiscal";
 import SimulateurResultat from "@/components/simulateur/SimulateurResultat";
+import MesSimulations from "@/components/simulateur/MesSimulations";
 import { Minus, Plus, User, Users, Baby } from "lucide-react";
 
 const NumInput = ({
