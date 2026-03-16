@@ -52,8 +52,8 @@ export const defaultFormData: SimulateurFormData = {
   pinel: 0,
 };
 
-const TRANCHES_2025 = [
-  { min: 0, max: 11497, taux: 0 },
+const BAREME = [
+  { min: 0, max: 11497, taux: 0.00 },
   { min: 11497, max: 29315, taux: 0.11 },
   { min: 29315, max: 83823, taux: 0.30 },
   { min: 83823, max: 177106, taux: 0.41 },
@@ -61,8 +61,7 @@ const TRANCHES_2025 = [
 ];
 
 export interface TrancheResult {
-  min: number;
-  max: number;
+  label: string;
   taux: number;
   montantImpose: number;
   impot: number;
@@ -87,114 +86,152 @@ export interface SimulateurResult {
   pfuMontant: number;
 }
 
-function calcParts(data: SimulateurFormData): number {
-  let parts = data.situation === "celibataire" ? 1 : 2;
+function calculerParts(data: SimulateurFormData): number {
+  const isMarie = data.situation === "marie" || data.situation === "marie_enfants";
+  let parts = isMarie ? 2 : 1;
 
-  const enfantsNormaux = data.gardeAlternee
-    ? Math.max(0, data.nbEnfants - data.nbEnfantsGardeAlternee)
-    : data.nbEnfants;
-  const enfantsGA = data.gardeAlternee ? Math.min(data.nbEnfantsGardeAlternee, data.nbEnfants) : 0;
+  const nbAlterne = data.gardeAlternee ? Math.min(data.nbEnfantsGardeAlternee, data.nbEnfants) : 0;
+  const enfantsEntiers = data.nbEnfants - nbAlterne;
 
-  // Normal children
-  for (let i = 0; i < enfantsNormaux; i++) {
-    const totalSoFar = i; // only counting normal so far
-    if (totalSoFar < 2) parts += 0.5;
-    else parts += 1;
-  }
+  // Enfants à charge entière
+  if (enfantsEntiers >= 1) parts += 0.5;
+  if (enfantsEntiers >= 2) parts += 0.5;
+  for (let i = 3; i <= enfantsEntiers; i++) parts += 1;
 
-  // Garde alternée children
-  for (let i = 0; i < enfantsGA; i++) {
-    const totalSoFar = enfantsNormaux + i;
-    if (totalSoFar < 2) parts += 0.25;
-    else parts += 0.5;
-  }
+  // Enfants en garde alternée (0.25 part chacun)
+  parts += nbAlterne * 0.25;
 
+  // Parent isolé
   if (data.parentIsole && data.nbEnfants > 0) parts += 0.5;
 
   return parts;
 }
 
+function calculerRevenuNetImposable(data: SimulateurFormData) {
+  // Salaires : abattement 10% (min 495€, max 14 171€) ou frais réels
+  let abattementSalaire = 0;
+  if (data.fraisReels && data.montantFraisReels > 0) {
+    abattementSalaire = data.montantFraisReels;
+  } else if (data.salaires > 0) {
+    abattementSalaire = Math.min(Math.max(data.salaires * 0.10, 495), 14171);
+  }
+  const revenuSalairesNet = Math.max(0, data.salaires - abattementSalaire);
+
+  // Micro-BIC : abattement 50%
+  const revenuBICNet = data.bic * 0.50;
+
+  // Micro-BNC : abattement 34% (on garde 66%)
+  const revenuBNCNet = data.bnc * 0.66;
+
+  // Capitaux mobiliers si option barème
+  const capitauxBareme = data.optionBareme2OP ? data.capitaux : 0;
+
+  // Total brut (pour affichage)
+  const revenuBrut = data.salaires + data.bic + data.bnc + data.fonciers + capitauxBareme + data.autresRevenus;
+
+  // Total net avant déductions
+  let totalNet = revenuSalairesNet + revenuBICNet + revenuBNCNet + data.fonciers + capitauxBareme + data.autresRevenus;
+
+  // Déductions
+  const totalDeductions = data.pensionsAlimentaires + Math.min(data.per, 35194);
+
+  const revenuNetImposable = Math.max(0, totalNet - totalDeductions);
+
+  return {
+    revenuBrut,
+    abattements: abattementSalaire + (data.bic * 0.50) + (data.bnc * 0.34),
+    deductions: totalDeductions,
+    revenuNetImposable,
+  };
+}
+
+function calculerImpotBrut(revenuNetImposable: number, nbParts: number) {
+  const quotientFamilial = nbParts > 0 ? Math.floor(revenuNetImposable / nbParts) : 0;
+  let impotParPart = 0;
+  const detailTranches: TrancheResult[] = [];
+
+  for (const tranche of BAREME) {
+    if (quotientFamilial <= tranche.min) {
+      detailTranches.push({
+        label: tranche.max === Infinity
+          ? `> ${tranche.min.toLocaleString("fr-FR")} €`
+          : `${tranche.min.toLocaleString("fr-FR")} → ${tranche.max.toLocaleString("fr-FR")} €`,
+        taux: tranche.taux,
+        montantImpose: 0,
+        impot: 0,
+      });
+      continue;
+    }
+
+    const montantImpose = Math.min(quotientFamilial, tranche.max) - tranche.min;
+    const impotTranche = montantImpose * tranche.taux;
+    impotParPart += impotTranche;
+
+    detailTranches.push({
+      label: tranche.max === Infinity
+        ? `> ${tranche.min.toLocaleString("fr-FR")} €`
+        : `${tranche.min.toLocaleString("fr-FR")} → ${tranche.max.toLocaleString("fr-FR")} €`,
+      taux: tranche.taux,
+      montantImpose: Math.round(montantImpose * nbParts),
+      impot: Math.round(impotTranche * nbParts),
+    });
+  }
+
+  const tauxMarginal = BAREME.find((t) => quotientFamilial <= t.max)?.taux ?? 0.45;
+
+  return {
+    impotBrut: Math.round(impotParPart * nbParts),
+    detailTranches,
+    quotientFamilial,
+    tauxMarginal: tauxMarginal * 100,
+  };
+}
+
+function calculerReductionsCredits(data: SimulateurFormData, impotBrut: number, revenuNetImposable: number) {
+  // Crédits d'impôt (remboursables)
+  const creditGardeEnfant = Math.min(
+    data.gardeEnfant * 0.50,
+    3500 * Math.max(data.nbEnfants, 1)
+  );
+  const plafondEmploi = 12000 + data.nbEnfants * 1500;
+  const creditEmploiDomicile = Math.min(data.emploiDomicile * 0.50, plafondEmploi);
+
+  // Réductions d'impôt (non remboursables)
+  const reductionDons = Math.min(data.dons * 0.66, revenuNetImposable * 0.20);
+  const reductionScolarite = data.nbCollege * 61 + data.nbLycee * 153 + data.nbSuperieur * 183;
+  const reductionPinel = data.pinel;
+
+  const totalCredits = Math.round(creditGardeEnfant + creditEmploiDomicile);
+  const totalReductions = Math.round(
+    Math.min(reductionDons + reductionScolarite + reductionPinel, impotBrut)
+  );
+
+  return { totalCredits, totalReductions };
+}
+
 export function useSimulateurFiscal(data: SimulateurFormData): SimulateurResult {
   return useMemo(() => {
-    const nbParts = calcParts(data);
+    const nbParts = calculerParts(data);
+    const { revenuBrut, abattements, deductions, revenuNetImposable } = calculerRevenuNetImposable(data);
+    const { impotBrut, detailTranches, quotientFamilial, tauxMarginal } = calculerImpotBrut(revenuNetImposable, nbParts);
+    const { totalCredits, totalReductions } = calculerReductionsCredits(data, impotBrut, revenuNetImposable);
 
-    // Revenu brut
-    const revenuBrut = data.salaires + data.bic + data.bnc + data.fonciers +
-      (data.optionBareme2OP ? data.capitaux : 0) + data.autresRevenus;
-
-    // Abattement 10% sur salaires
-    let abattementSalaires = 0;
-    if (!data.fraisReels) {
-      abattementSalaires = Math.min(Math.max(data.salaires * 0.1, 495), 14171);
-      if (data.salaires === 0) abattementSalaires = 0;
-    }
-    const fraisReelsMontant = data.fraisReels ? data.montantFraisReels : 0;
-    const abattements = data.fraisReels ? fraisReelsMontant : abattementSalaires;
-
-    // Déductions
-    const deductions = data.pensionsAlimentaires + Math.min(data.per, 35194);
-
-    // Revenu net imposable
-    const revenuNetImposable = Math.max(0, revenuBrut - abattements - deductions);
-
-    // Quotient familial
-    const quotientFamilial = nbParts > 0 ? Math.floor(revenuNetImposable / nbParts) : 0;
-
-    // Calcul par tranche
-    const tranches: TrancheResult[] = TRANCHES_2025.map((tr) => {
-      const maxTranche = tr.max === Infinity ? quotientFamilial : Math.min(quotientFamilial, tr.max);
-      const montantImpose = Math.max(0, maxTranche - tr.min);
-      return {
-        min: tr.min,
-        max: tr.max,
-        taux: tr.taux,
-        montantImpose,
-        impot: Math.round(montantImpose * tr.taux),
-      };
-    });
-
-    const impotParPart = tranches.reduce((sum, t) => sum + t.impot, 0);
-    const impotBrut = Math.round(impotParPart * nbParts);
-
-    // Taux marginal
-    let tauxMarginal = 0;
-    for (let i = TRANCHES_2025.length - 1; i >= 0; i--) {
-      if (quotientFamilial > TRANCHES_2025[i].min) {
-        tauxMarginal = TRANCHES_2025[i].taux * 100;
-        break;
-      }
-    }
-
-    // Réductions d'impôt
-    let reductions = 0;
-    // Dons: 66% (simplified)
-    reductions += Math.round(data.dons * 0.66);
-    // Scolarité
-    reductions += data.nbCollege * 61 + data.nbLycee * 153 + data.nbSuperieur * 183;
-    // Pinel
-    reductions += data.pinel;
-
-    // Crédits d'impôt
-    let credits = 0;
-    // Garde enfant: 50%, plafond 3500€/enfant -> crédit max 1750€/enfant
-    credits += Math.round(Math.min(data.gardeEnfant, 3500 * Math.max(data.nbEnfants, 1)) * 0.5);
-    // Emploi à domicile: 50%, plafond 12000 + 1500/enfant
-    const plafondEmploi = 12000 + 1500 * data.nbEnfants;
-    credits += Math.round(Math.min(data.emploiDomicile, plafondEmploi) * 0.5);
-
-    const impotApresReductions = Math.max(0, impotBrut - reductions);
-    const impotNet = Math.max(0, impotApresReductions - credits);
-    const remboursement = credits > impotApresReductions ? credits - impotApresReductions : 0;
+    // Résultat final
+    const impotApresReductions = Math.max(0, impotBrut - totalReductions);
+    const impotNet = Math.max(0, impotApresReductions - totalCredits);
+    const remboursement = Math.max(0, totalCredits - impotApresReductions);
 
     // PFU si pas option barème
-    const pfuMontant = !data.optionBareme2OP ? Math.round(data.capitaux * 0.3) : 0;
+    const pfuMontant = !data.optionBareme2OP ? Math.round(data.capitaux * 0.30) : 0;
 
+    // Taux
     const tauxMoyen = revenuNetImposable > 0
       ? Math.round((impotNet / revenuNetImposable) * 1000) / 10
       : 0;
 
-    const tauxPrelevement = revenuNetImposable > 0
-      ? Math.round((impotNet / revenuNetImposable) * 1000) / 10
+    const basePrelevement = data.salaires + data.bic + data.bnc;
+    const tauxPrelevement = basePrelevement > 0
+      ? Math.round((impotNet / basePrelevement) * 1000) / 10
       : 0;
 
     return {
@@ -204,10 +241,10 @@ export function useSimulateurFiscal(data: SimulateurFormData): SimulateurResult 
       revenuNetImposable,
       nbParts,
       quotientFamilial,
-      tranches,
+      tranches: detailTranches,
       impotBrut,
-      reductions,
-      credits,
+      reductions: totalReductions,
+      credits: totalCredits,
       impotNet,
       tauxMoyen,
       tauxMarginal,
