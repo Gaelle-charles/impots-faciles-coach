@@ -218,6 +218,28 @@ const Module = () => {
     );
   }
 
+  // Access denied state
+  if (accessDenied) {
+    return (
+      <div className="flex h-screen flex-col items-center justify-center gap-4 p-6 text-center">
+        <Lock className="h-12 w-12 text-muted-foreground" />
+        <h2 className="font-heading text-2xl font-bold text-foreground">Module verrouillé 🔒</h2>
+        <p className="max-w-md text-muted-foreground">
+          Votre plan actuel ({profile?.plan ?? 'nouveau'}) ne permet pas d'accéder à ce module.
+          Passez à un plan supérieur pour débloquer ce contenu.
+        </p>
+        <div className="flex gap-3">
+          <Button variant="outline" onClick={() => navigate('/dashboard')}>
+            Retour au dashboard
+          </Button>
+          <Button onClick={() => navigate('/tarifs')}>
+            Voir les tarifs
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
   // Loading skeleton
   if (loading) {
     return (
