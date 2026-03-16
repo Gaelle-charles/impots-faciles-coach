@@ -61,6 +61,15 @@
     --sidebar-border: 285 40% 25%;
     --sidebar-ring: 56 100% 49%;
     --sidebar-muted: 285 30% 25%;
+
+    /* Admin sidebar tokens — #0f172a = HSL 222 47% 11% */
+    --admin-sidebar-bg: 222 47% 11%;
+    --admin-sidebar-foreground: 0 0% 100%;
+    --admin-sidebar-muted: 222 30% 18%;
+    --admin-sidebar-border: 222 30% 22%;
+    /* Admin active = #991b1b = HSL 0 67% 35% */
+    --admin-sidebar-active: 0 67% 35%;
+    --admin-sidebar-active-foreground: 0 0% 100%;
   }
 
   .dark {
