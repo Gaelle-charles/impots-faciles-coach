@@ -1,4 +1,5 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -7,281 +8,348 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
-import { toast } from '@/hooks/use-toast';
-import { User, Mail, Briefcase, CreditCard, Save, Lock } from 'lucide-react';
 import { Separator } from '@/components/ui/separator';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
+import { toast } from '@/hooks/use-toast';
+import {
+  Save,
+  Lock,
+  BookOpen,
+  Target,
+  CalendarDays,
+  Camera,
+  CreditCard,
+  ArrowRight,
+  Trash2,
+} from 'lucide-react';
 
 interface ProfileData {
   prenom: string | null;
   nom: string | null;
   email: string | null;
   plan: string;
-  metier_id: string | null;
   created_at: string;
 }
 
-interface Metier {
-  id: string;
-  nom: string;
-}
+const planConfig: Record<string, { label: string; color: string }> = {
+  nouveau: { label: 'Nouveau', color: 'bg-muted text-muted-foreground' },
+  essentiel: { label: 'Essentiel', color: 'bg-blue-100 text-blue-800' },
+  pro: { label: 'Pro', color: 'bg-primary/10 text-primary' },
+  expert: { label: 'Expert', color: 'bg-accent/10 text-accent' },
+  starter: { label: 'Starter', color: 'bg-blue-100 text-blue-800' },
+  premium: { label: 'Premium', color: 'bg-accent/10 text-accent' },
+};
 
 const Profil = () => {
-  const { user } = useAuth();
+  const { user, signOut } = useAuth();
+  const navigate = useNavigate();
+
   const [profile, setProfile] = useState<ProfileData | null>(null);
-  const [metiers, setMetiers] = useState<Metier[]>([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
-  const [newPassword, setNewPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
-  const [savingPassword, setSavingPassword] = useState(false);
+  const [sendingReset, setSendingReset] = useState(false);
 
-  // Form state
   const [prenom, setPrenom] = useState('');
   const [nom, setNom] = useState('');
-  const [metierId, setMetierId] = useState<string>('none');
+
+  // Stats
+  const [totalModules, setTotalModules] = useState(0);
+  const [completedModules, setCompletedModules] = useState(0);
+  const [avgScore, setAvgScore] = useState<number | null>(null);
+
+  // Delete account
+  const [deleteOpen, setDeleteOpen] = useState(false);
+  const [deleteConfirm, setDeleteConfirm] = useState('');
+  const [deleting, setDeleting] = useState(false);
 
   useEffect(() => {
     if (!user) return;
 
-    const fetchData = async () => {
+    const fetchAll = async () => {
       setLoading(true);
-      const [profRes, metiersRes] = await Promise.all([
-        supabase.from('profiles').select('prenom, nom, email, plan, metier_id, created_at').eq('id', user.id).maybeSingle(),
-        supabase.from('metiers').select('id, nom').order('nom', { ascending: true }),
+      const [profRes, modRes, progRes, resRes] = await Promise.all([
+        supabase.from('profiles').select('prenom, nom, email, plan, created_at').eq('id', user.id).maybeSingle(),
+        supabase.from('modules').select('id'),
+        supabase.from('progressions').select('completion_date').eq('user_id', user.id),
+        supabase.from('resultat_quiz').select('pourcentage').eq('user_id', user.id),
       ]);
 
       if (profRes.data) {
         setProfile(profRes.data);
         setPrenom(profRes.data.prenom ?? '');
         setNom(profRes.data.nom ?? '');
-        setMetierId(profRes.data.metier_id ?? 'none');
       }
-      setMetiers(metiersRes.data ?? []);
+      setTotalModules(modRes.data?.length ?? 0);
+      setCompletedModules(progRes.data?.filter((p) => !!p.completion_date).length ?? 0);
+      if (resRes.data && resRes.data.length > 0) {
+        setAvgScore(Math.round(resRes.data.reduce((a, r) => a + Number(r.pourcentage), 0) / resRes.data.length));
+      }
       setLoading(false);
     };
 
-    fetchData();
+    fetchAll();
   }, [user]);
+
+  const initials = useMemo(() => {
+    const p = (profile?.prenom?.[0] ?? '').toUpperCase();
+    const n = (profile?.nom?.[0] ?? '').toUpperCase();
+    return p + n || '?';
+  }, [profile]);
 
   const handleSave = async () => {
     if (!user) return;
-
-    const trimmedPrenom = prenom.trim();
-    const trimmedNom = nom.trim();
-
-    if (!trimmedPrenom || !trimmedNom) {
-      toast({ title: 'Erreur', description: 'Le prénom et le nom sont obligatoires.', variant: 'destructive' });
+    const tp = prenom.trim();
+    const tn = nom.trim();
+    if (!tp || tp.length < 2) {
+      toast({ title: 'Erreur', description: 'Le prénom doit contenir au moins 2 caractères.', variant: 'destructive' });
       return;
     }
-
-    if (trimmedPrenom.length > 100 || trimmedNom.length > 100) {
-      toast({ title: 'Erreur', description: 'Le nom et le prénom ne doivent pas dépasser 100 caractères.', variant: 'destructive' });
+    if (!tn || tn.length < 2) {
+      toast({ title: 'Erreur', description: 'Le nom doit contenir au moins 2 caractères.', variant: 'destructive' });
       return;
     }
 
     setSaving(true);
-    const { error } = await supabase
-      .from('profiles')
-      .update({
-        prenom: trimmedPrenom,
-        nom: trimmedNom,
-        metier_id: metierId === 'none' ? null : metierId,
-      })
-      .eq('id', user.id);
-
+    const { error } = await supabase.from('profiles').update({ prenom: tp, nom: tn }).eq('id', user.id);
     setSaving(false);
 
     if (error) {
-      toast({ title: 'Erreur', description: 'Impossible de sauvegarder les modifications.', variant: 'destructive' });
+      toast({ title: 'Erreur', description: 'Impossible de sauvegarder.', variant: 'destructive' });
     } else {
-      setProfile((prev) => prev ? { ...prev, prenom: trimmedPrenom, nom: trimmedNom, metier_id: metierId === 'none' ? null : metierId } : prev);
-      toast({ title: 'Profil mis à jour', description: 'Tes informations ont été sauvegardées.' });
+      setProfile((prev) => (prev ? { ...prev, prenom: tp, nom: tn } : prev));
+      toast({ title: 'Profil mis à jour ✓', description: 'Tes informations ont été sauvegardées.' });
     }
   };
 
-  const handlePasswordChange = async () => {
-    if (newPassword.length < 6) {
-      toast({ title: 'Erreur', description: 'Le mot de passe doit contenir au moins 6 caractères.', variant: 'destructive' });
-      return;
-    }
-    if (newPassword !== confirmPassword) {
-      toast({ title: 'Erreur', description: 'Les mots de passe ne correspondent pas.', variant: 'destructive' });
-      return;
-    }
-    setSavingPassword(true);
-    const { error } = await supabase.auth.updateUser({ password: newPassword });
-    setSavingPassword(false);
+  const handleResetPassword = async () => {
+    const email = profile?.email ?? user?.email;
+    if (!email) return;
+    setSendingReset(true);
+    const { error } = await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: `${window.location.origin}/reset-password`,
+    });
+    setSendingReset(false);
     if (error) {
       toast({ title: 'Erreur', description: error.message, variant: 'destructive' });
     } else {
-      setNewPassword('');
-      setConfirmPassword('');
-      toast({ title: 'Mot de passe modifié', description: 'Ton mot de passe a été mis à jour.' });
+      toast({ title: 'Email envoyé', description: `Vérifie ta boîte mail à ${email}` });
     }
   };
 
-  const planLabels: Record<string, string> = {
-    nouveau: 'Nouveau',
-    starter: 'Starter',
-    expert: 'Expert',
-    premium: 'Premium',
+  const handleDeleteAccount = async () => {
+    if (deleteConfirm !== 'SUPPRIMER' || !user) return;
+    setDeleting(true);
+
+    // Delete profile (cascade will handle related data via FK)
+    await supabase.from('profiles').delete().eq('id', user.id);
+
+    // Sign out (admin delete not available client-side)
+    await signOut();
+    navigate('/');
+    toast({ title: 'Compte supprimé', description: 'Ton compte a été supprimé.' });
   };
+
+  const memberSince = profile?.created_at
+    ? new Date(profile.created_at).toLocaleDateString('fr-FR', { month: 'long', year: 'numeric' })
+    : '—';
+
+  const plan = planConfig[profile?.plan ?? 'nouveau'] ?? planConfig.nouveau;
 
   if (loading) {
     return (
       <div className="space-y-8">
-        <div>
-          <Skeleton className="h-9 w-48" />
-          <Skeleton className="mt-2 h-5 w-72" />
-        </div>
+        <Skeleton className="h-9 w-48" />
         <Skeleton className="h-80 rounded-lg" />
       </div>
     );
   }
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-8 max-w-3xl">
       {/* Header */}
-      <div>
-        <h1 className="font-heading text-3xl font-bold text-foreground">Mon profil</h1>
-        <p className="mt-1 text-muted-foreground">Gère tes informations personnelles.</p>
-      </div>
+      <h1 className="font-heading text-3xl font-bold text-foreground">👤 Mon profil</h1>
 
-      <div className="grid gap-6 md:grid-cols-3">
-        {/* Info card (read-only) */}
-        <Card className="border-border bg-background shadow-sm md:col-span-1">
-          <CardHeader className="pb-3">
-            <CardTitle className="font-heading text-lg">Informations</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="flex items-center gap-3 text-sm">
-              <Mail className="h-4 w-4 text-muted-foreground" />
-              <span className="text-foreground truncate">{profile?.email ?? user?.email ?? '—'}</span>
+      {/* ── Informations personnelles ── */}
+      <Card className="border-border bg-background shadow-sm">
+        <CardHeader className="pb-3">
+          <CardTitle className="font-heading text-lg">Informations personnelles</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-6">
+          {/* Avatar */}
+          <div className="flex items-center gap-4">
+            <div className="flex h-20 w-20 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground font-heading text-2xl font-bold">
+              {initials}
             </div>
-            <div className="flex items-center gap-3 text-sm">
-              <CreditCard className="h-4 w-4 text-muted-foreground" />
-              <Badge className="bg-primary/10 text-primary capitalize">
-                {planLabels[profile?.plan ?? 'nouveau'] ?? profile?.plan}
-              </Badge>
-            </div>
-            <div className="flex items-center gap-3 text-sm text-muted-foreground">
-              <User className="h-4 w-4" />
-              <span>
-                Membre depuis{' '}
-                {profile?.created_at
-                  ? new Date(profile.created_at).toLocaleDateString('fr-FR', { month: 'long', year: 'numeric' })
-                  : '—'}
-              </span>
-            </div>
-          </CardContent>
-        </Card>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button variant="outline" size="sm" disabled className="gap-2">
+                  <Camera className="h-4 w-4" />
+                  Changer la photo
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>Bientôt disponible</TooltipContent>
+            </Tooltip>
+          </div>
 
-        {/* Edit form */}
-        <Card className="border-border bg-background shadow-sm md:col-span-2">
-          <CardHeader className="pb-3">
-            <CardTitle className="font-heading text-lg">Modifier mes informations</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-5">
-            <div className="grid gap-4 sm:grid-cols-2">
-              <div className="space-y-2">
-                <Label htmlFor="prenom">Prénom</Label>
-                <Input
-                  id="prenom"
-                  value={prenom}
-                  onChange={(e) => setPrenom(e.target.value)}
-                  placeholder="Ton prénom"
-                  maxLength={100}
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="nom">Nom</Label>
-                <Input
-                  id="nom"
-                  value={nom}
-                  onChange={(e) => setNom(e.target.value)}
-                  placeholder="Ton nom"
-                  maxLength={100}
-                />
-              </div>
-            </div>
-
+          {/* Form fields */}
+          <div className="grid gap-4 sm:grid-cols-2">
             <div className="space-y-2">
-              <Label htmlFor="metier">Métier</Label>
-              <Select value={metierId} onValueChange={setMetierId}>
-                <SelectTrigger id="metier">
-                  <SelectValue placeholder="Sélectionne ton métier" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="none">— Aucun —</SelectItem>
-                  {metiers.map((m) => (
-                    <SelectItem key={m.id} value={m.id}>
-                      {m.nom}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              {metierId !== 'none' && (
-                <p className="text-xs text-muted-foreground flex items-center gap-1">
-                  <Briefcase className="h-3 w-3" />
-                  Ton métier personnalise certains contenus de formation.
-                </p>
-              )}
+              <Label htmlFor="prenom">Prénom *</Label>
+              <Input id="prenom" value={prenom} onChange={(e) => setPrenom(e.target.value)} placeholder="Marie" maxLength={100} />
             </div>
+            <div className="space-y-2">
+              <Label htmlFor="nom">Nom *</Label>
+              <Input id="nom" value={nom} onChange={(e) => setNom(e.target.value)} placeholder="Dupont" maxLength={100} />
+            </div>
+          </div>
 
-            <Button onClick={handleSave} disabled={saving} className="gap-2">
-              <Save className="h-4 w-4" />
-              {saving ? 'Enregistrement...' : 'Enregistrer'}
-            </Button>
-          </CardContent>
-        </Card>
-      </div>
+          <div className="space-y-2">
+            <Label htmlFor="email">Email</Label>
+            <Input id="email" value={profile?.email ?? user?.email ?? ''} disabled className="bg-muted" />
+            <p className="text-xs text-muted-foreground">Pour changer ton email, contacte le support.</p>
+          </div>
 
-      {/* Password change */}
+          <Button onClick={handleSave} disabled={saving} className="gap-2">
+            <Save className="h-4 w-4" />
+            {saving ? 'Enregistrement...' : '💾 Enregistrer les modifications'}
+          </Button>
+        </CardContent>
+      </Card>
+
+      {/* ── Mon abonnement ── */}
+      <Card className="border-border bg-background shadow-sm">
+        <CardHeader className="pb-3">
+          <CardTitle className="font-heading text-lg flex items-center gap-2">
+            <CreditCard className="h-4 w-4" />
+            Mon abonnement
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <span className="text-sm text-muted-foreground">Plan actuel :</span>
+            <Badge className={plan.color}>{plan.label}</Badge>
+          </div>
+          <Button variant="outline" size="sm" className="gap-1" onClick={() => navigate('/tarifs')}>
+            Changer de plan <ArrowRight className="h-4 w-4" />
+          </Button>
+        </CardContent>
+      </Card>
+
+      {/* ── Sécurité ── */}
       <Card className="border-border bg-background shadow-sm">
         <CardHeader className="pb-3">
           <CardTitle className="font-heading text-lg flex items-center gap-2">
             <Lock className="h-4 w-4" />
-            Changer le mot de passe
+            Sécurité
           </CardTitle>
         </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="grid gap-4 sm:grid-cols-2 max-w-lg">
-            <div className="space-y-2">
-              <Label htmlFor="new-password">Nouveau mot de passe</Label>
-              <Input
-                id="new-password"
-                type="password"
-                value={newPassword}
-                onChange={(e) => setNewPassword(e.target.value)}
-                placeholder="Min. 6 caractères"
-                maxLength={128}
-              />
+        <CardContent>
+          <Button variant="outline" onClick={handleResetPassword} disabled={sendingReset} className="gap-2">
+            <Lock className="h-4 w-4" />
+            {sendingReset ? 'Envoi en cours...' : 'Changer mon mot de passe'}
+          </Button>
+          <p className="mt-2 text-xs text-muted-foreground">
+            Un email de réinitialisation sera envoyé à ton adresse.
+          </p>
+        </CardContent>
+      </Card>
+
+      {/* ── Mes statistiques ── */}
+      <Card className="border-border bg-background shadow-sm">
+        <CardHeader className="pb-3">
+          <CardTitle className="font-heading text-lg">Mes statistiques</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="grid gap-4 sm:grid-cols-3">
+            <div className="flex items-center gap-3">
+              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10">
+                <BookOpen className="h-5 w-5 text-primary" />
+              </div>
+              <div>
+                <p className="text-xs text-muted-foreground">Modules complétés</p>
+                <p className="font-heading font-bold text-foreground">{completedModules} / {totalModules}</p>
+              </div>
             </div>
-            <div className="space-y-2">
-              <Label htmlFor="confirm-password">Confirmer</Label>
-              <Input
-                id="confirm-password"
-                type="password"
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
-                placeholder="Répète le mot de passe"
-                maxLength={128}
-              />
+            <div className="flex items-center gap-3">
+              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10">
+                <Target className="h-5 w-5 text-primary" />
+              </div>
+              <div>
+                <p className="text-xs text-muted-foreground">Score moyen aux quiz</p>
+                <p className="font-heading font-bold text-foreground">{avgScore !== null ? `${avgScore}%` : '—'}</p>
+              </div>
+            </div>
+            <div className="flex items-center gap-3">
+              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10">
+                <CalendarDays className="h-5 w-5 text-primary" />
+              </div>
+              <div>
+                <p className="text-xs text-muted-foreground">Membre depuis</p>
+                <p className="font-heading font-bold text-foreground capitalize">{memberSince}</p>
+              </div>
             </div>
           </div>
-          <Button onClick={handlePasswordChange} disabled={savingPassword} variant="outline" className="gap-2">
-            <Lock className="h-4 w-4" />
-            {savingPassword ? 'Modification...' : 'Modifier le mot de passe'}
+        </CardContent>
+      </Card>
+
+      {/* ── Zone danger ── */}
+      <Card className="border-destructive/30 bg-background shadow-sm">
+        <CardHeader className="pb-3">
+          <CardTitle className="font-heading text-lg text-destructive flex items-center gap-2">
+            <Trash2 className="h-4 w-4" />
+            Zone dangereuse
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <p className="text-sm text-muted-foreground mb-4">
+            La suppression de ton compte est définitive. Toutes tes données seront perdues.
+          </p>
+          <Button variant="outline" className="border-destructive text-destructive hover:bg-destructive/10 gap-2" onClick={() => setDeleteOpen(true)}>
+            <Trash2 className="h-4 w-4" />
+            Supprimer mon compte
           </Button>
         </CardContent>
       </Card>
+
+      {/* Delete confirmation dialog */}
+      <Dialog open={deleteOpen} onOpenChange={setDeleteOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle className="text-destructive">Supprimer mon compte</DialogTitle>
+            <DialogDescription>
+              Cette action est irréversible. Toutes tes données seront supprimées.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-2">
+            <Label>Tape <span className="font-bold">SUPPRIMER</span> pour confirmer</Label>
+            <Input
+              value={deleteConfirm}
+              onChange={(e) => setDeleteConfirm(e.target.value)}
+              placeholder="SUPPRIMER"
+            />
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => { setDeleteOpen(false); setDeleteConfirm(''); }}>
+              Annuler
+            </Button>
+            <Button
+              variant="destructive"
+              disabled={deleteConfirm !== 'SUPPRIMER' || deleting}
+              onClick={handleDeleteAccount}
+            >
+              {deleting ? 'Suppression...' : 'Confirmer la suppression'}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
