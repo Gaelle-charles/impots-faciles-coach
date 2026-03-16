@@ -16,7 +16,7 @@ import {
 
 const navItems = [
   { to: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
-  { to: '/dashboard#modules', label: 'Mes modules', icon: BookOpen },
+  { to: '/mes-modules', label: 'Mes modules', icon: BookOpen },
   { to: '/dashboard#resultats', label: 'Mes résultats', icon: BarChart3 },
   { to: '/simulateur', label: 'Simulateur', icon: Calculator },
   { to: '/profil', label: 'Mon profil', icon: User },
