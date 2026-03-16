@@ -22,6 +22,7 @@ export function ModuleContent({
   totalSteps,
   progressPercent,
   isLastStep,
+  isCompleted,
   onPrev,
   onNext,
 }: ModuleContentProps) {
