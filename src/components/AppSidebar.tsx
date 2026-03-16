@@ -55,7 +55,8 @@ export function AppSidebar({ collapsed = false }: { collapsed?: boolean }) {
   return (
     <aside className="fixed left-0 top-0 z-40 flex h-screen w-sidebar flex-col bg-primary text-primary-foreground">
       {/* Logo */}
-      <div className="flex h-16 items-center px-6">
+      <div className="flex h-16 items-center gap-2 px-6">
+        <img src={logo} alt="Impôts Facile" className="h-8 w-8" />
         <h1 className="font-heading text-xl font-bold">Impôts Facile</h1>
       </div>
 
