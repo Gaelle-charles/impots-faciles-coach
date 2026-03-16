@@ -21,12 +21,14 @@ Abattements : -${fmt(result.abattements)} €
 Déductions : -${fmt(result.deductions)} €
 Revenu net imposable : ${fmt(result.revenuNetImposable)} €
 Parts fiscales : ${result.nbParts}
+Quotient familial : ${fmt(result.quotientFamilial)} €
 Impôt brut : ${fmt(result.impotBrut)} €
 Réductions : -${fmt(result.reductions)} €
 Crédits : -${fmt(result.credits)} €
 Impôt net estimé : ${fmt(result.impotNet)} €
 Taux moyen : ${result.tauxMoyen}%
-Taux marginal : ${result.tauxMarginal}%${result.pfuMontant > 0 ? `\nPFU (flat tax) : ${fmt(result.pfuMontant)} €` : ""}`;
+Taux marginal : ${result.tauxMarginal}%
+Taux de prélèvement : ${result.tauxPrelevement}%${result.pfuMontant > 0 ? `\nPFU (flat tax) : ${fmt(result.pfuMontant)} €` : ""}`;
     navigator.clipboard.writeText(text);
     toast.success("Résumé copié dans le presse-papier");
   };
@@ -65,11 +67,7 @@ Taux marginal : ${result.tauxMarginal}%${result.pfuMontant > 0 ? `\nPFU (flat ta
               <TableBody>
                 {result.tranches.map((t, i) => (
                   <TableRow key={i} className="text-xs">
-                    <TableCell className="py-1.5">
-                      {t.max === Infinity
-                        ? `> ${fmt(t.min)} €`
-                        : `${fmt(t.min)} → ${fmt(t.max)} €`}
-                    </TableCell>
+                    <TableCell className="py-1.5">{t.label}</TableCell>
                     <TableCell className="py-1.5 text-right">{Math.round(t.taux * 100)}%</TableCell>
                     <TableCell className="py-1.5 text-right">{fmt(t.montantImpose)} €</TableCell>
                     <TableCell className="py-1.5 text-right font-medium">{fmt(t.impot)} €</TableCell>
