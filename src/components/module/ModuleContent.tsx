@@ -11,6 +11,7 @@ interface ModuleContentProps {
   totalSteps: number;
   progressPercent: number;
   isLastStep: boolean;
+  isCompleted: boolean;
   onPrev: () => void;
   onNext: () => void;
 }
