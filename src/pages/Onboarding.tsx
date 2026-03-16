@@ -86,7 +86,11 @@ const Onboarding = () => {
 
   const handleFinish = async (goToModule: boolean) => {
     if (!user) return;
-    await supabase.from('profiles').update({ onboarding_done: true }).eq('id', user.id);
+    const { error } = await supabase.from('profiles').update({ onboarding_done: true }).eq('id', user.id);
+    if (error) {
+      toast({ title: 'Erreur', description: "Impossible de sauvegarder. Réessaie.", variant: 'destructive' });
+      return;
+    }
     if (goToModule && module1) {
       navigate(`/module/${module1.module_slug}`, { replace: true });
     } else {
