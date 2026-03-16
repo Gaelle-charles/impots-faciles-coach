@@ -31,6 +31,7 @@ function getLevel(avgScore: number) {
 const Dashboard = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
 
   const [profile, setProfile] = useState<{ prenom: string | null; nom: string | null; plan: string } | null>(null);
   const [modules, setModules] = useState<ModuleRow[]>([]);
