@@ -11,6 +11,7 @@ import { AdminLayout } from "@/components/AdminLayout";
 
 import Index from "./pages/Index";
 import Connexion from "./pages/Connexion";
+import Inscription from "./pages/Inscription";
 import VerifierEmail from "./pages/VerifierEmail";
 import ResetPassword from "./pages/ResetPassword";
 import Tarifs from "./pages/Tarifs";
