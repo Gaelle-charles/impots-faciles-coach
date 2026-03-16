@@ -76,6 +76,12 @@ const AdminContenus = () => {
 
   useEffect(() => { fetchData(); }, [fetchData]);
 
+  const moduleMap = useMemo(() => {
+    const m = new Map<string, ModuleRow>();
+    modules.forEach(mod => m.set(mod.id, mod));
+    return m;
+  }, [modules]);
+
   const moduleTitleMap = useMemo(() => {
     const m = new Map<string, string>();
     modules.forEach(mod => m.set(mod.id, mod.titre));
@@ -91,6 +97,28 @@ const AdminContenus = () => {
     }
     return list;
   }, [contenus, moduleFilter, search]);
+
+  // Group by module, sorted by module order
+  const groupedByModule = useMemo(() => {
+    const groups = new Map<string, ContenuRow[]>();
+    filtered.forEach(c => {
+      const existing = groups.get(c.module_id) ?? [];
+      existing.push(c);
+      groups.set(c.module_id, existing);
+    });
+    // Sort groups by module order
+    return Array.from(groups.entries())
+      .sort(([a], [b]) => {
+        const orderA = moduleMap.get(a)?.order ?? 999;
+        const orderB = moduleMap.get(b)?.order ?? 999;
+        return orderA - orderB;
+      })
+      .map(([moduleId, items]) => ({
+        moduleId,
+        module: moduleMap.get(moduleId),
+        items: items.sort((a, b) => a.ordre - b.ordre),
+      }));
+  }, [filtered, moduleMap]);
 
   const openAdd = () => {
     setIsAdd(true);
