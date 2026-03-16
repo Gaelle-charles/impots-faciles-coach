@@ -13,6 +13,15 @@ type ResultatRow = Tables<'resultat_quiz'>;
 
 const LETTERS = ['A', 'B', 'C', 'D', 'E'];
 
+function getResultMessage(
+  pct: number,
+  texts: { faible: string | null; moyen: string | null; expert: string | null },
+) {
+  if (pct >= 80) return texts.expert || 'Excellent ! Tu maîtrises parfaitement ce sujet. 🏆';
+  if (pct >= 50) return texts.moyen || 'Pas mal ! Quelques révisions et tu seras au top. 💪';
+  return texts.faible || 'Continue tes efforts, tu progresses ! 📚';
+}
+
 const Quizz = () => {
   const { id: slug } = useParams<{ id: string }>();
   const { user } = useAuth();
@@ -20,6 +29,9 @@ const Quizz = () => {
 
   const [moduleTitle, setModuleTitle] = useState('');
   const [moduleId, setModuleId] = useState<string | null>(null);
+  const [moduleTexts, setModuleTexts] = useState<{
+    faible: string | null; moyen: string | null; expert: string | null;
+  }>({ faible: null, moyen: null, expert: null });
   const [questions, setQuestions] = useState<QuizzRow[]>([]);
   const [previousResult, setPreviousResult] = useState<ResultatRow | null>(null);
   const [loading, setLoading] = useState(true);
@@ -34,16 +46,16 @@ const Quizz = () => {
     { question_id: string; reponse_donnee: string; correct: boolean }[]
   >([]);
   const [finished, setFinished] = useState(false);
+  const [finalScore, setFinalScore] = useState(0);
 
   const fetchData = useCallback(async () => {
     if (!slug || !user) return;
     setLoading(true);
     setError(null);
 
-    // 1. Get module
     const { data: mod, error: modErr } = await supabase
       .from('modules')
-      .select('id, titre, module_slug')
+      .select('id, titre, module_slug, text_resultat_faible, text_resultat_moyen, text_resultat_expert')
       .eq('module_slug', slug)
       .maybeSingle();
 
@@ -52,8 +64,12 @@ const Quizz = () => {
 
     setModuleTitle(mod.titre);
     setModuleId(mod.id);
+    setModuleTexts({
+      faible: mod.text_resultat_faible,
+      moyen: mod.text_resultat_moyen,
+      expert: mod.text_resultat_expert,
+    });
 
-    // 2. Get questions + previous result in parallel
     const [qRes, rRes] = await Promise.all([
       supabase
         .from('quizz')
@@ -74,14 +90,16 @@ const Quizz = () => {
 
     setQuestions(qRes.data ?? []);
     setPreviousResult(rRes.data ?? null);
-
-    // Auto-start if no previous result
     if (!rRes.data) setStarted(true);
-
     setLoading(false);
   }, [slug, user]);
 
   useEffect(() => { fetchData(); }, [fetchData]);
+
+  const total = questions.length;
+  const question = questions[currentIndex];
+  const isLast = currentIndex === total - 1;
+  const progressPercent = total > 0 ? ((currentIndex + (validated ? 1 : 0)) / total) * 100 : 0;
 
   const handleValidate = () => {
     if (!selectedOption || !question) return;
@@ -105,14 +123,17 @@ const Quizz = () => {
   };
 
   const handleFinish = async () => {
+    // score already includes the last answer from handleValidate
+    const computedScore = score;
+    setFinalScore(computedScore);
     setFinished(true);
+
     if (!moduleId || !user) return;
-    const finalScore = score + (selectedOption === question.bonne_reponse && !validated ? 1 : 0);
-    const pct = Math.round((finalScore / total) * 100);
+    const pct = Math.round((computedScore / total) * 100);
     await supabase.from('resultat_quiz').insert({
       module_id: moduleId,
       user_id: user.id,
-      score: finalScore,
+      score: computedScore,
       score_max: total,
       pourcentage: pct,
     });
@@ -125,14 +146,10 @@ const Quizz = () => {
     setSelectedOption(null);
     setValidated(false);
     setScore(0);
+    setFinalScore(0);
     setReponsesUtilisateur([]);
     setFinished(false);
   };
-
-  const total = questions.length;
-  const question = questions[currentIndex];
-  const isLast = currentIndex === total - 1;
-  const progressPercent = total > 0 ? ((currentIndex + (validated ? 1 : 0)) / total) * 100 : 0;
 
   // --- Loading ---
   if (loading) {
@@ -176,6 +193,7 @@ const Quizz = () => {
 
   // --- Previous result screen ---
   if (previousResult && !started) {
+    const prevPct = Math.round(Number(previousResult.pourcentage));
     return (
       <div className="min-h-screen bg-muted/30 flex items-center justify-center px-4">
         <div className="w-full max-w-[700px] text-center space-y-6">
@@ -183,8 +201,11 @@ const Quizz = () => {
             Quiz — {moduleTitle}
           </h1>
           <p className="text-lg text-muted-foreground">
-            Tu as déjà obtenu <span className="font-bold text-primary">{previousResult.pourcentage}%</span> à ce quiz.
+            Tu as déjà obtenu <span className="font-bold text-primary">{prevPct}%</span> à ce quiz.
             Tu peux le repasser pour améliorer ton score.
+          </p>
+          <p className="text-sm text-muted-foreground italic">
+            {getResultMessage(prevPct, moduleTexts)}
           </p>
           <div className="flex flex-col gap-3 sm:flex-row sm:justify-center">
             <Button onClick={handleRestart}>Repasser le quiz</Button>
@@ -197,7 +218,6 @@ const Quizz = () => {
 
   // --- Finished ---
   if (finished) {
-    const finalScore = score;
     const pct = Math.round((finalScore / total) * 100);
     return (
       <div className="min-h-screen bg-muted/30 flex items-center justify-center px-4">
@@ -206,6 +226,9 @@ const Quizz = () => {
           <p className="text-5xl font-heading font-bold text-primary">{pct}%</p>
           <p className="text-lg text-muted-foreground">
             Tu as obtenu {finalScore}/{total} bonnes réponses.
+          </p>
+          <p className="text-base text-foreground">
+            {getResultMessage(pct, moduleTexts)}
           </p>
           <div className="flex flex-col gap-3 sm:flex-row sm:justify-center">
             <Button onClick={() => navigate(`/module/${slug}`)}>← Revenir au module</Button>
