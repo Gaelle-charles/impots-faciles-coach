@@ -18,7 +18,16 @@ import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from '@/components/ui/select';
 import { toast } from '@/hooks/use-toast';
-import { FileQuestion, Plus, Pencil, Trash2, AlertTriangle, Search } from 'lucide-react';
+import { FileQuestion, Plus, Pencil, Trash2, AlertTriangle, Search, GripVertical } from 'lucide-react';
+import {
+  DndContext, closestCenter, KeyboardSensor, PointerSensor, useSensor, useSensors,
+  type DragEndEvent,
+} from '@dnd-kit/core';
+import {
+  arrayMove, SortableContext, verticalListSortingStrategy, useSortable,
+} from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
+import { restrictToVerticalAxis } from '@dnd-kit/modifiers';
 
 interface QuizRow {
   id: string;
@@ -28,6 +37,7 @@ interface QuizRow {
   bonne_reponse: string;
   explication: string | null;
   nom_quizz: string | null;
+  ordre: number;
 }
 
 interface ModuleRow {
@@ -35,6 +45,36 @@ interface ModuleRow {
   titre: string;
   order: number;
 }
+
+// Sortable row component
+const SortableQuizRow = ({ q, onEdit, onDelete }: { q: QuizRow; onEdit: (q: QuizRow) => void; onDelete: (q: QuizRow) => void }) => {
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: q.id });
+  const style = { transform: CSS.Transform.toString(transform), transition, opacity: isDragging ? 0.5 : 1 };
+  return (
+    <TableRow ref={setNodeRef} style={style} className={isDragging ? 'bg-muted' : ''}>
+      <TableCell className="w-8 px-2">
+        <button {...attributes} {...listeners} className="cursor-grab active:cursor-grabbing p-1 text-muted-foreground hover:text-foreground">
+          <GripVertical className="h-4 w-4" />
+        </button>
+      </TableCell>
+      <TableCell className="text-sm font-medium max-w-[400px] truncate">{q.question}</TableCell>
+      <TableCell className="text-center">
+        <Badge variant="outline" className="text-xs">{q.options.length} opt.</Badge>
+      </TableCell>
+      <TableCell className="hidden lg:table-cell text-sm text-green-700 truncate max-w-[180px]">{q.bonne_reponse}</TableCell>
+      <TableCell>
+        <div className="flex gap-1">
+          <Button variant="outline" size="icon" className="h-7 w-7" onClick={() => onEdit(q)}>
+            <Pencil className="h-3.5 w-3.5" />
+          </Button>
+          <Button variant="outline" size="icon" className="h-7 w-7 text-destructive" onClick={() => onDelete(q)}>
+            <Trash2 className="h-3.5 w-3.5" />
+          </Button>
+        </div>
+      </TableCell>
+    </TableRow>
+  );
+};
 
 const AdminQuiz = () => {
   const { user } = useAuth();
@@ -61,7 +101,7 @@ const AdminQuiz = () => {
     if (!user) return;
     setLoading(true);
     const [qRes, mRes] = await Promise.all([
-      supabase.from('quizz').select('*'),
+      supabase.from('quizz').select('*').order('ordre', { ascending: true }),
       supabase.from('modules').select('id, titre, order').order('order', { ascending: true }),
     ]);
     setQuizzes(qRes.data ?? []);
@@ -100,10 +140,49 @@ const AdminQuiz = () => {
       if (!groups.has(q.module_id)) groups.set(q.module_id, []);
       groups.get(q.module_id)!.push(q);
     });
+    // Sort questions within each group by ordre
+    groups.forEach((qs, key) => {
+      groups.set(key, qs.sort((a, b) => a.ordre - b.ordre));
+    });
     return [...groups.entries()].sort((a, b) => {
       return (moduleOrderMap.get(a[0]) ?? 999) - (moduleOrderMap.get(b[0]) ?? 999);
     });
   }, [filtered, moduleOrderMap]);
+
+  const sensors = useSensors(
+    useSensor(PointerSensor, { activationConstraint: { distance: 5 } }),
+    useSensor(KeyboardSensor),
+  );
+
+  const handleDragEnd = async (moduleId: string, event: DragEndEvent) => {
+    const { active, over } = event;
+    if (!over || active.id === over.id) return;
+
+    const group = groupedByModule.find(([id]) => id === moduleId);
+    if (!group) return;
+    const items = group[1];
+    const oldIndex = items.findIndex(q => q.id === active.id);
+    const newIndex = items.findIndex(q => q.id === over.id);
+    if (oldIndex === -1 || newIndex === -1) return;
+
+    const reordered = arrayMove(items, oldIndex, newIndex);
+
+    // Optimistic update
+    setQuizzes(prev => {
+      const updated = [...prev];
+      reordered.forEach((q, i) => {
+        const idx = updated.findIndex(x => x.id === q.id);
+        if (idx !== -1) updated[idx] = { ...updated[idx], ordre: i };
+      });
+      return updated;
+    });
+
+    // Persist
+    const updates = reordered.map((q, i) =>
+      supabase.from('quizz').update({ ordre: i } as any).eq('id', q.id)
+    );
+    await Promise.all(updates);
+  };
 
   const openAdd = () => {
     setIsAdd(true);
@@ -207,6 +286,7 @@ const AdminQuiz = () => {
         <Table>
           <TableHeader>
             <TableRow>
+              <TableHead className="w-10" />
               <TableHead>Question</TableHead>
               <TableHead className="text-center">Options</TableHead>
               <TableHead className="hidden lg:table-cell">Bonne réponse</TableHead>
@@ -216,7 +296,7 @@ const AdminQuiz = () => {
           <TableBody>
             {groupedByModule.length === 0 && (
               <TableRow>
-                <TableCell colSpan={4} className="text-center text-muted-foreground py-10">Aucune question trouvée.</TableCell>
+                <TableCell colSpan={5} className="text-center text-muted-foreground py-10">Aucune question trouvée.</TableCell>
               </TableRow>
             )}
             {groupedByModule.map(([moduleId, questions]) => {
@@ -225,7 +305,7 @@ const AdminQuiz = () => {
               return (
                 <React.Fragment key={moduleId}>
                   <TableRow className="bg-muted/60 hover:bg-muted/60">
-                    <TableCell colSpan={4} className="py-2.5">
+                    <TableCell colSpan={5} className="py-2.5">
                       <span className="font-heading text-sm font-bold text-foreground flex items-center gap-2">
                         <Badge variant="secondary" className="text-xs font-mono">{moduleOrder}</Badge>
                         {moduleTitle}
@@ -233,25 +313,18 @@ const AdminQuiz = () => {
                       </span>
                     </TableCell>
                   </TableRow>
-                  {questions.map(q => (
-                    <TableRow key={q.id}>
-                      <TableCell className="text-sm font-medium max-w-[400px] truncate pl-8">{q.question}</TableCell>
-                      <TableCell className="text-center">
-                        <Badge variant="outline" className="text-xs">{q.options.length} opt.</Badge>
-                      </TableCell>
-                      <TableCell className="hidden lg:table-cell text-sm text-green-700 truncate max-w-[180px]">{q.bonne_reponse}</TableCell>
-                      <TableCell>
-                        <div className="flex gap-1">
-                          <Button variant="outline" size="icon" className="h-7 w-7" onClick={() => openEdit(q)}>
-                            <Pencil className="h-3.5 w-3.5" />
-                          </Button>
-                          <Button variant="outline" size="icon" className="h-7 w-7 text-destructive" onClick={() => setDeleteQuiz(q)}>
-                            <Trash2 className="h-3.5 w-3.5" />
-                          </Button>
-                        </div>
-                      </TableCell>
-                    </TableRow>
-                  ))}
+                  <DndContext
+                    sensors={sensors}
+                    collisionDetection={closestCenter}
+                    modifiers={[restrictToVerticalAxis]}
+                    onDragEnd={(e) => handleDragEnd(moduleId, e)}
+                  >
+                    <SortableContext items={questions.map(q => q.id)} strategy={verticalListSortingStrategy}>
+                      {questions.map(q => (
+                        <SortableQuizRow key={q.id} q={q} onEdit={openEdit} onDelete={setDeleteQuiz} />
+                      ))}
+                    </SortableContext>
+                  </DndContext>
                 </React.Fragment>
               );
             })}
