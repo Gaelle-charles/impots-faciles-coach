@@ -172,12 +172,12 @@ const Connexion = () => {
               Mot de passe oublié ?
             </button>
           )}
-          <button
-            onClick={() => { setIsSignUp(!isSignUp); setError(''); setMessage(''); }}
+          <Link
+            to="/inscription"
             className="text-muted-foreground hover:underline"
           >
-            {isSignUp ? 'Déjà un compte ? Se connecter' : 'Pas encore de compte ? S\'inscrire'}
-          </button>
+            Pas encore de compte ? S'inscrire
+          </Link>
         </div>
       </div>
     </div>
