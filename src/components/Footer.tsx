@@ -69,8 +69,9 @@ export function Footer() {
           </div>
         </div>
 
-        <div className="mt-10 border-t border-sidebar-border pt-6 text-center text-xs text-primary-foreground/50">
-          © {new Date().getFullYear()} Impôts Facile — Tous droits réservés
+        <div className="mt-10 border-t border-sidebar-border pt-6 text-center text-xs text-primary-foreground/50 space-y-1">
+          <p>© {new Date().getFullYear()} Impôts Facile — Tous droits réservés</p>
+          <p>Impôts Facile est un outil pédagogique. Il ne remplace pas un conseiller fiscal.</p>
         </div>
       </div>
     </footer>
