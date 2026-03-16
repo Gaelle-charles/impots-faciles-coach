@@ -110,10 +110,49 @@ const AdminQuiz = () => {
       if (!groups.has(q.module_id)) groups.set(q.module_id, []);
       groups.get(q.module_id)!.push(q);
     });
+    // Sort questions within each group by ordre
+    groups.forEach((qs, key) => {
+      groups.set(key, qs.sort((a, b) => a.ordre - b.ordre));
+    });
     return [...groups.entries()].sort((a, b) => {
       return (moduleOrderMap.get(a[0]) ?? 999) - (moduleOrderMap.get(b[0]) ?? 999);
     });
   }, [filtered, moduleOrderMap]);
+
+  const sensors = useSensors(
+    useSensor(PointerSensor, { activationConstraint: { distance: 5 } }),
+    useSensor(KeyboardSensor),
+  );
+
+  const handleDragEnd = async (moduleId: string, event: DragEndEvent) => {
+    const { active, over } = event;
+    if (!over || active.id === over.id) return;
+
+    const group = groupedByModule.find(([id]) => id === moduleId);
+    if (!group) return;
+    const items = group[1];
+    const oldIndex = items.findIndex(q => q.id === active.id);
+    const newIndex = items.findIndex(q => q.id === over.id);
+    if (oldIndex === -1 || newIndex === -1) return;
+
+    const reordered = arrayMove(items, oldIndex, newIndex);
+
+    // Optimistic update
+    setQuizzes(prev => {
+      const updated = [...prev];
+      reordered.forEach((q, i) => {
+        const idx = updated.findIndex(x => x.id === q.id);
+        if (idx !== -1) updated[idx] = { ...updated[idx], ordre: i };
+      });
+      return updated;
+    });
+
+    // Persist
+    const updates = reordered.map((q, i) =>
+      supabase.from('quizz').update({ ordre: i } as any).eq('id', q.id)
+    );
+    await Promise.all(updates);
+  };
 
   const openAdd = () => {
     setIsAdd(true);
