@@ -33,6 +33,7 @@ interface QuizRow {
 interface ModuleRow {
   id: string;
   titre: string;
+  order: number;
 }
 
 const AdminQuiz = () => {
