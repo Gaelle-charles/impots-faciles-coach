@@ -3,7 +3,7 @@ import { AppSidebar } from '@/components/AppSidebar';
 
 export function AppLayout() {
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-dashboard-bg">
       <AppSidebar />
       <main className="ml-sidebar min-h-screen">
         <div className="mx-auto max-w-content px-8 py-10">
