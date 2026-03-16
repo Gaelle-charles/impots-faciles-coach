@@ -106,6 +106,27 @@ const Profil = () => {
     }
   };
 
+  const handlePasswordChange = async () => {
+    if (newPassword.length < 6) {
+      toast({ title: 'Erreur', description: 'Le mot de passe doit contenir au moins 6 caractères.', variant: 'destructive' });
+      return;
+    }
+    if (newPassword !== confirmPassword) {
+      toast({ title: 'Erreur', description: 'Les mots de passe ne correspondent pas.', variant: 'destructive' });
+      return;
+    }
+    setSavingPassword(true);
+    const { error } = await supabase.auth.updateUser({ password: newPassword });
+    setSavingPassword(false);
+    if (error) {
+      toast({ title: 'Erreur', description: error.message, variant: 'destructive' });
+    } else {
+      setNewPassword('');
+      setConfirmPassword('');
+      toast({ title: 'Mot de passe modifié', description: 'Ton mot de passe a été mis à jour.' });
+    }
+  };
+
   const planLabels: Record<string, string> = {
     nouveau: 'Nouveau',
     starter: 'Starter',
