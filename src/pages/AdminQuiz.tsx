@@ -62,7 +62,7 @@ const AdminQuiz = () => {
     setLoading(true);
     const [qRes, mRes] = await Promise.all([
       supabase.from('quizz').select('*'),
-      supabase.from('modules').select('id, titre').order('order', { ascending: true }),
+      supabase.from('modules').select('id, titre, order').order('order', { ascending: true }),
     ]);
     setQuizzes(qRes.data ?? []);
     setModules(mRes.data ?? []);
