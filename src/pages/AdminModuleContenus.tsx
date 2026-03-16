@@ -436,51 +436,12 @@ const AdminModuleContenus = () => {
             {/* Contenu principal with Markdown preview */}
             <div className="space-y-1.5">
               <Label>Contenu principal *</Label>
-              {isMobile ? (
-                // Mobile: tabs
-                <Tabs value={previewTab} onValueChange={setPreviewTab}>
-                  <TabsList className="w-full grid grid-cols-2">
-                    <TabsTrigger value="edit">Édition</TabsTrigger>
-                    <TabsTrigger value="preview">Aperçu</TabsTrigger>
-                  </TabsList>
-                  <TabsContent value="edit">
-                    <Textarea
-                      value={form.contenu}
-                      onChange={e => setForm(p => ({ ...p, contenu: e.target.value }))}
-                      className="min-h-[300px] font-mono text-sm"
-                      placeholder="# Titre&#10;&#10;Votre contenu en **Markdown**…"
-                    />
-                  </TabsContent>
-                  <TabsContent value="preview">
-                    <div className="min-h-[300px] rounded-md border border-border p-4 prose prose-sm max-w-none bg-muted/30">
-                      {form.contenu ? (
-                        <ReactMarkdown>{form.contenu}</ReactMarkdown>
-                      ) : (
-                        <p className="text-muted-foreground italic">Rien à afficher…</p>
-                      )}
-                    </div>
-                  </TabsContent>
-                </Tabs>
-              ) : (
-                // Desktop: split view
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <Textarea
-                      value={form.contenu}
-                      onChange={e => setForm(p => ({ ...p, contenu: e.target.value }))}
-                      className="min-h-[300px] font-mono text-sm"
-                      placeholder="# Titre&#10;&#10;Votre contenu en **Markdown**…"
-                    />
-                  </div>
-                  <div className="min-h-[300px] rounded-md border border-border p-4 prose prose-sm max-w-none bg-muted/30 overflow-y-auto">
-                    {form.contenu ? (
-                      <ReactMarkdown>{form.contenu}</ReactMarkdown>
-                    ) : (
-                      <p className="text-muted-foreground italic">Aperçu Markdown…</p>
-                    )}
-                  </div>
-                </div>
-              )}
+              <MarkdownEditor
+                value={form.contenu}
+                onChange={(v) => setForm(p => ({ ...p, contenu: v }))}
+                placeholder="# Titre&#10;&#10;Votre contenu en **Markdown**…"
+                minHeight={300}
+              />
               <p className="text-xs text-muted-foreground">
                 Supporte le Markdown (# titres, **gras**, - listes, &gt; citations)
               </p>

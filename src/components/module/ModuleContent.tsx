@@ -1,3 +1,5 @@
+import { useMemo } from 'react';
+import { marked } from 'marked';
 import { Progress } from '@/components/ui/progress';
 import { Button } from '@/components/ui/button';
 import { ChevronLeft, ChevronRight, CheckCircle2 } from 'lucide-react';
