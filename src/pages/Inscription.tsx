@@ -73,6 +73,7 @@ const Inscription = () => {
   return (
     <div className="flex min-h-screen items-center justify-center bg-secondary px-4">
       <div className="w-full max-w-md rounded-lg bg-background p-8">
+        <img src="/src/assets/logo.png" alt="Impôts Facile" className="mx-auto mb-6 h-10 w-auto" />
         <h1 className="font-heading text-2xl font-bold text-foreground">Créer un compte</h1>
         <p className="mt-2 text-sm text-muted-foreground">Rejoignez Impôts Facile</p>
 
