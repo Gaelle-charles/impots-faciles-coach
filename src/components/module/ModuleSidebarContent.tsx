@@ -68,7 +68,7 @@ export function ModuleSidebarContent({
                   {/* Status icon */}
                   <span className="shrink-0">
                     {isDone && !isActive ? (
-                      <CheckCircle2 className="h-5 w-5 text-emerald-500" />
+                      <CheckCircle2 className="h-5 w-5 text-primary" />
                     ) : isActive ? (
                       <span className="relative flex h-5 w-5 items-center justify-center">
                         <span className="absolute h-5 w-5 animate-ping rounded-full bg-primary/20" />
