@@ -34,6 +34,7 @@ interface ContenuRow {
 interface ModuleRow {
   id: string;
   titre: string;
+  order: number;
 }
 
 const TYPE_OPTIONS = [
@@ -66,7 +67,7 @@ const AdminContenus = () => {
     setLoading(true);
     const [cRes, mRes] = await Promise.all([
       supabase.from('contenus').select('*').order('ordre', { ascending: true }),
-      supabase.from('modules').select('id, titre').order('order', { ascending: true }),
+      supabase.from('modules').select('id, titre, order').order('order', { ascending: true }),
     ]);
     setContenus(cRes.data ?? []);
     setModules(mRes.data ?? []);
@@ -74,6 +75,12 @@ const AdminContenus = () => {
   }, [user]);
 
   useEffect(() => { fetchData(); }, [fetchData]);
+
+  const moduleMap = useMemo(() => {
+    const m = new Map<string, ModuleRow>();
+    modules.forEach(mod => m.set(mod.id, mod));
+    return m;
+  }, [modules]);
 
   const moduleTitleMap = useMemo(() => {
     const m = new Map<string, string>();
@@ -90,6 +97,28 @@ const AdminContenus = () => {
     }
     return list;
   }, [contenus, moduleFilter, search]);
+
+  // Group by module, sorted by module order
+  const groupedByModule = useMemo(() => {
+    const groups = new Map<string, ContenuRow[]>();
+    filtered.forEach(c => {
+      const existing = groups.get(c.module_id) ?? [];
+      existing.push(c);
+      groups.set(c.module_id, existing);
+    });
+    // Sort groups by module order
+    return Array.from(groups.entries())
+      .sort(([a], [b]) => {
+        const orderA = moduleMap.get(a)?.order ?? 999;
+        const orderB = moduleMap.get(b)?.order ?? 999;
+        return orderA - orderB;
+      })
+      .map(([moduleId, items]) => ({
+        moduleId,
+        module: moduleMap.get(moduleId),
+        items: items.sort((a, b) => a.ordre - b.ordre),
+      }));
+  }, [filtered, moduleMap]);
 
   const openAdd = () => {
     setIsAdd(true);
@@ -176,50 +205,65 @@ const AdminContenus = () => {
         </Select>
       </div>
 
-      <Card className="border-border bg-background shadow-sm overflow-x-auto">
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead className="w-16">Ordre</TableHead>
-              <TableHead>Titre</TableHead>
-              <TableHead className="hidden md:table-cell">Module</TableHead>
-              <TableHead>Type</TableHead>
-              <TableHead className="w-20" />
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {filtered.map(c => (
-              <TableRow key={c.id}>
-                <TableCell>
-                  <Badge variant="outline" className="font-mono text-xs">{String(c.ordre).padStart(2, '0')}</Badge>
-                </TableCell>
-                <TableCell className="text-sm font-medium truncate max-w-[250px]">{c.titre}</TableCell>
-                <TableCell className="hidden md:table-cell text-sm text-muted-foreground truncate max-w-[200px]">
-                  {moduleTitleMap.get(c.module_id) ?? '—'}
-                </TableCell>
-                <TableCell>
-                  <Badge className="bg-primary/10 text-primary text-xs capitalize">{c.type_contenu ?? 'texte'}</Badge>
-                </TableCell>
-                <TableCell>
-                  <div className="flex gap-1">
-                    <Button variant="outline" size="icon" className="h-7 w-7" onClick={() => openEdit(c)}>
-                      <Pencil className="h-3.5 w-3.5" />
-                    </Button>
-                    <Button variant="outline" size="icon" className="h-7 w-7 text-destructive" onClick={() => setDeleteItem(c)}>
-                      <Trash2 className="h-3.5 w-3.5" />
-                    </Button>
-                  </div>
-                </TableCell>
-              </TableRow>
-            ))}
-            {filtered.length === 0 && (
-              <TableRow>
-                <TableCell colSpan={5} className="text-center text-muted-foreground py-10">Aucun contenu trouvé.</TableCell>
-              </TableRow>
-            )}
-          </TableBody>
-        </Table>
-      </Card>
+      {groupedByModule.length === 0 ? (
+        <Card className="border-border bg-background shadow-sm p-10 text-center text-muted-foreground">
+          Aucun contenu trouvé.
+        </Card>
+      ) : (
+        <div className="space-y-6">
+          {groupedByModule.map(({ moduleId, module, items }) => (
+            <Card key={moduleId} className="border-border bg-background shadow-sm overflow-hidden">
+              {/* Module header */}
+              <div className="flex items-center gap-3 px-4 py-3 border-b border-border bg-muted/30">
+                <Badge variant="outline" className="font-mono text-xs w-8 justify-center shrink-0">
+                  {String(module?.order ?? '?').padStart(2, '0')}
+                </Badge>
+                <h3 className="font-heading font-semibold text-foreground text-sm truncate">
+                  {module?.titre ?? 'Module inconnu'}
+                </h3>
+                <Badge className="ml-auto shrink-0 text-xs bg-primary/10 text-primary">
+                  {items.length} contenu{items.length > 1 ? 's' : ''}
+                </Badge>
+              </div>
+              <div className="overflow-x-auto">
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead className="w-16">Ordre</TableHead>
+                      <TableHead>Titre</TableHead>
+                      <TableHead>Type</TableHead>
+                      <TableHead className="w-20" />
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {items.map(c => (
+                      <TableRow key={c.id}>
+                        <TableCell>
+                          <Badge variant="outline" className="font-mono text-xs">{String(c.ordre).padStart(2, '0')}</Badge>
+                        </TableCell>
+                        <TableCell className="text-sm font-medium truncate max-w-[250px]">{c.titre}</TableCell>
+                        <TableCell>
+                          <Badge className="bg-primary/10 text-primary text-xs capitalize">{c.type_contenu ?? 'texte'}</Badge>
+                        </TableCell>
+                        <TableCell>
+                          <div className="flex gap-1">
+                            <Button variant="outline" size="icon" className="h-7 w-7" onClick={() => openEdit(c)}>
+                              <Pencil className="h-3.5 w-3.5" />
+                            </Button>
+                            <Button variant="outline" size="icon" className="h-7 w-7 text-destructive" onClick={() => setDeleteItem(c)}>
+                              <Trash2 className="h-3.5 w-3.5" />
+                            </Button>
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </div>
+            </Card>
+          ))}
+        </div>
+      )}
 
       {/* Add/Edit Modal */}
       <Dialog open={isAdd || !!editItem} onOpenChange={open => { if (!open) closeModal(); }}>
