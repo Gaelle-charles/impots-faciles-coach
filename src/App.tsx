@@ -37,6 +37,7 @@ import AdminSubscriptions from "./pages/AdminSubscriptions";
 import AdminEmails from "./pages/AdminEmails";
 import AdminSettings from "./pages/AdminSettings";
 import AuthCallback from "./pages/AuthCallback";
+import CommentCaMarche from "./pages/CommentCaMarche";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
