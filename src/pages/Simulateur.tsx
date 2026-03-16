@@ -294,7 +294,7 @@ const Simulateur = () => {
 
         {/* Right: Results */}
         <div className="lg:w-[40%]">
-          <SimulateurResultat result={result} onReset={handleReset} />
+          <SimulateurResultat result={result} formData={form} onReset={handleReset} />
         </div>
       </div>
     </div>
