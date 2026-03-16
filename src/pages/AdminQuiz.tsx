@@ -215,33 +215,47 @@ const AdminQuiz = () => {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {filtered.map(q => (
-              <TableRow key={q.id}>
-                <TableCell className="text-sm font-medium max-w-[300px] truncate">{q.question}</TableCell>
-                <TableCell className="hidden md:table-cell text-sm text-muted-foreground truncate max-w-[200px]">
-                  {moduleTitleMap.get(q.module_id) ?? '—'}
-                </TableCell>
-                <TableCell className="text-center">
-                  <Badge variant="outline" className="text-xs">{q.options.length}</Badge>
-                </TableCell>
-                <TableCell className="hidden lg:table-cell text-sm text-green-700 truncate max-w-[180px]">{q.bonne_reponse}</TableCell>
-                <TableCell>
-                  <div className="flex gap-1">
-                    <Button variant="outline" size="icon" className="h-7 w-7" onClick={() => openEdit(q)}>
-                      <Pencil className="h-3.5 w-3.5" />
-                    </Button>
-                    <Button variant="outline" size="icon" className="h-7 w-7 text-destructive" onClick={() => setDeleteQuiz(q)}>
-                      <Trash2 className="h-3.5 w-3.5" />
-                    </Button>
-                  </div>
-                </TableCell>
-              </TableRow>
-            ))}
-            {filtered.length === 0 && (
+            {groupedByModule.length === 0 && (
               <TableRow>
-                <TableCell colSpan={5} className="text-center text-muted-foreground py-10">Aucune question trouvée.</TableCell>
+                <TableCell colSpan={4} className="text-center text-muted-foreground py-10">Aucune question trouvée.</TableCell>
               </TableRow>
             )}
+            {groupedByModule.map(([moduleId, questions]) => {
+              const moduleOrder = moduleOrderMap.get(moduleId) ?? 0;
+              const moduleTitle = moduleTitleMap.get(moduleId) ?? '—';
+              return (
+                <React.Fragment key={moduleId}>
+                  <TableRow className="bg-muted/60 hover:bg-muted/60">
+                    <TableCell colSpan={4} className="py-2.5">
+                      <span className="font-heading text-sm font-bold text-foreground flex items-center gap-2">
+                        <Badge variant="secondary" className="text-xs font-mono">{moduleOrder}</Badge>
+                        {moduleTitle}
+                        <span className="text-muted-foreground font-normal ml-1">({questions.length} question{questions.length > 1 ? 's' : ''})</span>
+                      </span>
+                    </TableCell>
+                  </TableRow>
+                  {questions.map(q => (
+                    <TableRow key={q.id}>
+                      <TableCell className="text-sm font-medium max-w-[400px] truncate pl-8">{q.question}</TableCell>
+                      <TableCell className="text-center">
+                        <Badge variant="outline" className="text-xs">{q.options.length} opt.</Badge>
+                      </TableCell>
+                      <TableCell className="hidden lg:table-cell text-sm text-green-700 truncate max-w-[180px]">{q.bonne_reponse}</TableCell>
+                      <TableCell>
+                        <div className="flex gap-1">
+                          <Button variant="outline" size="icon" className="h-7 w-7" onClick={() => openEdit(q)}>
+                            <Pencil className="h-3.5 w-3.5" />
+                          </Button>
+                          <Button variant="outline" size="icon" className="h-7 w-7 text-destructive" onClick={() => setDeleteQuiz(q)}>
+                            <Trash2 className="h-3.5 w-3.5" />
+                          </Button>
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </React.Fragment>
+              );
+            })}
           </TableBody>
         </Table>
       </Card>
