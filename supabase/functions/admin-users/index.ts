@@ -1,0 +1,139 @@
+import { createClient } from "supabase";
+
+const corsHeaders = {
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
+};
+
+Deno.serve(async (req) => {
+  if (req.method === "OPTIONS") {
+    return new Response("ok", { headers: corsHeaders });
+  }
+
+  try {
+    // Verify the caller is an admin
+    const authHeader = req.headers.get("Authorization");
+    if (!authHeader) {
+      return new Response(JSON.stringify({ error: "Non authentifié" }), {
+        status: 401,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
+    const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
+    const serviceRoleKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
+
+    // Client with user's token to verify admin role
+    const userClient = createClient(supabaseUrl, Deno.env.get("SUPABASE_PUBLISHABLE_KEY")!, {
+      global: { headers: { Authorization: authHeader } },
+    });
+
+    const { data: { user: caller } } = await userClient.auth.getUser();
+    if (!caller) {
+      return new Response(JSON.stringify({ error: "Non authentifié" }), {
+        status: 401,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
+    // Check admin role
+    const { data: profile } = await userClient.from("profiles").select("role").eq("id", caller.id).single();
+    if (profile?.role !== "admin") {
+      return new Response(JSON.stringify({ error: "Accès refusé" }), {
+        status: 403,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
+    // Admin client with service role
+    const adminClient = createClient(supabaseUrl, serviceRoleKey, {
+      auth: { autoRefreshToken: false, persistSession: false },
+    });
+
+    const body = await req.json();
+    const { action } = body;
+
+    switch (action) {
+      case "create_user": {
+        const { email, password, prenom, nom, plan, role } = body;
+
+        // Create auth user
+        const { data: newUser, error: createError } = await adminClient.auth.admin.createUser({
+          email,
+          password,
+          email_confirm: true,
+        });
+
+        if (createError) {
+          return new Response(JSON.stringify({ error: createError.message }), {
+            status: 400,
+            headers: { ...corsHeaders, "Content-Type": "application/json" },
+          });
+        }
+
+        // Update profile (trigger should have created it)
+        await adminClient.from("profiles").update({
+          prenom,
+          nom,
+          plan: plan || "nouveau",
+          role: role || "client",
+        }).eq("id", newUser.user.id);
+
+        return new Response(JSON.stringify({ success: true, userId: newUser.user.id }), {
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+
+      case "delete_user": {
+        const { userId } = body;
+
+        // Delete related data
+        await Promise.all([
+          adminClient.from("resultat_quiz").delete().eq("user_id", userId),
+          adminClient.from("progressions").delete().eq("user_id", userId),
+        ]);
+        await adminClient.from("profiles").delete().eq("id", userId);
+
+        // Delete auth user
+        const { error: deleteError } = await adminClient.auth.admin.deleteUser(userId);
+        if (deleteError) {
+          return new Response(JSON.stringify({ error: deleteError.message }), {
+            status: 400,
+            headers: { ...corsHeaders, "Content-Type": "application/json" },
+          });
+        }
+
+        return new Response(JSON.stringify({ success: true }), {
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+
+      case "reset_password": {
+        const { email } = body;
+        const { error } = await adminClient.auth.resetPasswordForEmail(email, {
+          redirectTo: `${supabaseUrl.replace('.supabase.co', '.lovable.app')}/reset-password`,
+        });
+        if (error) {
+          return new Response(JSON.stringify({ error: error.message }), {
+            status: 400,
+            headers: { ...corsHeaders, "Content-Type": "application/json" },
+          });
+        }
+        return new Response(JSON.stringify({ success: true }), {
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+
+      default:
+        return new Response(JSON.stringify({ error: "Action inconnue" }), {
+          status: 400,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+    }
+  } catch (err) {
+    return new Response(JSON.stringify({ error: err.message }), {
+      status: 500,
+      headers: { ...corsHeaders, "Content-Type": "application/json" },
+    });
+  }
+});
