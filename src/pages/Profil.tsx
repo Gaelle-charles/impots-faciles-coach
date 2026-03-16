@@ -15,7 +15,8 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { toast } from '@/hooks/use-toast';
-import { User, Mail, Briefcase, CreditCard, Save } from 'lucide-react';
+import { User, Mail, Briefcase, CreditCard, Save, Lock } from 'lucide-react';
+import { Separator } from '@/components/ui/separator';
 
 interface ProfileData {
   prenom: string | null;
@@ -37,6 +38,9 @@ const Profil = () => {
   const [metiers, setMetiers] = useState<Metier[]>([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [savingPassword, setSavingPassword] = useState(false);
 
   // Form state
   const [prenom, setPrenom] = useState('');
@@ -99,6 +103,27 @@ const Profil = () => {
     } else {
       setProfile((prev) => prev ? { ...prev, prenom: trimmedPrenom, nom: trimmedNom, metier_id: metierId === 'none' ? null : metierId } : prev);
       toast({ title: 'Profil mis à jour', description: 'Tes informations ont été sauvegardées.' });
+    }
+  };
+
+  const handlePasswordChange = async () => {
+    if (newPassword.length < 6) {
+      toast({ title: 'Erreur', description: 'Le mot de passe doit contenir au moins 6 caractères.', variant: 'destructive' });
+      return;
+    }
+    if (newPassword !== confirmPassword) {
+      toast({ title: 'Erreur', description: 'Les mots de passe ne correspondent pas.', variant: 'destructive' });
+      return;
+    }
+    setSavingPassword(true);
+    const { error } = await supabase.auth.updateUser({ password: newPassword });
+    setSavingPassword(false);
+    if (error) {
+      toast({ title: 'Erreur', description: error.message, variant: 'destructive' });
+    } else {
+      setNewPassword('');
+      setConfirmPassword('');
+      toast({ title: 'Mot de passe modifié', description: 'Ton mot de passe a été mis à jour.' });
     }
   };
 
@@ -217,6 +242,46 @@ const Profil = () => {
           </CardContent>
         </Card>
       </div>
+
+      {/* Password change */}
+      <Card className="border-border bg-background shadow-sm">
+        <CardHeader className="pb-3">
+          <CardTitle className="font-heading text-lg flex items-center gap-2">
+            <Lock className="h-4 w-4" />
+            Changer le mot de passe
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="grid gap-4 sm:grid-cols-2 max-w-lg">
+            <div className="space-y-2">
+              <Label htmlFor="new-password">Nouveau mot de passe</Label>
+              <Input
+                id="new-password"
+                type="password"
+                value={newPassword}
+                onChange={(e) => setNewPassword(e.target.value)}
+                placeholder="Min. 6 caractères"
+                maxLength={128}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="confirm-password">Confirmer</Label>
+              <Input
+                id="confirm-password"
+                type="password"
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                placeholder="Répète le mot de passe"
+                maxLength={128}
+              />
+            </div>
+          </div>
+          <Button onClick={handlePasswordChange} disabled={savingPassword} variant="outline" className="gap-2">
+            <Lock className="h-4 w-4" />
+            {savingPassword ? 'Modification...' : 'Modifier le mot de passe'}
+          </Button>
+        </CardContent>
+      </Card>
     </div>
   );
 };
