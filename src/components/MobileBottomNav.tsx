@@ -3,7 +3,7 @@ import { LayoutDashboard, BookOpen, BarChart3, User } from 'lucide-react';
 
 const items = [
   { to: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
-  { to: '/dashboard#modules', label: 'Modules', icon: BookOpen },
+  { to: '/mes-modules', label: 'Modules', icon: BookOpen },
   { to: '/dashboard#resultats', label: 'Résultats', icon: BarChart3 },
   { to: '/profil', label: 'Profil', icon: User },
 ];
