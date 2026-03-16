@@ -15,7 +15,8 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { toast } from '@/hooks/use-toast';
-import { User, Mail, Briefcase, CreditCard, Save } from 'lucide-react';
+import { User, Mail, Briefcase, CreditCard, Save, Lock } from 'lucide-react';
+import { Separator } from '@/components/ui/separator';
 
 interface ProfileData {
   prenom: string | null;
