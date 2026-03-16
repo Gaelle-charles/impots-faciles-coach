@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Settings } from 'lucide-react';
-import { Drawer, DrawerContent, DrawerTitle } from '@/components/ui/drawer';
+import { Sheet, SheetContent, SheetTitle } from '@/components/ui/sheet';
 import { AdminSidebar } from '@/components/AdminSidebar';
 import { VisuallyHidden } from '@radix-ui/react-visually-hidden';
 
@@ -19,29 +19,20 @@ export function AdminMobileNav() {
         Admin
       </button>
 
-      <Drawer open={open} onOpenChange={setOpen} direction="left">
-        <DrawerContent
-          className="h-full w-[260px] rounded-none border-0 p-0"
+      <Sheet open={open} onOpenChange={setOpen}>
+        <SheetContent
+          side="left"
+          className="w-[260px] p-0 border-0"
           style={{ backgroundColor: 'hsl(222 47% 11%)' }}
         >
           <VisuallyHidden>
-            <DrawerTitle>Menu admin</DrawerTitle>
+            <SheetTitle>Menu admin</SheetTitle>
           </VisuallyHidden>
-          <div onClick={() => setOpen(false)} className="h-full">
-            <AdminSidebarMobile />
+          <div onClick={() => setOpen(false)} className="h-full [&>aside]:relative [&>aside]:w-full">
+            <AdminSidebar />
           </div>
-        </DrawerContent>
-      </Drawer>
+        </SheetContent>
+      </Sheet>
     </>
-  );
-}
-
-/** Inline version without fixed positioning for drawer usage */
-function AdminSidebarMobile() {
-  // Re-use the same sidebar but override fixed positioning
-  return (
-    <div className="h-full [&>aside]:relative [&>aside]:w-full">
-      <AdminSidebar />
-    </div>
   );
 }
