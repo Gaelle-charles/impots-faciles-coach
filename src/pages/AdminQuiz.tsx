@@ -77,6 +77,12 @@ const AdminQuiz = () => {
     return m;
   }, [modules]);
 
+  const moduleOrderMap = useMemo(() => {
+    const m = new Map<string, number>();
+    modules.forEach(mod => m.set(mod.id, mod.order));
+    return m;
+  }, [modules]);
+
   const filtered = useMemo(() => {
     let list = quizzes;
     if (moduleFilter !== 'Tous') list = list.filter(q => q.module_id === moduleFilter);
@@ -86,6 +92,18 @@ const AdminQuiz = () => {
     }
     return list;
   }, [quizzes, moduleFilter, search]);
+
+  // Group filtered questions by module, sorted by module order
+  const groupedByModule = useMemo(() => {
+    const groups = new Map<string, QuizRow[]>();
+    filtered.forEach(q => {
+      if (!groups.has(q.module_id)) groups.set(q.module_id, []);
+      groups.get(q.module_id)!.push(q);
+    });
+    return [...groups.entries()].sort((a, b) => {
+      return (moduleOrderMap.get(a[0]) ?? 999) - (moduleOrderMap.get(b[0]) ?? 999);
+    });
+  }, [filtered, moduleOrderMap]);
 
   const openAdd = () => {
     setIsAdd(true);
