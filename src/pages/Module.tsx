@@ -43,15 +43,25 @@ const Module = () => {
   const [showCompletion, setShowCompletion] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
-  const currentStep = progression?.step ?? 0;
+  const [profile, setProfile] = useState<{ plan: string } | null>(null);
+  const [accessDenied, setAccessDenied] = useState(false);
+
+  const rawStep = progression?.step ?? 0;
   const totalSteps = contenus.length;
-  const progressPercent = module?.total_step && module.total_step > 0
-    ? (currentStep / module.total_step) * 100
-    : totalSteps > 0
-      ? (currentStep / totalSteps) * 100
-      : 0;
-  const isLastStep = currentStep === totalSteps - 1;
-  const currentContenu = contenus[currentStep] ?? null;
+  const isCompleted = !!progression?.completion_date;
+  // Clamp step to valid content range so we never index out of bounds
+  const currentStep = isCompleted
+    ? Math.min(rawStep, totalSteps - 1)
+    : Math.min(rawStep, totalSteps - 1);
+  const progressPercent = isCompleted
+    ? 100
+    : module?.total_step && module.total_step > 0
+      ? (rawStep / module.total_step) * 100
+      : totalSteps > 0
+        ? (rawStep / totalSteps) * 100
+        : 0;
+  const isLastStep = !isCompleted && rawStep === totalSteps - 1;
+  const currentContenu = contenus[Math.max(0, currentStep)] ?? null;
 
   const fetchData = useCallback(async () => {
     if (!slug || !user) return;
