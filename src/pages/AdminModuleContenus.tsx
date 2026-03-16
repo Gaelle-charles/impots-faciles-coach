@@ -208,7 +208,7 @@ const AdminModuleContenus = () => {
   const openEdit = (step: ContenuRow) => {
     setIsAdd(false);
     setEditStep(step);
-    setPreviewTab('edit');
+    
     setForm({
       titre: step.titre,
       contenu: step.contenu ?? '',
