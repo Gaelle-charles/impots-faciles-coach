@@ -37,6 +37,7 @@ interface QuizRow {
   bonne_reponse: string;
   explication: string | null;
   nom_quizz: string | null;
+  ordre: number;
 }
 
 interface ModuleRow {
