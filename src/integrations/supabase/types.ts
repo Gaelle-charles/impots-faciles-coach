@@ -81,6 +81,7 @@ export type Database = {
           accessibilite: string[]
           created_at: string
           id: string
+          is_published: boolean
           module_slug: string
           order: number
           text_resultat_expert: string | null
@@ -93,6 +94,7 @@ export type Database = {
           accessibilite?: string[]
           created_at?: string
           id?: string
+          is_published?: boolean
           module_slug: string
           order?: number
           text_resultat_expert?: string | null
@@ -105,6 +107,7 @@ export type Database = {
           accessibilite?: string[]
           created_at?: string
           id?: string
+          is_published?: boolean
           module_slug?: string
           order?: number
           text_resultat_expert?: string | null
