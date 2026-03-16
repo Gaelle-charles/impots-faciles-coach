@@ -286,6 +286,7 @@ const AdminQuiz = () => {
         <Table>
           <TableHeader>
             <TableRow>
+              <TableHead className="w-10" />
               <TableHead>Question</TableHead>
               <TableHead className="text-center">Options</TableHead>
               <TableHead className="hidden lg:table-cell">Bonne réponse</TableHead>
