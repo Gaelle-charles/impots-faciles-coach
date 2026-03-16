@@ -33,12 +33,15 @@ export function ProtectedRoute({ children, adminOnly = false }: { children: Reac
   }
 
   if (!user) {
+    if (adminOnly) {
+      return <Navigate to="/admin/login" replace />;
+    }
     const redirectPath = location.pathname + location.search + location.hash;
     return <Navigate to={`/connexion?redirect=${encodeURIComponent(redirectPath)}`} replace />;
   }
 
   if (adminOnly && role !== 'admin') {
-    return <Navigate to="/dashboard" replace />;
+    return <Navigate to="/admin/login" replace />;
   }
 
   return <>{children}</>;
