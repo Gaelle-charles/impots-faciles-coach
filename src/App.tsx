@@ -22,6 +22,7 @@ import FicheMetier from "./pages/FicheMetier";
 import Profil from "./pages/Profil";
 import Admin from "./pages/Admin";
 import AdminUsers from "./pages/AdminUsers";
+import AdminModules from "./pages/AdminModules";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -57,6 +58,7 @@ const App = () => (
             <Route element={<ProtectedRoute adminOnly><AppLayout /></ProtectedRoute>}>
               <Route path="/admin" element={<Admin />} />
               <Route path="/admin/users" element={<AdminUsers />} />
+              <Route path="/admin/modules" element={<AdminModules />} />
             </Route>
 
             {/* Quizz has its own layout */}

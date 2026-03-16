@@ -1,0 +1,1 @@
+ALTER TABLE public.modules ADD COLUMN IF NOT EXISTS is_published boolean NOT NULL DEFAULT true;
