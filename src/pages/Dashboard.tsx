@@ -38,26 +38,34 @@ const Dashboard = () => {
   const [results, setResults] = useState<ResultatRow[]>([]);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
+  const fetchData = async () => {
     if (!user) return;
+    setLoading(true);
+    const [profRes, modRes, progRes, resRes] = await Promise.all([
+      supabase.from('profiles').select('prenom, nom, plan').eq('id', user.id).maybeSingle(),
+      supabase.from('modules').select('*').order('order', { ascending: true }),
+      supabase.from('progressions').select('*').eq('user_id', user.id),
+      supabase.from('resultat_quiz').select('*').eq('user_id', user.id).order('date_quiz', { ascending: false }),
+    ]);
 
-    const fetch = async () => {
-      setLoading(true);
-      const [profRes, modRes, progRes, resRes] = await Promise.all([
-        supabase.from('profiles').select('prenom, nom, plan').eq('id', user.id).single(),
-        supabase.from('modules').select('*').order('order', { ascending: true }),
-        supabase.from('progressions').select('*').eq('user_id', user.id),
-        supabase.from('resultat_quiz').select('*').eq('user_id', user.id).order('date_quiz', { ascending: false }),
-      ]);
+    if (profRes.data) setProfile(profRes.data);
+    setModules(modRes.data ?? []);
+    setProgressions(progRes.data ?? []);
+    setResults(resRes.data ?? []);
+    setLoading(false);
+  };
 
-      if (profRes.data) setProfile(profRes.data);
-      setModules(modRes.data ?? []);
-      setProgressions(progRes.data ?? []);
-      setResults(resRes.data ?? []);
-      setLoading(false);
+  useEffect(() => {
+    fetchData();
+  }, [user]);
+
+  // Refresh data when user returns to this tab
+  useEffect(() => {
+    const handleVisibility = () => {
+      if (document.visibilityState === 'visible') fetchData();
     };
-
-    fetch();
+    document.addEventListener('visibilitychange', handleVisibility);
+    return () => document.removeEventListener('visibilitychange', handleVisibility);
   }, [user]);
 
   // Maps for quick lookup
@@ -84,7 +92,7 @@ const Dashboard = () => {
   // Stats
   const completedCount = progressions.filter((p) => !!p.completion_date).length;
   const avgScore = results.length > 0
-    ? Math.round(results.reduce((acc, r) => acc + Number(r.score), 0) / results.length)
+    ? Math.round(results.reduce((acc, r) => acc + Number(r.pourcentage), 0) / results.length)
     : 0;
   const remainingModules = modules.length - completedCount;
   const estimatedHours = remainingModules * 2;
