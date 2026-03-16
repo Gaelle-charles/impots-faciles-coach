@@ -1,4 +1,4 @@
-import { useEffect, useState, useMemo, useCallback } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
@@ -8,7 +8,6 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Skeleton } from '@/components/ui/skeleton';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import {
   Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter,
 } from '@/components/ui/dialog';
@@ -23,8 +22,7 @@ import {
   SortableContext, verticalListSortingStrategy, useSortable, arrayMove,
 } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
-import ReactMarkdown from 'react-markdown';
-import { useIsMobile } from '@/hooks/use-mobile';
+import { MarkdownEditor } from '@/components/admin/MarkdownEditor';
 
 // ─── Types ───
 interface ContenuRow {
@@ -121,7 +119,7 @@ function SortableStepRow({
 const AdminModuleContenus = () => {
   const { id: moduleId } = useParams<{ id: string }>();
   const { user } = useAuth();
-  const isMobile = useIsMobile();
+  
 
   const [loading, setLoading] = useState(true);
   const [moduleInfo, setModuleInfo] = useState<ModuleInfo | null>(null);
@@ -142,7 +140,7 @@ const AdminModuleContenus = () => {
     texte_2: '',
     image_url: '',
   });
-  const [previewTab, setPreviewTab] = useState<string>('edit');
+  
   const [saving, setSaving] = useState(false);
 
   // Delete
@@ -204,14 +202,13 @@ const AdminModuleContenus = () => {
   const openAdd = () => {
     setIsAdd(true);
     setEditStep(null);
-    setPreviewTab('edit');
     setForm({ titre: '', contenu: '', texte_2: '', image_url: '' });
   };
 
   const openEdit = (step: ContenuRow) => {
     setIsAdd(false);
     setEditStep(step);
-    setPreviewTab('edit');
+    
     setForm({
       titre: step.titre,
       contenu: step.contenu ?? '',
@@ -437,51 +434,12 @@ const AdminModuleContenus = () => {
             {/* Contenu principal with Markdown preview */}
             <div className="space-y-1.5">
               <Label>Contenu principal *</Label>
-              {isMobile ? (
-                // Mobile: tabs
-                <Tabs value={previewTab} onValueChange={setPreviewTab}>
-                  <TabsList className="w-full grid grid-cols-2">
-                    <TabsTrigger value="edit">Édition</TabsTrigger>
-                    <TabsTrigger value="preview">Aperçu</TabsTrigger>
-                  </TabsList>
-                  <TabsContent value="edit">
-                    <Textarea
-                      value={form.contenu}
-                      onChange={e => setForm(p => ({ ...p, contenu: e.target.value }))}
-                      className="min-h-[300px] font-mono text-sm"
-                      placeholder="# Titre&#10;&#10;Votre contenu en **Markdown**…"
-                    />
-                  </TabsContent>
-                  <TabsContent value="preview">
-                    <div className="min-h-[300px] rounded-md border border-border p-4 prose prose-sm max-w-none bg-muted/30">
-                      {form.contenu ? (
-                        <ReactMarkdown>{form.contenu}</ReactMarkdown>
-                      ) : (
-                        <p className="text-muted-foreground italic">Rien à afficher…</p>
-                      )}
-                    </div>
-                  </TabsContent>
-                </Tabs>
-              ) : (
-                // Desktop: split view
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <Textarea
-                      value={form.contenu}
-                      onChange={e => setForm(p => ({ ...p, contenu: e.target.value }))}
-                      className="min-h-[300px] font-mono text-sm"
-                      placeholder="# Titre&#10;&#10;Votre contenu en **Markdown**…"
-                    />
-                  </div>
-                  <div className="min-h-[300px] rounded-md border border-border p-4 prose prose-sm max-w-none bg-muted/30 overflow-y-auto">
-                    {form.contenu ? (
-                      <ReactMarkdown>{form.contenu}</ReactMarkdown>
-                    ) : (
-                      <p className="text-muted-foreground italic">Aperçu Markdown…</p>
-                    )}
-                  </div>
-                </div>
-              )}
+              <MarkdownEditor
+                value={form.contenu}
+                onChange={(v) => setForm(p => ({ ...p, contenu: v }))}
+                placeholder="# Titre&#10;&#10;Votre contenu en **Markdown**…"
+                minHeight={300}
+              />
               <p className="text-xs text-muted-foreground">
                 Supporte le Markdown (# titres, **gras**, - listes, &gt; citations)
               </p>

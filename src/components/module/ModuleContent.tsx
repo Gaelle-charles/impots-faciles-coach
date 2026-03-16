@@ -1,3 +1,5 @@
+import { useMemo } from 'react';
+import { marked } from 'marked';
 import { Progress } from '@/components/ui/progress';
 import { Button } from '@/components/ui/button';
 import { ChevronLeft, ChevronRight, CheckCircle2 } from 'lucide-react';
@@ -26,6 +28,16 @@ export function ModuleContent({
   onPrev,
   onNext,
 }: ModuleContentProps) {
+  const contenuHtml = useMemo(() => {
+    if (!currentContenu?.contenu) return '';
+    return marked.parse(currentContenu.contenu, { async: false }) as string;
+  }, [currentContenu?.contenu]);
+
+  const texte2Html = useMemo(() => {
+    if (!currentContenu?.texte_2) return '';
+    return marked.parse(currentContenu.texte_2, { async: false }) as string;
+  }, [currentContenu?.texte_2]);
+
   return (
     <div className="flex flex-1 flex-col p-6 lg:p-10">
       {/* Progress bar */}
@@ -55,19 +67,19 @@ export function ModuleContent({
             />
           )}
 
-          {currentContenu.contenu && (
+          {contenuHtml && (
             <div
               className="prose prose-sm max-w-none leading-relaxed text-foreground lg:prose-base"
               style={{ lineHeight: 1.8 }}
-              dangerouslySetInnerHTML={{ __html: currentContenu.contenu }}
+              dangerouslySetInnerHTML={{ __html: contenuHtml }}
             />
           )}
 
-          {currentContenu.texte_2 && (
+          {texte2Html && (
             <div
               className="mt-6 rounded-lg bg-muted/50 p-5 prose prose-sm max-w-none text-foreground"
               style={{ lineHeight: 1.8 }}
-              dangerouslySetInnerHTML={{ __html: currentContenu.texte_2 }}
+              dangerouslySetInnerHTML={{ __html: texte2Html }}
             />
           )}
         </article>
