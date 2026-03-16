@@ -172,14 +172,41 @@ Taux de prélèvement : ${result.tauxPrelevement}%${result.pfuMontant > 0 ? `\nP
           <p className="font-heading font-bold text-foreground text-lg">{result.tauxPrelevement}%</p>
         </div>
 
-        <div className="flex gap-2">
-          <Button variant="outline" className="flex-1" onClick={handleCopy}>
-            <Copy className="h-4 w-4 mr-1" /> Copier le résumé
-          </Button>
-          <Button variant="outline" className="flex-1" onClick={onReset}>
-            <RotateCcw className="h-4 w-4 mr-1" /> Réinitialiser
+        <div className="flex flex-col gap-2">
+          <div className="flex gap-2">
+            <Button variant="outline" className="flex-1" onClick={handleCopy}>
+              <Copy className="h-4 w-4 mr-1" /> Copier le résumé
+            </Button>
+            <Button variant="outline" className="flex-1" onClick={onReset}>
+              <RotateCcw className="h-4 w-4 mr-1" /> Réinitialiser
+            </Button>
+          </div>
+          <Button className="w-full" onClick={() => setSaveOpen(true)}>
+            <Save className="h-4 w-4 mr-1" /> 💾 Sauvegarder cette simulation
           </Button>
         </div>
+
+        <Dialog open={saveOpen} onOpenChange={setSaveOpen}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Sauvegarder la simulation</DialogTitle>
+            </DialogHeader>
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-foreground">Nom de la simulation</label>
+              <Input
+                value={saveName}
+                onChange={(e) => setSaveName(e.target.value)}
+                placeholder="ex: Estimation 2024"
+              />
+            </div>
+            <DialogFooter>
+              <Button variant="outline" onClick={() => setSaveOpen(false)}>Annuler</Button>
+              <Button onClick={handleSave} disabled={saving || !saveName.trim()}>
+                {saving ? "Sauvegarde…" : "Sauvegarder"}
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
       </Card>
 
       {/* Bloc pédagogique */}
