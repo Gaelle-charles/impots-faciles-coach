@@ -46,6 +46,36 @@ interface ModuleRow {
   order: number;
 }
 
+// Sortable row component
+const SortableQuizRow = ({ q, onEdit, onDelete }: { q: QuizRow; onEdit: (q: QuizRow) => void; onDelete: (q: QuizRow) => void }) => {
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: q.id });
+  const style = { transform: CSS.Transform.toString(transform), transition, opacity: isDragging ? 0.5 : 1 };
+  return (
+    <TableRow ref={setNodeRef} style={style} className={isDragging ? 'bg-muted' : ''}>
+      <TableCell className="w-8 px-2">
+        <button {...attributes} {...listeners} className="cursor-grab active:cursor-grabbing p-1 text-muted-foreground hover:text-foreground">
+          <GripVertical className="h-4 w-4" />
+        </button>
+      </TableCell>
+      <TableCell className="text-sm font-medium max-w-[400px] truncate">{q.question}</TableCell>
+      <TableCell className="text-center">
+        <Badge variant="outline" className="text-xs">{q.options.length} opt.</Badge>
+      </TableCell>
+      <TableCell className="hidden lg:table-cell text-sm text-green-700 truncate max-w-[180px]">{q.bonne_reponse}</TableCell>
+      <TableCell>
+        <div className="flex gap-1">
+          <Button variant="outline" size="icon" className="h-7 w-7" onClick={() => onEdit(q)}>
+            <Pencil className="h-3.5 w-3.5" />
+          </Button>
+          <Button variant="outline" size="icon" className="h-7 w-7 text-destructive" onClick={() => onDelete(q)}>
+            <Trash2 className="h-3.5 w-3.5" />
+          </Button>
+        </div>
+      </TableCell>
+    </TableRow>
+  );
+};
+
 const AdminQuiz = () => {
   const { user } = useAuth();
   const [loading, setLoading] = useState(true);
