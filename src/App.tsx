@@ -50,6 +50,7 @@ const App = () => (
             {/* Public routes */}
             <Route path="/" element={<Index />} />
             <Route path="/connexion" element={<RedirectIfAuth><Connexion /></RedirectIfAuth>} />
+            <Route path="/inscription" element={<RedirectIfAuth><Inscription /></RedirectIfAuth>} />
             <Route path="/verifier-email" element={<VerifierEmail />} />
             <Route path="/reset-password" element={<ResetPassword />} />
             <Route path="/tarifs" element={<Tarifs />} />
