@@ -1,16 +1,51 @@
-import { useEffect, useState, useMemo } from 'react';
+import { useEffect, useState, useMemo, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
-import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
-import { Progress } from '@/components/ui/progress';
 import { Switch } from '@/components/ui/switch';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
+import { Label } from '@/components/ui/label';
+import { Checkbox } from '@/components/ui/checkbox';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from '@/components/ui/dialog';
 import { toast } from '@/hooks/use-toast';
-import { BookOpen, ExternalLink, Eye, AlertTriangle } from 'lucide-react';
+import {
+  Library,
+  Plus,
+  Pencil,
+  Trash2,
+  GripVertical,
+  Save,
+  X,
+  AlertTriangle,
+} from 'lucide-react';
+import {
+  DndContext,
+  closestCenter,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  type DragEndEvent,
+} from '@dnd-kit/core';
+import {
+  SortableContext,
+  verticalListSortingStrategy,
+  useSortable,
+  arrayMove,
+} from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
 
+// ─── Types ───
 interface ModuleRow {
   id: string;
   titre: string;
@@ -18,35 +53,184 @@ interface ModuleRow {
   is_published: boolean;
   order: number;
   total_step: number;
+  accessibilite: string[];
+  text_resultat_expert: string | null;
+  text_resultat_moyen: string | null;
+  text_resultat_faible: string | null;
 }
 
-interface ProgressionRow {
-  module_id: string;
-  user_id: string;
-  completion_date: string | null;
+interface ModuleStats extends ModuleRow {
+  contenuCount: number;
+  quizCount: number;
+  rate: number;
 }
 
-interface ResultRow {
-  module_id: string;
-  pourcentage: number;
+const PLANS = ['nouveau', 'essentiel', 'pro', 'expert'];
+
+function slugify(text: string) {
+  return text
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/(^-|-$)/g, '');
 }
 
-interface ContenuRow {
-  module_id: string;
+// ─── Sortable Row ───
+function SortableModuleRow({
+  mod,
+  reorderMode,
+  onEdit,
+  onDelete,
+  onToggle,
+}: {
+  mod: ModuleStats;
+  reorderMode: boolean;
+  onEdit: () => void;
+  onDelete: () => void;
+  onToggle: (checked: boolean) => void;
+}) {
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({ id: mod.id, disabled: !reorderMode });
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    opacity: isDragging ? 0.5 : 1,
+  };
+
+  return (
+    <div
+      ref={setNodeRef}
+      style={style}
+      className="flex items-center gap-3 rounded-lg border border-border bg-background p-4 shadow-sm"
+    >
+      {reorderMode && (
+        <button
+          {...attributes}
+          {...listeners}
+          className="cursor-grab active:cursor-grabbing text-muted-foreground hover:text-foreground touch-none"
+        >
+          <GripVertical className="h-5 w-5" />
+        </button>
+      )}
+
+      {/* Order badge */}
+      <Badge variant="outline" className="shrink-0 font-mono text-xs w-8 justify-center">
+        {String(mod.order).padStart(2, '0')}
+      </Badge>
+
+      {/* Title */}
+      <span className="font-heading font-semibold text-foreground flex-1 min-w-0 truncate">
+        {mod.titre}
+      </span>
+
+      {/* Status */}
+      <Badge
+        className={`shrink-0 text-xs ${
+          mod.is_published
+            ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200'
+            : 'bg-muted text-muted-foreground'
+        }`}
+      >
+        {mod.is_published ? 'Publié' : 'Brouillon'}
+      </Badge>
+
+      {/* Stats */}
+      <span className="hidden md:inline text-xs text-muted-foreground whitespace-nowrap">
+        {mod.contenuCount} étapes
+      </span>
+      <span className="hidden md:inline text-xs text-muted-foreground whitespace-nowrap">
+        {mod.quizCount} questions
+      </span>
+      <span className="hidden lg:inline text-xs text-muted-foreground whitespace-nowrap">
+        {mod.rate}%
+      </span>
+
+      {!reorderMode && (
+        <div className="flex items-center gap-2 shrink-0">
+          <Switch
+            checked={mod.is_published}
+            onCheckedChange={onToggle}
+          />
+          <Button variant="outline" size="icon" className="h-8 w-8" onClick={onEdit}>
+            <Pencil className="h-3.5 w-3.5" />
+          </Button>
+          <Button
+            variant="outline"
+            size="icon"
+            className="h-8 w-8 text-destructive hover:text-destructive"
+            onClick={onDelete}
+          >
+            <Trash2 className="h-3.5 w-3.5" />
+          </Button>
+        </div>
+      )}
+    </div>
+  );
 }
 
-const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL as string;
-const PROJECT_ID = import.meta.env.VITE_SUPABASE_PROJECT_ID as string;
-
+// ─── Main Page ───
 const AdminModules = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
 
   const [loading, setLoading] = useState(true);
   const [modules, setModules] = useState<ModuleRow[]>([]);
-  const [progressions, setProgressions] = useState<ProgressionRow[]>([]);
-  const [results, setResults] = useState<ResultRow[]>([]);
-  const [contenus, setContenus] = useState<ContenuRow[]>([]);
+  const [contenus, setContenus] = useState<{ module_id: string }[]>([]);
+  const [quizzes, setQuizzes] = useState<{ module_id: string }[]>([]);
+  const [progressions, setProgressions] = useState<{ module_id: string; user_id: string; completion_date: string | null }[]>([]);
+
+  // Reorder state
+  const [reorderMode, setReorderMode] = useState(false);
+  const [orderedModules, setOrderedModules] = useState<ModuleRow[]>([]);
+  const [originalOrder, setOriginalOrder] = useState<ModuleRow[]>([]);
+
+  // Edit / Add modal
+  const [editModule, setEditModule] = useState<ModuleRow | null>(null);
+  const [isAddMode, setIsAddMode] = useState(false);
+  const [formData, setFormData] = useState({
+    titre: '',
+    module_slug: '',
+    accessibilite: [] as string[],
+    text_resultat_expert: '',
+    text_resultat_moyen: '',
+    text_resultat_faible: '',
+    is_published: false,
+  });
+  const [slugManual, setSlugManual] = useState(false);
+  const [saving, setSaving] = useState(false);
+
+  // Delete modal
+  const [deleteModule, setDeleteModule] = useState<ModuleRow | null>(null);
+  const [deleteConfirm, setDeleteConfirm] = useState('');
+  const [deleting, setDeleting] = useState(false);
+
+  const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 5 } }));
+
+  // ─── Fetch ───
+  const fetchData = useCallback(async () => {
+    if (!user) return;
+    setLoading(true);
+    const [mRes, cRes, qRes, pRes] = await Promise.all([
+      supabase.from('modules').select('id, titre, module_slug, is_published, order, total_step, accessibilite, text_resultat_expert, text_resultat_moyen, text_resultat_faible').order('order', { ascending: true }),
+      supabase.from('contenus').select('module_id'),
+      supabase.from('quizz').select('module_id'),
+      supabase.from('progressions').select('module_id, user_id, completion_date'),
+    ]);
+    const mods = (mRes.data ?? []) as ModuleRow[];
+    setModules(mods);
+    setContenus(cRes.data ?? []);
+    setQuizzes(qRes.data ?? []);
+    setProgressions(pRes.data ?? []);
+    setLoading(false);
+  }, [user]);
 
   useEffect(() => {
     if (!user) return;
@@ -57,44 +241,65 @@ const AdminModules = () => {
         navigate('/dashboard', { replace: true });
         return;
       }
-      setLoading(true);
-      const [mRes, pRes, rRes, cRes] = await Promise.all([
-        supabase.from('modules').select('id, titre, module_slug, is_published, order, total_step').order('order', { ascending: true }),
-        supabase.from('progressions').select('module_id, user_id, completion_date'),
-        supabase.from('resultat_quiz').select('module_id, pourcentage'),
-        supabase.from('contenus').select('module_id'),
-      ]);
-      setModules(mRes.data as ModuleRow[] ?? []);
-      setProgressions(pRes.data ?? []);
-      setResults(rRes.data ?? []);
-      setContenus(cRes.data ?? []);
-      setLoading(false);
+      fetchData();
     };
     init();
-  }, [user, navigate]);
+  }, [user, navigate, fetchData]);
 
-  // Stats per module
-  const moduleStats = useMemo(() => {
+  // ─── Computed stats ───
+  const moduleStats: ModuleStats[] = useMemo(() => {
     return modules.map((mod) => {
+      const contenuCount = contenus.filter((c) => c.module_id === mod.id).length;
+      const quizCount = quizzes.filter((q) => q.module_id === mod.id).length;
       const modProgs = progressions.filter((p) => p.module_id === mod.id);
       const startedUsers = new Set(modProgs.map((p) => p.user_id)).size;
       const completedUsers = new Set(modProgs.filter((p) => !!p.completion_date).map((p) => p.user_id)).size;
       const rate = startedUsers > 0 ? Math.round((completedUsers / startedUsers) * 100) : 0;
-
-      const modResults = results.filter((r) => r.module_id === mod.id);
-      const avgScore = modResults.length > 0
-        ? Math.round(modResults.reduce((a, r) => a + Number(r.pourcentage), 0) / modResults.length)
-        : null;
-
-      const contenuCount = contenus.filter((c) => c.module_id === mod.id).length;
-      const mismatch = contenuCount !== mod.total_step;
-
-      return { ...mod, startedUsers, completedUsers, rate, avgScore, contenuCount, mismatch };
+      return { ...mod, contenuCount, quizCount, rate };
     });
-  }, [modules, progressions, results, contenus]);
+  }, [modules, contenus, quizzes, progressions]);
 
-  const mismatchModules = moduleStats.filter((m) => m.mismatch);
+  const displayList = reorderMode ? orderedModules : modules;
 
+  // ─── Reorder ───
+  const enterReorder = () => {
+    setOriginalOrder([...modules]);
+    setOrderedModules([...modules]);
+    setReorderMode(true);
+  };
+
+  const cancelReorder = () => {
+    setReorderMode(false);
+    setOrderedModules([]);
+  };
+
+  const handleDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event;
+    if (!over || active.id === over.id) return;
+    setOrderedModules((prev) => {
+      const oldIdx = prev.findIndex((m) => m.id === active.id);
+      const newIdx = prev.findIndex((m) => m.id === over.id);
+      return arrayMove(prev, oldIdx, newIdx);
+    });
+  };
+
+  const saveOrder = async () => {
+    setSaving(true);
+    const updates = orderedModules.map((m, i) => ({
+      id: m.id,
+      order: i + 1,
+    }));
+    // Update each module order
+    for (const u of updates) {
+      await supabase.from('modules').update({ order: u.order } as any).eq('id', u.id);
+    }
+    setModules(orderedModules.map((m, i) => ({ ...m, order: i + 1 })));
+    setReorderMode(false);
+    setSaving(false);
+    toast({ title: 'Ordre enregistré ✓' });
+  };
+
+  // ─── Toggle publish ───
   const handleToggle = async (mod: ModuleRow, checked: boolean) => {
     const { error } = await supabase.from('modules').update({ is_published: checked } as any).eq('id', mod.id);
     if (error) {
@@ -105,114 +310,392 @@ const AdminModules = () => {
     }
   };
 
+  // ─── Edit / Add modal ───
+  const openEdit = (mod: ModuleRow) => {
+    setEditModule(mod);
+    setIsAddMode(false);
+    setSlugManual(false);
+    setFormData({
+      titre: mod.titre,
+      module_slug: mod.module_slug,
+      accessibilite: mod.accessibilite ?? [],
+      text_resultat_expert: mod.text_resultat_expert ?? '',
+      text_resultat_moyen: mod.text_resultat_moyen ?? '',
+      text_resultat_faible: mod.text_resultat_faible ?? '',
+      is_published: mod.is_published,
+    });
+  };
+
+  const openAdd = () => {
+    setEditModule(null);
+    setIsAddMode(true);
+    setSlugManual(false);
+    setFormData({
+      titre: '',
+      module_slug: '',
+      accessibilite: [],
+      text_resultat_expert: '',
+      text_resultat_moyen: '',
+      text_resultat_faible: '',
+      is_published: false,
+    });
+  };
+
+  const closeModal = () => {
+    setEditModule(null);
+    setIsAddMode(false);
+  };
+
+  const handleTitleChange = (val: string) => {
+    setFormData((prev) => ({
+      ...prev,
+      titre: val,
+      module_slug: slugManual ? prev.module_slug : slugify(val),
+    }));
+  };
+
+  const toggleAccess = (plan: string) => {
+    setFormData((prev) => ({
+      ...prev,
+      accessibilite: prev.accessibilite.includes(plan)
+        ? prev.accessibilite.filter((p) => p !== plan)
+        : [...prev.accessibilite, plan],
+    }));
+  };
+
+  const saveModule = async () => {
+    if (!formData.titre.trim() || !formData.module_slug.trim()) {
+      toast({ title: 'Le titre et le slug sont obligatoires', variant: 'destructive' });
+      return;
+    }
+    setSaving(true);
+
+    if (isAddMode) {
+      const maxOrder = modules.reduce((max, m) => Math.max(max, m.order), 0);
+      const { error } = await supabase.from('modules').insert({
+        titre: formData.titre,
+        module_slug: formData.module_slug,
+        accessibilite: formData.accessibilite,
+        text_resultat_expert: formData.text_resultat_expert || null,
+        text_resultat_moyen: formData.text_resultat_moyen || null,
+        text_resultat_faible: formData.text_resultat_faible || null,
+        is_published: formData.is_published,
+        order: maxOrder + 1,
+        total_step: 0,
+      });
+      if (error) {
+        toast({ title: 'Erreur', description: error.message, variant: 'destructive' });
+      } else {
+        toast({ title: 'Module créé ✓' });
+        closeModal();
+        fetchData();
+      }
+    } else if (editModule) {
+      const { error } = await supabase.from('modules').update({
+        titre: formData.titre,
+        module_slug: formData.module_slug,
+        accessibilite: formData.accessibilite,
+        text_resultat_expert: formData.text_resultat_expert || null,
+        text_resultat_moyen: formData.text_resultat_moyen || null,
+        text_resultat_faible: formData.text_resultat_faible || null,
+        is_published: formData.is_published,
+      } as any).eq('id', editModule.id);
+      if (error) {
+        toast({ title: 'Erreur', description: error.message, variant: 'destructive' });
+      } else {
+        toast({ title: 'Module mis à jour ✓' });
+        closeModal();
+        fetchData();
+      }
+    }
+    setSaving(false);
+  };
+
+  // ─── Delete ───
+  const confirmDelete = async () => {
+    if (!deleteModule) return;
+    setDeleting(true);
+    // Delete related data first (in case no CASCADE)
+    await Promise.all([
+      supabase.from('resultat_quiz').delete().eq('module_id', deleteModule.id),
+      supabase.from('progressions').delete().eq('module_id', deleteModule.id),
+      supabase.from('quizz').delete().eq('module_id', deleteModule.id),
+      supabase.from('contenus').delete().eq('module_id', deleteModule.id),
+    ]);
+    const { error } = await supabase.from('modules').delete().eq('id', deleteModule.id);
+    if (error) {
+      toast({ title: 'Erreur', description: error.message, variant: 'destructive' });
+    } else {
+      toast({ title: 'Module supprimé' });
+      setDeleteModule(null);
+      setDeleteConfirm('');
+      fetchData();
+    }
+    setDeleting(false);
+  };
+
+  // ─── Stats helper for display list ───
+  const getStats = (id: string) => moduleStats.find((m) => m.id === id);
+
+  // ─── Render ───
   if (loading) {
     return (
-      <div className="space-y-6">
+      <div className="space-y-4">
         <Skeleton className="h-9 w-56" />
-        <div className="grid gap-4 sm:grid-cols-2">
-          {Array.from({ length: 4 }).map((_, i) => <Skeleton key={i} className="h-56 rounded-lg" />)}
-        </div>
+        {Array.from({ length: 4 }).map((_, i) => (
+          <Skeleton key={i} className="h-16 rounded-lg" />
+        ))}
       </div>
     );
   }
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-6">
       {/* Header */}
       <div className="flex items-center justify-between flex-wrap gap-3">
-        <h1 className="font-heading text-3xl font-bold text-foreground flex items-center gap-2">
-          <BookOpen className="h-7 w-7" /> Modules
+        <h1 className="font-heading text-2xl font-bold text-foreground flex items-center gap-2">
+          <Library className="h-6 w-6" /> Modules ({modules.length})
         </h1>
+        <div className="flex items-center gap-3">
+          {reorderMode ? (
+            <>
+              <Button
+                size="sm"
+                className="gap-2"
+                style={{ backgroundColor: 'hsl(0 67% 35%)', color: 'white' }}
+                onClick={saveOrder}
+                disabled={saving}
+              >
+                <Save className="h-4 w-4" /> {saving ? 'Enregistrement…' : 'Enregistrer l\'ordre'}
+              </Button>
+              <Button size="sm" variant="outline" className="gap-2" onClick={cancelReorder}>
+                <X className="h-4 w-4" /> Annuler
+              </Button>
+            </>
+          ) : (
+            <>
+              <Button size="sm" variant="outline" onClick={enterReorder}>
+                Mode réorganisation
+              </Button>
+              <Button
+                size="sm"
+                className="gap-2"
+                style={{ backgroundColor: 'hsl(0 67% 35%)', color: 'white' }}
+                onClick={openAdd}
+              >
+                <Plus className="h-4 w-4" /> Ajouter un module
+              </Button>
+            </>
+          )}
+        </div>
       </div>
 
-      {/* Grid */}
-      <div className="grid gap-4 sm:grid-cols-2">
-        {moduleStats.map((mod, idx) => (
-          <Card key={mod.id} className="border-border bg-background shadow-sm">
-            <CardContent className="p-5 space-y-4">
-              {/* Title + toggle */}
-              <div className="flex items-start justify-between gap-3">
-                <h3 className="font-heading text-base font-semibold text-foreground leading-snug">
-                  <span className="text-muted-foreground mr-1">{idx + 1}.</span>
-                  {mod.titre}
-                </h3>
-                <div className="flex items-center gap-2 shrink-0">
-                  <span className="text-xs text-muted-foreground">{mod.is_published ? 'Publié' : 'Masqué'}</span>
-                  <Switch
-                    checked={mod.is_published}
-                    onCheckedChange={(checked) => handleToggle(mod, checked)}
+      {/* Module list */}
+      {reorderMode ? (
+        <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+          <SortableContext items={orderedModules.map((m) => m.id)} strategy={verticalListSortingStrategy}>
+            <div className="space-y-2">
+              {orderedModules.map((mod, idx) => {
+                const stats = getStats(mod.id);
+                return (
+                  <SortableModuleRow
+                    key={mod.id}
+                    mod={{ ...(stats ?? { ...mod, contenuCount: 0, quizCount: 0, rate: 0 }), order: idx + 1 }}
+                    reorderMode
+                    onEdit={() => {}}
+                    onDelete={() => {}}
+                    onToggle={() => {}}
                   />
-                </div>
-              </div>
-
-              {/* Stats */}
-              <div className="grid grid-cols-2 gap-2 text-sm">
-                <div>
-                  <p className="text-muted-foreground">Commencé par</p>
-                  <p className="font-semibold text-foreground">{mod.startedUsers} utilisateur{mod.startedUsers > 1 ? 's' : ''}</p>
-                </div>
-                <div>
-                  <p className="text-muted-foreground">Terminé par</p>
-                  <p className="font-semibold text-foreground">{mod.completedUsers} utilisateur{mod.completedUsers > 1 ? 's' : ''}</p>
-                </div>
-                <div>
-                  <p className="text-muted-foreground">Taux complétion</p>
-                  <p className="font-semibold text-foreground">{mod.rate}%</p>
-                </div>
-                <div>
-                  <p className="text-muted-foreground">Score moyen quiz</p>
-                  <p className="font-semibold text-foreground">{mod.avgScore != null ? `${mod.avgScore}%` : '—'}</p>
-                </div>
-              </div>
-
-              <Progress value={mod.rate} className="h-2" />
-
-              {/* Mismatch warning */}
-              {mod.mismatch && (
-                <div className="flex items-center gap-2 rounded-md bg-orange-100 dark:bg-orange-900/30 px-3 py-2 text-xs text-orange-800 dark:text-orange-300">
-                  <AlertTriangle className="h-3.5 w-3.5 shrink-0" />
-                  <span>total_step ({mod.total_step}) ≠ contenus réels ({mod.contenuCount})</span>
-                </div>
-              )}
-
-              {/* Actions */}
-              <div className="flex gap-2">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="gap-1.5 flex-1"
-                  asChild
-                >
-                  <a href={`/module/${mod.module_slug}`} target="_blank" rel="noopener noreferrer">
-                    <Eye className="h-3.5 w-3.5" /> Prévisualiser
-                  </a>
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-        ))}
-      </div>
-
-      {/* Content mismatch section */}
-      {mismatchModules.length > 0 && (
-        <section>
-          <h2 className="font-heading text-xl font-bold text-foreground mb-4 flex items-center gap-2">
-            <AlertTriangle className="h-5 w-5 text-orange-500" /> Contenu manquant
-          </h2>
-          <Card className="border-orange-200 dark:border-orange-800 bg-orange-50 dark:bg-orange-950/20">
-            <CardContent className="p-4 space-y-2">
-              {mismatchModules.map((mod) => (
-                <div key={mod.id} className="flex items-center justify-between text-sm">
-                  <span className="font-medium text-foreground">{mod.titre}</span>
-                  <Badge className="bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-200">
-                    {mod.contenuCount} contenus / {mod.total_step} étapes déclarées
-                  </Badge>
-                </div>
-              ))}
-            </CardContent>
-          </Card>
-        </section>
+                );
+              })}
+            </div>
+          </SortableContext>
+        </DndContext>
+      ) : (
+        <div className="space-y-2">
+          {moduleStats.map((mod) => (
+            <SortableModuleRow
+              key={mod.id}
+              mod={mod}
+              reorderMode={false}
+              onEdit={() => openEdit(mod)}
+              onDelete={() => { setDeleteModule(mod); setDeleteConfirm(''); }}
+              onToggle={(checked) => handleToggle(mod, checked)}
+            />
+          ))}
+        </div>
       )}
+
+      {modules.length === 0 && (
+        <p className="text-center text-muted-foreground py-10">Aucun module pour le moment.</p>
+      )}
+
+      {/* ─── Edit / Add Modal ─── */}
+      <Dialog open={!!editModule || isAddMode} onOpenChange={(open) => { if (!open) closeModal(); }}>
+        <DialogContent className="max-w-lg max-h-[85vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="font-heading">
+              {isAddMode ? '➕ Ajouter un module' : '✏️ Modifier le module'}
+            </DialogTitle>
+          </DialogHeader>
+
+          <div className="space-y-4 py-2">
+            {/* Titre */}
+            <div className="space-y-1.5">
+              <Label htmlFor="mod-title">Titre *</Label>
+              <Input
+                id="mod-title"
+                value={formData.titre}
+                onChange={(e) => handleTitleChange(e.target.value)}
+                placeholder="Ex : Comprendre l'impôt sur le revenu"
+              />
+            </div>
+
+            {/* Slug */}
+            <div className="space-y-1.5">
+              <Label htmlFor="mod-slug">Slug</Label>
+              <Input
+                id="mod-slug"
+                value={formData.module_slug}
+                onChange={(e) => {
+                  setSlugManual(true);
+                  setFormData((prev) => ({ ...prev, module_slug: e.target.value }));
+                }}
+                placeholder="comprendre-limpot-sur-le-revenu"
+              />
+              {!isAddMode && slugManual && (
+                <p className="text-xs text-orange-600 flex items-center gap-1">
+                  <AlertTriangle className="h-3 w-3" />
+                  Changer le slug cassera les liens existants vers ce module.
+                </p>
+              )}
+            </div>
+
+            {/* Étapes (read-only) */}
+            {!isAddMode && editModule && (
+              <div className="space-y-1.5">
+                <Label>Nombre d'étapes (contenus)</Label>
+                <Input
+                  value={`${contenus.filter((c) => c.module_id === editModule.id).length} contenus`}
+                  disabled
+                  className="opacity-60"
+                />
+              </div>
+            )}
+
+            {/* Accessibilité */}
+            <div className="space-y-1.5">
+              <Label>Accessibilité</Label>
+              <div className="flex flex-wrap gap-3">
+                {PLANS.map((plan) => (
+                  <label key={plan} className="flex items-center gap-2 text-sm capitalize cursor-pointer">
+                    <Checkbox
+                      checked={formData.accessibilite.includes(plan)}
+                      onCheckedChange={() => toggleAccess(plan)}
+                    />
+                    {plan}
+                  </label>
+                ))}
+              </div>
+            </div>
+
+            {/* Résultats texts */}
+            <div className="space-y-1.5">
+              <Label htmlFor="mod-expert">Texte résultat expert (≥ 80%)</Label>
+              <Textarea
+                id="mod-expert"
+                value={formData.text_resultat_expert}
+                onChange={(e) => setFormData((prev) => ({ ...prev, text_resultat_expert: e.target.value }))}
+                rows={2}
+              />
+            </div>
+            <div className="space-y-1.5">
+              <Label htmlFor="mod-moyen">Texte résultat moyen (50-79%)</Label>
+              <Textarea
+                id="mod-moyen"
+                value={formData.text_resultat_moyen}
+                onChange={(e) => setFormData((prev) => ({ ...prev, text_resultat_moyen: e.target.value }))}
+                rows={2}
+              />
+            </div>
+            <div className="space-y-1.5">
+              <Label htmlFor="mod-faible">Texte résultat débutant (&lt; 50%)</Label>
+              <Textarea
+                id="mod-faible"
+                value={formData.text_resultat_faible}
+                onChange={(e) => setFormData((prev) => ({ ...prev, text_resultat_faible: e.target.value }))}
+                rows={2}
+              />
+            </div>
+
+            {/* Statut */}
+            <div className="space-y-1.5">
+              <Label>Statut</Label>
+              <RadioGroup
+                value={formData.is_published ? 'published' : 'draft'}
+                onValueChange={(v) => setFormData((prev) => ({ ...prev, is_published: v === 'published' }))}
+                className="flex gap-4"
+              >
+                <label className="flex items-center gap-2 text-sm cursor-pointer">
+                  <RadioGroupItem value="published" /> Publié
+                </label>
+                <label className="flex items-center gap-2 text-sm cursor-pointer">
+                  <RadioGroupItem value="draft" /> Brouillon
+                </label>
+              </RadioGroup>
+            </div>
+          </div>
+
+          <DialogFooter className="gap-2">
+            <Button variant="outline" onClick={closeModal}>Annuler</Button>
+            <Button
+              onClick={saveModule}
+              disabled={saving}
+              style={{ backgroundColor: 'hsl(0 67% 35%)', color: 'white' }}
+            >
+              {saving ? 'Enregistrement…' : isAddMode ? '➕ Créer le module' : '💾 Enregistrer'}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* ─── Delete Modal ─── */}
+      <Dialog open={!!deleteModule} onOpenChange={(open) => { if (!open) { setDeleteModule(null); setDeleteConfirm(''); } }}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle className="font-heading flex items-center gap-2 text-destructive">
+              <AlertTriangle className="h-5 w-5" /> Supprimer ce module
+            </DialogTitle>
+          </DialogHeader>
+          <div className="space-y-3 py-2">
+            <p className="text-sm text-muted-foreground">
+              ⚠️ Supprimer ce module supprimera aussi tous ses contenus, quiz et progressions.
+              <br />
+              <strong>Cette action est irréversible.</strong>
+            </p>
+            <p className="text-sm">
+              Tapez <strong className="text-foreground">« {deleteModule?.titre} »</strong> pour confirmer :
+            </p>
+            <Input
+              value={deleteConfirm}
+              onChange={(e) => setDeleteConfirm(e.target.value)}
+              placeholder={deleteModule?.titre}
+            />
+          </div>
+          <DialogFooter className="gap-2">
+            <Button variant="outline" onClick={() => { setDeleteModule(null); setDeleteConfirm(''); }}>
+              Annuler
+            </Button>
+            <Button
+              variant="destructive"
+              disabled={deleteConfirm !== deleteModule?.titre || deleting}
+              onClick={confirmDelete}
+            >
+              {deleting ? 'Suppression…' : 'Supprimer définitivement'}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
