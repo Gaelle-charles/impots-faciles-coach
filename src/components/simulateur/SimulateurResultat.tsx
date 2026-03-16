@@ -1,9 +1,11 @@
 import { SimulateurResult } from "@/hooks/useSimulateurFiscal";
+import { SimulateurFormData } from "@/hooks/useSimulateurFiscal";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Copy, RotateCcw } from "lucide-react";
+import { Copy, RotateCcw, ArrowRight } from "lucide-react";
 import { toast } from "sonner";
+import { Link } from "react-router-dom";
 
 const fmt = (n: number) =>
   n.toLocaleString("fr-FR", { maximumFractionDigits: 0 });
