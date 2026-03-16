@@ -125,6 +125,7 @@ const Quizz = () => {
     setSelectedOption(null);
     setValidated(false);
     setScore(0);
+    setReponsesUtilisateur([]);
     setFinished(false);
   };
 
