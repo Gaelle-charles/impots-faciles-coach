@@ -202,9 +202,12 @@ const Dashboard = () => {
                   </p>
 
                   {lastQuiz && (
-                    <p className="text-xs text-muted-foreground">
+                    <button
+                      className="text-xs text-muted-foreground hover:text-primary transition-colors cursor-pointer text-left"
+                      onClick={() => navigate(`/quizz/${mod.module_slug}`)}
+                    >
                       🎯 Quiz : <span className="font-semibold text-foreground">{Math.round(Number(lastQuiz.pourcentage))}%</span>
-                    </p>
+                    </button>
                   )}
 
                   <Button
