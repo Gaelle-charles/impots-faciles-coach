@@ -8,8 +8,10 @@ const navLinks = [
 ];
 
 const legalLinks = [
-  { label: 'CGV', to: '/cgv' },
   { label: 'Mentions légales', to: '/mentions-legales' },
+  { label: 'Politique de confidentialité', to: '/confidentialite' },
+  { label: 'CGU', to: '/cgu' },
+  { label: 'CGV', to: '/cgv' },
 ];
 
 export function Footer() {
