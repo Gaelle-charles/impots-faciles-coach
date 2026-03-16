@@ -312,6 +312,7 @@ const Module = () => {
           totalSteps={totalSteps}
           progressPercent={progressPercent}
           isLastStep={isLastStep}
+          isCompleted={isCompleted}
           onPrev={handlePrev}
           onNext={handleNext}
         />
