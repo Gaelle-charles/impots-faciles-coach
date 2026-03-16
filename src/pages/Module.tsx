@@ -68,27 +68,46 @@ const Module = () => {
 
     setLoading(true);
     setError(null);
+    setAccessDenied(false);
 
-    // 1. Fetch module first (needed for module_id)
-    const { data: mod, error: modError } = await supabase
-      .from('modules')
-      .select('*')
-      .eq('module_slug', slug)
-      .maybeSingle();
+    // 1. Fetch module + profile in parallel
+    const [modRes, profileRes] = await Promise.all([
+      supabase
+        .from('modules')
+        .select('*')
+        .eq('module_slug', slug)
+        .maybeSingle(),
+      supabase
+        .from('profiles')
+        .select('plan')
+        .eq('id', user.id)
+        .single(),
+    ]);
 
-    if (modError) {
+    if (modRes.error) {
       setError('Erreur lors du chargement du module.');
       setLoading(false);
       return;
     }
 
-    if (!mod) {
+    if (!modRes.data) {
       toast({ title: 'Module introuvable', description: 'Ce module n\'existe pas.', variant: 'destructive' });
       navigate('/dashboard', { replace: true });
       return;
     }
 
+    const mod = modRes.data;
     setModule(mod);
+
+    // Access control: check user plan against module.accessibilite
+    const userPlan = profileRes.data?.plan ?? 'nouveau';
+    setProfile(profileRes.data ?? { plan: userPlan });
+
+    if (mod.accessibilite && mod.accessibilite.length > 0 && !mod.accessibilite.includes(userPlan)) {
+      setAccessDenied(true);
+      setLoading(false);
+      return;
+    }
 
     // 2. Fetch contenus + progression in parallel
     const [contRes, progRes] = await Promise.all([
@@ -122,7 +141,6 @@ const Module = () => {
     if (progRes.data) {
       setProgression(progRes.data);
     } else {
-      // Create initial progression
       const { data: newProg, error: insertErr } = await supabase
         .from('progressions')
         .insert({ module_id: mod.id, user_id: user.id, step: 0 })
