@@ -48,7 +48,8 @@ export function ModuleSidebarContent({
           {contenus.map((c, i) => {
             const isActive = i === currentStep;
             const isDone = completionDate ? true : i < currentStep;
-            const isLocked = !isDone && !isActive;
+            const isReachable = i <= currentStep || !!completionDate;
+            const isLocked = !isReachable;
 
             return (
               <li key={c.id}>

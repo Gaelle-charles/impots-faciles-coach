@@ -162,10 +162,12 @@ const Module = () => {
 
   const handleComplete = async () => {
     if (!progression) return;
+    const finalStep = module?.total_step ?? totalSteps;
     await supabase
       .from('progressions')
-      .update({ completion_date: new Date().toISOString() })
+      .update({ step: finalStep, completion_date: new Date().toISOString() })
       .eq('id', progression.id);
+    setProgression(prev => prev ? { ...prev, step: finalStep, completion_date: new Date().toISOString() } : prev);
     setShowCompletion(true);
   };
 
