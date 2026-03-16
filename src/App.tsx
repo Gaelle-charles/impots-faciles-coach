@@ -25,6 +25,12 @@ import Admin from "./pages/Admin";
 import AdminLogin from "./pages/AdminLogin";
 import AdminUsers from "./pages/AdminUsers";
 import AdminModules from "./pages/AdminModules";
+import AdminStats from "./pages/AdminStats";
+import AdminQuiz from "./pages/AdminQuiz";
+import AdminContenus from "./pages/AdminContenus";
+import AdminSubscriptions from "./pages/AdminSubscriptions";
+import AdminEmails from "./pages/AdminEmails";
+import AdminSettings from "./pages/AdminSettings";
 import AuthCallback from "./pages/AuthCallback";
 import NotFound from "./pages/NotFound";
 
