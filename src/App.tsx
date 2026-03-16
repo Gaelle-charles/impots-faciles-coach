@@ -28,6 +28,7 @@ import AdminModules from "./pages/AdminModules";
 import AdminStats from "./pages/AdminStats";
 import AdminQuiz from "./pages/AdminQuiz";
 import AdminContenus from "./pages/AdminContenus";
+import AdminModuleContenus from "./pages/AdminModuleContenus";
 import AdminSubscriptions from "./pages/AdminSubscriptions";
 import AdminEmails from "./pages/AdminEmails";
 import AdminSettings from "./pages/AdminSettings";
