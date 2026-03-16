@@ -62,13 +62,18 @@ export function AppSidebar({ collapsed = false }: { collapsed?: boolean }) {
 
       {/* User info */}
       {profile && (
-        <div className="mx-4 mb-4 rounded-lg bg-sidebar-muted p-3">
-          <p className="text-sm font-semibold truncate">
-            {profile.prenom ?? ''} {profile.nom ?? ''}
-          </p>
-          <Badge className="mt-1 bg-sidebar-primary text-sidebar-primary-foreground text-xs capitalize">
-            {profile.plan}
-          </Badge>
+        <div className="mx-4 mb-4 rounded-lg bg-sidebar-muted p-3 flex items-center gap-3">
+          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-accent text-accent-foreground font-heading font-bold text-sm">
+            {(profile.prenom?.[0] ?? '').toUpperCase()}{(profile.nom?.[0] ?? '').toUpperCase()}
+          </div>
+          <div className="min-w-0">
+            <p className="text-sm font-semibold truncate">
+              {profile.prenom ?? ''} {profile.nom ?? ''}
+            </p>
+            <Badge className="mt-0.5 bg-sidebar-primary text-sidebar-primary-foreground text-xs capitalize">
+              {profile.plan}
+            </Badge>
+          </div>
         </div>
       )}
 
