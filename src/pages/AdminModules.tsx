@@ -112,52 +112,61 @@ function SortableModuleRow({
     <div
       ref={setNodeRef}
       style={style}
-      className="flex items-center gap-3 rounded-lg border border-border bg-background p-4 shadow-sm"
+      className="flex flex-col lg:flex-row lg:items-center gap-3 rounded-lg border border-border bg-background p-4 shadow-sm"
     >
-      {reorderMode && (
-        <button
-          {...attributes}
-          {...listeners}
-          className="cursor-grab active:cursor-grabbing text-muted-foreground hover:text-foreground touch-none"
+      <div className="flex items-center gap-3 min-w-0">
+        {reorderMode && (
+          <button
+            {...attributes}
+            {...listeners}
+            className="cursor-grab active:cursor-grabbing text-muted-foreground hover:text-foreground touch-none"
+          >
+            <GripVertical className="h-5 w-5" />
+          </button>
+        )}
+
+        {/* Order badge */}
+        <Badge variant="outline" className="shrink-0 font-mono text-xs w-8 justify-center">
+          {String(mod.order).padStart(2, '0')}
+        </Badge>
+
+        {/* Status */}
+        <Badge
+          className={`shrink-0 text-xs ${
+            mod.is_published
+              ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200'
+              : 'bg-muted text-muted-foreground'
+          }`}
         >
-          <GripVertical className="h-5 w-5" />
-        </button>
-      )}
+          {mod.is_published ? 'Publié' : 'Brouillon'}
+        </Badge>
 
-      {/* Order badge */}
-      <Badge variant="outline" className="shrink-0 font-mono text-xs w-8 justify-center">
-        {String(mod.order).padStart(2, '0')}
-      </Badge>
+        {/* Title */}
+        <span className="font-heading font-semibold text-foreground min-w-0 truncate">
+          {mod.titre}
+        </span>
 
-      {/* Title */}
-      <span className="font-heading font-semibold text-foreground flex-1 min-w-0 truncate">
-        {mod.titre}
-      </span>
+        {/* Stats inline on larger screens */}
+        <span className="hidden lg:inline text-xs text-muted-foreground whitespace-nowrap">
+          {mod.contenuCount} étapes
+        </span>
+        <span className="hidden lg:inline text-xs text-muted-foreground whitespace-nowrap">
+          {mod.quizCount} questions
+        </span>
+        <span className="hidden xl:inline text-xs text-muted-foreground whitespace-nowrap">
+          {mod.rate}%
+        </span>
+      </div>
 
-      {/* Status */}
-      <Badge
-        className={`shrink-0 text-xs ${
-          mod.is_published
-            ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200'
-            : 'bg-muted text-muted-foreground'
-        }`}
-      >
-        {mod.is_published ? 'Publié' : 'Brouillon'}
-      </Badge>
-
-      {/* Stats */}
-      <span className="hidden md:inline text-xs text-muted-foreground whitespace-nowrap">
-        {mod.contenuCount} étapes
-      </span>
-      <span className="hidden md:inline text-xs text-muted-foreground whitespace-nowrap">
-        {mod.quizCount} questions
-      </span>
-      <span className="hidden lg:inline text-xs text-muted-foreground whitespace-nowrap">
-        {mod.rate}%
-      </span>
+      {/* Stats on mobile */}
+      <div className="flex items-center gap-3 text-xs text-muted-foreground lg:hidden pl-11">
+        <span>{mod.contenuCount} étapes</span>
+        <span>{mod.quizCount} questions</span>
+        <span>{mod.rate}%</span>
+      </div>
 
       {!reorderMode && (
-        <div className="flex items-center gap-2 shrink-0 flex-wrap">
+        <div className="flex items-center gap-2 shrink-0 flex-wrap lg:ml-auto pl-11 lg:pl-0">
           <Switch
             checked={mod.is_published}
             onCheckedChange={onToggle}
@@ -168,7 +177,7 @@ function SortableModuleRow({
             className="h-8 gap-1.5 text-xs"
             onClick={onEdit}
           >
-            <Settings className="h-3.5 w-3.5" /> Métadonnées
+            <Settings className="h-3.5 w-3.5" /> <span className="hidden sm:inline">Métadonnées</span>
           </Button>
           <Button
             variant="outline"
