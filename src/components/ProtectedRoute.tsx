@@ -1,11 +1,12 @@
 import { useAuth } from '@/contexts/AuthContext';
-import { Navigate } from 'react-router-dom';
+import { Navigate, useLocation } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import type { ReactNode } from 'react';
 
 export function ProtectedRoute({ children, adminOnly = false }: { children: ReactNode; adminOnly?: boolean }) {
   const { user, loading } = useAuth();
+  const location = useLocation();
   const [role, setRole] = useState<string | null>(null);
   const [roleLoading, setRoleLoading] = useState(false);
 
@@ -32,7 +33,8 @@ export function ProtectedRoute({ children, adminOnly = false }: { children: Reac
   }
 
   if (!user) {
-    return <Navigate to="/connexion" replace />;
+    const redirectPath = location.pathname + location.search + location.hash;
+    return <Navigate to={`/connexion?redirect=${encodeURIComponent(redirectPath)}`} replace />;
   }
 
   if (adminOnly && role !== 'admin') {
