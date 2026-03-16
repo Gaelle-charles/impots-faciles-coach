@@ -56,7 +56,7 @@ const App = () => (
             <Route path="/module/:id" element={<ProtectedRoute><Module /></ProtectedRoute>} />
 
             {/* Admin route */}
-            <Route element={<ProtectedRoute adminOnly><AppLayout /></ProtectedRoute>}>
+            <Route element={<ProtectedRoute adminOnly><AdminLayout /></ProtectedRoute>}>
               <Route path="/admin" element={<Admin />} />
               <Route path="/admin/users" element={<AdminUsers />} />
               <Route path="/admin/modules" element={<AdminModules />} />
