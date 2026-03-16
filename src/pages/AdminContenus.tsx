@@ -279,7 +279,7 @@ const AdminContenus = () => {
             <div className="grid grid-cols-2 gap-3">
               <div className="space-y-1.5">
                 <Label>Module *</Label>
-                <Select value={form.module_id} onValueChange={v => setForm(p => ({ ...p, module_id: v }))}>
+                <Select value={form.module_id} onValueChange={v => setForm(p => ({ ...p, module_id: v, ...(isAdd ? { ordre: getNextOrdreForModule(v) } : {}) }))}>
                   <SelectTrigger><SelectValue /></SelectTrigger>
                   <SelectContent>
                     {modules.map(m => <SelectItem key={m.id} value={m.id}>{m.titre}</SelectItem>)}
