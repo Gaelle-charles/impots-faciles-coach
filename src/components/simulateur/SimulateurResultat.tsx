@@ -1,11 +1,15 @@
-import { SimulateurResult } from "@/hooks/useSimulateurFiscal";
-import { SimulateurFormData } from "@/hooks/useSimulateurFiscal";
+import { useState } from "react";
+import { SimulateurResult, SimulateurFormData } from "@/hooks/useSimulateurFiscal";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Copy, RotateCcw, ArrowRight } from "lucide-react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
+import { Copy, RotateCcw, ArrowRight, Save } from "lucide-react";
 import { toast } from "sonner";
 import { Link } from "react-router-dom";
+import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/contexts/AuthContext";
 
 const fmt = (n: number) =>
   n.toLocaleString("fr-FR", { maximumFractionDigits: 0 });
@@ -14,9 +18,34 @@ interface Props {
   result: SimulateurResult;
   formData: SimulateurFormData;
   onReset: () => void;
+  onSimulationSaved?: () => void;
 }
 
-export default function SimulateurResultat({ result, formData, onReset }: Props) {
+export default function SimulateurResultat({ result, formData, onReset, onSimulationSaved }: Props) {
+  const { user } = useAuth();
+  const [saveOpen, setSaveOpen] = useState(false);
+  const [saveName, setSaveName] = useState("Estimation 2024");
+  const [saving, setSaving] = useState(false);
+
+  const handleSave = async () => {
+    if (!user) return;
+    setSaving(true);
+    const { error } = await supabase.from("simulations" as any).insert({
+      user_id: user.id,
+      nom: saveName,
+      donnees: formData as any,
+      impot_net: result.impotNet,
+      taux_moyen: result.tauxMoyen,
+    });
+    setSaving(false);
+    if (error) {
+      toast.error("Erreur lors de la sauvegarde");
+    } else {
+      toast.success("Simulation sauvegardée ✓");
+      setSaveOpen(false);
+      onSimulationSaved?.();
+    }
+  };
   const handleCopy = () => {
     const text = `Estimation impôt 2025 (revenus 2024)
 Revenu brut : ${fmt(result.revenuBrut)} €
@@ -143,14 +172,41 @@ Taux de prélèvement : ${result.tauxPrelevement}%${result.pfuMontant > 0 ? `\nP
           <p className="font-heading font-bold text-foreground text-lg">{result.tauxPrelevement}%</p>
         </div>
 
-        <div className="flex gap-2">
-          <Button variant="outline" className="flex-1" onClick={handleCopy}>
-            <Copy className="h-4 w-4 mr-1" /> Copier le résumé
-          </Button>
-          <Button variant="outline" className="flex-1" onClick={onReset}>
-            <RotateCcw className="h-4 w-4 mr-1" /> Réinitialiser
+        <div className="flex flex-col gap-2">
+          <div className="flex gap-2">
+            <Button variant="outline" className="flex-1" onClick={handleCopy}>
+              <Copy className="h-4 w-4 mr-1" /> Copier le résumé
+            </Button>
+            <Button variant="outline" className="flex-1" onClick={onReset}>
+              <RotateCcw className="h-4 w-4 mr-1" /> Réinitialiser
+            </Button>
+          </div>
+          <Button className="w-full" onClick={() => setSaveOpen(true)}>
+            <Save className="h-4 w-4 mr-1" /> 💾 Sauvegarder cette simulation
           </Button>
         </div>
+
+        <Dialog open={saveOpen} onOpenChange={setSaveOpen}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Sauvegarder la simulation</DialogTitle>
+            </DialogHeader>
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-foreground">Nom de la simulation</label>
+              <Input
+                value={saveName}
+                onChange={(e) => setSaveName(e.target.value)}
+                placeholder="ex: Estimation 2024"
+              />
+            </div>
+            <DialogFooter>
+              <Button variant="outline" onClick={() => setSaveOpen(false)}>Annuler</Button>
+              <Button onClick={handleSave} disabled={saving || !saveName.trim()}>
+                {saving ? "Sauvegarde…" : "Sauvegarder"}
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
       </Card>
 
       {/* Bloc pédagogique */}

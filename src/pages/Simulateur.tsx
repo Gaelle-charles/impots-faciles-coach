@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { useSimulateurFiscal, defaultFormData, type SimulateurFormData } from "@/hooks/useSimulateurFiscal";
 import SimulateurResultat from "@/components/simulateur/SimulateurResultat";
+import MesSimulations from "@/components/simulateur/MesSimulations";
 import { Minus, Plus, User, Users, Baby } from "lucide-react";
 
 const NumInput = ({
@@ -31,6 +32,7 @@ const NumInput = ({
 
 const Simulateur = () => {
   const [form, setForm] = useState<SimulateurFormData>(defaultFormData);
+  const [refreshKey, setRefreshKey] = useState(0);
   const result = useSimulateurFiscal(form);
 
   const update = useCallback(<K extends keyof SimulateurFormData>(key: K, value: SimulateurFormData[K]) => {
@@ -290,11 +292,19 @@ const Simulateur = () => {
               </AccordionContent>
             </AccordionItem>
           </Accordion>
+
+          {/* Mes simulations sauvegardées */}
+          <MesSimulations onLoad={(data) => setForm(data)} refreshKey={refreshKey} />
         </div>
 
         {/* Right: Results */}
         <div className="lg:w-[40%]">
-          <SimulateurResultat result={result} formData={form} onReset={handleReset} />
+          <SimulateurResultat
+            result={result}
+            formData={form}
+            onReset={handleReset}
+            onSimulationSaved={() => setRefreshKey((k) => k + 1)}
+          />
         </div>
       </div>
     </div>

@@ -294,6 +294,44 @@ export type Database = {
           },
         ]
       }
+      simulations: {
+        Row: {
+          created_at: string | null
+          donnees: Json
+          id: string
+          impot_net: number | null
+          nom: string | null
+          taux_moyen: number | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          donnees: Json
+          id?: string
+          impot_net?: number | null
+          nom?: string | null
+          taux_moyen?: number | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          donnees?: Json
+          id?: string
+          impot_net?: number | null
+          nom?: string | null
+          taux_moyen?: number | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "simulations_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
