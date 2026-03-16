@@ -67,7 +67,7 @@ const AdminContenus = () => {
     setLoading(true);
     const [cRes, mRes] = await Promise.all([
       supabase.from('contenus').select('*').order('ordre', { ascending: true }),
-      supabase.from('modules').select('id, titre').order('order', { ascending: true }),
+      supabase.from('modules').select('id, titre, order').order('order', { ascending: true }),
     ]);
     setContenus(cRes.data ?? []);
     setModules(mRes.data ?? []);
