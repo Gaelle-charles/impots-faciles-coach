@@ -11,6 +11,7 @@ import { AdminLayout } from "@/components/AdminLayout";
 
 import Index from "./pages/Index";
 import Connexion from "./pages/Connexion";
+import Inscription from "./pages/Inscription";
 import VerifierEmail from "./pages/VerifierEmail";
 import ResetPassword from "./pages/ResetPassword";
 import Tarifs from "./pages/Tarifs";
@@ -49,6 +50,7 @@ const App = () => (
             {/* Public routes */}
             <Route path="/" element={<Index />} />
             <Route path="/connexion" element={<RedirectIfAuth><Connexion /></RedirectIfAuth>} />
+            <Route path="/inscription" element={<RedirectIfAuth><Inscription /></RedirectIfAuth>} />
             <Route path="/verifier-email" element={<VerifierEmail />} />
             <Route path="/reset-password" element={<ResetPassword />} />
             <Route path="/tarifs" element={<Tarifs />} />
