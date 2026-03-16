@@ -56,7 +56,10 @@ const App = () => (
             {/* Module has its own layout */}
             <Route path="/module/:id" element={<ProtectedRoute><Module /></ProtectedRoute>} />
 
-            {/* Admin route */}
+            {/* Admin login (public) */}
+            <Route path="/admin/login" element={<AdminLogin />} />
+
+            {/* Admin routes */}
             <Route element={<ProtectedRoute adminOnly><AdminLayout /></ProtectedRoute>}>
               <Route path="/admin" element={<Admin />} />
               <Route path="/admin/users" element={<AdminUsers />} />
