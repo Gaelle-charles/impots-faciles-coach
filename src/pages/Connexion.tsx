@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
+import logo from '@/assets/logo.png';
 import { lovable } from '@/integrations/lovable/index';
 import { getPostLoginRedirect } from '@/lib/auth-redirect';
 import { Button } from '@/components/ui/button';
@@ -67,6 +68,7 @@ const Connexion = () => {
   return (
     <div className="flex min-h-screen items-center justify-center bg-secondary px-4">
       <div className="w-full max-w-md rounded-lg bg-background p-8">
+        <img src={logo} alt="Impôts Facile" className="mx-auto mb-6 h-10 w-auto" />
         <h1 className="font-heading text-2xl font-bold text-foreground">
           {isSignUp ? 'Créer un compte' : 'Connexion'}
         </h1>
