@@ -1,36 +1,60 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { MailCheck, RefreshCw } from 'lucide-react';
+import { getPostLoginRedirect } from '@/lib/auth-redirect';
 
 const VerifierEmail = () => {
   const [checking, setChecking] = useState(false);
   const [error, setError] = useState('');
   const navigate = useNavigate();
 
+  const checkConfirmedUser = async () => {
+    const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
+
+    if (sessionError) {
+      throw sessionError;
+    }
+
+    if (!sessionData.session) {
+      return false;
+    }
+
+    const { data: userData, error: userError } = await supabase.auth.getUser();
+
+    if (userError) {
+      throw userError;
+    }
+
+    if (!userData.user?.email_confirmed_at) {
+      return false;
+    }
+
+    const redirectPath = await getPostLoginRedirect(userData.user.id);
+    navigate(redirectPath, { replace: true });
+    return true;
+  };
+
+  useEffect(() => {
+    checkConfirmedUser().catch(() => undefined);
+  }, []);
+
   const handleCheck = async () => {
     setChecking(true);
     setError('');
 
-    // Refresh the session to pick up confirmed status
-    const { data, error: refreshError } = await supabase.auth.getSession();
+    try {
+      const confirmed = await checkConfirmedUser();
 
-    if (refreshError) {
+      if (!confirmed) {
+        setError("Votre email n'est pas encore confirmé. Si vous l'avez validé dans un autre navigateur, reconnectez-vous.");
+      }
+    } catch {
       setError('Erreur lors de la vérification. Réessayez.');
+    } finally {
       setChecking(false);
-      return;
     }
-
-    const user = data.session?.user;
-
-    if (user?.email_confirmed_at) {
-      navigate('/dashboard', { replace: true });
-    } else {
-      setError('Votre email n\'est pas encore confirmé. Vérifiez votre boîte mail.');
-    }
-
-    setChecking(false);
   };
 
   return (

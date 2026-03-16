@@ -12,7 +12,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { Progress } from '@/components/ui/progress';
 import { Card, CardContent } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { toast } from '@/hooks/use-toast';
@@ -41,75 +40,102 @@ const Onboarding = () => {
   const [step, setStep] = useState(0);
   const [prenom, setPrenom] = useState('');
   const [loading, setLoading] = useState(true);
-
-  // Step 2 fields
   const [famille, setFamille] = useState('');
   const [pro, setPro] = useState('');
   const [premiere, setPremiere] = useState<string>('');
   const [saving, setSaving] = useState(false);
-
-  // Module 1 info
-  const [module1, setModule1] = useState<{ titre: string; module_slug: string } | null>(null);
+  const [finishing, setFinishing] = useState(false);
 
   useEffect(() => {
     if (!user) return;
+
     let cancelled = false;
+
     const fetchData = async () => {
-      const [profRes, modRes] = await Promise.all([
-        supabase.from('profiles').select('prenom, onboarding_done').eq('id', user.id).maybeSingle(),
-        supabase.from('modules').select('titre, module_slug').order('order', { ascending: true }).limit(1).maybeSingle(),
-      ]);
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('prenom, onboarding_done')
+        .eq('id', user.id)
+        .maybeSingle();
+
       if (cancelled) return;
-      if (profRes.data?.onboarding_done) {
+
+      if (error) {
+        toast({ title: 'Erreur', description: 'Impossible de charger votre profil.', variant: 'destructive' });
+        setLoading(false);
+        return;
+      }
+
+      if (data?.onboarding_done) {
         navigate('/dashboard', { replace: true });
         return;
       }
-      setPrenom(profRes.data?.prenom ?? '');
-      setModule1(modRes.data);
+
+      setPrenom(data?.prenom ?? '');
       setLoading(false);
     };
+
     fetchData();
-    return () => { cancelled = true; };
+
+    return () => {
+      cancelled = true;
+    };
   }, [user, navigate]);
 
   const handleSaveProfile = async () => {
     if (!user) return;
+
     setSaving(true);
-    await supabase.from('profiles').update({
-      situation_famille: famille || null,
-      situation_pro: pro || null,
-      premiere_declaration: premiere === 'oui' ? true : premiere === 'non' ? false : null,
-    }).eq('id', user.id);
+
+    const { error } = await supabase
+      .from('profiles')
+      .update({
+        situation_famille: famille || null,
+        situation_pro: pro || null,
+        premiere_declaration: premiere === 'oui' ? true : premiere === 'non' ? false : null,
+      })
+      .eq('id', user.id);
+
+    if (error) {
+      toast({ title: 'Erreur', description: 'Impossible d’enregistrer votre profil.', variant: 'destructive' });
+      setSaving(false);
+      return;
+    }
+
     setSaving(false);
     setStep(2);
   };
 
-  const handleFinish = async (goToModule: boolean) => {
+  const handleFinish = async () => {
     if (!user) return;
-    const { error } = await supabase.from('profiles').update({ onboarding_done: true }).eq('id', user.id);
+
+    setFinishing(true);
+
+    const { error } = await supabase
+      .from('profiles')
+      .update({ onboarding_done: true })
+      .eq('id', user.id);
+
     if (error) {
-      toast({ title: 'Erreur', description: "Impossible de sauvegarder. Réessaie.", variant: 'destructive' });
+      toast({ title: 'Erreur', description: "Impossible de finaliser l'inscription.", variant: 'destructive' });
+      setFinishing(false);
       return;
     }
-    if (goToModule && module1) {
-      navigate(`/module/${module1.module_slug}`, { replace: true });
-    } else {
-      navigate('/dashboard', { replace: true });
-    }
+
+    navigate('/dashboard', { replace: true });
   };
 
   if (loading) {
     return (
-      <div className="flex min-h-screen items-center justify-center" style={{ backgroundColor: '#f5f3ff' }}>
+      <div className="flex min-h-screen items-center justify-center bg-secondary px-4 py-12">
         <Skeleton className="h-96 w-full max-w-[640px] rounded-2xl" />
       </div>
     );
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center px-4 py-12" style={{ backgroundColor: '#f5f3ff' }}>
+    <div className="flex min-h-screen items-center justify-center bg-secondary px-4 py-12">
       <div className="w-full max-w-[640px] space-y-8">
-        {/* Progress indicator */}
         <div className="flex items-center justify-center gap-0">
           {STEPS.map((label, i) => (
             <div key={label} className="flex items-center">
@@ -134,10 +160,8 @@ const Onboarding = () => {
           ))}
         </div>
 
-        {/* Card */}
-        <Card className="border-border bg-background shadow-lg rounded-2xl">
+        <Card className="rounded-2xl border-border bg-background shadow-lg">
           <CardContent className="p-8">
-            {/* ── STEP 1: Bienvenue ── */}
             {step === 0 && (
               <div className="space-y-6 text-center">
                 <div className="text-6xl">🎉</div>
@@ -150,7 +174,7 @@ const Onboarding = () => {
                   </p>
                 </div>
 
-                <p className="text-sm text-foreground/80 leading-relaxed">
+                <p className="leading-relaxed text-sm text-foreground/80">
                   Impôts Facile te guide pas à pas à travers 8 modules pour comprendre,
                   optimiser et valider ta déclaration de revenus — même si tu pars de zéro.
                 </p>
@@ -160,10 +184,10 @@ const Onboarding = () => {
                     { emoji: '📚', text: '8 modules de cours' },
                     { emoji: '❓', text: 'Quiz interactifs' },
                     { emoji: '🎯', text: 'Conseils personnalisés' },
-                  ].map((p) => (
-                    <div key={p.text} className="flex flex-col items-center gap-1.5 rounded-xl bg-secondary p-4">
-                      <span className="text-2xl">{p.emoji}</span>
-                      <span className="text-xs font-medium text-foreground">{p.text}</span>
+                  ].map((item) => (
+                    <div key={item.text} className="flex flex-col items-center gap-1.5 rounded-xl bg-secondary p-4">
+                      <span className="text-2xl">{item.emoji}</span>
+                      <span className="text-xs font-medium text-foreground">{item.text}</span>
                     </div>
                   ))}
                 </div>
@@ -174,7 +198,6 @@ const Onboarding = () => {
               </div>
             )}
 
-            {/* ── STEP 2: Ton profil ── */}
             {step === 1 && (
               <div className="space-y-6">
                 <div className="text-center">
@@ -187,7 +210,6 @@ const Onboarding = () => {
                 </div>
 
                 <div className="space-y-5">
-                  {/* Situation familiale */}
                   <div className="space-y-2">
                     <Label>Situation familiale</Label>
                     <Select value={famille} onValueChange={setFamille}>
@@ -202,7 +224,6 @@ const Onboarding = () => {
                     </Select>
                   </div>
 
-                  {/* Situation professionnelle */}
                   <div className="space-y-2">
                     <Label>Situation professionnelle</Label>
                     <Select value={pro} onValueChange={setPro}>
@@ -217,17 +238,16 @@ const Onboarding = () => {
                     </Select>
                   </div>
 
-                  {/* Première déclaration */}
                   <div className="space-y-2">
                     <Label>Première déclaration ?</Label>
                     <RadioGroup value={premiere} onValueChange={setPremiere} className="flex gap-4">
                       <div className="flex items-center gap-2">
                         <RadioGroupItem value="oui" id="prem-oui" />
-                        <Label htmlFor="prem-oui" className="font-normal cursor-pointer">Oui, c'est ma première fois</Label>
+                        <Label htmlFor="prem-oui" className="cursor-pointer font-normal">Oui, c'est ma première fois</Label>
                       </div>
                       <div className="flex items-center gap-2">
                         <RadioGroupItem value="non" id="prem-non" />
-                        <Label htmlFor="prem-non" className="font-normal cursor-pointer">Non, j'ai déjà déclaré</Label>
+                        <Label htmlFor="prem-non" className="cursor-pointer font-normal">Non, j'ai déjà déclaré</Label>
                       </div>
                     </RadioGroup>
                   </div>
@@ -246,7 +266,6 @@ const Onboarding = () => {
               </div>
             )}
 
-            {/* ── STEP 3: C'est parti ── */}
             {step === 2 && (
               <div className="space-y-6 text-center">
                 <div className="text-6xl">🚀</div>
@@ -255,37 +274,25 @@ const Onboarding = () => {
                     Tout est prêt{prenom ? `, ${prenom}` : ''} !
                   </h2>
                   <p className="mt-2 text-muted-foreground">
-                    Commence par le Module 1 — il te faut environ 15 minutes.
+                    Ton espace est configuré. Tu arrives maintenant sur ton dashboard.
                   </p>
                 </div>
 
-                {/* Module 1 card */}
                 <Card className="border-border bg-secondary/50 text-left">
-                  <CardContent className="p-5 space-y-3">
-                    <span className="text-xs font-bold text-primary uppercase tracking-wide">Module 1</span>
+                  <CardContent className="space-y-3 p-5">
+                    <span className="text-xs font-bold uppercase tracking-wide text-primary">Prochaine étape</span>
                     <h3 className="font-heading text-base font-semibold text-foreground">
-                      {module1?.titre ?? "Comprendre l'impôt sur le revenu 2025"}
+                      Accéder à ton espace personnel
                     </h3>
                     <p className="text-sm text-muted-foreground">
-                      Les bases : pourquoi déclarer, comment calculer, vos premiers choix.
+                      Tu pourras découvrir les modules depuis ton dashboard une fois ton accès activé.
                     </p>
-                    <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
-                      ⏱️ ~15 min
-                    </div>
-                    <Progress value={0} className="h-2" />
                   </CardContent>
                 </Card>
 
-                <Button className="w-full" onClick={() => handleFinish(true)}>
-                  📚 Commencer le Module 1 →
+                <Button className="w-full" onClick={handleFinish} disabled={finishing}>
+                  {finishing ? 'Redirection...' : '📊 Accéder à mon dashboard →'}
                 </Button>
-
-                <button
-                  onClick={() => handleFinish(false)}
-                  className="block w-full text-center text-sm text-muted-foreground hover:underline"
-                >
-                  Explorer le dashboard d'abord
-                </button>
               </div>
             )}
           </CardContent>
