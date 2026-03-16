@@ -25,6 +25,7 @@ import Admin from "./pages/Admin";
 import AdminLogin from "./pages/AdminLogin";
 import AdminUsers from "./pages/AdminUsers";
 import AdminModules from "./pages/AdminModules";
+import AuthCallback from "./pages/AuthCallback";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
