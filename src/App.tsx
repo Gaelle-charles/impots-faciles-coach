@@ -66,6 +66,7 @@ const App = () => (
               <Route path="/simulateur-de-frais" element={<SimulateurFrais />} />
               <Route path="/fiche-metier/:id" element={<FicheMetier />} />
               <Route path="/profil" element={<Profil />} />
+              <Route path="/mes-modules" element={<MesModules />} />
             </Route>
 
             {/* Module has its own layout */}
