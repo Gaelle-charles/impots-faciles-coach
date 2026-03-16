@@ -1,5 +1,5 @@
 import { useEffect, useState, useMemo } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { Card, CardContent } from '@/components/ui/card';
@@ -31,6 +31,7 @@ function getLevel(avgScore: number) {
 const Dashboard = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
 
   const [profile, setProfile] = useState<{ prenom: string | null; nom: string | null; plan: string } | null>(null);
   const [modules, setModules] = useState<ModuleRow[]>([]);
@@ -57,7 +58,7 @@ const Dashboard = () => {
 
   useEffect(() => {
     fetchData();
-  }, [user]);
+  }, [user, location.key]);
 
   // Refresh data when user returns to this tab
   useEffect(() => {

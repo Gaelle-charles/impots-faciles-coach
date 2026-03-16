@@ -32,11 +32,11 @@ export function AppSidebar({ collapsed = false }: { collapsed?: boolean }) {
       .from('profiles')
       .select('prenom, nom, plan')
       .eq('id', user.id)
-      .single()
+      .maybeSingle()
       .then(({ data }) => {
         if (data) setProfile(data);
       });
-  }, [user]);
+  }, [user, location.pathname]);
 
   if (collapsed) {
     return (
