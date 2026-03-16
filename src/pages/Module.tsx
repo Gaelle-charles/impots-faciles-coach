@@ -178,14 +178,14 @@ const Module = () => {
   );
 
   const handlePrev = () => {
-    if (currentStep > 0) updateStep(currentStep - 1);
+    if (rawStep > 0) updateStep(rawStep - 1);
   };
 
   const handleNext = () => {
     if (isLastStep) {
       handleComplete();
     } else {
-      updateStep(currentStep + 1);
+      updateStep(rawStep + 1);
     }
   };
 
