@@ -58,7 +58,7 @@ const Dashboard = () => {
 
   useEffect(() => {
     fetchData();
-  }, [user]);
+  }, [user, location.key]);
 
   // Refresh data when user returns to this tab
   useEffect(() => {
