@@ -264,6 +264,8 @@ const AdminUsers = () => {
         nom: createForm.nom,
         plan: createForm.plan,
         role: createForm.role,
+        sendActivationEmail: createForm.role === 'admin',
+        siteUrl: window.location.origin,
       },
     });
     if (error || data?.error) {
@@ -343,7 +345,7 @@ const AdminUsers = () => {
   const handleResetPassword = async (u: UserRow) => {
     if (!u.email) return;
     const { data, error } = await supabase.functions.invoke('admin-users', {
-      body: { action: 'reset_password', email: u.email },
+      body: { action: 'reset_password', email: u.email, siteUrl: window.location.origin },
     });
     if (error || data?.error) {
       toast({ title: 'Erreur', description: data?.error || error?.message, variant: 'destructive' });
