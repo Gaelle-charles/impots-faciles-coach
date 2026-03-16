@@ -85,7 +85,7 @@ export function Header({ variant = 'light' }: HeaderProps) {
                   Connexion
                 </Button>
               </Link>
-              <Link to="/connexion?tab=register">
+              <Link to="/inscription">
                 <Button variant={isDark ? 'cta' : 'default'} size="sm">
                   S'inscrire
                 </Button>
@@ -151,7 +151,7 @@ export function Header({ variant = 'light' }: HeaderProps) {
                     Connexion
                   </Button>
                 </Link>
-                <Link to="/connexion?tab=register" onClick={() => setMobileOpen(false)}>
+                <Link to="/inscription" onClick={() => setMobileOpen(false)}>
                   <Button variant={isDark ? 'cta' : 'default'} size="sm" className="w-full">
                     S'inscrire
                   </Button>
