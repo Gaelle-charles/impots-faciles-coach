@@ -37,6 +37,7 @@ import AdminSubscriptions from "./pages/AdminSubscriptions";
 import AdminEmails from "./pages/AdminEmails";
 import AdminSettings from "./pages/AdminSettings";
 import AuthCallback from "./pages/AuthCallback";
+import CommentCaMarche from "./pages/CommentCaMarche";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -56,6 +57,7 @@ const App = () => (
             <Route path="/verifier-email" element={<VerifierEmail />} />
             <Route path="/reset-password" element={<ResetPassword />} />
             <Route path="/tarifs" element={<Tarifs />} />
+            <Route path="/comment-ca-marche" element={<CommentCaMarche />} />
             <Route path="/auth/callback" element={<AuthCallback />} />
             <Route path="/onboarding" element={<ProtectedRoute><Onboarding /></ProtectedRoute>} />
 
