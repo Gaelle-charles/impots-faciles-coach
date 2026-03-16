@@ -38,6 +38,9 @@ const Profil = () => {
   const [metiers, setMetiers] = useState<Metier[]>([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [savingPassword, setSavingPassword] = useState(false);
 
   // Form state
   const [prenom, setPrenom] = useState('');
