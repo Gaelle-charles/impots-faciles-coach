@@ -286,7 +286,7 @@ const AdminUsers = () => {
       </div>
 
       {/* Table */}
-      <Card className="border-border bg-background shadow-sm overflow-hidden">
+      <Card className="border-border bg-background shadow-sm overflow-x-auto">
         <Table>
           <TableHeader>
             <TableRow>
