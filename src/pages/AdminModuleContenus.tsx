@@ -23,8 +23,7 @@ import {
   SortableContext, verticalListSortingStrategy, useSortable, arrayMove,
 } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
-import ReactMarkdown from 'react-markdown';
-import { useIsMobile } from '@/hooks/use-mobile';
+import { MarkdownEditor } from '@/components/admin/MarkdownEditor';
 
 // ─── Types ───
 interface ContenuRow {
