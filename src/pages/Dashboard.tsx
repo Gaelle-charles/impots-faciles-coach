@@ -60,13 +60,7 @@ const Dashboard = () => {
     fetchData();
   }, [user, location.key]);
 
-  // Scroll to hash anchor after loading
-  useEffect(() => {
-    if (!loading && location.hash) {
-      const el = document.querySelector(location.hash);
-      if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }
-  }, [loading, location.hash]);
+
 
   // Refresh data when user returns to this tab
   useEffect(() => {
