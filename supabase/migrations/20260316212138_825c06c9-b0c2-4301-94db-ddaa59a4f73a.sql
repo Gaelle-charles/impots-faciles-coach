@@ -1,0 +1,1 @@
+ALTER TABLE public.quizz ADD COLUMN IF NOT EXISTS ordre integer NOT NULL DEFAULT 0;

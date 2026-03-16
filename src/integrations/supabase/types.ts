@@ -221,6 +221,7 @@ export type Database = {
           module_id: string
           nom_quizz: string | null
           options: string[]
+          ordre: number
           question: string
         }
         Insert: {
@@ -231,6 +232,7 @@ export type Database = {
           module_id: string
           nom_quizz?: string | null
           options?: string[]
+          ordre?: number
           question: string
         }
         Update: {
@@ -241,6 +243,7 @@ export type Database = {
           module_id?: string
           nom_quizz?: string | null
           options?: string[]
+          ordre?: number
           question?: string
         }
         Relationships: [
