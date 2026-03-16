@@ -1,5 +1,5 @@
 import { useEffect, useState, useMemo, useCallback } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
@@ -90,6 +90,7 @@ function SortableModuleRow({
   onDelete: () => void;
   onToggle: (checked: boolean) => void;
 }) {
+  const navigate = useNavigate();
   const {
     attributes,
     listeners,
@@ -159,6 +160,14 @@ function SortableModuleRow({
             checked={mod.is_published}
             onCheckedChange={onToggle}
           />
+          <Button
+            variant="outline"
+            size="sm"
+            className="h-8 gap-1.5 text-xs"
+            onClick={() => navigate(`/admin/modules/${mod.id}/contenus`)}
+          >
+            <Library className="h-3.5 w-3.5" /> Contenus
+          </Button>
           <Button variant="outline" size="icon" className="h-8 w-8" onClick={onEdit}>
             <Pencil className="h-3.5 w-3.5" />
           </Button>
