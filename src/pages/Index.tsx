@@ -40,21 +40,27 @@ const Index = () => {
       <Header />
 
       {/* Hero */}
-      <section className="flex flex-col items-center px-4 py-24 text-center">
-        <h2 className="max-w-2xl font-heading text-5xl font-bold leading-tight text-foreground">
-          La fiscalité, enfin accessible.
-        </h2>
-        <p className="mt-6 max-w-lg text-lg text-muted-foreground">
-          Maîtrisez l'impôt sur le revenu, la TVA, les régimes fiscaux et bien plus
-          grâce à des modules clairs et des simulateurs pratiques.
-        </p>
-        <div className="mt-10 flex items-center gap-4">
-          <Link to="/connexion">
-            <Button variant="cta" size="lg" className="gap-2">
-              <ArrowRight className="h-5 w-5" />
-            </Button>
-          </Link>
-          <span className="font-heading text-sm font-semibold text-foreground">Commencer gratuitement</span>
+      <section
+        className="relative flex flex-col items-center px-4 py-24 text-center bg-cover bg-center"
+        style={{ backgroundImage: `url(${heroBg})` }}
+      >
+        <div className="absolute inset-0 bg-primary/70" />
+        <div className="relative z-10">
+          <h2 className="max-w-2xl font-heading text-5xl font-bold leading-tight text-primary-foreground">
+            La fiscalité, enfin accessible.
+          </h2>
+          <p className="mt-6 max-w-lg text-lg text-primary-foreground/80 mx-auto">
+            Maîtrisez l'impôt sur le revenu, la TVA, les régimes fiscaux et bien plus
+            grâce à des modules clairs et des simulateurs pratiques.
+          </p>
+          <div className="mt-10 flex items-center justify-center gap-4">
+            <Link to="/connexion">
+              <Button variant="cta" size="lg" className="gap-2">
+                <ArrowRight className="h-5 w-5" />
+              </Button>
+            </Link>
+            <span className="font-heading text-sm font-semibold text-primary-foreground">Commencer gratuitement</span>
+          </div>
         </div>
       </section>
 
