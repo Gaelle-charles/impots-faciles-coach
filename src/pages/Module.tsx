@@ -4,6 +4,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { Button } from '@/components/ui/button';
+import { Lock } from 'lucide-react';
 import {
   Dialog,
   DialogContent,
@@ -43,42 +44,71 @@ const Module = () => {
   const [showCompletion, setShowCompletion] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
-  const currentStep = progression?.step ?? 0;
+  const [profile, setProfile] = useState<{ plan: string } | null>(null);
+  const [accessDenied, setAccessDenied] = useState(false);
+
+  const rawStep = progression?.step ?? 0;
   const totalSteps = contenus.length;
-  const progressPercent = module?.total_step && module.total_step > 0
-    ? (currentStep / module.total_step) * 100
-    : totalSteps > 0
-      ? (currentStep / totalSteps) * 100
-      : 0;
-  const isLastStep = currentStep === totalSteps - 1;
-  const currentContenu = contenus[currentStep] ?? null;
+  const isCompleted = !!progression?.completion_date;
+  // Clamp step to valid content range so we never index out of bounds
+  const currentStep = isCompleted
+    ? Math.min(rawStep, totalSteps - 1)
+    : Math.min(rawStep, totalSteps - 1);
+  const progressPercent = isCompleted
+    ? 100
+    : module?.total_step && module.total_step > 0
+      ? (rawStep / module.total_step) * 100
+      : totalSteps > 0
+        ? (rawStep / totalSteps) * 100
+        : 0;
+  const isLastStep = !isCompleted && rawStep === totalSteps - 1;
+  const currentContenu = contenus[Math.max(0, currentStep)] ?? null;
 
   const fetchData = useCallback(async () => {
     if (!slug || !user) return;
 
     setLoading(true);
     setError(null);
+    setAccessDenied(false);
 
-    // 1. Fetch module first (needed for module_id)
-    const { data: mod, error: modError } = await supabase
-      .from('modules')
-      .select('*')
-      .eq('module_slug', slug)
-      .maybeSingle();
+    // 1. Fetch module + profile in parallel
+    const [modRes, profileRes] = await Promise.all([
+      supabase
+        .from('modules')
+        .select('*')
+        .eq('module_slug', slug)
+        .maybeSingle(),
+      supabase
+        .from('profiles')
+        .select('plan')
+        .eq('id', user.id)
+        .single(),
+    ]);
 
-    if (modError) {
+    if (modRes.error) {
       setError('Erreur lors du chargement du module.');
       setLoading(false);
       return;
     }
 
-    if (!mod) {
+    if (!modRes.data) {
       toast({ title: 'Module introuvable', description: 'Ce module n\'existe pas.', variant: 'destructive' });
       navigate('/dashboard', { replace: true });
       return;
     }
 
+    const mod = modRes.data;
     setModule(mod);
+
+    // Access control: check user plan against module.accessibilite
+    const userPlan = profileRes.data?.plan ?? 'nouveau';
+    setProfile(profileRes.data ?? { plan: userPlan });
+
+    if (mod.accessibilite && mod.accessibilite.length > 0 && !mod.accessibilite.includes(userPlan)) {
+      setAccessDenied(true);
+      setLoading(false);
+      return;
+    }
 
     // 2. Fetch contenus + progression in parallel
     const [contRes, progRes] = await Promise.all([
@@ -112,7 +142,6 @@ const Module = () => {
     if (progRes.data) {
       setProgression(progRes.data);
     } else {
-      // Create initial progression
       const { data: newProg, error: insertErr } = await supabase
         .from('progressions')
         .insert({ module_id: mod.id, user_id: user.id, step: 0 })
@@ -149,14 +178,14 @@ const Module = () => {
   );
 
   const handlePrev = () => {
-    if (currentStep > 0) updateStep(currentStep - 1);
+    if (rawStep > 0) updateStep(rawStep - 1);
   };
 
   const handleNext = () => {
     if (isLastStep) {
       handleComplete();
     } else {
-      updateStep(currentStep + 1);
+      updateStep(rawStep + 1);
     }
   };
 
@@ -185,6 +214,28 @@ const Module = () => {
           <RefreshCw className="h-4 w-4" />
           Réessayer
         </Button>
+      </div>
+    );
+  }
+
+  // Access denied state
+  if (accessDenied) {
+    return (
+      <div className="flex h-screen flex-col items-center justify-center gap-4 p-6 text-center">
+        <Lock className="h-12 w-12 text-muted-foreground" />
+        <h2 className="font-heading text-2xl font-bold text-foreground">Module verrouillé 🔒</h2>
+        <p className="max-w-md text-muted-foreground">
+          Votre plan actuel ({profile?.plan ?? 'nouveau'}) ne permet pas d'accéder à ce module.
+          Passez à un plan supérieur pour débloquer ce contenu.
+        </p>
+        <div className="flex gap-3">
+          <Button variant="outline" onClick={() => navigate('/dashboard')}>
+            Retour au dashboard
+          </Button>
+          <Button onClick={() => navigate('/tarifs')}>
+            Voir les tarifs
+          </Button>
+        </div>
       </div>
     );
   }
@@ -261,6 +312,7 @@ const Module = () => {
           totalSteps={totalSteps}
           progressPercent={progressPercent}
           isLastStep={isLastStep}
+          isCompleted={isCompleted}
           onPrev={handlePrev}
           onNext={handleNext}
         />
