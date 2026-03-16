@@ -11,7 +11,6 @@ Deno.serve(async (req) => {
   }
 
   try {
-    // Verify the caller is an admin
     const authHeader = req.headers.get("Authorization");
     if (!authHeader) {
       return new Response(JSON.stringify({ error: "Non authentifié" }), {
@@ -22,9 +21,10 @@ Deno.serve(async (req) => {
 
     const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
     const serviceRoleKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
+    const anonKey = Deno.env.get("SUPABASE_PUBLISHABLE_KEY")!;
 
     // Client with user's token to verify admin role
-    const userClient = createClient(supabaseUrl, Deno.env.get("SUPABASE_PUBLISHABLE_KEY")!, {
+    const userClient = createClient(supabaseUrl, anonKey, {
       global: { headers: { Authorization: authHeader } },
     });
 
@@ -36,7 +36,6 @@ Deno.serve(async (req) => {
       });
     }
 
-    // Check admin role
     const { data: profile } = await userClient.from("profiles").select("role").eq("id", caller.id).single();
     if (profile?.role !== "admin") {
       return new Response(JSON.stringify({ error: "Accès refusé" }), {
@@ -53,9 +52,12 @@ Deno.serve(async (req) => {
     const body = await req.json();
     const { action } = body;
 
+    // Determine the app URL for redirects
+    const siteUrl = body.siteUrl || supabaseUrl.replace('.supabase.co', '.lovable.app');
+
     switch (action) {
       case "create_user": {
-        const { email, password, prenom, nom, plan, role } = body;
+        const { email, password, prenom, nom, plan, role, sendActivationEmail } = body;
 
         // Create auth user
         const { data: newUser, error: createError } = await adminClient.auth.admin.createUser({
@@ -79,6 +81,13 @@ Deno.serve(async (req) => {
           role: role || "client",
         }).eq("id", newUser.user.id);
 
+        // If admin role, send password reset email pointing to /admin/login
+        if (role === "admin" && sendActivationEmail !== false) {
+          await adminClient.auth.resetPasswordForEmail(email, {
+            redirectTo: `${siteUrl}/admin/login`,
+          });
+        }
+
         return new Response(JSON.stringify({ success: true, userId: newUser.user.id }), {
           headers: { ...corsHeaders, "Content-Type": "application/json" },
         });
@@ -87,14 +96,12 @@ Deno.serve(async (req) => {
       case "delete_user": {
         const { userId } = body;
 
-        // Delete related data
         await Promise.all([
           adminClient.from("resultat_quiz").delete().eq("user_id", userId),
           adminClient.from("progressions").delete().eq("user_id", userId),
         ]);
         await adminClient.from("profiles").delete().eq("id", userId);
 
-        // Delete auth user
         const { error: deleteError } = await adminClient.auth.admin.deleteUser(userId);
         if (deleteError) {
           return new Response(JSON.stringify({ error: deleteError.message }), {
@@ -109,9 +116,9 @@ Deno.serve(async (req) => {
       }
 
       case "reset_password": {
-        const { email } = body;
+        const { email, redirectTo } = body;
         const { error } = await adminClient.auth.resetPasswordForEmail(email, {
-          redirectTo: `${supabaseUrl.replace('.supabase.co', '.lovable.app')}/reset-password`,
+          redirectTo: redirectTo || `${siteUrl}/reset-password`,
         });
         if (error) {
           return new Response(JSON.stringify({ error: error.message }), {

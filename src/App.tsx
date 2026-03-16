@@ -25,6 +25,7 @@ import Admin from "./pages/Admin";
 import AdminLogin from "./pages/AdminLogin";
 import AdminUsers from "./pages/AdminUsers";
 import AdminModules from "./pages/AdminModules";
+import AuthCallback from "./pages/AuthCallback";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -43,6 +44,7 @@ const App = () => (
             <Route path="/verifier-email" element={<VerifierEmail />} />
             <Route path="/reset-password" element={<ResetPassword />} />
             <Route path="/tarifs" element={<Tarifs />} />
+            <Route path="/auth/callback" element={<AuthCallback />} />
 
             {/* Protected routes with sidebar layout */}
             <Route element={<ProtectedRoute><AppLayout /></ProtectedRoute>}>
