@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { ArrowRight } from 'lucide-react';
 import { Header } from '@/components/Header';
+import { useEffect, useRef } from 'react';
 import heroBg from '@/assets/hero-bg.jpg';
 import { Footer } from '@/components/Footer';
 import {
@@ -35,16 +36,35 @@ const faqItems = [
 ];
 
 const Index = () => {
+  const heroRef = useRef<HTMLElement>(null);
+  const imgRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      if (imgRef.current) {
+        const offset = window.scrollY;
+        imgRef.current.style.transform = `translateY(${offset * 0.4}px)`;
+      }
+    };
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
   return (
     <div className="min-h-screen bg-background">
       <Header />
 
       {/* Hero */}
       <section
-        className="relative flex flex-col items-center px-4 py-24 text-center bg-cover bg-center"
-        style={{ backgroundImage: `url(${heroBg})` }}
+        ref={heroRef}
+        className="relative flex flex-col items-center px-4 py-24 text-center overflow-hidden"
       >
-        <div className="absolute inset-0 bg-[#2C1338]/80" />
+        <div
+          ref={imgRef}
+          className="absolute inset-0 -top-20 -bottom-20 bg-cover bg-center will-change-transform"
+          style={{ backgroundImage: `url(${heroBg})` }}
+        />
+        <div className="absolute inset-0 bg-[#2C1338]/20" />
         <div className="relative z-10">
           <h2 className="max-w-2xl font-heading text-5xl font-bold leading-tight text-primary-foreground">
             La fiscalité, enfin accessible.
