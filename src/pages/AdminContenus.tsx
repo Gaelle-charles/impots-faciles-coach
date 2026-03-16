@@ -34,6 +34,7 @@ interface ContenuRow {
 interface ModuleRow {
   id: string;
   titre: string;
+  order: number;
 }
 
 const TYPE_OPTIONS = [
