@@ -85,7 +85,7 @@ export function Header({ variant = 'light' }: HeaderProps) {
                   Connexion
                 </Button>
               </Link>
-              <Link to="/connexion?tab=register">
+              <Link to="/inscription">
                 <Button variant={isDark ? 'cta' : 'default'} size="sm">
                   S'inscrire
                 </Button>
