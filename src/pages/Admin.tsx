@@ -240,11 +240,11 @@ const Admin = () => {
       </Card>
 
       {/* Last registered users */}
-      <Card className="border-border bg-background shadow-sm overflow-hidden">
+      <Card className="border-border bg-background shadow-sm">
         <CardHeader>
           <CardTitle className="font-heading text-lg">Derniers inscrits</CardTitle>
         </CardHeader>
-        <CardContent className="p-0">
+        <CardContent className="p-0 overflow-x-auto">
           <Table>
             <TableHeader>
               <TableRow>
