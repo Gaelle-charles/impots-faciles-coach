@@ -57,6 +57,7 @@ const App = () => (
             <Route path="/verifier-email" element={<VerifierEmail />} />
             <Route path="/reset-password" element={<ResetPassword />} />
             <Route path="/tarifs" element={<Tarifs />} />
+            <Route path="/comment-ca-marche" element={<CommentCaMarche />} />
             <Route path="/auth/callback" element={<AuthCallback />} />
             <Route path="/onboarding" element={<ProtectedRoute><Onboarding /></ProtectedRoute>} />
 
