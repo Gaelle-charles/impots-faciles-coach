@@ -16,7 +16,7 @@ interface Props {
   onReset: () => void;
 }
 
-export default function SimulateurResultat({ result, onReset }: Props) {
+export default function SimulateurResultat({ result, formData, onReset }: Props) {
   const handleCopy = () => {
     const text = `Estimation impôt 2025 (revenus 2024)
 Revenu brut : ${fmt(result.revenuBrut)} €
