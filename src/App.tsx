@@ -42,11 +42,13 @@ const App = () => (
             {/* Protected routes with sidebar layout */}
             <Route element={<ProtectedRoute><AppLayout /></ProtectedRoute>}>
               <Route path="/dashboard" element={<Dashboard />} />
-              <Route path="/module/:id" element={<Module />} />
               <Route path="/simulateur" element={<Simulateur />} />
               <Route path="/simulateur-de-frais" element={<SimulateurFrais />} />
               <Route path="/fiche-metier/:id" element={<FicheMetier />} />
             </Route>
+
+            {/* Module has its own layout */}
+            <Route path="/module/:id" element={<ProtectedRoute><Module /></ProtectedRoute>} />
 
             {/* Admin route */}
             <Route element={<ProtectedRoute adminOnly><AppLayout /></ProtectedRoute>}>
