@@ -18,6 +18,7 @@ interface Props {
   result: SimulateurResult;
   formData: SimulateurFormData;
   onReset: () => void;
+  onSimulationSaved?: () => void;
 }
 
 export default function SimulateurResultat({ result, formData, onReset }: Props) {
