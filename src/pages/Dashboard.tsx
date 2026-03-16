@@ -92,7 +92,7 @@ const Dashboard = () => {
   // Stats
   const completedCount = progressions.filter((p) => !!p.completion_date).length;
   const avgScore = results.length > 0
-    ? Math.round(results.reduce((acc, r) => acc + Number(r.score), 0) / results.length)
+    ? Math.round(results.reduce((acc, r) => acc + Number(r.pourcentage), 0) / results.length)
     : 0;
   const remainingModules = modules.length - completedCount;
   const estimatedHours = remainingModules * 2;
