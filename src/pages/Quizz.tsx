@@ -30,6 +30,9 @@ const Quizz = () => {
   const [selectedOption, setSelectedOption] = useState<string | null>(null);
   const [validated, setValidated] = useState(false);
   const [score, setScore] = useState(0);
+  const [reponsesUtilisateur, setReponsesUtilisateur] = useState<
+    { question_id: string; reponse_donnee: string; correct: boolean }[]
+  >([]);
   const [finished, setFinished] = useState(false);
 
   const fetchData = useCallback(async () => {
