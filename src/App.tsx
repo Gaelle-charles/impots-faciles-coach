@@ -72,6 +72,12 @@ const App = () => (
               <Route path="/admin" element={<Admin />} />
               <Route path="/admin/users" element={<AdminUsers />} />
               <Route path="/admin/modules" element={<AdminModules />} />
+              <Route path="/admin/stats" element={<AdminStats />} />
+              <Route path="/admin/quiz" element={<AdminQuiz />} />
+              <Route path="/admin/contenus" element={<AdminContenus />} />
+              <Route path="/admin/subscriptions" element={<AdminSubscriptions />} />
+              <Route path="/admin/emails" element={<AdminEmails />} />
+              <Route path="/admin/settings" element={<AdminSettings />} />
             </Route>
 
             {/* Quizz has its own layout */}
