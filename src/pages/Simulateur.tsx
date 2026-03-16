@@ -32,6 +32,7 @@ const NumInput = ({
 
 const Simulateur = () => {
   const [form, setForm] = useState<SimulateurFormData>(defaultFormData);
+  const [refreshKey, setRefreshKey] = useState(0);
   const result = useSimulateurFiscal(form);
 
   const update = useCallback(<K extends keyof SimulateurFormData>(key: K, value: SimulateurFormData[K]) => {
