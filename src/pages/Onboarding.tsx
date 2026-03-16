@@ -53,11 +53,13 @@ const Onboarding = () => {
 
   useEffect(() => {
     if (!user) return;
-    const fetch = async () => {
+    let cancelled = false;
+    const fetchData = async () => {
       const [profRes, modRes] = await Promise.all([
         supabase.from('profiles').select('prenom, onboarding_done').eq('id', user.id).maybeSingle(),
         supabase.from('modules').select('titre, module_slug').order('order', { ascending: true }).limit(1).maybeSingle(),
       ]);
+      if (cancelled) return;
       if (profRes.data?.onboarding_done) {
         navigate('/dashboard', { replace: true });
         return;
@@ -66,8 +68,9 @@ const Onboarding = () => {
       setModule1(modRes.data);
       setLoading(false);
     };
-    fetch();
-  }, [user]);
+    fetchData();
+    return () => { cancelled = true; };
+  }, [user, navigate]);
 
   const handleSaveProfile = async () => {
     if (!user) return;
@@ -83,7 +86,11 @@ const Onboarding = () => {
 
   const handleFinish = async (goToModule: boolean) => {
     if (!user) return;
-    await supabase.from('profiles').update({ onboarding_done: true }).eq('id', user.id);
+    const { error } = await supabase.from('profiles').update({ onboarding_done: true }).eq('id', user.id);
+    if (error) {
+      toast({ title: 'Erreur', description: "Impossible de sauvegarder. Réessaie.", variant: 'destructive' });
+      return;
+    }
     if (goToModule && module1) {
       navigate(`/module/${module1.module_slug}`, { replace: true });
     } else {
