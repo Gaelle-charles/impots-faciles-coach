@@ -9,29 +9,31 @@ import heroBg from '@/assets/comment-ca-marche-hero.jpg';
 
 /* ─── Animation helpers ─── */
 
-const fadeUp = {
+import type { Variants } from 'framer-motion';
+
+const fadeUp: Variants = {
   hidden: { opacity: 0, y: 30 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: 'easeOut' } },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: [0.25, 0.1, 0.25, 1] } },
 };
 
-const fadeIn = {
+const fadeIn: Variants = {
   hidden: { opacity: 0 },
   visible: { opacity: 1, transition: { duration: 0.5 } },
 };
 
-const staggerContainer = {
+const staggerContainer: Variants = {
   hidden: {},
   visible: { transition: { staggerChildren: 0.12 } },
 };
 
-const scaleUp = {
+const scaleUp: Variants = {
   hidden: { opacity: 0, scale: 0.9 },
-  visible: { opacity: 1, scale: 1, transition: { duration: 0.5, ease: 'easeOut' } },
+  visible: { opacity: 1, scale: 1, transition: { duration: 0.5, ease: [0.25, 0.1, 0.25, 1] } },
 };
 
-const slideInLeft = {
+const slideInLeft: Variants = {
   hidden: { opacity: 0, x: -40 },
-  visible: { opacity: 1, x: 0, transition: { duration: 0.6, ease: 'easeOut' } },
+  visible: { opacity: 1, x: 0, transition: { duration: 0.6, ease: [0.25, 0.1, 0.25, 1] } },
 };
 
 /* ─── Data ─── */
