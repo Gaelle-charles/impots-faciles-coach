@@ -4,6 +4,7 @@ import { ArrowRight, BookOpen, Brain, Calculator, Shield, Clock, Users, Star, Ch
 import { Header } from '@/components/Header';
 import { useEffect, useRef } from 'react';
 import heroBg from '@/assets/hero-bg.jpg';
+import ctaBg from '@/assets/cta-bg.jpg';
 import { Footer } from '@/components/Footer';
 import {
   Accordion,
@@ -239,8 +240,9 @@ const Index = () => {
       {/* CTA Banner */}
       <section className="px-4 py-20 md:py-28">
         <div className="mx-auto max-w-3xl text-center">
-          <div className="rounded-3xl bg-primary p-10 md:p-16 relative overflow-hidden">
-            <div className="absolute inset-0 bg-gradient-to-br from-primary via-primary to-accent/30 opacity-90" />
+          <div className="rounded-3xl p-10 md:p-16 relative overflow-hidden">
+            <img src={ctaBg} alt="" className="absolute inset-0 h-full w-full object-cover" />
+            <div className="absolute inset-0 bg-gradient-to-br from-[hsl(285,52%,15%/0.85)] to-[hsl(263,70%,50%/0.75)]" />
             <div className="relative z-10">
               <h2 className="font-heading text-3xl md:text-4xl font-bold text-primary-foreground">
                 Prêt à maîtriser vos impôts ?
