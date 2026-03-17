@@ -218,10 +218,14 @@ const AdminLogin = () => {
           onClick={async () => {
             setLoading(true);
             setError('');
+            sessionStorage.setItem('pendingAdminLogin', 'true');
             const { error } = await lovable.auth.signInWithOAuth('google', {
               redirect_uri: window.location.origin,
             });
-            if (error) setError(error.message);
+            if (error) {
+              sessionStorage.removeItem('pendingAdminLogin');
+              setError(error.message);
+            }
             setLoading(false);
           }}
         >
