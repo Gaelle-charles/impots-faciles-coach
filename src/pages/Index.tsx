@@ -4,6 +4,7 @@ import { ArrowRight, BookOpen, Brain, Calculator, Shield, Clock, Users, Star, Ch
 import { Header } from '@/components/Header';
 import { useEffect, useRef } from 'react';
 import heroBg from '@/assets/hero-bg.jpg';
+import ctaBg from '@/assets/cta-bg.jpg';
 import { Footer } from '@/components/Footer';
 import {
   Accordion,
