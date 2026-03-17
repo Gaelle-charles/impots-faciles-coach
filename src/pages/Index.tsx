@@ -102,7 +102,11 @@ const Index = () => {
       }
       if (ctaImgRef.current && ctaSectionRef.current) {
         const rect = ctaSectionRef.current.getBoundingClientRect();
-        const offset = -rect.top * 0.4;
+        const sectionH = rect.height;
+        const viewH = window.innerHeight;
+        const progress = (viewH - rect.top) / (viewH + sectionH);
+        const maxShift = sectionH * 0.3;
+        const offset = (progress - 0.5) * maxShift;
         ctaImgRef.current.style.transform = `translateY(${offset}px)`;
       }
     };
