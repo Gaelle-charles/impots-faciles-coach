@@ -115,7 +115,7 @@ const Index = () => {
           className="absolute inset-0 -top-20 -bottom-20 bg-cover bg-center will-change-transform"
           style={{ backgroundImage: `url(${heroBg})` }}
         />
-        <div className="absolute inset-0 bg-[hsl(var(--violet-deep))]/75" />
+        <div className="absolute inset-0 bg-[hsl(var(--violet-deep))]/40" />
 
         <div className="relative z-10 max-w-3xl mx-auto">
           <span className="inline-block mb-4 px-4 py-1.5 rounded-full bg-primary-foreground/10 border border-primary-foreground/20 text-primary-foreground text-sm font-medium backdrop-blur-sm">
