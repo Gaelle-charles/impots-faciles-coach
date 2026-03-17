@@ -26,10 +26,27 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
       setSession(session);
       setUser(session?.user ?? null);
       setLoading(false);
+
+      // Handle pending admin login from Google OAuth
+      if (event === 'SIGNED_IN' && session && sessionStorage.getItem('pendingAdminLogin')) {
+        sessionStorage.removeItem('pendingAdminLogin');
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('role')
+          .eq('id', session.user.id)
+          .maybeSingle();
+
+        if (profile?.role === 'admin') {
+          navigate('/admin', { replace: true });
+        } else {
+          await supabase.auth.signOut();
+          navigate('/admin/login', { replace: true });
+        }
+      }
     });
 
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -39,7 +56,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     });
 
     return () => subscription.unsubscribe();
-  }, []);
+  }, [navigate]);
 
   const signOut = async () => {
     await supabase.auth.signOut();
