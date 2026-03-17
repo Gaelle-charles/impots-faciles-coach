@@ -1,10 +1,38 @@
 import { Link } from 'react-router-dom';
 import { useEffect, useRef } from 'react';
+import { motion } from 'framer-motion';
 import { Header } from '@/components/Header';
 import { Footer } from '@/components/Footer';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import heroBg from '@/assets/comment-ca-marche-hero.jpg';
+
+/* ─── Animation helpers ─── */
+
+const fadeUp = {
+  hidden: { opacity: 0, y: 30 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: 'easeOut' } },
+};
+
+const fadeIn = {
+  hidden: { opacity: 0 },
+  visible: { opacity: 1, transition: { duration: 0.5 } },
+};
+
+const staggerContainer = {
+  hidden: {},
+  visible: { transition: { staggerChildren: 0.12 } },
+};
+
+const scaleUp = {
+  hidden: { opacity: 0, scale: 0.9 },
+  visible: { opacity: 1, scale: 1, transition: { duration: 0.5, ease: 'easeOut' } },
+};
+
+const slideInLeft = {
+  hidden: { opacity: 0, x: -40 },
+  visible: { opacity: 1, x: 0, transition: { duration: 0.6, ease: 'easeOut' } },
+};
 
 /* ─── Data ─── */
 
@@ -109,19 +137,24 @@ const CommentCaMarche = () => {
           className="absolute inset-0 h-[130%] w-full object-cover will-change-transform"
         />
         <div className="absolute inset-0 bg-gradient-to-br from-[hsl(285,52%,15%/0.85)] to-[hsl(263,70%,50%/0.75)]" />
-        <div className="relative z-10 mx-auto max-w-3xl space-y-6">
-          <span className="inline-block rounded-full bg-white/20 px-4 py-1.5 text-sm font-semibold backdrop-blur-sm">
+        <motion.div
+          className="relative z-10 mx-auto max-w-3xl space-y-6"
+          initial="hidden"
+          animate="visible"
+          variants={staggerContainer}
+        >
+          <motion.span variants={fadeIn} className="inline-block rounded-full bg-white/20 px-4 py-1.5 text-sm font-semibold backdrop-blur-sm">
             ✨ Simple. Guidé. Efficace.
-          </span>
-          <h1 className="font-heading text-3xl font-bold leading-tight md:text-5xl">
+          </motion.span>
+          <motion.h1 variants={fadeUp} className="font-heading text-3xl font-bold leading-tight md:text-5xl">
             Comprendre ta déclaration d'impôts,
             <br />
             étape par étape
-          </h1>
-          <p className="mx-auto max-w-xl text-base text-white/85 md:text-lg">
+          </motion.h1>
+          <motion.p variants={fadeUp} className="mx-auto max-w-xl text-base text-white/85 md:text-lg">
             Impôts Facile transforme un sujet complexe en un parcours clair, interactif et personnalisé — en moins d'une heure.
-          </p>
-          <div className="flex flex-col items-center justify-center gap-3 sm:flex-row">
+          </motion.p>
+          <motion.div variants={fadeUp} className="flex flex-col items-center justify-center gap-3 sm:flex-row">
             <Link to="/inscription">
               <Button className="bg-white text-primary hover:bg-white/90 font-heading font-bold px-6">
                 Commencer gratuitement →
@@ -132,47 +165,68 @@ const CommentCaMarche = () => {
                 Voir les modules
               </Button>
             </a>
-          </div>
-          <div className="flex items-center justify-center gap-6 pt-4 text-4xl">
+          </motion.div>
+          <motion.div variants={scaleUp} className="flex items-center justify-center gap-6 pt-4 text-4xl">
             <span className="flex h-16 w-16 items-center justify-center rounded-full bg-white/20">📚</span>
             <span className="flex h-16 w-16 items-center justify-center rounded-full bg-white/20">✅</span>
             <span className="flex h-16 w-16 items-center justify-center rounded-full bg-white/20">🎯</span>
-          </div>
-        </div>
+          </motion.div>
+        </motion.div>
       </section>
 
       {/* ── SECTION 2 — PROBLÈME ── */}
       <section className="bg-background px-6 py-16 md:py-20">
-        <div className="mx-auto max-w-5xl space-y-10 text-center">
-          <h2 className="font-heading text-2xl font-bold text-foreground md:text-3xl">Tu te reconnais ici ?</h2>
-          <div className="grid gap-6 sm:grid-cols-3">
+        <motion.div
+          className="mx-auto max-w-5xl space-y-10 text-center"
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.2 }}
+          variants={staggerContainer}
+        >
+          <motion.h2 variants={fadeUp} className="font-heading text-2xl font-bold text-foreground md:text-3xl">
+            Tu te reconnais ici ?
+          </motion.h2>
+          <motion.div className="grid gap-6 sm:grid-cols-3" variants={staggerContainer}>
             {problemCards.map((c) => (
-              <Card key={c.title} className="border-border bg-background">
-                <CardContent className="space-y-3 p-6 text-center">
-                  <span className="text-4xl">{c.emoji}</span>
-                  <h3 className="font-heading text-base font-bold text-foreground">{c.title}</h3>
-                  <p className="text-sm text-muted-foreground">{c.text}</p>
-                </CardContent>
-              </Card>
+              <motion.div key={c.title} variants={scaleUp}>
+                <Card className="border-border bg-background h-full transition-shadow duration-300 hover:shadow-lg">
+                  <CardContent className="space-y-3 p-6 text-center">
+                    <span className="text-4xl">{c.emoji}</span>
+                    <h3 className="font-heading text-base font-bold text-foreground">{c.title}</h3>
+                    <p className="text-sm text-muted-foreground">{c.text}</p>
+                  </CardContent>
+                </Card>
+              </motion.div>
             ))}
-          </div>
-          <p className="font-heading text-lg font-bold text-primary">Impôts Facile existe pour changer ça.</p>
-        </div>
+          </motion.div>
+          <motion.p variants={fadeUp} className="font-heading text-lg font-bold text-primary">
+            Impôts Facile existe pour changer ça.
+          </motion.p>
+        </motion.div>
       </section>
 
       {/* ── SECTION 3 — COMMENT ÇA MARCHE ── */}
-      <section id="comment-ca-marche" className="bg-[hsl(210,20%,98%)] px-6 py-16 md:py-20">
-        <div className="mx-auto max-w-3xl space-y-10 text-center">
-          <div>
+      <section id="comment-ca-marche" className="bg-muted/30 px-6 py-16 md:py-20">
+        <motion.div
+          className="mx-auto max-w-3xl space-y-10 text-center"
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.15 }}
+          variants={staggerContainer}
+        >
+          <motion.div variants={fadeUp}>
             <h2 className="font-heading text-2xl font-bold text-foreground md:text-3xl">Comment ça marche ?</h2>
             <p className="mt-2 text-muted-foreground">4 étapes simples, à ton rythme.</p>
-          </div>
+          </motion.div>
           <div className="relative space-y-0 text-left">
-            {/* Vertical line */}
             <div className="absolute left-6 top-0 hidden h-full w-0.5 bg-border md:block" />
-            {steps.map((s, i) => (
-              <div key={s.num} className="relative flex gap-5 pb-10 last:pb-0">
-                <div className="relative z-10 flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-primary text-lg font-bold text-primary-foreground font-heading">
+            {steps.map((s) => (
+              <motion.div
+                key={s.num}
+                className="relative flex gap-5 pb-10 last:pb-0"
+                variants={slideInLeft}
+              >
+                <div className="relative z-10 flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-primary text-lg font-bold text-primary-foreground font-heading shadow-md">
                   {s.num}
                 </div>
                 <div className="space-y-1 pt-1">
@@ -182,128 +236,179 @@ const CommentCaMarche = () => {
                   </div>
                   <p className="text-sm leading-relaxed text-muted-foreground whitespace-pre-line">{s.text}</p>
                 </div>
-              </div>
+              </motion.div>
             ))}
           </div>
-        </div>
+        </motion.div>
       </section>
 
       {/* ── SECTION 4 — LES MODULES ── */}
       <section id="modules" className="bg-background px-6 py-16 md:py-20">
-        <div className="mx-auto max-w-5xl space-y-10 text-center">
-          <div>
+        <motion.div
+          className="mx-auto max-w-5xl space-y-10 text-center"
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.1 }}
+          variants={staggerContainer}
+        >
+          <motion.div variants={fadeUp}>
             <h2 className="font-heading text-2xl font-bold text-foreground md:text-3xl">8 modules pour tout comprendre</h2>
             <p className="mt-2 text-muted-foreground">Du débutant complet au contribuable averti.</p>
-          </div>
-          <div className="grid gap-5 sm:grid-cols-2">
+          </motion.div>
+          <motion.div className="grid gap-5 sm:grid-cols-2" variants={staggerContainer}>
             {modules.map((m) => (
-              <Card key={m.num} className="border-border bg-background text-left">
-                <CardContent className="space-y-2 p-5">
-                  <div className="flex items-center justify-between">
-                    <span className="rounded-md bg-primary px-2 py-0.5 text-xs font-bold text-primary-foreground">Module {m.num}</span>
-                    <span className={`rounded-full px-2.5 py-0.5 text-xs font-semibold ${m.available ? 'bg-green-100 text-green-700' : 'bg-muted text-muted-foreground'}`}>
-                      {m.available ? 'Inclus' : 'Bientôt'}
-                    </span>
-                  </div>
-                  <h3 className="font-heading text-base font-bold text-foreground">
-                    <span className="mr-1.5">{m.icon}</span>{m.title}
-                  </h3>
-                  <p className="text-sm text-muted-foreground">{m.desc}</p>
-                </CardContent>
-              </Card>
+              <motion.div key={m.num} variants={scaleUp}>
+                <Card className="border-border bg-background text-left h-full transition-all duration-300 hover:shadow-lg hover:-translate-y-1">
+                  <CardContent className="space-y-2 p-5">
+                    <div className="flex items-center justify-between">
+                      <span className="rounded-md bg-primary px-2 py-0.5 text-xs font-bold text-primary-foreground">Module {m.num}</span>
+                      <span className={`rounded-full px-2.5 py-0.5 text-xs font-semibold ${m.available ? 'bg-green-100 text-green-700' : 'bg-muted text-muted-foreground'}`}>
+                        {m.available ? 'Inclus' : 'Bientôt'}
+                      </span>
+                    </div>
+                    <h3 className="font-heading text-base font-bold text-foreground">
+                      <span className="mr-1.5">{m.icon}</span>{m.title}
+                    </h3>
+                    <p className="text-sm text-muted-foreground">{m.desc}</p>
+                  </CardContent>
+                </Card>
+              </motion.div>
             ))}
-          </div>
-          <Link to="/inscription">
-            <Button className="font-heading font-bold">Voir tous les modules →</Button>
-          </Link>
-        </div>
+          </motion.div>
+          <motion.div variants={fadeUp}>
+            <Link to="/inscription">
+              <Button className="font-heading font-bold">Voir tous les modules →</Button>
+            </Link>
+          </motion.div>
+        </motion.div>
       </section>
 
       {/* ── SECTION 5 — POUR QUI ? ── */}
-      <section className="bg-[hsl(270,100%,98%)] px-6 py-16 md:py-20">
-        <div className="mx-auto max-w-5xl space-y-10 text-center">
-          <h2 className="font-heading text-2xl font-bold text-foreground md:text-3xl">Fait pour toi, quelle que soit ta situation</h2>
-          <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+      <section className="bg-accent/30 px-6 py-16 md:py-20">
+        <motion.div
+          className="mx-auto max-w-5xl space-y-10 text-center"
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.15 }}
+          variants={staggerContainer}
+        >
+          <motion.h2 variants={fadeUp} className="font-heading text-2xl font-bold text-foreground md:text-3xl">
+            Fait pour toi, quelle que soit ta situation
+          </motion.h2>
+          <motion.div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3" variants={staggerContainer}>
             {profiles.map((p) => (
-              <Card key={p.title} className="border-border bg-background">
-                <CardContent className="space-y-2 p-5 text-center">
-                  <span className="text-3xl">{p.icon}</span>
-                  <h3 className="font-heading text-base font-bold text-foreground">{p.title}</h3>
-                  <p className="text-sm text-muted-foreground">{p.text}</p>
-                </CardContent>
-              </Card>
+              <motion.div key={p.title} variants={scaleUp}>
+                <Card className="border-border bg-background h-full transition-all duration-300 hover:shadow-lg hover:-translate-y-1">
+                  <CardContent className="space-y-2 p-5 text-center">
+                    <span className="text-3xl">{p.icon}</span>
+                    <h3 className="font-heading text-base font-bold text-foreground">{p.title}</h3>
+                    <p className="text-sm text-muted-foreground">{p.text}</p>
+                  </CardContent>
+                </Card>
+              </motion.div>
             ))}
-          </div>
-        </div>
+          </motion.div>
+        </motion.div>
       </section>
 
       {/* ── SECTION 6 — RÉASSURANCE ── */}
       <section className="bg-background px-6 py-16 md:py-20">
-        <div className="mx-auto max-w-4xl space-y-10 text-center">
-          <h2 className="font-heading text-2xl font-bold text-foreground md:text-3xl">Pourquoi choisir Impôts Facile ?</h2>
-          <div className="grid gap-6 sm:grid-cols-2">
+        <motion.div
+          className="mx-auto max-w-4xl space-y-10 text-center"
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.2 }}
+          variants={staggerContainer}
+        >
+          <motion.h2 variants={fadeUp} className="font-heading text-2xl font-bold text-foreground md:text-3xl">
+            Pourquoi choisir Impôts Facile ?
+          </motion.h2>
+          <motion.div className="grid gap-6 sm:grid-cols-2" variants={staggerContainer}>
             {trustPoints.map((t) => (
-              <div key={t.title} className="space-y-2 rounded-xl border border-border p-6 text-center">
+              <motion.div
+                key={t.title}
+                variants={scaleUp}
+                className="space-y-2 rounded-xl border border-border p-6 text-center transition-all duration-300 hover:shadow-lg hover:border-primary/30"
+              >
                 <span className="text-3xl">{t.icon}</span>
                 <h3 className="font-heading text-base font-bold text-foreground">{t.title}</h3>
                 <p className="text-sm text-muted-foreground">{t.text}</p>
-              </div>
+              </motion.div>
             ))}
-          </div>
-        </div>
+          </motion.div>
+        </motion.div>
       </section>
 
       {/* ── SECTION 7 — TARIFS ── */}
-      <section className="bg-[hsl(210,20%,98%)] px-6 py-16 md:py-20">
-        <div className="mx-auto max-w-5xl space-y-10 text-center">
-          <div>
+      <section className="bg-muted/30 px-6 py-16 md:py-20">
+        <motion.div
+          className="mx-auto max-w-5xl space-y-10 text-center"
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.1 }}
+          variants={staggerContainer}
+        >
+          <motion.div variants={fadeUp}>
             <h2 className="font-heading text-2xl font-bold text-foreground md:text-3xl">Un accès simple et transparent</h2>
             <p className="mt-2 text-muted-foreground">Commence gratuitement, évolue selon tes besoins.</p>
-          </div>
-          <div className="grid gap-6 sm:grid-cols-3">
+          </motion.div>
+          <motion.div className="grid gap-6 sm:grid-cols-3" variants={staggerContainer}>
             {pricingCards.map((card) => (
-              <Card
-                key={card.name}
-                className={`border-border bg-background ${card.highlight ? 'ring-2 ring-primary shadow-xl scale-[1.03]' : ''}`}
-              >
-                <CardContent className="flex flex-col items-center space-y-4 p-6">
-                  <span className={`rounded-full px-3 py-1 text-xs font-bold ${card.badgeClass}`}>{card.badge}</span>
-                  <p className="font-heading text-3xl font-bold text-foreground">{card.price}</p>
-                  <ul className="w-full space-y-2 text-left text-sm text-muted-foreground">
-                    {card.features.map((f) => (
-                      <li key={f} className="flex items-start gap-2">
-                        <span className="mt-0.5 text-primary">✓</span>{f}
-                      </li>
-                    ))}
-                  </ul>
-                  <Link to="/inscription" className="w-full">
-                    <Button variant={card.btnVariant} className="w-full font-heading font-bold">
-                      {card.btnLabel}
-                    </Button>
-                  </Link>
-                </CardContent>
-              </Card>
+              <motion.div key={card.name} variants={scaleUp}>
+                <Card
+                  className={`border-border bg-background h-full transition-all duration-300 hover:shadow-lg ${card.highlight ? 'ring-2 ring-primary shadow-xl scale-[1.03]' : ''}`}
+                >
+                  <CardContent className="flex flex-col items-center space-y-4 p-6">
+                    <span className={`rounded-full px-3 py-1 text-xs font-bold ${card.badgeClass}`}>{card.badge}</span>
+                    <p className="font-heading text-3xl font-bold text-foreground">{card.price}</p>
+                    <ul className="w-full space-y-2 text-left text-sm text-muted-foreground">
+                      {card.features.map((f) => (
+                        <li key={f} className="flex items-start gap-2">
+                          <span className="mt-0.5 text-primary">✓</span>{f}
+                        </li>
+                      ))}
+                    </ul>
+                    <Link to="/inscription" className="w-full">
+                      <Button variant={card.btnVariant} className="w-full font-heading font-bold">
+                        {card.btnLabel}
+                      </Button>
+                    </Link>
+                  </CardContent>
+                </Card>
+              </motion.div>
             ))}
-          </div>
-          <p className="text-xs text-muted-foreground">Les prix sont indiqués en TTC. Paiement sécurisé via Stripe.</p>
-        </div>
+          </motion.div>
+          <motion.p variants={fadeIn} className="text-xs text-muted-foreground">
+            Les prix sont indiqués en TTC. Paiement sécurisé via Stripe.
+          </motion.p>
+        </motion.div>
       </section>
 
       {/* ── SECTION 8 — CTA FINAL ── */}
-      <section className="bg-gradient-to-br from-[hsl(239,84%,67%)] to-[hsl(263,70%,50%)] px-6 py-16 text-center text-white md:py-24">
+      <motion.section
+        className="bg-gradient-to-br from-[hsl(239,84%,67%)] to-[hsl(263,70%,50%)] px-6 py-16 text-center text-white md:py-24"
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, amount: 0.3 }}
+        variants={staggerContainer}
+      >
         <div className="mx-auto max-w-2xl space-y-6">
-          <h2 className="font-heading text-2xl font-bold md:text-4xl">Prêt à comprendre ta déclaration ?</h2>
-          <p className="text-base text-white/85 md:text-lg">
+          <motion.h2 variants={fadeUp} className="font-heading text-2xl font-bold md:text-4xl">
+            Prêt à comprendre ta déclaration ?
+          </motion.h2>
+          <motion.p variants={fadeUp} className="text-base text-white/85 md:text-lg">
             Rejoins des milliers de contribuables qui déclarent sans stress grâce à Impôts Facile.
-          </p>
-          <Link to="/inscription">
-            <Button className="bg-white text-[hsl(263,70%,50%)] hover:bg-white/90 font-heading font-bold px-8 py-3 text-base">
-              Créer mon compte gratuitement →
-            </Button>
-          </Link>
-          <p className="text-sm text-white/60">Sans carte bancaire. Accès immédiat.</p>
+          </motion.p>
+          <motion.div variants={scaleUp}>
+            <Link to="/inscription">
+              <Button className="bg-white text-[hsl(263,70%,50%)] hover:bg-white/90 font-heading font-bold px-8 py-3 text-base">
+                Créer mon compte gratuitement →
+              </Button>
+            </Link>
+          </motion.div>
+          <motion.p variants={fadeIn} className="text-sm text-white/60">Sans carte bancaire. Accès immédiat.</motion.p>
         </div>
-      </section>
+      </motion.section>
 
       <Footer />
     </div>
