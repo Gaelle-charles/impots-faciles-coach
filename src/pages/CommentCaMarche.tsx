@@ -84,13 +84,32 @@ const pricingCards = [
 /* ─── Page ─── */
 
 const CommentCaMarche = () => {
+  const imgRef = useRef<HTMLImageElement>(null);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      if (imgRef.current) {
+        imgRef.current.style.transform = `translateY(${window.scrollY * 0.4}px)`;
+      }
+    };
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
   return (
     <div className="min-h-screen bg-background">
       <Header />
 
       {/* ── SECTION 1 — HERO ── */}
-      <section className="relative overflow-hidden bg-gradient-to-br from-[hsl(239,84%,67%)] to-[hsl(263,70%,50%)] px-6 py-20 text-center text-white md:py-28">
-        <div className="mx-auto max-w-3xl space-y-6">
+      <section className="relative overflow-hidden px-6 py-20 text-center text-white md:py-28">
+        <img
+          ref={imgRef}
+          src={heroBg}
+          alt=""
+          className="absolute inset-0 h-[130%] w-full object-cover will-change-transform"
+        />
+        <div className="absolute inset-0 bg-gradient-to-br from-[hsl(285,52%,15%/0.85)] to-[hsl(263,70%,50%/0.75)]" />
+        <div className="relative z-10 mx-auto max-w-3xl space-y-6">
           <span className="inline-block rounded-full bg-white/20 px-4 py-1.5 text-sm font-semibold backdrop-blur-sm">
             ✨ Simple. Guidé. Efficace.
           </span>
@@ -104,7 +123,7 @@ const CommentCaMarche = () => {
           </p>
           <div className="flex flex-col items-center justify-center gap-3 sm:flex-row">
             <Link to="/inscription">
-              <Button className="bg-white text-[hsl(263,70%,50%)] hover:bg-white/90 font-heading font-bold px-6">
+              <Button className="bg-white text-primary hover:bg-white/90 font-heading font-bold px-6">
                 Commencer gratuitement →
               </Button>
             </Link>
