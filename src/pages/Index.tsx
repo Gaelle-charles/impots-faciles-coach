@@ -238,26 +238,22 @@ const Index = () => {
       </section>
 
       {/* CTA Banner */}
-      <section className="px-4 py-20 md:py-28">
-        <div className="mx-auto max-w-3xl text-center">
-          <div className="rounded-3xl p-10 md:p-16 relative overflow-hidden">
-            <img src={ctaBg} alt="" className="absolute inset-0 h-full w-full object-cover" />
-            <div className="absolute inset-0 bg-gradient-to-br from-[hsl(285,52%,15%/0.85)] to-[hsl(263,70%,50%/0.75)]" />
-            <div className="relative z-10">
-              <h2 className="font-heading text-3xl md:text-4xl font-bold text-primary-foreground">
-                Prêt à maîtriser vos impôts ?
-              </h2>
-              <p className="mt-4 text-primary-foreground/80 max-w-md mx-auto">
-                Rejoignez Impôts Facile et commencez votre formation fiscale dès aujourd'hui.
-              </p>
-              <Link to="/inscription">
-                <Button variant="cta" size="lg" className="mt-8 gap-2 text-base px-8 py-6 shadow-lg">
-                  Créer mon compte gratuit
-                  <ArrowRight className="h-5 w-5" />
-                </Button>
-              </Link>
-            </div>
-          </div>
+      <section className="relative overflow-hidden px-4 py-20 md:py-28">
+        <img src={ctaBg} alt="" className="absolute inset-0 h-full w-full object-cover" />
+        <div className="absolute inset-0 bg-gradient-to-br from-[hsl(285,52%,15%/0.85)] to-[hsl(263,70%,50%/0.75)]" />
+        <div className="relative z-10 mx-auto max-w-3xl text-center">
+          <h2 className="font-heading text-3xl md:text-4xl font-bold text-white">
+            Prêt à maîtriser vos impôts ?
+          </h2>
+          <p className="mt-4 text-white/80 max-w-md mx-auto">
+            Rejoignez Impôts Facile et commencez votre formation fiscale dès aujourd'hui.
+          </p>
+          <Link to="/inscription">
+            <Button variant="cta" size="lg" className="mt-8 gap-2 text-base px-8 py-6 shadow-lg">
+              Créer mon compte gratuit
+              <ArrowRight className="h-5 w-5" />
+            </Button>
+          </Link>
         </div>
       </section>
 
