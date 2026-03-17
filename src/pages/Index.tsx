@@ -92,6 +92,8 @@ const advantages = [
 
 const Index = () => {
   const imgRef = useRef<HTMLDivElement>(null);
+  const ctaImgRef = useRef<HTMLImageElement>(null);
+  const ctaSectionRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
     const handleScroll = () => {
