@@ -1,8 +1,10 @@
 import { Link } from 'react-router-dom';
+import { useEffect, useRef } from 'react';
 import { Header } from '@/components/Header';
 import { Footer } from '@/components/Footer';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
+import heroBg from '@/assets/comment-ca-marche-hero.jpg';
 
 /* ─── Data ─── */
 
