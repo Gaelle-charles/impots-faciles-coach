@@ -92,12 +92,18 @@ const advantages = [
 
 const Index = () => {
   const imgRef = useRef<HTMLDivElement>(null);
+  const ctaImgRef = useRef<HTMLImageElement>(null);
+  const ctaSectionRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
     const handleScroll = () => {
       if (imgRef.current) {
-        const offset = window.scrollY;
-        imgRef.current.style.transform = `translateY(${offset * 0.4}px)`;
+        imgRef.current.style.transform = `translateY(${window.scrollY * 0.4}px)`;
+      }
+      if (ctaImgRef.current && ctaSectionRef.current) {
+        const rect = ctaSectionRef.current.getBoundingClientRect();
+        const offset = -rect.top * 0.4;
+        ctaImgRef.current.style.transform = `translateY(${offset}px)`;
       }
     };
     window.addEventListener('scroll', handleScroll, { passive: true });
@@ -238,8 +244,8 @@ const Index = () => {
       </section>
 
       {/* CTA Banner */}
-      <section className="relative overflow-hidden px-4 py-20 md:py-28">
-        <img src={ctaBg} alt="" className="absolute inset-0 h-full w-full object-cover" />
+      <section ref={ctaSectionRef} className="relative overflow-hidden px-4 py-20 md:py-28">
+        <img ref={ctaImgRef} src={ctaBg} alt="" className="absolute inset-0 h-[130%] w-full object-cover will-change-transform" />
         <div className="absolute inset-0 bg-gradient-to-br from-[hsl(285,52%,15%/0.85)] to-[hsl(263,70%,50%/0.75)]" />
         <div className="relative z-10 mx-auto max-w-3xl text-center">
           <h2 className="font-heading text-3xl md:text-4xl font-bold text-white">
