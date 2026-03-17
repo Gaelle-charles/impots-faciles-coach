@@ -98,8 +98,12 @@ const Index = () => {
   useEffect(() => {
     const handleScroll = () => {
       if (imgRef.current) {
-        const offset = window.scrollY;
-        imgRef.current.style.transform = `translateY(${offset * 0.4}px)`;
+        imgRef.current.style.transform = `translateY(${window.scrollY * 0.4}px)`;
+      }
+      if (ctaImgRef.current && ctaSectionRef.current) {
+        const rect = ctaSectionRef.current.getBoundingClientRect();
+        const offset = -rect.top * 0.4;
+        ctaImgRef.current.style.transform = `translateY(${offset}px)`;
       }
     };
     window.addEventListener('scroll', handleScroll, { passive: true });
