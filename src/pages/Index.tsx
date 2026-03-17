@@ -102,7 +102,11 @@ const Index = () => {
       }
       if (ctaImgRef.current && ctaSectionRef.current) {
         const rect = ctaSectionRef.current.getBoundingClientRect();
-        const offset = -rect.top * 0.4;
+        const sectionH = rect.height;
+        const viewH = window.innerHeight;
+        const progress = (viewH - rect.top) / (viewH + sectionH);
+        const maxShift = sectionH * 0.3;
+        const offset = (progress - 0.5) * maxShift;
         ctaImgRef.current.style.transform = `translateY(${offset}px)`;
       }
     };
@@ -245,7 +249,7 @@ const Index = () => {
 
       {/* CTA Banner */}
       <section ref={ctaSectionRef} className="relative overflow-hidden px-4 py-20 md:py-28">
-        <img ref={ctaImgRef} src={ctaBg} alt="" className="absolute inset-0 h-[130%] w-full object-cover will-change-transform" />
+        <img ref={ctaImgRef} src={ctaBg} alt="" className="absolute -top-[15%] left-0 h-[130%] w-full object-cover will-change-transform" />
         <div className="absolute inset-0 bg-gradient-to-br from-[hsl(285,52%,15%/0.85)] to-[hsl(263,70%,50%/0.75)]" />
         <div className="relative z-10 mx-auto max-w-3xl text-center">
           <h2 className="font-heading text-3xl md:text-4xl font-bold text-white">
