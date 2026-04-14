@@ -1,9 +1,10 @@
 import { NavLink, useLocation } from 'react-router-dom';
-import { LayoutDashboard, BookOpen, BarChart3, User } from 'lucide-react';
+import { LayoutDashboard, BookOpen, Calculator, BarChart3, User } from 'lucide-react';
 
 const items = [
   { to: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
   { to: '/mes-modules', label: 'Modules', icon: BookOpen },
+  { to: '/simulateur', label: 'Simulateur', icon: Calculator },
   { to: '/dashboard#resultats', label: 'Résultats', icon: BarChart3 },
   { to: '/profil', label: 'Profil', icon: User },
 ];
