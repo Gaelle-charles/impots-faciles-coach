@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { Menu, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/contexts/AuthContext';
+import { useAccess } from '@/hooks/useAccess';
 import logo from '@/assets/logo.png';
 import { cn } from '@/lib/utils';
 
@@ -18,9 +19,11 @@ interface HeaderProps {
 
 export function Header({ variant = 'light' }: HeaderProps) {
   const { user, signOut } = useAuth();
+  const { hasAdminAccess } = useAccess();
   const [mobileOpen, setMobileOpen] = useState(false);
 
   const isDark = variant === 'dark';
+  const isAdmin = hasAdminAccess();
 
   return (
     <header
@@ -54,6 +57,19 @@ export function Header({ variant = 'light' }: HeaderProps) {
               {l.label}
             </Link>
           ))}
+          {isAdmin && (
+            <Link
+              to="/admin"
+              className={cn(
+                'text-sm font-semibold transition-colors',
+                isDark
+                  ? 'text-yellow-vivid hover:text-yellow-vivid/80'
+                  : 'text-primary hover:text-primary/80'
+              )}
+            >
+              Admin
+            </Link>
+          )}
         </nav>
 
         {/* Desktop auth buttons */}
@@ -126,6 +142,18 @@ export function Header({ variant = 'light' }: HeaderProps) {
                 {l.label}
               </Link>
             ))}
+            {isAdmin && (
+              <Link
+                to="/admin"
+                onClick={() => setMobileOpen(false)}
+                className={cn(
+                  'text-sm font-semibold',
+                  isDark ? 'text-yellow-vivid' : 'text-primary'
+                )}
+              >
+                Admin
+              </Link>
+            )}
           </nav>
           <div className="mt-4 flex flex-col gap-2">
             {user ? (

@@ -25,6 +25,7 @@ import {
 } from 'recharts';
 import { Users, BookOpen, Target, Activity } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
+import { useAccess } from '@/hooks/useAccess';
 
 interface ProfileRow {
   prenom: string | null;
@@ -55,6 +56,7 @@ interface ResultRow {
 const Admin = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
+  const { isLoading: accessLoading, hasAdminAccess } = useAccess();
 
   const [loading, setLoading] = useState(true);
   const [profiles, setProfiles] = useState<ProfileRow[]>([]);
@@ -62,23 +64,23 @@ const Admin = () => {
   const [modules, setModules] = useState<ModuleRow[]>([]);
   const [avgScore, setAvgScore] = useState(0);
 
+  // Access guard
   useEffect(() => {
-    if (!user) return;
+    if (accessLoading) return;
+    if (!hasAdminAccess()) {
+      toast({
+        title: 'Accès restreint',
+        description: 'Accès réservé aux administrateurs',
+        variant: 'destructive',
+      });
+      navigate('/dashboard', { replace: true });
+    }
+  }, [accessLoading, hasAdminAccess, navigate]);
+
+  useEffect(() => {
+    if (!user || accessLoading || !hasAdminAccess()) return;
 
     const init = async () => {
-      // Role check
-      const { data: prof } = await supabase
-        .from('profiles')
-        .select('role')
-        .eq('id', user.id)
-        .maybeSingle();
-
-      if (prof?.role !== 'admin') {
-        toast({ title: 'Accès refusé', description: "Tu n'as pas les droits administrateur.", variant: 'destructive' });
-        navigate('/dashboard', { replace: true });
-        return;
-      }
-
       setLoading(true);
       const [profRes, progRes, modRes, resRes] = await Promise.all([
         supabase.from('profiles').select('prenom, nom, email, plan, created_at, role'),
@@ -99,7 +101,7 @@ const Admin = () => {
     };
 
     init();
-  }, [user, navigate]);
+  }, [user, accessLoading, hasAdminAccess]);
 
   // Stats
   const totalUsers = profiles.length;
@@ -153,7 +155,7 @@ const Admin = () => {
     { label: 'Actifs (7j)', value: activeUsers, icon: Activity },
   ];
 
-  if (loading) {
+  if (accessLoading || loading) {
     return (
       <div className="space-y-10">
         <Skeleton className="h-9 w-56" />
@@ -166,6 +168,8 @@ const Admin = () => {
       </div>
     );
   }
+
+  if (!hasAdminAccess()) return null;
 
   return (
     <div className="space-y-10">
