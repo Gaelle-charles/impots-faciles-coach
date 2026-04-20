@@ -234,7 +234,80 @@ const Dashboard = () => {
         ))}
       </div>
 
+      {/* Modules list with access control */}
+      <section id="modules">
+        <h2 className="font-heading text-2xl font-bold text-foreground mb-5">Mes modules</h2>
+        {accessLoading ? (
+          <div className="grid gap-4 sm:grid-cols-2">
+            {Array.from({ length: 4 }).map((_, i) => (
+              <Skeleton key={i} className="h-44 rounded-lg" />
+            ))}
+          </div>
+        ) : modules.length === 0 ? (
+          <p className="text-muted-foreground">Aucun module disponible.</p>
+        ) : (
+          <div className="grid gap-4 sm:grid-cols-2">
+            {modules.map((mod) => {
+              const hasAccess = hasModuleAccess(mod);
+              const prog = progMap.get(mod.id);
+              const totalStep = mod.total_step || 1;
+              const pct = prog ? Math.min(Math.round((prog.step / totalStep) * 100), 100) : 0;
+              const isCompleted = !!prog?.completion_date;
+              const requiredPlan = mod.accessibilite?.[0] ?? 'starter';
 
+              return (
+                <Card key={mod.id} className="relative overflow-hidden border-border bg-background shadow-sm">
+                  <CardContent className={`p-5 space-y-3 ${!hasAccess ? 'opacity-60' : ''}`}>
+                    <div className="flex items-start justify-between gap-2">
+                      <h3 className="font-heading text-base font-semibold text-foreground">{mod.titre}</h3>
+                      {isCompleted && hasAccess && (
+                        <Badge className="bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200">
+                          Terminé
+                        </Badge>
+                      )}
+                    </div>
+                    {hasAccess && (
+                      <>
+                        <Progress value={pct} className="h-2" />
+                        <p className="text-xs text-muted-foreground">
+                          Étape {prog?.step ?? 0} sur {mod.total_step}
+                        </p>
+                      </>
+                    )}
+                    <Button
+                      onClick={() =>
+                        hasAccess ? navigate(`/module/${mod.module_slug}`) : navigate('/tarifs')
+                      }
+                      disabled={!hasAccess}
+                      className="w-full"
+                    >
+                      {hasAccess
+                        ? isCompleted
+                          ? 'Revoir'
+                          : prog
+                            ? 'Continuer'
+                            : 'Commencer'
+                        : `Débloquer avec ${capitalize(requiredPlan)}`}
+                    </Button>
+                  </CardContent>
+                  {!hasAccess && (
+                    <button
+                      type="button"
+                      onClick={() => navigate('/tarifs')}
+                      aria-label={`Débloquer avec ${capitalize(requiredPlan)}`}
+                      className="absolute inset-0 flex items-center justify-center bg-background/40 backdrop-blur-[1px] transition-colors hover:bg-background/30"
+                    >
+                      <span className="flex h-14 w-14 items-center justify-center rounded-full bg-foreground/80 shadow-lg">
+                        <Lock className="h-6 w-6 text-background" />
+                      </span>
+                    </button>
+                  )}
+                </Card>
+              );
+            })}
+          </div>
+        )}
+      </section>
 
       {/* Quiz results */}
       <section id="resultats">
