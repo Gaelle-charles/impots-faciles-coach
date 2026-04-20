@@ -17,7 +17,7 @@ const FicheMetier = () => {
         description: 'Les fiches métier sont disponibles avec le plan Expert ou Premium',
         variant: 'destructive',
       });
-      navigate('/tarifs', { replace: true });
+      navigate('/tarifs?recommended=expert&redirected=1', { replace: true });
     }
   }, [isLoading, hasFicheMetierAccess, navigate]);
 

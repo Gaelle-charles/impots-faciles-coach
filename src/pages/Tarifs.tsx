@@ -1,12 +1,14 @@
+import { useSearchParams, useLocation } from 'react-router-dom';
 import { Header } from '@/components/Header';
 import { Footer } from '@/components/Footer';
 import { Button } from '@/components/ui/button';
-import { Check } from 'lucide-react';
+import { Check, Info } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 const plans = [
   {
     name: 'Starter',
+    slug: 'starter',
     price: 49,
     popular: false,
     features: [
@@ -18,6 +20,7 @@ const plans = [
   },
   {
     name: 'Expert',
+    slug: 'expert',
     price: 79,
     popular: true,
     features: [
@@ -29,6 +32,7 @@ const plans = [
   },
   {
     name: 'Premium',
+    slug: 'premium',
     price: 119,
     popular: false,
     features: [
@@ -39,58 +43,113 @@ const plans = [
   },
 ];
 
+interface RedirectState {
+  recommendedPlan?: string;
+  reason?: string;
+}
+
 const Tarifs = () => {
+  const [searchParams] = useSearchParams();
+  const location = useLocation();
+  const state = (location.state ?? {}) as RedirectState;
+
+  const recommendedRaw =
+    searchParams.get('recommended') ?? state.recommendedPlan ?? '';
+  const recommended = recommendedRaw.toLowerCase();
+  const wasRedirected =
+    !!recommended || searchParams.get('redirected') === '1' || !!state.reason;
+
+  const recommendedPlan = plans.find((p) => p.slug === recommended);
+
   return (
     <div className="flex min-h-screen flex-col bg-background">
       <Header />
 
       <div className="flex flex-1 flex-col items-center px-4 py-20">
+        {wasRedirected && (
+          <div className="mb-8 flex w-full max-w-3xl items-start gap-3 rounded-lg border border-accent/40 bg-accent/10 p-4 text-sm text-foreground">
+            <Info className="mt-0.5 h-5 w-5 shrink-0 text-accent" />
+            <div>
+              <p className="font-semibold">
+                Vous avez été redirigé ici car le contenu demandé nécessite un plan supérieur.
+              </p>
+              {recommendedPlan && (
+                <p className="mt-1 text-muted-foreground">
+                  Le plan <span className="font-semibold text-foreground">{recommendedPlan.name}</span> est recommandé pour débloquer cet accès.
+                </p>
+              )}
+            </div>
+          </div>
+        )}
+
         <h1 className="font-heading text-4xl font-bold text-foreground">Nos tarifs</h1>
         <p className="mt-4 max-w-xl text-center text-lg text-muted-foreground">
           Choisissez la formule qui vous convient pour maîtriser la fiscalité et réduire vos impôts.
         </p>
 
-        <div className="mt-14 grid w-full max-w-4xl gap-8 sm:grid-cols-2 lg:grid-cols-3">
-          {plans.map((plan) => (
-            <div
-              key={plan.name}
-              className={cn(
-                'relative flex flex-col rounded-xl border p-8 transition-shadow',
-                plan.popular
-                  ? 'border-accent bg-background shadow-lg shadow-accent/20 ring-2 ring-accent'
-                  : 'border-border bg-card'
-              )}
-            >
-              {plan.popular && (
-                <span className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-accent px-4 py-1 text-xs font-bold text-accent-foreground">
-                  Populaire
-                </span>
-              )}
-
-              <h3 className="font-heading text-xl font-bold text-foreground">{plan.name}</h3>
-              <p className="mt-3">
-                <span className="font-heading text-4xl font-bold text-foreground">{plan.price}€</span>
-                <span className="ml-1 text-sm text-muted-foreground">/ accès</span>
-              </p>
-
-              <ul className="mt-8 flex-1 space-y-3">
-                {plan.features.map((f) => (
-                  <li key={f} className="flex items-start gap-2 text-sm text-muted-foreground">
-                    <Check className="mt-0.5 h-4 w-4 shrink-0 text-accent" />
-                    {f}
-                  </li>
-                ))}
-              </ul>
-
-              <Button
-                disabled
-                variant={plan.popular ? 'cta' : 'default'}
-                className="mt-8 w-full"
+        <div className="mt-14 grid w-full max-w-4xl gap-8 sm:grid-cols-2 lg:grid-cols-3 lg:items-stretch">
+          {plans.map((plan) => {
+            const isRecommended = plan.slug === recommended;
+            return (
+              <div
+                key={plan.name}
+                className={cn(
+                  'relative flex flex-col rounded-xl border p-8 transition-all',
+                  isRecommended
+                    ? 'border-primary bg-background shadow-2xl shadow-primary/30 ring-4 ring-primary lg:scale-105 lg:-my-2'
+                    : plan.popular
+                      ? 'border-accent bg-background shadow-lg shadow-accent/20 ring-2 ring-accent'
+                      : 'border-border bg-card',
+                )}
               >
-                Payer {plan.price}€
-              </Button>
-            </div>
-          ))}
+                {isRecommended ? (
+                  <span className="absolute -top-3 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-full bg-primary px-4 py-1 text-xs font-bold text-primary-foreground shadow-md">
+                    ⭐ Plan recommandé pour votre accès
+                  </span>
+                ) : (
+                  plan.popular && (
+                    <span className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-accent px-4 py-1 text-xs font-bold text-accent-foreground">
+                      Populaire
+                    </span>
+                  )
+                )}
+
+                <h3 className="font-heading text-xl font-bold text-foreground">{plan.name}</h3>
+                <p className="mt-3">
+                  <span
+                    className={cn(
+                      'font-heading font-bold text-foreground',
+                      isRecommended ? 'text-5xl' : 'text-4xl',
+                    )}
+                  >
+                    {plan.price}€
+                  </span>
+                  <span className="ml-1 text-sm text-muted-foreground">/ accès</span>
+                </p>
+
+                <ul className="mt-8 flex-1 space-y-3">
+                  {plan.features.map((f) => (
+                    <li key={f} className="flex items-start gap-2 text-sm text-muted-foreground">
+                      <Check className="mt-0.5 h-4 w-4 shrink-0 text-accent" />
+                      {f}
+                    </li>
+                  ))}
+                </ul>
+
+                <Button
+                  disabled
+                  variant={isRecommended ? 'cta' : plan.popular ? 'cta' : 'default'}
+                  size={isRecommended ? 'lg' : 'default'}
+                  className={cn(
+                    'mt-8 w-full',
+                    isRecommended && 'text-base font-bold shadow-lg',
+                  )}
+                >
+                  Payer {plan.price}€
+                </Button>
+              </div>
+            );
+          })}
         </div>
       </div>
 

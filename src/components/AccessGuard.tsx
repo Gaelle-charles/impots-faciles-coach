@@ -64,7 +64,9 @@ export function AccessGuard({ requires, children }: AccessGuardProps) {
   }
 
   if (!isAllowed) {
-    return <Navigate to="/tarifs" replace />;
+    const recommended = requires === 'admin' || requires === 'authenticated' ? '' : requires;
+    const target = recommended ? `/tarifs?recommended=${recommended}&redirected=1` : '/tarifs';
+    return <Navigate to={target} replace />;
   }
 
   return <>{children}</>;
