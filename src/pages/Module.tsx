@@ -4,7 +4,6 @@ import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { Button } from '@/components/ui/button';
-import { Button } from '@/components/ui/button';
 import {
   Dialog,
   DialogContent,
@@ -46,8 +45,7 @@ const Module = () => {
   const [showCompletion, setShowCompletion] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
-  const [profile, setProfile] = useState<{ plan: string } | null>(null);
-  const [accessDenied, setAccessDenied] = useState(false);
+
 
   const rawStep = progression?.step ?? 0;
   const totalSteps = contenus.length;
@@ -71,21 +69,13 @@ const Module = () => {
 
     setLoading(true);
     setError(null);
-    setAccessDenied(false);
 
-    // 1. Fetch module + profile in parallel
-    const [modRes, profileRes] = await Promise.all([
-      supabase
-        .from('modules')
-        .select('*')
-        .eq('module_slug', slug)
-        .maybeSingle(),
-      supabase
-        .from('profiles')
-        .select('plan')
-        .eq('id', user.id)
-        .single(),
-    ]);
+    // 1. Fetch module
+    const modRes = await supabase
+      .from('modules')
+      .select('*')
+      .eq('module_slug', slug)
+      .maybeSingle();
 
     if (modRes.error) {
       setError('Erreur lors du chargement du module.');
@@ -101,16 +91,6 @@ const Module = () => {
 
     const mod = modRes.data;
     setModule(mod);
-
-    // Access control: check user plan against module.accessibilite
-    const userPlan = profileRes.data?.plan ?? 'nouveau';
-    setProfile(profileRes.data ?? { plan: userPlan });
-
-    if (mod.accessibilite && mod.accessibilite.length > 0 && !mod.accessibilite.includes(userPlan)) {
-      setAccessDenied(true);
-      setLoading(false);
-      return;
-    }
 
     // 2. Fetch contenus + progression in parallel
     const [contRes, progRes] = await Promise.all([
