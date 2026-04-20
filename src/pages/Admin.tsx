@@ -155,7 +155,7 @@ const Admin = () => {
     { label: 'Actifs (7j)', value: activeUsers, icon: Activity },
   ];
 
-  if (loading) {
+  if (accessLoading || loading) {
     return (
       <div className="space-y-10">
         <Skeleton className="h-9 w-56" />
