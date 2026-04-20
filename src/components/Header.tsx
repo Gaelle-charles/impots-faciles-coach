@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { Menu, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/contexts/AuthContext';
+import { useAccess } from '@/hooks/useAccess';
 import logo from '@/assets/logo.png';
 import { cn } from '@/lib/utils';
 
@@ -18,9 +19,11 @@ interface HeaderProps {
 
 export function Header({ variant = 'light' }: HeaderProps) {
   const { user, signOut } = useAuth();
+  const { hasAdminAccess } = useAccess();
   const [mobileOpen, setMobileOpen] = useState(false);
 
   const isDark = variant === 'dark';
+  const isAdmin = hasAdminAccess();
 
   return (
     <header
