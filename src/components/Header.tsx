@@ -142,6 +142,18 @@ export function Header({ variant = 'light' }: HeaderProps) {
                 {l.label}
               </Link>
             ))}
+            {isAdmin && (
+              <Link
+                to="/admin"
+                onClick={() => setMobileOpen(false)}
+                className={cn(
+                  'text-sm font-semibold',
+                  isDark ? 'text-yellow-vivid' : 'text-primary'
+                )}
+              >
+                Admin
+              </Link>
+            )}
           </nav>
           <div className="mt-4 flex flex-col gap-2">
             {user ? (
