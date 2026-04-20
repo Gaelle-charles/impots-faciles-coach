@@ -236,21 +236,6 @@ const Module = () => {
     );
   }
 
-  // Access control via useAccess — only check after both module + access profile are loaded
-  useEffect(() => {
-    if (loading || accessLoading) return;
-    if (!module) return;
-    if (!hasModuleAccess(module)) {
-      const requiredPlan = module.accessibilite?.[0] ?? 'starter';
-      const label = requiredPlan.charAt(0).toUpperCase() + requiredPlan.slice(1);
-      toast({
-        title: 'Accès restreint',
-        description: `Ce module nécessite le plan ${label}. Découvrez nos offres pour y accéder.`,
-        variant: 'destructive',
-      });
-      navigate('/tarifs', { replace: true });
-    }
-  }, [loading, accessLoading, module, hasModuleAccess, navigate]);
 
   // Loading skeleton
   if (loading || accessLoading) {
