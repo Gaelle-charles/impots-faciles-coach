@@ -57,6 +57,19 @@ export function Header({ variant = 'light' }: HeaderProps) {
               {l.label}
             </Link>
           ))}
+          {isAdmin && (
+            <Link
+              to="/admin"
+              className={cn(
+                'text-sm font-semibold transition-colors',
+                isDark
+                  ? 'text-yellow-vivid hover:text-yellow-vivid/80'
+                  : 'text-primary hover:text-primary/80'
+              )}
+            >
+              Admin
+            </Link>
+          )}
         </nav>
 
         {/* Desktop auth buttons */}
