@@ -276,7 +276,9 @@ const Dashboard = () => {
                     )}
                     <Button
                       onClick={() =>
-                        hasAccess ? navigate(`/module/${mod.module_slug}`) : navigate('/tarifs')
+                        hasAccess
+                          ? navigate(`/module/${mod.module_slug}`)
+                          : navigate(`/tarifs?recommended=${requiredPlan}&redirected=1`)
                       }
                       disabled={!hasAccess}
                       className="w-full"
@@ -293,7 +295,7 @@ const Dashboard = () => {
                   {!hasAccess && (
                     <button
                       type="button"
-                      onClick={() => navigate('/tarifs')}
+                      onClick={() => navigate(`/tarifs?recommended=${requiredPlan}&redirected=1`)}
                       aria-label={`Débloquer avec ${capitalize(requiredPlan)}`}
                       className="absolute inset-0 flex items-center justify-center bg-background/40 backdrop-blur-[1px] transition-colors hover:bg-background/30"
                     >
