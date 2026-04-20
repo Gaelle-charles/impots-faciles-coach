@@ -169,6 +169,8 @@ const Admin = () => {
     );
   }
 
+  if (!hasAdminAccess()) return null;
+
   return (
     <div className="space-y-10">
       <div>
