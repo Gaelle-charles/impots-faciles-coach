@@ -157,7 +157,7 @@ const Module = () => {
         description: `Ce module nécessite le plan ${label}. Découvrez nos offres pour y accéder.`,
         variant: 'destructive',
       });
-      navigate('/tarifs', { replace: true });
+      navigate(`/tarifs?recommended=${requiredPlan}&redirected=1`, { replace: true });
     }
   }, [loading, accessLoading, module, hasModuleAccess, navigate]);
 
