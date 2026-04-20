@@ -1,14 +1,18 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { Skeleton } from "@/components/ui/skeleton";
 import { useSimulateurFiscal, defaultFormData, type SimulateurFormData } from "@/hooks/useSimulateurFiscal";
 import SimulateurResultat from "@/components/simulateur/SimulateurResultat";
 import MesSimulations from "@/components/simulateur/MesSimulations";
 import { Minus, Plus, User, Users, Baby } from "lucide-react";
+import { useAccess } from "@/hooks/useAccess";
+import { toast } from "@/hooks/use-toast";
 
 const NumInput = ({
   label, note, placeholder = "0", value, onChange,
@@ -31,9 +35,23 @@ const NumInput = ({
 );
 
 const Simulateur = () => {
+  const navigate = useNavigate();
+  const { isLoading: accessLoading, hasSimulateurCompletAccess } = useAccess();
   const [form, setForm] = useState<SimulateurFormData>(defaultFormData);
   const [refreshKey, setRefreshKey] = useState(0);
   const result = useSimulateurFiscal(form);
+
+  useEffect(() => {
+    if (accessLoading) return;
+    if (!hasSimulateurCompletAccess()) {
+      toast({
+        title: 'Accès restreint',
+        description: 'Le simulateur complet est disponible avec le plan Expert ou Premium',
+        variant: 'destructive',
+      });
+      navigate('/simulateur-de-frais', { replace: true });
+    }
+  }, [accessLoading, hasSimulateurCompletAccess, navigate]);
 
   const update = useCallback(<K extends keyof SimulateurFormData>(key: K, value: SimulateurFormData[K]) => {
     setForm((prev) => ({ ...prev, [key]: value }));
@@ -46,6 +64,21 @@ const Simulateur = () => {
     { value: "marie" as const, label: "Marié ou Pacsé", icon: Users },
     { value: "marie_enfants" as const, label: "Marié/Pacsé + enfants", icon: Baby },
   ];
+
+  if (accessLoading) {
+    return (
+      <div className="space-y-6">
+        <Skeleton className="h-9 w-72" />
+        <Skeleton className="h-5 w-96" />
+        <div className="flex flex-col lg:flex-row gap-8">
+          <Skeleton className="lg:w-[60%] h-96 rounded-lg" />
+          <Skeleton className="lg:w-[40%] h-96 rounded-lg" />
+        </div>
+      </div>
+    );
+  }
+
+  if (!hasSimulateurCompletAccess()) return null;
 
   return (
     <div className="space-y-6">
