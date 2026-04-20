@@ -1,4 +1,6 @@
-const SimulateurFrais = () => {
+import { AccessGuard } from '@/components/AccessGuard';
+
+const SimulateurFraisContent = () => {
   return (
     <div>
       <h1 className="font-heading text-3xl font-bold text-foreground">Simulateur de frais</h1>
@@ -6,5 +8,11 @@ const SimulateurFrais = () => {
     </div>
   );
 };
+
+const SimulateurFrais = () => (
+  <AccessGuard requires="starter">
+    <SimulateurFraisContent />
+  </AccessGuard>
+);
 
 export default SimulateurFrais;

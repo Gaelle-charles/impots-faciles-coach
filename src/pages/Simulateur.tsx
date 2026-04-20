@@ -65,6 +65,21 @@ const Simulateur = () => {
     { value: "marie_enfants" as const, label: "Marié/Pacsé + enfants", icon: Baby },
   ];
 
+  if (accessLoading) {
+    return (
+      <div className="space-y-6">
+        <Skeleton className="h-9 w-72" />
+        <Skeleton className="h-5 w-96" />
+        <div className="flex flex-col lg:flex-row gap-8">
+          <Skeleton className="lg:w-[60%] h-96 rounded-lg" />
+          <Skeleton className="lg:w-[40%] h-96 rounded-lg" />
+        </div>
+      </div>
+    );
+  }
+
+  if (!hasSimulateurCompletAccess()) return null;
+
   return (
     <div className="space-y-6">
       {/* Header */}
