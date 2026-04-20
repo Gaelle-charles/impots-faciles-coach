@@ -21,6 +21,7 @@ import {
 import { Loader2, Menu, RefreshCw } from 'lucide-react';
 import { Skeleton } from '@/components/ui/skeleton';
 import { toast } from '@/hooks/use-toast';
+import { useAccess } from '@/hooks/useAccess';
 import type { Tables } from '@/integrations/supabase/types';
 
 import { ModuleSidebarContent } from '@/components/module/ModuleSidebarContent';
@@ -35,6 +36,7 @@ const Module = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
   const isMobile = useIsMobile();
+  const { hasModuleAccess, isLoading: accessLoading } = useAccess();
 
   const [module, setModule] = useState<ModuleRow | null>(null);
   const [contenus, setContenus] = useState<ContenuRow[]>([]);
@@ -218,30 +220,24 @@ const Module = () => {
     );
   }
 
-  // Access denied state
-  if (accessDenied) {
-    return (
-      <div className="flex h-screen flex-col items-center justify-center gap-4 p-6 text-center">
-        <Lock className="h-12 w-12 text-muted-foreground" />
-        <h2 className="font-heading text-2xl font-bold text-foreground">Module verrouillé 🔒</h2>
-        <p className="max-w-md text-muted-foreground">
-          Votre plan actuel ({profile?.plan ?? 'nouveau'}) ne permet pas d'accéder à ce module.
-          Passez à un plan supérieur pour débloquer ce contenu.
-        </p>
-        <div className="flex gap-3">
-          <Button variant="outline" onClick={() => navigate('/dashboard')}>
-            Retour au dashboard
-          </Button>
-          <Button onClick={() => navigate('/tarifs')}>
-            Voir les tarifs
-          </Button>
-        </div>
-      </div>
-    );
-  }
+  // Access control via useAccess — only check after both module + access profile are loaded
+  useEffect(() => {
+    if (loading || accessLoading) return;
+    if (!module) return;
+    if (!hasModuleAccess(module)) {
+      const requiredPlan = module.accessibilite?.[0] ?? 'starter';
+      const label = requiredPlan.charAt(0).toUpperCase() + requiredPlan.slice(1);
+      toast({
+        title: 'Accès restreint',
+        description: `Ce module nécessite le plan ${label}. Découvrez nos offres pour y accéder.`,
+        variant: 'destructive',
+      });
+      navigate('/tarifs', { replace: true });
+    }
+  }, [loading, accessLoading, module, hasModuleAccess, navigate]);
 
   // Loading skeleton
-  if (loading) {
+  if (loading || accessLoading) {
     return (
       <div className="flex h-screen overflow-hidden bg-background">
         {!isMobile && (
