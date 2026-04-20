@@ -15,8 +15,9 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { BookOpen, Target, Clock, Trophy } from 'lucide-react';
+import { BookOpen, Target, Clock, Trophy, Lock } from 'lucide-react';
 import type { Tables } from '@/integrations/supabase/types';
+import { useAccess } from '@/hooks/useAccess';
 
 type ModuleRow = Tables<'modules'>;
 type ProgressionRow = Tables<'progressions'>;
@@ -32,6 +33,9 @@ const Dashboard = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
+  const { hasModuleAccess, isLoading: accessLoading } = useAccess();
+
+  const capitalize = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
 
   const [profile, setProfile] = useState<{ prenom: string | null; nom: string | null; plan: string } | null>(null);
   const [modules, setModules] = useState<ModuleRow[]>([]);
