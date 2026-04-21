@@ -1,9 +1,13 @@
-import { useSearchParams, useLocation } from 'react-router-dom';
+import { useState } from 'react';
+import { useSearchParams, useLocation, useNavigate } from 'react-router-dom';
 import { Header } from '@/components/Header';
 import { Footer } from '@/components/Footer';
 import { Button } from '@/components/ui/button';
-import { Check, Info } from 'lucide-react';
+import { Check, Info, Loader2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { useAuth } from '@/contexts/AuthContext';
+import { supabase } from '@/integrations/supabase/client';
+import { toast } from 'sonner';
 
 const plans = [
   {
@@ -51,7 +55,31 @@ interface RedirectState {
 const Tarifs = () => {
   const [searchParams] = useSearchParams();
   const location = useLocation();
+  const navigate = useNavigate();
+  const { user } = useAuth();
   const state = (location.state ?? {}) as RedirectState;
+  const [loadingPlan, setLoadingPlan] = useState<string | null>(null);
+
+  const handleCheckout = async (planSlug: string) => {
+    if (!user) {
+      navigate(`/connexion?redirect=${encodeURIComponent('/tarifs')}`);
+      return;
+    }
+    try {
+      setLoadingPlan(planSlug);
+      const { data, error } = await supabase.functions.invoke('create-checkout-session', {
+        body: { plan: planSlug },
+      });
+      if (error) throw error;
+      if (!data?.url) throw new Error('URL Stripe manquante');
+      window.location.href = data.url;
+    } catch (err) {
+      console.error(err);
+      const message = err instanceof Error ? err.message : 'Une erreur est survenue';
+      toast.error('Erreur de paiement', { description: message });
+      setLoadingPlan(null);
+    }
+  };
 
   const recommendedRaw =
     searchParams.get('recommended') ?? state.recommendedPlan ?? '';
@@ -137,7 +165,8 @@ const Tarifs = () => {
                 </ul>
 
                 <Button
-                  disabled
+                  onClick={() => handleCheckout(plan.slug)}
+                  disabled={loadingPlan !== null}
                   variant={isRecommended ? 'cta' : plan.popular ? 'cta' : 'default'}
                   size={isRecommended ? 'lg' : 'default'}
                   className={cn(
@@ -145,7 +174,11 @@ const Tarifs = () => {
                     isRecommended && 'text-base font-bold shadow-lg',
                   )}
                 >
-                  Payer {plan.price}€
+                  {loadingPlan === plan.slug ? (
+                    <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Redirection…</>
+                  ) : (
+                    <>Payer {plan.price}€</>
+                  )}
                 </Button>
               </div>
             );
