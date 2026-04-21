@@ -134,6 +134,8 @@ export type Database = {
           role: string
           situation_famille: string | null
           situation_pro: string | null
+          stripe_customer_id: string | null
+          stripe_subscription_id: string | null
         }
         Insert: {
           created_at?: string
@@ -150,6 +152,8 @@ export type Database = {
           role?: string
           situation_famille?: string | null
           situation_pro?: string | null
+          stripe_customer_id?: string | null
+          stripe_subscription_id?: string | null
         }
         Update: {
           created_at?: string
@@ -166,6 +170,8 @@ export type Database = {
           role?: string
           situation_famille?: string | null
           situation_pro?: string | null
+          stripe_customer_id?: string | null
+          stripe_subscription_id?: string | null
         }
         Relationships: [
           {
