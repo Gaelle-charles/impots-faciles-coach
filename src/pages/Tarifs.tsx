@@ -184,6 +184,11 @@ const Tarifs = () => {
             );
           })}
         </div>
+
+        <p className="mt-12 max-w-3xl text-center text-xs text-muted-foreground leading-relaxed">
+          Les formations Impôts Facile apportent une information pédagogique générale et ne remplacent
+          pas un conseil personnalisé d'un professionnel réglementé.
+        </p>
       </div>
 
       <Footer />
