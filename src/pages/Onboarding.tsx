@@ -19,8 +19,9 @@ import {
 import { Card, CardContent } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Badge } from '@/components/ui/badge';
-import { Sparkles, Target, ShieldCheck, Clock, Check, Loader2, X, Plus } from 'lucide-react';
+import { Sparkles, Target, ShieldCheck, Clock, Check, Loader2, X, Plus, FileText, Briefcase, Globe } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { recalculerMatching } from '@/lib/matching';
 
 const TOTAL_STEPS = 7;
 
