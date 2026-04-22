@@ -176,6 +176,15 @@ function SortableModuleRow({
             variant="outline"
             size="sm"
             className="h-8 gap-1.5 text-xs"
+            onClick={() => window.open(`/module/${mod.module_slug}`, '_blank', 'noopener,noreferrer')}
+            title="Voir comme un utilisateur (nouvel onglet)"
+          >
+            <Eye className="h-3.5 w-3.5" /> <span className="hidden sm:inline">Aperçu</span>
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            className="h-8 gap-1.5 text-xs"
             onClick={onEdit}
           >
             <Settings className="h-3.5 w-3.5" /> <span className="hidden sm:inline">Métadonnées</span>
