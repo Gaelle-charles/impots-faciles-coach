@@ -18,6 +18,7 @@ import {
 import { BookOpen, Target, Clock, Trophy, Lock } from 'lucide-react';
 import type { Tables } from '@/integrations/supabase/types';
 import { useAccess } from '@/hooks/useAccess';
+import PersonalizedFiches from '@/components/dashboard/PersonalizedFiches';
 
 type ModuleRow = Tables<'modules'>;
 type ProgressionRow = Tables<'progressions'>;
@@ -310,6 +311,9 @@ const Dashboard = () => {
           </div>
         )}
       </section>
+
+      {/* Personalized fiches by plan */}
+      <PersonalizedFiches />
 
       {/* Quiz results */}
       <section id="resultats">
