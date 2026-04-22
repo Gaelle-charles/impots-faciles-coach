@@ -772,6 +772,7 @@ const Onboarding = () => {
                 }
                 selectors={paysSelectors}
                 paysByZone={paysByZone}
+                paysLoadingZone={paysLoadingZone}
                 onUpdateSelector={updateSelector}
                 onAddSelector={addSelector}
                 onRemoveSelector={removeSelector}
@@ -1244,6 +1245,7 @@ function Step6({
   onSituationChange,
   selectors,
   paysByZone,
+  paysLoadingZone,
   onUpdateSelector,
   onAddSelector,
   onRemoveSelector,
@@ -1252,6 +1254,7 @@ function Step6({
   onSituationChange: (v: string) => void;
   selectors: { zone: string; paysId: string }[];
   paysByZone: Record<string, PaysRow[]>;
+  paysLoadingZone: Record<string, boolean>;
   onUpdateSelector: (idx: number, patch: Partial<{ zone: string; paysId: string }>) => void;
   onAddSelector: () => void;
   onRemoveSelector: (idx: number) => void;
