@@ -62,6 +62,44 @@ export function StripeRevenueStats() {
     });
   };
 
+  const exportCsv = () => {
+    if (!data) return;
+    const cur = data.currency.toUpperCase();
+    const eur = (cents: number) => (cents / 100).toFixed(2).replace('.', ',');
+    const esc = (v: string | number) => `"${String(v).replace(/"/g, '""')}"`;
+
+    const lines: string[] = [];
+    lines.push(`Export CA Stripe;Généré le ${new Date(data.generated_at).toLocaleString('fr-FR')}`);
+    lines.push('');
+    lines.push('KPI;Valeur;Devise');
+    lines.push(`${esc('CA brut')};${eur(data.gross_revenue)};${cur}`);
+    lines.push(`${esc('Remboursé')};${eur(data.refunded)};${cur}`);
+    lines.push(`${esc('CA net')};${eur(data.net_revenue)};${cur}`);
+    lines.push(`${esc('MRR')};${eur(data.mrr)};${cur}`);
+    lines.push(`${esc('ARR')};${eur(data.arr)};${cur}`);
+    lines.push(`${esc('Factures payées')};${data.paid_invoices_count};`);
+    lines.push(`${esc('Refunds')};${data.refunds_count};`);
+    lines.push(`${esc('Abonnements actifs')};${data.active_subscriptions};`);
+    lines.push('');
+    lines.push('Mois;Brut;Remboursé;Net;Devise');
+    data.by_month.forEach((m) => {
+      lines.push(`${m.month};${eur(m.gross)};${eur(m.refunded)};${eur(m.net)};${cur}`);
+    });
+
+    // BOM UTF-8 pour qu'Excel ouvre correctement les accents
+    const csv = '\uFEFF' + lines.join('\n');
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    const date = new Date().toISOString().slice(0, 10);
+    a.href = url;
+    a.download = `stripe-revenue-${date}.csv`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  };
+
   return (
     <Card className="border-border bg-background shadow-sm">
       <CardHeader className="flex flex-row items-center justify-between space-y-0">
@@ -73,10 +111,22 @@ export function StripeRevenueStats() {
             </Badge>
           )}
         </CardTitle>
-        <Button variant="ghost" size="sm" onClick={load} disabled={loading} className="gap-1.5">
-          <RotateCw className={`h-3.5 w-3.5 ${loading ? 'animate-spin' : ''}`} />
-          <span className="text-xs">Actualiser</span>
-        </Button>
+        <div className="flex items-center gap-2">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={exportCsv}
+            disabled={!data || loading}
+            className="gap-1.5"
+          >
+            <Download className="h-3.5 w-3.5" />
+            <span className="text-xs">Export CSV</span>
+          </Button>
+          <Button variant="ghost" size="sm" onClick={load} disabled={loading} className="gap-1.5">
+            <RotateCw className={`h-3.5 w-3.5 ${loading ? 'animate-spin' : ''}`} />
+            <span className="text-xs">Actualiser</span>
+          </Button>
+        </div>
       </CardHeader>
       <CardContent className="space-y-4">
         {loading && !data && (
