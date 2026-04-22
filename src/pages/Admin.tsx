@@ -68,7 +68,7 @@ const Admin = () => {
   // Access guard
   useEffect(() => {
     if (accessLoading) return;
-    if (!hasAdminAccess()) {
+    if (!isAdmin) {
       toast({
         title: 'Accès restreint',
         description: 'Accès réservé aux administrateurs',
@@ -76,10 +76,10 @@ const Admin = () => {
       });
       navigate('/dashboard', { replace: true });
     }
-  }, [accessLoading, hasAdminAccess, navigate]);
+  }, [accessLoading, isAdmin, navigate]);
 
   useEffect(() => {
-    if (!user || accessLoading || !hasAdminAccess()) return;
+    if (!user || accessLoading || !isAdmin) return;
 
     const init = async () => {
       setLoading(true);
@@ -102,7 +102,7 @@ const Admin = () => {
     };
 
     init();
-  }, [user, accessLoading, hasAdminAccess]);
+  }, [user, accessLoading, isAdmin]);
 
   // Stats
   const totalUsers = profiles.length;
