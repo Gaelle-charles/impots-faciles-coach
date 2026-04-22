@@ -30,6 +30,7 @@ import {
   Settings,
   FileText,
   HelpCircle,
+  Eye,
 } from 'lucide-react';
 import {
   DndContext,
