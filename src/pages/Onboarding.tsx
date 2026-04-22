@@ -94,11 +94,11 @@ const SITUATION_INTL_OPTIONS = [
 ];
 
 const ZONES_OPTIONS = [
-  { value: 'Afrique', label: '🌍 Afrique' },
-  { value: 'Asie', label: '🌏 Asie' },
-  { value: 'Europe', label: '🇪🇺 Europe' },
-  { value: 'Amériques', label: '🌎 Amériques' },
-  { value: 'Moyen-Orient', label: '🌍 Moyen-Orient' },
+  { value: 'afrique', label: '🌍 Afrique' },
+  { value: 'asie', label: '🌏 Asie' },
+  { value: 'europe', label: '🇪🇺 Europe' },
+  { value: 'ameriques', label: '🌎 Amériques' },
+  { value: 'moyen_orient', label: '🌍 Moyen-Orient' },
 ];
 
 const TRANCHE_REVENUS_OPTIONS = [
