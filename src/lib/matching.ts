@@ -69,9 +69,6 @@ export function detecterMetiers(profile: Partial<Profile>): string[] {
  * Volontairement SANS try/catch : on veut que toute erreur remonte.
  */
 export async function recalculerMatching(userId: string): Promise<void> {
-  console.log('🔵 [matching] recalculerMatching démarrée pour', userId);
-
-  console.log('🔵 [matching] SELECT profile...');
   const { data, error: selectError } = await supabase
     .from('profiles')
     .select('*')
@@ -79,30 +76,24 @@ export async function recalculerMatching(userId: string): Promise<void> {
     .maybeSingle();
 
   if (selectError) {
-    console.error('🔴 [matching] SELECT error:', selectError);
+    console.error('[matching] SELECT error:', selectError);
     throw selectError;
   }
   if (!data) {
-    console.error('🔴 [matching] profil introuvable pour', userId);
+    console.error('[matching] profil introuvable pour', userId);
     throw new Error('Profil introuvable');
   }
 
-  console.log('🔵 [matching] profile lu:', data);
   const profils_detectes = detecterProfils(data);
   const metiers_detectes = detecterMetiers(data);
-  console.log('🔵 [matching] profils calculés:', profils_detectes);
-  console.log('🔵 [matching] metiers calculés:', metiers_detectes);
 
-  console.log('🔵 [matching] UPDATE en cours...');
   const updateResult = await supabase
     .from('profiles')
     .update({ profils_detectes, metiers_detectes })
     .eq('id', userId);
 
-  console.log('🔵 [matching] UPDATE result:', updateResult);
-
   if (updateResult.error) {
-    console.error('🔴 [matching] UPDATE error:', updateResult.error);
+    console.error('[matching] UPDATE failed:', updateResult.error);
     throw updateResult.error;
   }
 }
