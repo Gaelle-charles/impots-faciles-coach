@@ -120,58 +120,139 @@ export type Database = {
       }
       profiles: {
         Row: {
+          a_activite_secondaire: boolean | null
+          a_investissements_defisc: boolean | null
+          a_placements: boolean | null
+          a_revenus_etrangers: boolean | null
+          a_revenus_fonciers_nus: boolean | null
+          a_revenus_lmnp: boolean | null
+          activite_type: string | null
+          aidant_familial: boolean | null
           created_at: string
           date_paiement: string | null
           email: string | null
+          forme_juridique: string | null
           id: string
           is_active: boolean
+          metier_categorie: string | null
           metier_id: string | null
+          metier_precis: string | null
+          metier_secondaire_categorie: string | null
+          metier_secondaire_precis: string | null
+          metiers_detectes: string[] | null
+          nb_enfants_charge: number | null
           nom: string | null
+          onboarding_completed_at: string | null
           onboarding_done: boolean
+          pays_concernes: string[] | null
+          pension_alimentaire: boolean | null
+          personne_handicap: boolean | null
           plan: string
+          plan_recommande: string | null
           premiere_declaration: boolean | null
           prenom: string | null
+          primo_declarant: boolean | null
+          profils_detectes: string[] | null
           role: string
+          score_complexite: number | null
+          situation_familiale: string | null
           situation_famille: string | null
+          situation_internationale: string | null
+          situation_principale: string | null
           situation_pro: string | null
           stripe_customer_id: string | null
           stripe_subscription_id: string | null
+          tranche_revenus: string | null
         }
         Insert: {
+          a_activite_secondaire?: boolean | null
+          a_investissements_defisc?: boolean | null
+          a_placements?: boolean | null
+          a_revenus_etrangers?: boolean | null
+          a_revenus_fonciers_nus?: boolean | null
+          a_revenus_lmnp?: boolean | null
+          activite_type?: string | null
+          aidant_familial?: boolean | null
           created_at?: string
           date_paiement?: string | null
           email?: string | null
+          forme_juridique?: string | null
           id: string
           is_active?: boolean
+          metier_categorie?: string | null
           metier_id?: string | null
+          metier_precis?: string | null
+          metier_secondaire_categorie?: string | null
+          metier_secondaire_precis?: string | null
+          metiers_detectes?: string[] | null
+          nb_enfants_charge?: number | null
           nom?: string | null
+          onboarding_completed_at?: string | null
           onboarding_done?: boolean
+          pays_concernes?: string[] | null
+          pension_alimentaire?: boolean | null
+          personne_handicap?: boolean | null
           plan?: string
+          plan_recommande?: string | null
           premiere_declaration?: boolean | null
           prenom?: string | null
+          primo_declarant?: boolean | null
+          profils_detectes?: string[] | null
           role?: string
+          score_complexite?: number | null
+          situation_familiale?: string | null
           situation_famille?: string | null
+          situation_internationale?: string | null
+          situation_principale?: string | null
           situation_pro?: string | null
           stripe_customer_id?: string | null
           stripe_subscription_id?: string | null
+          tranche_revenus?: string | null
         }
         Update: {
+          a_activite_secondaire?: boolean | null
+          a_investissements_defisc?: boolean | null
+          a_placements?: boolean | null
+          a_revenus_etrangers?: boolean | null
+          a_revenus_fonciers_nus?: boolean | null
+          a_revenus_lmnp?: boolean | null
+          activite_type?: string | null
+          aidant_familial?: boolean | null
           created_at?: string
           date_paiement?: string | null
           email?: string | null
+          forme_juridique?: string | null
           id?: string
           is_active?: boolean
+          metier_categorie?: string | null
           metier_id?: string | null
+          metier_precis?: string | null
+          metier_secondaire_categorie?: string | null
+          metier_secondaire_precis?: string | null
+          metiers_detectes?: string[] | null
+          nb_enfants_charge?: number | null
           nom?: string | null
+          onboarding_completed_at?: string | null
           onboarding_done?: boolean
+          pays_concernes?: string[] | null
+          pension_alimentaire?: boolean | null
+          personne_handicap?: boolean | null
           plan?: string
+          plan_recommande?: string | null
           premiere_declaration?: boolean | null
           prenom?: string | null
+          primo_declarant?: boolean | null
+          profils_detectes?: string[] | null
           role?: string
+          score_complexite?: number | null
+          situation_familiale?: string | null
           situation_famille?: string | null
+          situation_internationale?: string | null
+          situation_principale?: string | null
           situation_pro?: string | null
           stripe_customer_id?: string | null
           stripe_subscription_id?: string | null
+          tranche_revenus?: string | null
         }
         Relationships: [
           {
