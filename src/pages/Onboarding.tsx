@@ -267,6 +267,7 @@ const Onboarding = () => {
   const [finalScore, setFinalScore] = useState<number | null>(null);
   const [finalPlan, setFinalPlan] = useState<'starter' | 'expert' | 'premium'>('starter');
   const [finalLabel, setFinalLabel] = useState('');
+  const [matchCounts, setMatchCounts] = useState<{ profils: number; metiers: number; pays: number }>({ profils: 0, metiers: 0, pays: 0 });
   const [checkoutLoading, setCheckoutLoading] = useState<string | null>(null);
 
   const [formData, setFormData] = useState<FormData>({
