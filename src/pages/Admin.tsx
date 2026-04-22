@@ -201,9 +201,17 @@ const Admin = () => {
       </div>
 
       {/* Revenue / business KPIs */}
-      <div>
-        <h2 className="font-heading text-xl font-bold text-foreground mb-4">Revenus & abonnements</h2>
-        <RevenueStats profiles={profiles} />
+      <div className="space-y-6">
+        <h2 className="font-heading text-xl font-bold text-foreground">Revenus & abonnements</h2>
+        <StripeRevenueStats />
+        <details className="group">
+          <summary className="cursor-pointer text-sm text-muted-foreground hover:text-foreground">
+            Voir aussi l'estimation interne (basée sur profiles.plan)
+          </summary>
+          <div className="mt-4">
+            <RevenueStats profiles={profiles} />
+          </div>
+        </details>
       </div>
 
       {/* Weekly signups chart */}
