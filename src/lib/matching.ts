@@ -76,16 +76,17 @@ export async function recalculerMatching(userId: string): Promise<void> {
       .maybeSingle();
 
     if (selectError) {
-      console.error('recalculerMatching SELECT ERROR:', selectError);
+      console.error('[matching] SELECT error:', selectError);
       throw selectError;
     }
     if (!profile) {
-      console.error('recalculerMatching: profil introuvable pour', userId);
+      console.error('[matching] profil introuvable pour', userId);
       throw new Error('Profil introuvable');
     }
 
     const profils_detectes = detecterProfils(profile);
     const metiers_detectes = detecterMetiers(profile);
+    console.log('[matching] Calculé pour', userId, { profils: profils_detectes, metiers: metiers_detectes });
 
     const { error: updateError } = await supabase
       .from('profiles')
@@ -93,11 +94,12 @@ export async function recalculerMatching(userId: string): Promise<void> {
       .eq('id', userId);
 
     if (updateError) {
-      console.error('recalculerMatching ERROR:', updateError);
+      console.error('[matching] UPDATE error:', updateError);
       throw updateError;
     }
+    console.log('[matching] UPDATE OK');
   } catch (e) {
-    console.error('recalculerMatching EXCEPTION:', e);
+    console.error('[matching] EXCEPTION:', e);
     throw e;
   }
 }
