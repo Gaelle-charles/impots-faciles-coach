@@ -1,6 +1,7 @@
 import { Outlet } from 'react-router-dom';
 import { AppSidebar } from '@/components/AppSidebar';
 import { MobileBottomNav } from '@/components/MobileBottomNav';
+import { Disclaimer } from '@/components/Disclaimer';
 import { useIsMobile } from '@/hooks/use-mobile';
 
 export function AppLayout() {
@@ -12,9 +13,11 @@ export function AppLayout() {
       <main className={`min-h-screen ${isMobile ? '' : 'ml-sidebar'}`}>
         <div className={`mx-auto w-full max-w-7xl py-10 ${isMobile ? 'px-4 pb-20' : 'px-4 sm:px-6 lg:px-8'}`}>
           <Outlet />
+          <Disclaimer />
         </div>
       </main>
       {isMobile && <MobileBottomNav />}
     </div>
   );
 }
+
