@@ -31,7 +31,7 @@ const AdminStats = () => {
     const fetch = async () => {
       setLoading(true);
       const [pRes, prRes, rRes, mRes] = await Promise.all([
-        supabase.from('profiles').select('id, plan, created_at, is_active, role'),
+        supabase.from('profiles').select('id, plan, created_at, is_active, role, date_paiement'),
         supabase.from('progressions').select('user_id, module_id, step, completion_date, created_at'),
         supabase.from('resultat_quiz').select('user_id, module_id, pourcentage, score, score_max, date_quiz'),
         supabase.from('modules').select('id, titre, order, total_step').order('order', { ascending: true }),
