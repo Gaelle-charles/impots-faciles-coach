@@ -167,7 +167,7 @@ const Tarifs = () => {
                 <Button
                   onClick={() => handleCheckout(plan.slug)}
                   disabled={loadingPlan !== null}
-                  variant={isRecommended ? 'cta' : plan.popular ? 'cta' : 'default'}
+                  variant="cta"
                   size={isRecommended ? 'lg' : 'default'}
                   className={cn(
                     'mt-8 w-full',
