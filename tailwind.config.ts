@@ -79,6 +79,9 @@ export default {
       width: {
         sidebar: "280px",
       },
+      spacing: {
+        sidebar: "280px",
+      },
       keyframes: {
         "accordion-down": {
           from: { height: "0" },
