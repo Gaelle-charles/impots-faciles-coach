@@ -18,6 +18,7 @@ import {
 } from '@/components/ui/select';
 import { Card, CardContent } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
+import { Sparkles, Target, ShieldCheck, Clock } from 'lucide-react';
 
 const TOTAL_STEPS = 7;
 
