@@ -764,8 +764,8 @@ const Onboarding = () => {
       {/* Content */}
       <main
         className={cn(
-          'mx-auto flex w-full flex-1 flex-col px-6 py-8',
-          isResult ? 'max-w-[920px]' : 'max-w-[680px]'
+          'mx-auto flex w-full flex-1 flex-col px-4 py-8 sm:px-6 lg:px-8',
+          isResult ? 'max-w-7xl' : 'max-w-[680px]'
         )}
       >
         <Card className="rounded-2xl border-border bg-background shadow-md">
@@ -1554,7 +1554,7 @@ function Step8({
         <p className="mt-2 text-sm text-muted-foreground">{justification}</p>
       </div>
 
-      <div className="grid gap-4 sm:grid-cols-3">
+      <div className="grid gap-4 grid-cols-1 md:grid-cols-3">
         {PLANS.map((p) => {
           const isReco = p.slug === plan;
           return (
