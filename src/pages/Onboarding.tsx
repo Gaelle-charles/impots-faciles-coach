@@ -1471,6 +1471,42 @@ function Step8({
         </CardContent>
       </Card>
 
+      <div className="grid gap-3 sm:grid-cols-3">
+        <div className="flex items-center gap-3 rounded-xl border border-border bg-card p-4">
+          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary">
+            <FileText className="h-5 w-5" />
+          </div>
+          <div>
+            <p className="font-heading text-2xl font-bold text-foreground">{matchCounts.profils}</p>
+            <p className="text-xs text-muted-foreground">
+              {matchCounts.profils > 1 ? 'fiches profil détectées' : 'fiche profil détectée'}
+            </p>
+          </div>
+        </div>
+        <div className="flex items-center gap-3 rounded-xl border border-border bg-card p-4">
+          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary">
+            <Briefcase className="h-5 w-5" />
+          </div>
+          <div>
+            <p className="font-heading text-2xl font-bold text-foreground">{matchCounts.metiers}</p>
+            <p className="text-xs text-muted-foreground">
+              {matchCounts.metiers > 1 ? 'fiches métier' : 'fiche métier'}
+            </p>
+          </div>
+        </div>
+        <div className="flex items-center gap-3 rounded-xl border border-border bg-card p-4">
+          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary">
+            <Globe className="h-5 w-5" />
+          </div>
+          <div>
+            <p className="font-heading text-2xl font-bold text-foreground">{matchCounts.pays}</p>
+            <p className="text-xs text-muted-foreground">
+              {matchCounts.pays > 1 ? 'pays concernés' : 'pays concerné'}
+            </p>
+          </div>
+        </div>
+      </div>
+
       <div className="space-y-3">
         <h2 className="font-heading text-base font-semibold text-foreground">
           Voici ce qui vous attend sur Impôts Facile :
