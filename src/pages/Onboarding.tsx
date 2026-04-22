@@ -1316,18 +1316,32 @@ function Step6({
                   <Select
                     value={sel.paysId}
                     onValueChange={(v) => onUpdateSelector(idx, { paysId: v })}
-                    disabled={!sel.zone || !paysByZone[sel.zone]}
+                    disabled={!sel.zone || !!paysLoadingZone[sel.zone]}
                   >
                     <SelectTrigger>
-                      <SelectValue placeholder="Choisir un pays" />
+                      <SelectValue
+                        placeholder={
+                          !sel.zone
+                            ? 'Choisir une zone d\u2019abord'
+                            : paysLoadingZone[sel.zone]
+                              ? 'Chargement\u2026'
+                              : 'Choisir un pays'
+                        }
+                      />
                     </SelectTrigger>
                     <SelectContent>
-                      {(paysByZone[sel.zone] ?? []).map((p) => (
-                        <SelectItem key={p.id} value={p.id}>
-                          {p.icone ? `${p.icone} ` : ''}
-                          {p.nom}
-                        </SelectItem>
-                      ))}
+                      {sel.zone && !paysLoadingZone[sel.zone] && (paysByZone[sel.zone]?.length ?? 0) === 0 ? (
+                        <div className="px-2 py-3 text-center text-sm text-muted-foreground">
+                          Aucun pays disponible dans cette zone
+                        </div>
+                      ) : (
+                        (paysByZone[sel.zone] ?? []).map((p) => (
+                          <SelectItem key={p.id} value={p.id}>
+                            {p.icone ? `${p.icone} ` : ''}
+                            {p.nom}
+                          </SelectItem>
+                        ))
+                      )}
                     </SelectContent>
                   </Select>
                 </div>
