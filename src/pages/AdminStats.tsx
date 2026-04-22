@@ -15,6 +15,7 @@ import {
   TrendingUp, Users, BookOpen, Target, Activity, Award, Clock, ArrowUpRight, ArrowDownRight, Euro,
 } from 'lucide-react';
 import { RevenueStats } from '@/components/admin/RevenueStats';
+import { StripeRevenueStats } from '@/components/admin/StripeRevenueStats';
 
 const COLORS = ['hsl(285, 52%, 15%)', 'hsl(336, 70%, 62%)', 'hsl(56, 100%, 49%)', 'hsl(200, 70%, 50%)', 'hsl(150, 60%, 45%)'];
 
