@@ -19,8 +19,9 @@ import {
 import { Card, CardContent } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Badge } from '@/components/ui/badge';
-import { Sparkles, Target, ShieldCheck, Clock, Check, Loader2, X, Plus } from 'lucide-react';
+import { Sparkles, Target, ShieldCheck, Clock, Check, Loader2, X, Plus, FileText, Briefcase, Globe } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { recalculerMatching } from '@/lib/matching';
 
 const TOTAL_STEPS = 7;
 
@@ -266,6 +267,7 @@ const Onboarding = () => {
   const [finalScore, setFinalScore] = useState<number | null>(null);
   const [finalPlan, setFinalPlan] = useState<'starter' | 'expert' | 'premium'>('starter');
   const [finalLabel, setFinalLabel] = useState('');
+  const [matchCounts, setMatchCounts] = useState<{ profils: number; metiers: number; pays: number }>({ profils: 0, metiers: 0, pays: 0 });
   const [checkoutLoading, setCheckoutLoading] = useState<string | null>(null);
 
   const [formData, setFormData] = useState<FormData>({
@@ -551,6 +553,27 @@ const Onboarding = () => {
       return;
     }
 
+    // Calcul du matching profils / métiers
+    try {
+      await recalculerMatching(user.id);
+    } catch (e) {
+      console.error('Erreur matching:', e);
+      toast.error('Erreur lors du calcul des recommandations.');
+    }
+
+    // Re-SELECT pour récupérer les compteurs à jour
+    const { data: refreshed } = await supabase
+      .from('profiles')
+      .select('profils_detectes, metiers_detectes, pays_concernes')
+      .eq('id', user.id)
+      .maybeSingle();
+
+    setMatchCounts({
+      profils: refreshed?.profils_detectes?.length ?? 0,
+      metiers: refreshed?.metiers_detectes?.length ?? 0,
+      pays: refreshed?.pays_concernes?.length ?? 0,
+    });
+
     setFinalScore(score);
     setFinalPlan(plan);
     setFinalLabel(label);
@@ -790,6 +813,7 @@ const Onboarding = () => {
                 plan={finalPlan}
                 score={finalScore}
                 formData={formData}
+                matchCounts={matchCounts}
                 onCheckout={handleCheckout}
                 checkoutLoading={checkoutLoading}
                 onSkip={() => navigate('/dashboard')}
@@ -1404,6 +1428,7 @@ function Step8({
   plan,
   score,
   formData,
+  matchCounts,
   onCheckout,
   checkoutLoading,
   onSkip,
@@ -1412,6 +1437,7 @@ function Step8({
   plan: 'starter' | 'expert' | 'premium';
   score: number;
   formData: FormData;
+  matchCounts: { profils: number; metiers: number; pays: number };
   onCheckout: (slug: string) => void;
   checkoutLoading: string | null;
   onSkip: () => void;
@@ -1444,6 +1470,42 @@ function Step8({
           <p className="text-lg font-medium text-foreground">{profilLabel}</p>
         </CardContent>
       </Card>
+
+      <div className="grid gap-3 sm:grid-cols-3">
+        <div className="flex items-center gap-3 rounded-xl border border-border bg-card p-4">
+          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary">
+            <FileText className="h-5 w-5" />
+          </div>
+          <div>
+            <p className="font-heading text-2xl font-bold text-foreground">{matchCounts.profils}</p>
+            <p className="text-xs text-muted-foreground">
+              {matchCounts.profils > 1 ? 'fiches profil détectées' : 'fiche profil détectée'}
+            </p>
+          </div>
+        </div>
+        <div className="flex items-center gap-3 rounded-xl border border-border bg-card p-4">
+          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary">
+            <Briefcase className="h-5 w-5" />
+          </div>
+          <div>
+            <p className="font-heading text-2xl font-bold text-foreground">{matchCounts.metiers}</p>
+            <p className="text-xs text-muted-foreground">
+              {matchCounts.metiers > 1 ? 'fiches métier' : 'fiche métier'}
+            </p>
+          </div>
+        </div>
+        <div className="flex items-center gap-3 rounded-xl border border-border bg-card p-4">
+          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary">
+            <Globe className="h-5 w-5" />
+          </div>
+          <div>
+            <p className="font-heading text-2xl font-bold text-foreground">{matchCounts.pays}</p>
+            <p className="text-xs text-muted-foreground">
+              {matchCounts.pays > 1 ? 'pays concernés' : 'pays concerné'}
+            </p>
+          </div>
+        </div>
+      </div>
 
       <div className="space-y-3">
         <h2 className="font-heading text-base font-semibold text-foreground">
