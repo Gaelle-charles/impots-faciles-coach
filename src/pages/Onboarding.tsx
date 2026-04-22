@@ -1428,6 +1428,7 @@ function Step8({
   plan,
   score,
   formData,
+  matchCounts,
   onCheckout,
   checkoutLoading,
   onSkip,
@@ -1436,6 +1437,7 @@ function Step8({
   plan: 'starter' | 'expert' | 'premium';
   score: number;
   formData: FormData;
+  matchCounts: { profils: number; metiers: number; pays: number };
   onCheckout: (slug: string) => void;
   checkoutLoading: string | null;
   onSkip: () => void;
