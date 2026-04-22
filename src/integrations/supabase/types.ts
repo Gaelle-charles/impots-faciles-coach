@@ -58,6 +58,42 @@ export type Database = {
           },
         ]
       }
+      fiches_profils: {
+        Row: {
+          created_at: string | null
+          description: string | null
+          icone: string | null
+          id: string
+          is_active: boolean | null
+          nom: string
+          numero: number
+          order_display: number | null
+          slug: string
+        }
+        Insert: {
+          created_at?: string | null
+          description?: string | null
+          icone?: string | null
+          id?: string
+          is_active?: boolean | null
+          nom: string
+          numero: number
+          order_display?: number | null
+          slug: string
+        }
+        Update: {
+          created_at?: string | null
+          description?: string | null
+          icone?: string | null
+          id?: string
+          is_active?: boolean | null
+          nom?: string
+          numero?: number
+          order_display?: number | null
+          slug?: string
+        }
+        Relationships: []
+      }
       metiers: {
         Row: {
           categorie: string | null
