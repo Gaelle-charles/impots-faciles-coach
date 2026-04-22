@@ -18,7 +18,9 @@ import {
 } from '@/components/ui/select';
 import { Card, CardContent } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
-import { Sparkles, Target, ShieldCheck, Clock } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
+import { Sparkles, Target, ShieldCheck, Clock, Check, Loader2, X, Plus } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
 const TOTAL_STEPS = 7;
 
@@ -74,6 +76,46 @@ const SITUATION_FAMILIALE_OPTIONS = [
   { value: 'divorce', label: 'Divorcé(e)' },
 ];
 
+const REVENUS_COMPL_OPTIONS = [
+  { key: 'a_activite_secondaire', label: "Une activité secondaire (freelance, job d'appoint...)" },
+  { key: 'a_revenus_fonciers_nus', label: 'Des revenus locatifs nus (location vide)' },
+  { key: 'a_revenus_lmnp', label: 'Des revenus locatifs meublés (LMNP / LMP)' },
+  { key: 'a_placements', label: 'Des placements financiers (dividendes, plus-values...)' },
+  { key: 'a_revenus_etrangers', label: "Des revenus ou des comptes à l'étranger" },
+  { key: 'a_investissements_defisc', label: 'Des investissements défiscalisants (Pinel, PER, Madelin...)' },
+] as const;
+
+const SITUATION_INTL_OPTIONS = [
+  { value: 'frontalier', label: 'Je suis frontalier(ère) (Belgique/Suisse/Luxembourg)' },
+  { value: 'revenus_etranger', label: "J'ai des revenus d'un pays étranger" },
+  { value: 'expat_retour', label: 'Je suis expatrié de retour en France' },
+  { value: 'drom', label: 'Je réside en Outre-Mer (DROM)' },
+  { value: 'non_resident', label: 'Je suis non-résident avec revenus en France' },
+];
+
+const ZONES_OPTIONS = [
+  { value: 'Afrique', label: '🌍 Afrique' },
+  { value: 'Asie', label: '🌏 Asie' },
+  { value: 'Europe', label: '🇪🇺 Europe' },
+  { value: 'Amériques', label: '🌎 Amériques' },
+  { value: 'Moyen-Orient', label: '🌍 Moyen-Orient' },
+];
+
+const TRANCHE_REVENUS_OPTIONS = [
+  { value: 'moins_20k', label: 'Moins de 20 000 €' },
+  { value: '20k_40k', label: '20 000 - 40 000 €' },
+  { value: '40k_80k', label: '40 000 - 80 000 €' },
+  { value: '80k_150k', label: '80 000 - 150 000 €' },
+  { value: 'plus_150k', label: 'Plus de 150 000 € (⚠️ potentiellement concerné par la CDHR)' },
+  { value: 'non_precise', label: 'Je préfère ne pas répondre' },
+];
+
+const PLANS = [
+  { slug: 'starter', name: 'Starter', price: 49, features: ['7 modules pédagogiques', 'Contenu personnalisé', 'Simulateur de frais'] },
+  { slug: 'expert', name: 'Expert', price: 79, features: ['Tout Starter +', 'Fiches profil contribuable', 'Fiches métier', 'Parcours adaptatif IA'] },
+  { slug: 'premium', name: 'Premium', price: 119, features: ['Tout Expert +', 'Conseil fiscal IA avancé', '5 webinaires thématiques'] },
+];
+
 interface FormData {
   situation_principale: SituationPrincipale | '';
   activite_type: string;
@@ -87,12 +129,119 @@ interface FormData {
   aidant_familial: boolean;
   pension_alimentaire: boolean;
   primo_declarant: boolean;
+  // Step 5
+  a_activite_secondaire: boolean;
+  a_revenus_fonciers_nus: boolean;
+  a_revenus_lmnp: boolean;
+  a_placements: boolean;
+  a_revenus_etrangers: boolean;
+  a_investissements_defisc: boolean;
+  aucun_revenu_compl: boolean;
+  // Step 6
+  situation_internationale: string;
+  pays_concernes: string[];
+  // Step 7
+  tranche_revenus: string;
 }
 
 interface MetierRow {
   id: string;
   nom: string;
   icone: string | null;
+}
+
+interface PaysRow {
+  id: string;
+  nom: string;
+  icone: string | null;
+  zone: string;
+}
+
+const REVENUS_KEYS: (keyof FormData)[] = [
+  'a_activite_secondaire',
+  'a_revenus_fonciers_nus',
+  'a_revenus_lmnp',
+  'a_placements',
+  'a_revenus_etrangers',
+  'a_investissements_defisc',
+];
+
+function calculerScore(p: FormData): number {
+  let s = 0;
+  if (p.situation_principale === 'independant') s += 3;
+  if (p.situation_principale === 'dirigeant') s += 6;
+  if (p.situation_principale === 'retraite') s += 1;
+
+  if (p.a_activite_secondaire) s += 2;
+  if (p.a_revenus_fonciers_nus) s += 1;
+  if (p.a_revenus_lmnp) s += 2;
+  if (p.a_placements) s += 2;
+  if (p.a_revenus_etrangers) s += 3;
+  if (p.a_investissements_defisc) s += 2;
+
+  if (p.situation_familiale === 'parent_isole') s += 1;
+  if (p.personne_handicap) s += 1;
+  if (p.pension_alimentaire) s += 1;
+
+  if (p.situation_internationale === 'frontalier') s += 2;
+  if (p.situation_internationale === 'expat_retour') s += 3;
+  if (p.situation_internationale === 'non_resident') s += 3;
+
+  if (p.tranche_revenus === '40k_80k') s += 1;
+  if (p.tranche_revenus === '80k_150k') s += 2;
+  if (p.tranche_revenus === 'plus_150k') s += 4;
+
+  return s;
+}
+
+function getRecommendedPlan(score: number): 'starter' | 'expert' | 'premium' {
+  if (score <= 3) return 'starter';
+  if (score <= 8) return 'expert';
+  return 'premium';
+}
+
+function getProfilLabel(p: FormData, metierNom?: string, paysNoms?: string[]): string {
+  const parts: string[] = [];
+
+  const baseMap: Record<string, string> = {
+    salarie: 'Salarié(e)',
+    independant: 'Indépendant(e)',
+    dirigeant: 'Dirigeant(e) de société',
+    retraite: 'Retraité(e)',
+    etudiant: 'Étudiant(e) / Jeune actif',
+    sans_activite: 'Sans activité',
+  };
+  parts.push(baseMap[p.situation_principale] ?? 'Contribuable');
+
+  if (metierNom && (p.situation_principale === 'independant' || p.situation_principale === 'dirigeant')) {
+    parts[0] = `${metierNom}`;
+  }
+
+  const compl: string[] = [];
+  if (p.a_revenus_lmnp) compl.push('revenus locatifs meublés');
+  if (p.a_revenus_fonciers_nus) compl.push('revenus locatifs nus');
+  if (p.a_placements) compl.push('placements financiers');
+  if (p.a_activite_secondaire) compl.push('activité secondaire');
+  if (p.a_investissements_defisc) compl.push('investissements défiscalisants');
+
+  let sentence = parts[0];
+  if (compl.length > 0) {
+    sentence += ` avec ${compl.slice(0, 2).join(' et ')}`;
+  }
+
+  if (p.a_revenus_etrangers || p.situation_internationale) {
+    if (paysNoms && paysNoms.length > 0) {
+      sentence += ` et situation internationale (${paysNoms.join(', ')})`;
+    } else if (p.situation_internationale === 'drom') {
+      sentence += ' résidant en Outre-Mer';
+    } else {
+      sentence += ' avec situation internationale';
+    }
+  }
+
+  if (p.tranche_revenus === 'plus_150k') sentence += ' — hauts revenus';
+
+  return sentence;
 }
 
 const Onboarding = () => {
@@ -105,6 +254,18 @@ const Onboarding = () => {
   const [saving, setSaving] = useState(false);
   const [metiers, setMetiers] = useState<MetierRow[]>([]);
   const [metiersLoading, setMetiersLoading] = useState(false);
+
+  // Step 6 — pays
+  const [paysSelectors, setPaysSelectors] = useState<{ zone: string; paysId: string }[]>([
+    { zone: '', paysId: '' },
+  ]);
+  const [paysByZone, setPaysByZone] = useState<Record<string, PaysRow[]>>({});
+
+  // Step 8 — résultat
+  const [finalScore, setFinalScore] = useState<number | null>(null);
+  const [finalPlan, setFinalPlan] = useState<'starter' | 'expert' | 'premium'>('starter');
+  const [finalLabel, setFinalLabel] = useState('');
+  const [checkoutLoading, setCheckoutLoading] = useState<string | null>(null);
 
   const [formData, setFormData] = useState<FormData>({
     situation_principale: '',
@@ -119,6 +280,16 @@ const Onboarding = () => {
     aidant_familial: false,
     pension_alimentaire: false,
     primo_declarant: false,
+    a_activite_secondaire: false,
+    a_revenus_fonciers_nus: false,
+    a_revenus_lmnp: false,
+    a_placements: false,
+    a_revenus_etrangers: false,
+    a_investissements_defisc: false,
+    aucun_revenu_compl: false,
+    situation_internationale: '',
+    pays_concernes: [],
+    tranche_revenus: '',
   });
 
   // Charger profil existant
@@ -130,7 +301,7 @@ const Onboarding = () => {
       const { data, error } = await supabase
         .from('profiles')
         .select(
-          'prenom, onboarding_done, situation_principale, activite_type, forme_juridique, metier_categorie, metier_id, situation_familiale, nb_enfants_charge, personne_handicap, aidant_familial, pension_alimentaire, primo_declarant'
+          'prenom, onboarding_done, situation_principale, activite_type, forme_juridique, metier_categorie, metier_id, situation_familiale, nb_enfants_charge, personne_handicap, aidant_familial, pension_alimentaire, primo_declarant, a_activite_secondaire, a_revenus_fonciers_nus, a_revenus_lmnp, a_placements, a_revenus_etrangers, a_investissements_defisc, situation_internationale, pays_concernes, tranche_revenus'
         )
         .eq('id', user.id)
         .maybeSingle();
@@ -163,6 +334,15 @@ const Onboarding = () => {
         aidant_familial: data?.aidant_familial ?? false,
         pension_alimentaire: data?.pension_alimentaire ?? false,
         primo_declarant: data?.primo_declarant ?? false,
+        a_activite_secondaire: data?.a_activite_secondaire ?? false,
+        a_revenus_fonciers_nus: data?.a_revenus_fonciers_nus ?? false,
+        a_revenus_lmnp: data?.a_revenus_lmnp ?? false,
+        a_placements: data?.a_placements ?? false,
+        a_revenus_etrangers: data?.a_revenus_etrangers ?? false,
+        a_investissements_defisc: data?.a_investissements_defisc ?? false,
+        situation_internationale: data?.situation_internationale ?? '',
+        pays_concernes: (data?.pays_concernes as string[]) ?? [],
+        tranche_revenus: data?.tranche_revenus ?? '',
       }));
       setLoading(false);
     })();
@@ -172,7 +352,7 @@ const Onboarding = () => {
     };
   }, [user, navigate]);
 
-  // Charger les métiers selon la catégorie choisie (écran 3)
+  // Charger les métiers
   useEffect(() => {
     if (!formData.metier_categorie) {
       setMetiers([]);
@@ -205,18 +385,30 @@ const Onboarding = () => {
     formData.situation_principale === 'independant' ||
     formData.situation_principale === 'dirigeant';
 
-  // Le numéro réel d'écran à rendre. On "skip" l'écran 2 si non concerné.
-  const visibleStepLabel = useMemo(() => {
-    // Pour l'affichage de la barre de progression, on garde l'index logique 1..7
-    return currentStep;
-  }, [currentStep]);
+  const needsIntlScreen = formData.a_revenus_etrangers === true;
+
+  // Charger pays pour une zone donnée
+  const loadPaysForZone = async (zone: string) => {
+    if (!zone || paysByZone[zone]) return;
+    const { data, error } = await supabase
+      .from('pays')
+      .select('id, nom, icone, zone')
+      .eq('zone', zone)
+      .eq('is_active', true)
+      .order('order_display', { ascending: true });
+    if (error) {
+      toast.error('Impossible de charger la liste des pays.');
+      return;
+    }
+    setPaysByZone((prev) => ({ ...prev, [zone]: (data as PaysRow[]) ?? [] }));
+  };
 
   const canGoNext = (): boolean => {
     switch (currentStep) {
       case 1:
         return !!formData.situation_principale;
       case 2:
-        if (!needsActivityScreen) return true; // sera skip
+        if (!needsActivityScreen) return true;
         if (!formData.activite_type) return false;
         if (formData.situation_principale === 'dirigeant' && !formData.forme_juridique) return false;
         return true;
@@ -227,6 +419,17 @@ const Onboarding = () => {
         if (!formData.a_enfants) return false;
         if (formData.a_enfants === 'oui' && (!formData.nb_enfants_charge || formData.nb_enfants_charge < 1)) return false;
         return true;
+      case 5: {
+        if (formData.aucun_revenu_compl) return true;
+        return REVENUS_KEYS.some((k) => formData[k] === true);
+      }
+      case 6: {
+        if (!formData.situation_internationale) return false;
+        if (formData.situation_internationale === 'drom') return true;
+        return formData.pays_concernes.length > 0;
+      }
+      case 7:
+        return !!formData.tranche_revenus;
       default:
         return true;
     }
@@ -264,6 +467,26 @@ const Onboarding = () => {
           primo_declarant: formData.primo_declarant,
         };
         break;
+      case 5:
+        patch = {
+          a_activite_secondaire: formData.a_activite_secondaire,
+          a_revenus_fonciers_nus: formData.a_revenus_fonciers_nus,
+          a_revenus_lmnp: formData.a_revenus_lmnp,
+          a_placements: formData.a_placements,
+          a_revenus_etrangers: formData.a_revenus_etrangers,
+          a_investissements_defisc: formData.a_investissements_defisc,
+        };
+        break;
+      case 6:
+        patch = {
+          situation_internationale: formData.situation_internationale,
+          pays_concernes:
+            formData.situation_internationale === 'drom' ? [] : formData.pays_concernes,
+        };
+        break;
+      case 7:
+        patch = { tranche_revenus: formData.tranche_revenus };
+        break;
       default:
         return true;
     }
@@ -276,6 +499,58 @@ const Onboarding = () => {
     return true;
   };
 
+  const finalizeAndShowResult = async () => {
+    if (!user) return;
+    const score = calculerScore(formData);
+    const plan = getRecommendedPlan(score);
+
+    // Récupérer noms métier et pays pour le label
+    let metierNom: string | undefined;
+    if (formData.metier_id) {
+      const m = metiers.find((x) => x.id === formData.metier_id);
+      if (m) metierNom = m.nom;
+      else {
+        const { data } = await supabase
+          .from('metiers')
+          .select('nom')
+          .eq('id', formData.metier_id)
+          .maybeSingle();
+        metierNom = data?.nom;
+      }
+    }
+
+    let paysNoms: string[] = [];
+    if (formData.pays_concernes.length > 0) {
+      const { data } = await supabase
+        .from('pays')
+        .select('nom')
+        .in('id', formData.pays_concernes);
+      paysNoms = (data ?? []).map((p) => p.nom);
+    }
+
+    const label = getProfilLabel(formData, metierNom, paysNoms);
+
+    const { error } = await supabase
+      .from('profiles')
+      .update({
+        plan_recommande: plan,
+        score_complexite: score,
+        onboarding_completed_at: new Date().toISOString(),
+        onboarding_done: true,
+      })
+      .eq('id', user.id);
+
+    if (error) {
+      toast.error('Erreur lors de la finalisation. Réessayez.');
+      return;
+    }
+
+    setFinalScore(score);
+    setFinalPlan(plan);
+    setFinalLabel(label);
+    setCurrentStep(8);
+  };
+
   const handleNext = async () => {
     if (!canGoNext()) return;
     setSaving(true);
@@ -283,24 +558,118 @@ const Onboarding = () => {
     setSaving(false);
     if (!ok) return;
 
-    toast.success('Réponses enregistrées', { duration: 1500 });
+    toast.success('Réponses enregistrées', { duration: 1200 });
 
-    let next = currentStep + 1;
-    // Skip écran 2 si non concerné
-    if (next === 2 && !needsActivityScreen) next = 3;
-    if (next > TOTAL_STEPS) {
-      // Pour l'instant, écrans 5-8 non implémentés : on reste sur écran 4 max.
-      // (rien à faire ici, le bouton Suivant ne devrait pas dépasser 4 dans ce prompt)
+    // Step 7 → finalisation
+    if (currentStep === 7) {
+      setSaving(true);
+      await finalizeAndShowResult();
+      setSaving(false);
       return;
     }
+
+    let next = currentStep + 1;
+    if (next === 2 && !needsActivityScreen) next = 3;
+    if (next === 6 && !needsIntlScreen) next = 7;
+    if (next > TOTAL_STEPS) return;
     setCurrentStep(next);
   };
 
   const handlePrev = () => {
     let prev = currentStep - 1;
+    if (prev === 6 && !needsIntlScreen) prev = 5;
     if (prev === 2 && !needsActivityScreen) prev = 1;
     if (prev < 1) prev = 1;
     setCurrentStep(prev);
+  };
+
+  // Step 5 handlers
+  const toggleRevenu = (key: typeof REVENUS_COMPL_OPTIONS[number]['key'], checked: boolean) => {
+    setFormData((p) => ({
+      ...p,
+      [key]: checked,
+      aucun_revenu_compl: checked ? false : p.aucun_revenu_compl,
+    }));
+  };
+  const toggleAucun = (checked: boolean) => {
+    setFormData((p) => ({
+      ...p,
+      aucun_revenu_compl: checked,
+      ...(checked
+        ? {
+            a_activite_secondaire: false,
+            a_revenus_fonciers_nus: false,
+            a_revenus_lmnp: false,
+            a_placements: false,
+            a_revenus_etrangers: false,
+            a_investissements_defisc: false,
+          }
+        : {}),
+    }));
+  };
+
+  // Step 6 handlers
+  const updateSelector = (idx: number, patch: Partial<{ zone: string; paysId: string }>) => {
+    setPaysSelectors((prev) => {
+      const next = [...prev];
+      next[idx] = { ...next[idx], ...patch };
+      if (patch.zone !== undefined) next[idx].paysId = '';
+      return next;
+    });
+    if (patch.zone) loadPaysForZone(patch.zone);
+  };
+  const addSelector = () => setPaysSelectors((p) => [...p, { zone: '', paysId: '' }]);
+  const removeSelector = (idx: number) =>
+    setPaysSelectors((p) => p.filter((_, i) => i !== idx));
+
+  // Sync pays_concernes depuis paysSelectors
+  useEffect(() => {
+    const ids = Array.from(
+      new Set(paysSelectors.map((s) => s.paysId).filter((id) => !!id))
+    );
+    setFormData((p) => {
+      if (
+        p.pays_concernes.length === ids.length &&
+        p.pays_concernes.every((id, i) => ids[i] === id)
+      ) {
+        return p;
+      }
+      return { ...p, pays_concernes: ids };
+    });
+  }, [paysSelectors]);
+
+  // Hydrater paysSelectors depuis pays_concernes existants
+  useEffect(() => {
+    if (currentStep !== 6) return;
+    if (formData.pays_concernes.length === 0) return;
+    if (paysSelectors.some((s) => s.paysId)) return;
+    (async () => {
+      const { data } = await supabase
+        .from('pays')
+        .select('id, nom, icone, zone')
+        .in('id', formData.pays_concernes);
+      if (!data) return;
+      const zones = Array.from(new Set(data.map((p) => p.zone)));
+      await Promise.all(zones.map((z) => loadPaysForZone(z)));
+      setPaysSelectors(data.map((p) => ({ zone: p.zone, paysId: p.id })));
+    })();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentStep]);
+
+  const handleCheckout = async (planSlug: string) => {
+    try {
+      setCheckoutLoading(planSlug);
+      const { data, error } = await supabase.functions.invoke('create-checkout-session', {
+        body: { plan: planSlug },
+      });
+      if (error) throw error;
+      if (!data?.url) throw new Error('URL Stripe manquante');
+      window.location.href = data.url;
+    } catch (err) {
+      const m = err instanceof Error ? err.message : 'Erreur de paiement';
+      toast.error('Erreur de paiement', { description: m });
+      setCheckoutLoading(null);
+    }
   };
 
   if (loading) {
@@ -311,62 +680,57 @@ const Onboarding = () => {
     );
   }
 
-  const progressValue = (visibleStepLabel / TOTAL_STEPS) * 100;
+  const showProgress = currentStep >= 1 && currentStep <= TOTAL_STEPS;
+  const progressValue = (currentStep / TOTAL_STEPS) * 100;
+  const isResult = currentStep === 8;
 
   return (
     <div className="flex min-h-screen flex-col bg-secondary">
       {/* Header */}
       <header className="border-b border-border bg-background">
         <div className="mx-auto flex max-w-[840px] items-center justify-between px-6 py-4">
-          <div className="font-heading text-lg font-bold text-foreground">
-            Impôts Facile
-          </div>
-          <div className="text-sm text-muted-foreground">
-            Personnalisons votre expérience
-          </div>
+          <div className="font-heading text-lg font-bold text-foreground">Impôts Facile</div>
+          <div className="text-sm text-muted-foreground">Personnalisons votre expérience</div>
         </div>
       </header>
 
       {/* Progress */}
-      {currentStep >= 1 && (
+      {showProgress && (
         <div className="mx-auto w-full max-w-[680px] px-6 pt-8">
           <div className="mb-2 flex items-center justify-between">
             <span className="text-sm font-medium text-foreground">
-              Étape {visibleStepLabel} sur {TOTAL_STEPS}
+              Étape {currentStep} sur {TOTAL_STEPS}
             </span>
-            <span className="text-xs text-muted-foreground">
-              {Math.round(progressValue)}%
-            </span>
+            <span className="text-xs text-muted-foreground">{Math.round(progressValue)}%</span>
           </div>
           <Progress value={progressValue} className="h-2" />
         </div>
       )}
 
       {/* Content */}
-      <main className="mx-auto flex w-full max-w-[680px] flex-1 flex-col px-6 py-8">
+      <main
+        className={cn(
+          'mx-auto flex w-full flex-1 flex-col px-6 py-8',
+          isResult ? 'max-w-[920px]' : 'max-w-[680px]'
+        )}
+      >
         <Card className="rounded-2xl border-border bg-background shadow-md">
-          <CardContent className="p-8">
+          <CardContent className={cn(isResult ? 'p-8 sm:p-10' : 'p-8')}>
             {currentStep === 0 && <Step0 prenom={prenom} />}
             {currentStep === 1 && (
               <Step1
                 value={formData.situation_principale}
-                onChange={(v) =>
-                  setFormData((p) => ({ ...p, situation_principale: v }))
-                }
+                onChange={(v) => setFormData((p) => ({ ...p, situation_principale: v }))}
                 prenom={prenom}
               />
             )}
             {currentStep === 2 && needsActivityScreen && (
               <Step2
                 activite={formData.activite_type}
-                onActiviteChange={(v) =>
-                  setFormData((p) => ({ ...p, activite_type: v }))
-                }
+                onActiviteChange={(v) => setFormData((p) => ({ ...p, activite_type: v }))}
                 showForme={formData.situation_principale === 'dirigeant'}
                 forme={formData.forme_juridique}
-                onFormeChange={(v) =>
-                  setFormData((p) => ({ ...p, forme_juridique: v }))
-                }
+                onFormeChange={(v) => setFormData((p) => ({ ...p, forme_juridique: v }))}
               />
             )}
             {currentStep === 3 && (
@@ -376,9 +740,7 @@ const Onboarding = () => {
                   setFormData((p) => ({ ...p, metier_categorie: v, metier_id: '' }))
                 }
                 metierId={formData.metier_id}
-                onMetierChange={(v) =>
-                  setFormData((p) => ({ ...p, metier_id: v }))
-                }
+                onMetierChange={(v) => setFormData((p) => ({ ...p, metier_id: v }))}
                 metiers={metiers}
                 metiersLoading={metiersLoading}
               />
@@ -389,34 +751,70 @@ const Onboarding = () => {
                 onChange={(patch) => setFormData((p) => ({ ...p, ...patch }))}
               />
             )}
+            {currentStep === 5 && (
+              <Step5
+                data={formData}
+                onToggleRevenu={toggleRevenu}
+                onToggleAucun={toggleAucun}
+              />
+            )}
+            {currentStep === 6 && (
+              <Step6
+                situation={formData.situation_internationale}
+                onSituationChange={(v) =>
+                  setFormData((p) => ({ ...p, situation_internationale: v }))
+                }
+                selectors={paysSelectors}
+                paysByZone={paysByZone}
+                onUpdateSelector={updateSelector}
+                onAddSelector={addSelector}
+                onRemoveSelector={removeSelector}
+              />
+            )}
+            {currentStep === 7 && (
+              <Step7
+                value={formData.tranche_revenus}
+                onChange={(v) => setFormData((p) => ({ ...p, tranche_revenus: v }))}
+              />
+            )}
+            {currentStep === 8 && finalScore !== null && (
+              <Step8
+                profilLabel={finalLabel}
+                plan={finalPlan}
+                score={finalScore}
+                formData={formData}
+                onCheckout={handleCheckout}
+                checkoutLoading={checkoutLoading}
+                onSkip={() => navigate('/dashboard')}
+              />
+            )}
           </CardContent>
         </Card>
 
         {/* Footer actions */}
-        {currentStep === 0 ? (
+        {currentStep === 0 && (
           <div className="mt-6 flex justify-center">
             <Button size="lg" variant="cta" onClick={() => setCurrentStep(1)}>
               Commencer le questionnaire →
             </Button>
           </div>
-        ) : (
+        )}
+
+        {currentStep >= 1 && currentStep <= TOTAL_STEPS && (
           <div className="mt-6 flex items-center justify-between">
             <div>
               {currentStep > 1 && (
-                <Button
-                  variant="outline"
-                  onClick={handlePrev}
-                  disabled={saving}
-                >
+                <Button variant="outline" onClick={handlePrev} disabled={saving}>
                   ← Retour
                 </Button>
               )}
             </div>
-            <Button
-              onClick={handleNext}
-              disabled={!canGoNext() || saving}
-            >
-              {saving ? 'Enregistrement...' : 'Suivant →'}
+            <Button onClick={handleNext} disabled={!canGoNext() || saving}>
+              {saving
+                ? 'Enregistrement...'
+                : currentStep === 7
+                ? 'Voir ma recommandation →'
+                : 'Suivant →'}
             </Button>
           </div>
         )}
@@ -432,9 +830,7 @@ function Step0({ prenom }: { prenom: string }) {
       <div className="text-6xl" aria-hidden>🎉</div>
       <div className="space-y-3">
         <h1 className="font-heading text-3xl font-bold text-foreground sm:text-4xl">
-          {prenom
-            ? `Bienvenue sur Impôts Facile, ${prenom} !`
-            : 'Bienvenue sur Impôts Facile !'}
+          {prenom ? `Bienvenue sur Impôts Facile, ${prenom} !` : 'Bienvenue sur Impôts Facile !'}
         </h1>
         <p className="text-lg text-muted-foreground">
           Personnalisons votre expérience fiscale en 2 minutes
@@ -442,41 +838,21 @@ function Step0({ prenom }: { prenom: string }) {
       </div>
 
       <div className="space-y-4 rounded-xl bg-secondary/50 p-6 text-left">
-        <div className="flex items-start gap-4">
-          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary">
-            <Sparkles className="h-5 w-5" />
+        {[
+          { Icon: Sparkles, title: 'Personnalisation', text: 'Nous allons vous poser quelques questions pour adapter le contenu à votre situation' },
+          { Icon: Target, title: 'Recommandation', text: 'À la fin, nous vous suggérerons le plan le plus adapté à votre profil fiscal' },
+          { Icon: ShieldCheck, title: 'Confidentialité', text: 'Vos réponses sont stockées de manière sécurisée et modifiables à tout moment dans votre profil' },
+        ].map(({ Icon, title, text }) => (
+          <div key={title} className="flex items-start gap-4">
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary">
+              <Icon className="h-5 w-5" />
+            </div>
+            <div>
+              <h3 className="font-heading font-semibold text-foreground">{title}</h3>
+              <p className="text-sm text-muted-foreground">{text}</p>
+            </div>
           </div>
-          <div>
-            <h3 className="font-heading font-semibold text-foreground">Personnalisation</h3>
-            <p className="text-sm text-muted-foreground">
-              Nous allons vous poser quelques questions pour adapter le contenu à votre situation
-            </p>
-          </div>
-        </div>
-
-        <div className="flex items-start gap-4">
-          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary">
-            <Target className="h-5 w-5" />
-          </div>
-          <div>
-            <h3 className="font-heading font-semibold text-foreground">Recommandation</h3>
-            <p className="text-sm text-muted-foreground">
-              À la fin, nous vous suggérerons le plan le plus adapté à votre profil fiscal
-            </p>
-          </div>
-        </div>
-
-        <div className="flex items-start gap-4">
-          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary">
-            <ShieldCheck className="h-5 w-5" />
-          </div>
-          <div>
-            <h3 className="font-heading font-semibold text-foreground">Confidentialité</h3>
-            <p className="text-sm text-muted-foreground">
-              Vos réponses sont stockées de manière sécurisée et modifiables à tout moment dans votre profil
-            </p>
-          </div>
-        </div>
+        ))}
 
         <div className="flex items-center justify-center gap-2 pt-2 text-sm text-muted-foreground">
           <Clock className="h-4 w-4" />
@@ -628,9 +1004,7 @@ function Step3({
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="font-heading text-xl font-bold text-foreground">
-          Votre métier principal
-        </h2>
+        <h2 className="font-heading text-xl font-bold text-foreground">Votre métier principal</h2>
         <p className="mt-1 text-sm text-muted-foreground">
           Choisissez d'abord la catégorie, puis votre métier précis.
         </p>
@@ -693,12 +1067,9 @@ function Step4({
   return (
     <div className="space-y-8">
       <div>
-        <h2 className="font-heading text-xl font-bold text-foreground">
-          Votre situation familiale
-        </h2>
+        <h2 className="font-heading text-xl font-bold text-foreground">Votre situation familiale</h2>
       </div>
 
-      {/* Q1 */}
       <div className="space-y-3">
         <Label>Situation</Label>
         <RadioGroup
@@ -723,7 +1094,6 @@ function Step4({
         </RadioGroup>
       </div>
 
-      {/* Q2 */}
       <div className="space-y-3">
         <Label>Avez-vous des enfants à charge ?</Label>
         <RadioGroup
@@ -767,7 +1137,6 @@ function Step4({
         )}
       </div>
 
-      {/* Q3 */}
       <div className="space-y-3">
         <Label>Situation particulière ? (plusieurs choix possibles)</Label>
         <div className="space-y-2">
@@ -793,6 +1162,344 @@ function Step4({
             </label>
           ))}
         </div>
+      </div>
+    </div>
+  );
+}
+
+/* ===================== Step 5 — Revenus complémentaires ===================== */
+function Step5({
+  data,
+  onToggleRevenu,
+  onToggleAucun,
+}: {
+  data: FormData;
+  onToggleRevenu: (key: typeof REVENUS_COMPL_OPTIONS[number]['key'], checked: boolean) => void;
+  onToggleAucun: (checked: boolean) => void;
+}) {
+  const aucun = data.aucun_revenu_compl;
+  return (
+    <div className="space-y-6">
+      <div>
+        <h2 className="font-heading text-xl font-bold text-foreground">Avez-vous aussi… ?</h2>
+        <p className="mt-1 text-sm text-muted-foreground">
+          Sélectionnez toutes les situations qui vous concernent (plusieurs réponses possibles).
+        </p>
+      </div>
+
+      <div className="space-y-2">
+        {REVENUS_COMPL_OPTIONS.map((opt) => {
+          const checked = data[opt.key] as boolean;
+          return (
+            <label
+              key={opt.key}
+              htmlFor={`rev-${opt.key}`}
+              className={cn(
+                'flex cursor-pointer items-center gap-3 rounded-xl border-2 p-3 text-sm transition-colors',
+                checked ? 'border-primary bg-primary/5' : 'border-border hover:border-primary/40',
+                aucun && 'cursor-not-allowed opacity-50'
+              )}
+            >
+              <Checkbox
+                id={`rev-${opt.key}`}
+                checked={checked}
+                disabled={aucun}
+                onCheckedChange={(c) => onToggleRevenu(opt.key, c === true)}
+              />
+              <span className="font-medium text-foreground">{opt.label}</span>
+            </label>
+          );
+        })}
+
+        <label
+          htmlFor="rev-aucun"
+          className={cn(
+            'mt-3 flex cursor-pointer items-center gap-3 rounded-xl border-2 p-3 text-sm transition-colors',
+            aucun ? 'border-primary bg-primary/5' : 'border-border hover:border-primary/40'
+          )}
+        >
+          <Checkbox
+            id="rev-aucun"
+            checked={aucun}
+            onCheckedChange={(c) => onToggleAucun(c === true)}
+          />
+          <span className="font-medium text-foreground">
+            Aucun, ma situation principale est mon seul revenu
+          </span>
+        </label>
+      </div>
+    </div>
+  );
+}
+
+/* ===================== Step 6 — International ===================== */
+function Step6({
+  situation,
+  onSituationChange,
+  selectors,
+  paysByZone,
+  onUpdateSelector,
+  onAddSelector,
+  onRemoveSelector,
+}: {
+  situation: string;
+  onSituationChange: (v: string) => void;
+  selectors: { zone: string; paysId: string }[];
+  paysByZone: Record<string, PaysRow[]>;
+  onUpdateSelector: (idx: number, patch: Partial<{ zone: string; paysId: string }>) => void;
+  onAddSelector: () => void;
+  onRemoveSelector: (idx: number) => void;
+}) {
+  const showPays = situation && situation !== 'drom';
+  return (
+    <div className="space-y-8">
+      <div>
+        <h2 className="font-heading text-xl font-bold text-foreground">Votre situation internationale</h2>
+      </div>
+
+      <div className="space-y-3">
+        <Label>Quelle est votre situation ?</Label>
+        <RadioGroup value={situation} onValueChange={onSituationChange} className="space-y-2">
+          {SITUATION_INTL_OPTIONS.map((opt) => (
+            <label
+              key={opt.value}
+              htmlFor={`intl-${opt.value}`}
+              className={cn(
+                'flex cursor-pointer items-center gap-3 rounded-xl border-2 p-3 text-sm transition-colors',
+                situation === opt.value
+                  ? 'border-primary bg-primary/5'
+                  : 'border-border hover:border-primary/40'
+              )}
+            >
+              <RadioGroupItem value={opt.value} id={`intl-${opt.value}`} />
+              <span className="font-medium text-foreground">{opt.label}</span>
+            </label>
+          ))}
+        </RadioGroup>
+      </div>
+
+      {showPays && (
+        <div className="space-y-3 border-t border-border pt-6">
+          <Label>Quel(s) pays vous concerne(nt) ?</Label>
+          <div className="space-y-3">
+            {selectors.map((sel, idx) => (
+              <div key={idx} className="flex items-end gap-2">
+                <div className="flex-1 space-y-1">
+                  <span className="text-xs text-muted-foreground">Zone</span>
+                  <Select
+                    value={sel.zone}
+                    onValueChange={(v) => onUpdateSelector(idx, { zone: v })}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Choisir une zone" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {ZONES_OPTIONS.map((z) => (
+                        <SelectItem key={z.value} value={z.value}>
+                          {z.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="flex-1 space-y-1">
+                  <span className="text-xs text-muted-foreground">Pays</span>
+                  <Select
+                    value={sel.paysId}
+                    onValueChange={(v) => onUpdateSelector(idx, { paysId: v })}
+                    disabled={!sel.zone || !paysByZone[sel.zone]}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Choisir un pays" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {(paysByZone[sel.zone] ?? []).map((p) => (
+                        <SelectItem key={p.id} value={p.id}>
+                          {p.icone ? `${p.icone} ` : ''}
+                          {p.nom}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                {selectors.length > 1 && (
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => onRemoveSelector(idx)}
+                    aria-label="Retirer ce pays"
+                  >
+                    <X className="h-4 w-4" />
+                  </Button>
+                )}
+              </div>
+            ))}
+          </div>
+
+          <Button variant="outline" size="sm" onClick={onAddSelector} className="mt-2">
+            <Plus className="h-4 w-4" /> Ajouter un autre pays
+          </Button>
+        </div>
+      )}
+    </div>
+  );
+}
+
+/* ===================== Step 7 — Tranche revenus ===================== */
+function Step7({ value, onChange }: { value: string; onChange: (v: string) => void }) {
+  return (
+    <div className="space-y-6">
+      <div>
+        <h2 className="font-heading text-xl font-bold text-foreground">Vos revenus annuels bruts</h2>
+        <p className="mt-1 text-sm text-muted-foreground">Tous revenus confondus, estimation.</p>
+      </div>
+
+      <RadioGroup value={value} onValueChange={onChange} className="space-y-2">
+        {TRANCHE_REVENUS_OPTIONS.map((opt) => (
+          <label
+            key={opt.value}
+            htmlFor={`tr-${opt.value}`}
+            className={cn(
+              'flex cursor-pointer items-center gap-3 rounded-xl border-2 p-3 text-sm transition-colors',
+              value === opt.value
+                ? 'border-primary bg-primary/5'
+                : 'border-border hover:border-primary/40'
+            )}
+          >
+            <RadioGroupItem value={opt.value} id={`tr-${opt.value}`} />
+            <span className="font-medium text-foreground">{opt.label}</span>
+          </label>
+        ))}
+      </RadioGroup>
+    </div>
+  );
+}
+
+/* ===================== Step 8 — Résultat ===================== */
+function Step8({
+  profilLabel,
+  plan,
+  score,
+  formData,
+  onCheckout,
+  checkoutLoading,
+  onSkip,
+}: {
+  profilLabel: string;
+  plan: 'starter' | 'expert' | 'premium';
+  score: number;
+  formData: FormData;
+  onCheckout: (slug: string) => void;
+  checkoutLoading: string | null;
+  onSkip: () => void;
+}) {
+  const justification =
+    plan === 'starter'
+      ? 'Votre situation fiscale est simple. Le plan Starter couvre tous les essentiels.'
+      : plan === 'expert'
+      ? `Votre profil présente plusieurs spécificités (score ${score}). Le plan Expert vous donne accès aux fiches métier et au parcours adaptatif.`
+      : `Votre situation est complexe (score ${score}). Le plan Premium ajoute le conseil fiscal IA avancé et les webinaires.`;
+
+  const bullets: string[] = [
+    'Modules pédagogiques personnalisés',
+    'Fiches pour votre profil contribuable',
+  ];
+  if (plan !== 'starter') bullets.push('Fiche métier correspondant à votre activité');
+  if (formData.a_revenus_etrangers || formData.pays_concernes.length > 0)
+    bullets.push('Fiche(s) pays pour vos revenus étrangers');
+  bullets.push('Simulateurs adaptés à votre profil');
+
+  return (
+    <div className="space-y-8 animate-in fade-in duration-500">
+      <div className="space-y-3 text-center">
+        <div className="text-6xl" aria-hidden>✨</div>
+        <h1 className="font-heading text-3xl font-bold text-foreground">Votre profil fiscal</h1>
+      </div>
+
+      <Card className="border-primary/30 bg-primary/5">
+        <CardContent className="p-6 text-center">
+          <p className="text-lg font-medium text-foreground">{profilLabel}</p>
+        </CardContent>
+      </Card>
+
+      <div className="space-y-3">
+        <h2 className="font-heading text-base font-semibold text-foreground">
+          Voici ce qui vous attend sur Impôts Facile :
+        </h2>
+        <ul className="space-y-2">
+          {bullets.map((b) => (
+            <li key={b} className="flex items-start gap-2 text-sm text-foreground">
+              <Check className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
+              <span>{b}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      <div className="rounded-xl border-2 border-accent bg-accent/10 p-5 text-center">
+        <p className="font-heading text-lg font-bold text-foreground">
+          💡 Plan recommandé pour vous :{' '}
+          <span className="text-primary">{PLANS.find((p) => p.slug === plan)?.name}</span>
+        </p>
+        <p className="mt-2 text-sm text-muted-foreground">{justification}</p>
+      </div>
+
+      <div className="grid gap-4 sm:grid-cols-3">
+        {PLANS.map((p) => {
+          const isReco = p.slug === plan;
+          return (
+            <div
+              key={p.slug}
+              className={cn(
+                'relative flex flex-col rounded-xl border-2 p-5 transition-all',
+                isReco
+                  ? 'border-primary bg-background shadow-lg ring-2 ring-primary'
+                  : 'border-border bg-card'
+              )}
+            >
+              {isReco && (
+                <Badge className="absolute -top-3 left-1/2 -translate-x-1/2 whitespace-nowrap">
+                  ⭐ RECOMMANDÉ
+                </Badge>
+              )}
+              <h3 className="font-heading text-lg font-bold text-foreground">{p.name}</h3>
+              <p className="mt-2">
+                <span className="font-heading text-3xl font-bold text-foreground">{p.price}€</span>
+                <span className="ml-1 text-xs text-muted-foreground">/ accès</span>
+              </p>
+              <ul className="mt-4 flex-1 space-y-2">
+                {p.features.map((f) => (
+                  <li key={f} className="flex items-start gap-2 text-xs text-muted-foreground">
+                    <Check className="mt-0.5 h-3 w-3 shrink-0 text-accent" />
+                    {f}
+                  </li>
+                ))}
+              </ul>
+              <Button
+                onClick={() => onCheckout(p.slug)}
+                disabled={checkoutLoading !== null}
+                variant={isReco ? 'cta' : 'default'}
+                className="mt-5 w-full"
+              >
+                {checkoutLoading === p.slug ? (
+                  <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Redirection…</>
+                ) : (
+                  'Choisir ce plan'
+                )}
+              </Button>
+            </div>
+          );
+        })}
+      </div>
+
+      <div className="text-center">
+        <button
+          type="button"
+          onClick={onSkip}
+          className="text-sm text-muted-foreground underline-offset-4 hover:text-foreground hover:underline"
+        >
+          ou Commencer gratuitement avec le module 0 →
+        </button>
       </div>
     </div>
   );
