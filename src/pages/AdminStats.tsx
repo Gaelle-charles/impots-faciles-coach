@@ -178,6 +178,14 @@ const AdminStats = () => {
         ))}
       </div>
 
+      {/* Revenue / business KPIs */}
+      <div>
+        <h2 className="font-heading text-xl font-bold text-foreground mb-4 flex items-center gap-2">
+          <Euro className="h-5 w-5" /> Revenus & abonnements
+        </h2>
+        <RevenueStats profiles={profiles} />
+      </div>
+
       <div className="grid gap-6 lg:grid-cols-2">
         {/* Daily signups */}
         <Card className="border-border bg-background shadow-sm">
