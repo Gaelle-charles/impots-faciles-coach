@@ -18,6 +18,7 @@ import {
 } from '@/components/ui/select';
 import { Card, CardContent } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
+import { Sparkles, Target, ShieldCheck, Clock } from 'lucide-react';
 
 const TOTAL_STEPS = 7;
 
@@ -100,7 +101,7 @@ const Onboarding = () => {
 
   const [loading, setLoading] = useState(true);
   const [prenom, setPrenom] = useState('');
-  const [currentStep, setCurrentStep] = useState(1);
+  const [currentStep, setCurrentStep] = useState(0);
   const [saving, setSaving] = useState(false);
   const [metiers, setMetiers] = useState<MetierRow[]>([]);
   const [metiersLoading, setMetiersLoading] = useState(false);
@@ -327,22 +328,25 @@ const Onboarding = () => {
       </header>
 
       {/* Progress */}
-      <div className="mx-auto w-full max-w-[680px] px-6 pt-8">
-        <div className="mb-2 flex items-center justify-between">
-          <span className="text-sm font-medium text-foreground">
-            Étape {visibleStepLabel} sur {TOTAL_STEPS}
-          </span>
-          <span className="text-xs text-muted-foreground">
-            {Math.round(progressValue)}%
-          </span>
+      {currentStep >= 1 && (
+        <div className="mx-auto w-full max-w-[680px] px-6 pt-8">
+          <div className="mb-2 flex items-center justify-between">
+            <span className="text-sm font-medium text-foreground">
+              Étape {visibleStepLabel} sur {TOTAL_STEPS}
+            </span>
+            <span className="text-xs text-muted-foreground">
+              {Math.round(progressValue)}%
+            </span>
+          </div>
+          <Progress value={progressValue} className="h-2" />
         </div>
-        <Progress value={progressValue} className="h-2" />
-      </div>
+      )}
 
       {/* Content */}
       <main className="mx-auto flex w-full max-w-[680px] flex-1 flex-col px-6 py-8">
         <Card className="rounded-2xl border-border bg-background shadow-md">
           <CardContent className="p-8">
+            {currentStep === 0 && <Step0 prenom={prenom} />}
             {currentStep === 1 && (
               <Step1
                 value={formData.situation_principale}
@@ -389,29 +393,99 @@ const Onboarding = () => {
         </Card>
 
         {/* Footer actions */}
-        <div className="mt-6 flex items-center justify-between">
-          <div>
-            {currentStep > 1 && (
-              <Button
-                variant="outline"
-                onClick={handlePrev}
-                disabled={saving}
-              >
-                ← Retour
-              </Button>
-            )}
+        {currentStep === 0 ? (
+          <div className="mt-6 flex justify-center">
+            <Button size="lg" variant="cta" onClick={() => setCurrentStep(1)}>
+              Commencer le questionnaire →
+            </Button>
           </div>
-          <Button
-            onClick={handleNext}
-            disabled={!canGoNext() || saving}
-          >
-            {saving ? 'Enregistrement...' : 'Suivant →'}
-          </Button>
-        </div>
+        ) : (
+          <div className="mt-6 flex items-center justify-between">
+            <div>
+              {currentStep > 1 && (
+                <Button
+                  variant="outline"
+                  onClick={handlePrev}
+                  disabled={saving}
+                >
+                  ← Retour
+                </Button>
+              )}
+            </div>
+            <Button
+              onClick={handleNext}
+              disabled={!canGoNext() || saving}
+            >
+              {saving ? 'Enregistrement...' : 'Suivant →'}
+            </Button>
+          </div>
+        )}
       </main>
     </div>
   );
 };
+
+/* ===================== Step 0 (Welcome) ===================== */
+function Step0({ prenom }: { prenom: string }) {
+  return (
+    <div className="space-y-8 text-center animate-in fade-in duration-500">
+      <div className="text-6xl" aria-hidden>🎉</div>
+      <div className="space-y-3">
+        <h1 className="font-heading text-3xl font-bold text-foreground sm:text-4xl">
+          {prenom
+            ? `Bienvenue sur Impôts Facile, ${prenom} !`
+            : 'Bienvenue sur Impôts Facile !'}
+        </h1>
+        <p className="text-lg text-muted-foreground">
+          Personnalisons votre expérience fiscale en 2 minutes
+        </p>
+      </div>
+
+      <div className="space-y-4 rounded-xl bg-secondary/50 p-6 text-left">
+        <div className="flex items-start gap-4">
+          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary">
+            <Sparkles className="h-5 w-5" />
+          </div>
+          <div>
+            <h3 className="font-heading font-semibold text-foreground">Personnalisation</h3>
+            <p className="text-sm text-muted-foreground">
+              Nous allons vous poser quelques questions pour adapter le contenu à votre situation
+            </p>
+          </div>
+        </div>
+
+        <div className="flex items-start gap-4">
+          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary">
+            <Target className="h-5 w-5" />
+          </div>
+          <div>
+            <h3 className="font-heading font-semibold text-foreground">Recommandation</h3>
+            <p className="text-sm text-muted-foreground">
+              À la fin, nous vous suggérerons le plan le plus adapté à votre profil fiscal
+            </p>
+          </div>
+        </div>
+
+        <div className="flex items-start gap-4">
+          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary">
+            <ShieldCheck className="h-5 w-5" />
+          </div>
+          <div>
+            <h3 className="font-heading font-semibold text-foreground">Confidentialité</h3>
+            <p className="text-sm text-muted-foreground">
+              Vos réponses sont stockées de manière sécurisée et modifiables à tout moment dans votre profil
+            </p>
+          </div>
+        </div>
+
+        <div className="flex items-center justify-center gap-2 pt-2 text-sm text-muted-foreground">
+          <Clock className="h-4 w-4" />
+          <span>Environ 2-3 minutes</span>
+        </div>
+      </div>
+    </div>
+  );
+}
 
 /* ===================== Step 1 ===================== */
 function Step1({
