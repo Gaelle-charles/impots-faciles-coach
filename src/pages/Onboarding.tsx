@@ -538,14 +538,9 @@ const Onboarding = () => {
     }
 
     // 3. Recalcul du matching profils / métiers (APRÈS les UPDATE ci-dessus)
-    console.log('[onboarding] AVANT recalculerMatching pour user', user.id);
-    try {
-      await recalculerMatching(user.id);
-      console.log('[onboarding] APRES recalculerMatching OK');
-    } catch (e) {
-      console.error('[onboarding] Erreur matching:', e);
-      toast.error('Erreur lors du calcul des recommandations.');
-    }
+    console.log('[onboarding] step 7 done, recalculerMatching pour', user.id);
+    await recalculerMatching(user.id);
+    console.log('[onboarding] recalculerMatching terminé');
 
     // 4. Re-SELECT pour récupérer les valeurs fraichement calculées
     const { data: refreshed, error: selectError } = await supabase
