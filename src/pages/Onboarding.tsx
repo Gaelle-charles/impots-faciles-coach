@@ -538,12 +538,12 @@ const Onboarding = () => {
     }
 
     // 3. Recalcul du matching profils / métiers (APRÈS les UPDATE ci-dessus)
-    console.log('AVANT recalculerMatching pour', user.id);
+    console.log('[onboarding] AVANT recalculerMatching pour user', user.id);
     try {
       await recalculerMatching(user.id);
-      console.log('APRES recalculerMatching OK');
+      console.log('[onboarding] APRES recalculerMatching OK');
     } catch (e) {
-      console.error('Erreur matching:', e);
+      console.error('[onboarding] Erreur matching:', e);
       toast.error('Erreur lors du calcul des recommandations.');
     }
 
