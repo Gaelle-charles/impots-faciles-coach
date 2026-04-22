@@ -60,19 +60,43 @@ export type Database = {
       }
       metiers: {
         Row: {
+          categorie: string | null
+          code_ref: string | null
           created_at: string
+          description: string | null
+          icone: string | null
           id: string
+          is_active: boolean | null
           nom: string
+          order_display: number | null
+          slug: string | null
+          sous_categorie: string | null
         }
         Insert: {
+          categorie?: string | null
+          code_ref?: string | null
           created_at?: string
+          description?: string | null
+          icone?: string | null
           id?: string
+          is_active?: boolean | null
           nom: string
+          order_display?: number | null
+          slug?: string | null
+          sous_categorie?: string | null
         }
         Update: {
+          categorie?: string | null
+          code_ref?: string | null
           created_at?: string
+          description?: string | null
+          icone?: string | null
           id?: string
+          is_active?: boolean | null
           nom?: string
+          order_display?: number | null
+          slug?: string | null
+          sous_categorie?: string | null
         }
         Relationships: []
       }
@@ -118,6 +142,45 @@ export type Database = {
         }
         Relationships: []
       }
+      pays: {
+        Row: {
+          code_iso: string | null
+          created_at: string | null
+          icone: string | null
+          id: string
+          is_active: boolean | null
+          nom: string
+          order_display: number | null
+          slug: string | null
+          type: string | null
+          zone: string
+        }
+        Insert: {
+          code_iso?: string | null
+          created_at?: string | null
+          icone?: string | null
+          id?: string
+          is_active?: boolean | null
+          nom: string
+          order_display?: number | null
+          slug?: string | null
+          type?: string | null
+          zone: string
+        }
+        Update: {
+          code_iso?: string | null
+          created_at?: string | null
+          icone?: string | null
+          id?: string
+          is_active?: boolean | null
+          nom?: string
+          order_display?: number | null
+          slug?: string | null
+          type?: string | null
+          zone?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           a_activite_secondaire: boolean | null
@@ -149,17 +212,14 @@ export type Database = {
           personne_handicap: boolean | null
           plan: string
           plan_recommande: string | null
-          premiere_declaration: boolean | null
           prenom: string | null
           primo_declarant: boolean | null
           profils_detectes: string[] | null
           role: string
           score_complexite: number | null
           situation_familiale: string | null
-          situation_famille: string | null
           situation_internationale: string | null
           situation_principale: string | null
-          situation_pro: string | null
           stripe_customer_id: string | null
           stripe_subscription_id: string | null
           tranche_revenus: string | null
@@ -194,17 +254,14 @@ export type Database = {
           personne_handicap?: boolean | null
           plan?: string
           plan_recommande?: string | null
-          premiere_declaration?: boolean | null
           prenom?: string | null
           primo_declarant?: boolean | null
           profils_detectes?: string[] | null
           role?: string
           score_complexite?: number | null
           situation_familiale?: string | null
-          situation_famille?: string | null
           situation_internationale?: string | null
           situation_principale?: string | null
-          situation_pro?: string | null
           stripe_customer_id?: string | null
           stripe_subscription_id?: string | null
           tranche_revenus?: string | null
@@ -239,17 +296,14 @@ export type Database = {
           personne_handicap?: boolean | null
           plan?: string
           plan_recommande?: string | null
-          premiere_declaration?: boolean | null
           prenom?: string | null
           primo_declarant?: boolean | null
           profils_detectes?: string[] | null
           role?: string
           score_complexite?: number | null
           situation_familiale?: string | null
-          situation_famille?: string | null
           situation_internationale?: string | null
           situation_principale?: string | null
-          situation_pro?: string | null
           stripe_customer_id?: string | null
           stripe_subscription_id?: string | null
           tranche_revenus?: string | null
