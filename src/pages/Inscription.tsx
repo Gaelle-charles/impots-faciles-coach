@@ -85,7 +85,7 @@ const Inscription = () => {
             <Input
               value={prenom}
               onChange={(e) => setPrenom(e.target.value)}
-              placeholder="Marie"
+              placeholder="Votre prénom"
               className="mt-1"
             />
             {errors.prenom && <p className="mt-1 text-xs text-destructive">{errors.prenom}</p>}
@@ -97,7 +97,7 @@ const Inscription = () => {
             <Input
               value={nom}
               onChange={(e) => setNom(e.target.value)}
-              placeholder="Dupont"
+              placeholder="Votre nom"
               className="mt-1"
             />
             {errors.nom && <p className="mt-1 text-xs text-destructive">{errors.nom}</p>}
@@ -162,7 +162,11 @@ const Inscription = () => {
 
           {globalError && <p className="text-sm text-destructive">{globalError}</p>}
 
-          <Button type="submit" className="w-full bg-primary text-primary-foreground hover:bg-primary/90 font-heading font-bold" disabled={loading}>
+          <Button
+            type="submit"
+            className="w-full bg-primary text-primary-foreground hover:bg-primary/90 font-heading font-bold"
+            disabled={loading || !prenom.trim() || !nom.trim() || !email.trim() || !password || !confirm}
+          >
             {loading ? 'Chargement...' : 'Créer mon compte →'}
           </Button>
         </form>
