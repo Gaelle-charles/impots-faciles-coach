@@ -4,7 +4,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
 import { supabase } from '@/integrations/supabase/client';
-import { Euro, TrendingUp, CreditCard, RefreshCw, AlertCircle, RotateCw } from 'lucide-react';
+import { Euro, TrendingUp, CreditCard, RefreshCw, AlertCircle, RotateCw, Download } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend,
