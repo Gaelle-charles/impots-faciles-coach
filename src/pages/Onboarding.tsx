@@ -553,6 +553,27 @@ const Onboarding = () => {
       return;
     }
 
+    // Calcul du matching profils / métiers
+    try {
+      await recalculerMatching(user.id);
+    } catch (e) {
+      console.error('Erreur matching:', e);
+      toast.error('Erreur lors du calcul des recommandations.');
+    }
+
+    // Re-SELECT pour récupérer les compteurs à jour
+    const { data: refreshed } = await supabase
+      .from('profiles')
+      .select('profils_detectes, metiers_detectes, pays_concernes')
+      .eq('id', user.id)
+      .maybeSingle();
+
+    setMatchCounts({
+      profils: refreshed?.profils_detectes?.length ?? 0,
+      metiers: refreshed?.metiers_detectes?.length ?? 0,
+      pays: refreshed?.pays_concernes?.length ?? 0,
+    });
+
     setFinalScore(score);
     setFinalPlan(plan);
     setFinalLabel(label);
