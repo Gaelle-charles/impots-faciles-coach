@@ -66,40 +66,43 @@ export function detecterMetiers(profile: Partial<Profile>): string[] {
 
 /**
  * Recalcule profils_detectes et metiers_detectes pour un user puis persiste.
+ * Volontairement SANS try/catch : on veut que toute erreur remonte.
  */
 export async function recalculerMatching(userId: string): Promise<void> {
-  try {
-    const { data: profile, error: selectError } = await supabase
-      .from('profiles')
-      .select('*')
-      .eq('id', userId)
-      .maybeSingle();
+  console.log('🔵 [matching] recalculerMatching démarrée pour', userId);
 
-    if (selectError) {
-      console.error('[matching] SELECT error:', selectError);
-      throw selectError;
-    }
-    if (!profile) {
-      console.error('[matching] profil introuvable pour', userId);
-      throw new Error('Profil introuvable');
-    }
+  console.log('🔵 [matching] SELECT profile...');
+  const { data, error: selectError } = await supabase
+    .from('profiles')
+    .select('*')
+    .eq('id', userId)
+    .maybeSingle();
 
-    const profils_detectes = detecterProfils(profile);
-    const metiers_detectes = detecterMetiers(profile);
-    console.log('[matching] Calculé pour', userId, { profils: profils_detectes, metiers: metiers_detectes });
+  if (selectError) {
+    console.error('🔴 [matching] SELECT error:', selectError);
+    throw selectError;
+  }
+  if (!data) {
+    console.error('🔴 [matching] profil introuvable pour', userId);
+    throw new Error('Profil introuvable');
+  }
 
-    const { error: updateError } = await supabase
-      .from('profiles')
-      .update({ profils_detectes, metiers_detectes })
-      .eq('id', userId);
+  console.log('🔵 [matching] profile lu:', data);
+  const profils_detectes = detecterProfils(data);
+  const metiers_detectes = detecterMetiers(data);
+  console.log('🔵 [matching] profils calculés:', profils_detectes);
+  console.log('🔵 [matching] metiers calculés:', metiers_detectes);
 
-    if (updateError) {
-      console.error('[matching] UPDATE error:', updateError);
-      throw updateError;
-    }
-    console.log('[matching] UPDATE OK');
-  } catch (e) {
-    console.error('[matching] EXCEPTION:', e);
-    throw e;
+  console.log('🔵 [matching] UPDATE en cours...');
+  const updateResult = await supabase
+    .from('profiles')
+    .update({ profils_detectes, metiers_detectes })
+    .eq('id', userId);
+
+  console.log('🔵 [matching] UPDATE result:', updateResult);
+
+  if (updateResult.error) {
+    console.error('🔴 [matching] UPDATE error:', updateResult.error);
+    throw updateResult.error;
   }
 }

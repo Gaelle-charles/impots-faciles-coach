@@ -508,6 +508,8 @@ const Onboarding = () => {
   };
 
   const finalizeAndShowResult = async () => {
+    console.log('🟢 [onboarding] finalizeAndShowResult APPELÉE');
+    console.log('🟢 [onboarding] user:', user);
     if (!user) return;
     const score = calculerScore(formData);
     const plan = getRecommendedPlan(score);
@@ -538,9 +540,9 @@ const Onboarding = () => {
     }
 
     // 3. Recalcul du matching profils / métiers (APRÈS les UPDATE ci-dessus)
-    console.log('[onboarding] step 7 done, recalculerMatching pour', user.id);
+    console.log('🟡 [onboarding] AVANT recalculerMatching, user.id =', user?.id);
     await recalculerMatching(user.id);
-    console.log('[onboarding] recalculerMatching terminé');
+    console.log('🟢 [onboarding] APRÈS recalculerMatching OK');
 
     // 4. Re-SELECT pour récupérer les valeurs fraichement calculées
     const { data: refreshed, error: selectError } = await supabase
