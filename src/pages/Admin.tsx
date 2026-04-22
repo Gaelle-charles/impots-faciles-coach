@@ -26,6 +26,7 @@ import {
 import { Users, BookOpen, Target, Activity } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
 import { useAccess } from '@/hooks/useAccess';
+import { RevenueStats } from '@/components/admin/RevenueStats';
 
 interface ProfileRow {
   prenom: string | null;
@@ -34,6 +35,8 @@ interface ProfileRow {
   plan: string;
   created_at: string;
   role: string;
+  is_active?: boolean | null;
+  date_paiement?: string | null;
 }
 
 interface ProgressionRow {
@@ -84,7 +87,7 @@ const Admin = () => {
     const init = async () => {
       setLoading(true);
       const [profRes, progRes, modRes, resRes] = await Promise.all([
-        supabase.from('profiles').select('prenom, nom, email, plan, created_at, role'),
+        supabase.from('profiles').select('prenom, nom, email, plan, created_at, role, is_active, date_paiement'),
         supabase.from('progressions').select('module_id, completion_date, user_id, created_at'),
         supabase.from('modules').select('id, titre, order').order('order', { ascending: true }),
         supabase.from('resultat_quiz').select('pourcentage'),
@@ -194,6 +197,12 @@ const Admin = () => {
             </CardContent>
           </Card>
         ))}
+      </div>
+
+      {/* Revenue / business KPIs */}
+      <div>
+        <h2 className="font-heading text-xl font-bold text-foreground mb-4">Revenus & abonnements</h2>
+        <RevenueStats profiles={profiles} />
       </div>
 
       {/* Weekly signups chart */}

@@ -12,8 +12,9 @@ import {
   BarChart, Bar, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell,
 } from 'recharts';
 import {
-  TrendingUp, Users, BookOpen, Target, Activity, Award, Clock, ArrowUpRight, ArrowDownRight,
+  TrendingUp, Users, BookOpen, Target, Activity, Award, Clock, ArrowUpRight, ArrowDownRight, Euro,
 } from 'lucide-react';
+import { RevenueStats } from '@/components/admin/RevenueStats';
 
 const COLORS = ['hsl(285, 52%, 15%)', 'hsl(336, 70%, 62%)', 'hsl(56, 100%, 49%)', 'hsl(200, 70%, 50%)', 'hsl(150, 60%, 45%)'];
 
@@ -30,7 +31,7 @@ const AdminStats = () => {
     const fetch = async () => {
       setLoading(true);
       const [pRes, prRes, rRes, mRes] = await Promise.all([
-        supabase.from('profiles').select('id, plan, created_at, is_active, role'),
+        supabase.from('profiles').select('id, plan, created_at, is_active, role, date_paiement'),
         supabase.from('progressions').select('user_id, module_id, step, completion_date, created_at'),
         supabase.from('resultat_quiz').select('user_id, module_id, pourcentage, score, score_max, date_quiz'),
         supabase.from('modules').select('id, titre, order, total_step').order('order', { ascending: true }),
@@ -175,6 +176,14 @@ const AdminStats = () => {
             </CardContent>
           </Card>
         ))}
+      </div>
+
+      {/* Revenue / business KPIs */}
+      <div>
+        <h2 className="font-heading text-xl font-bold text-foreground mb-4 flex items-center gap-2">
+          <Euro className="h-5 w-5" /> Revenus & abonnements
+        </h2>
+        <RevenueStats profiles={profiles} />
       </div>
 
       <div className="grid gap-6 lg:grid-cols-2">
