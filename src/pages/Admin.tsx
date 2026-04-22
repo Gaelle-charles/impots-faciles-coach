@@ -27,6 +27,7 @@ import { Users, BookOpen, Target, Activity } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
 import { useAccess } from '@/hooks/useAccess';
 import { RevenueStats } from '@/components/admin/RevenueStats';
+import { StripeRevenueStats } from '@/components/admin/StripeRevenueStats';
 
 interface ProfileRow {
   prenom: string | null;
