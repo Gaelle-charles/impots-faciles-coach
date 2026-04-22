@@ -199,6 +199,12 @@ const Admin = () => {
         ))}
       </div>
 
+      {/* Revenue / business KPIs */}
+      <div>
+        <h2 className="font-heading text-xl font-bold text-foreground mb-4">Revenus & abonnements</h2>
+        <RevenueStats profiles={profiles} />
+      </div>
+
       {/* Weekly signups chart */}
       <Card className="border-border bg-background shadow-sm">
         <CardHeader>
