@@ -40,7 +40,7 @@ const features = [
   {
     icon: BookOpen,
     title: 'Modules de formation',
-    desc: 'Des cours structurés et progressifs, du débutant à l\'expert fiscal.',
+    desc: 'Des cours structurés et progressifs, du débutant au formateur en impôts.',
     color: 'bg-primary/10 text-primary',
   },
   {
@@ -132,8 +132,8 @@ const Index = () => {
             🎓 La plateforme n°1 de formation fiscale
           </span>
           <h1 className="font-heading text-4xl sm:text-5xl md:text-6xl font-bold leading-tight text-primary-foreground">
-            La fiscalité, enfin{' '}
-            <span className="text-[hsl(var(--yellow-vivid))]">accessible.</span>
+            Les impôts, enfin{' '}
+            <span className="text-[hsl(var(--yellow-vivid))]">accessibles.</span>
           </h1>
           <p className="mt-6 max-w-xl text-lg text-primary-foreground/85 mx-auto leading-relaxed">
             Maîtrisez l'impôt sur le revenu, la TVA, les régimes fiscaux et bien plus
@@ -221,7 +221,7 @@ const Index = () => {
               Nos avantages
             </h2>
             <p className="mt-3 text-muted-foreground max-w-xl mx-auto">
-              Impôts Facile simplifie la fiscalité pour que chacun puisse déclarer en toute confiance.
+              Impôts Facile simplifie les impôts pour que chacun puisse déclarer en toute confiance.
             </p>
           </div>
 

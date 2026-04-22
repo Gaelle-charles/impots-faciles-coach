@@ -69,9 +69,14 @@ export function Footer() {
           </div>
         </div>
 
-        <div className="mt-10 border-t border-sidebar-border pt-6 text-center text-xs text-primary-foreground/50 space-y-1">
+        <div className="mt-10 border-t border-sidebar-border pt-6 text-center text-xs text-primary-foreground/60 space-y-3">
+          <p className="mx-auto max-w-3xl leading-relaxed">
+            Impôts Facile est une plateforme de formation et d'information pédagogique sur les impôts.
+            Nos contenus, simulateurs et recommandations ont une vocation éducative et ne constituent
+            ni un conseil fiscal personnalisé, ni une prestation réglementée. Pour toute décision
+            engageante, consultez un professionnel agréé (avocat fiscaliste, expert-comptable).
+          </p>
           <p>© {new Date().getFullYear()} Impôts Facile — Tous droits réservés</p>
-          <p>Impôts Facile est un outil pédagogique. Il ne remplace pas un conseiller fiscal.</p>
         </div>
       </div>
     </footer>

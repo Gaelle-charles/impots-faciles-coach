@@ -114,7 +114,7 @@ const TRANCHE_REVENUS_OPTIONS = [
 const PLANS = [
   { slug: 'starter', name: 'Starter', price: 49, features: ['7 modules pédagogiques', 'Contenu personnalisé', 'Simulateur de frais'] },
   { slug: 'expert', name: 'Expert', price: 79, features: ['Tout Starter +', 'Fiches profil contribuable', 'Fiches métier', 'Parcours adaptatif IA'] },
-  { slug: 'premium', name: 'Premium', price: 119, features: ['Tout Expert +', 'Conseil fiscal IA avancé', '5 webinaires thématiques'] },
+  { slug: 'premium', name: 'Premium', price: 119, features: ['Tout Expert +', 'Formation sur les impôts IA avancée', '5 webinaires thématiques'] },
 ];
 
 interface FormData {
@@ -1477,7 +1477,7 @@ function Step8({
       ? 'Votre situation fiscale est simple. Le plan Starter couvre tous les essentiels.'
       : plan === 'expert'
       ? `Votre profil présente plusieurs spécificités (score ${score}). Le plan Expert vous donne accès aux fiches métier et au parcours adaptatif.`
-      : `Votre situation est complexe (score ${score}). Le plan Premium ajoute le conseil fiscal IA avancé et les webinaires.`;
+      : `Votre situation est complexe (score ${score}). Le plan Premium ajoute la formation sur les impôts IA avancée et les webinaires.`;
 
   const bullets: string[] = [
     'Modules pédagogiques personnalisés',

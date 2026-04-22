@@ -41,7 +41,7 @@ const plans = [
     popular: false,
     features: [
       'Tout Expert +',
-      'Conseil fiscal IA avancé',
+      'Formation sur les impôts IA avancée',
       '5 webinaires thématiques',
     ],
   },
@@ -112,7 +112,7 @@ const Tarifs = () => {
 
         <h1 className="font-heading text-4xl font-bold text-foreground">Nos tarifs</h1>
         <p className="mt-4 max-w-xl text-center text-lg text-muted-foreground">
-          Choisissez la formule qui vous convient pour maîtriser la fiscalité et réduire vos impôts.
+          Choisissez la formule qui vous convient pour maîtriser et réduire vos impôts.
         </p>
 
         <div className="mt-14 grid w-full max-w-4xl gap-8 sm:grid-cols-2 lg:grid-cols-3 lg:items-stretch">
