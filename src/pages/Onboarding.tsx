@@ -813,6 +813,7 @@ const Onboarding = () => {
                 plan={finalPlan}
                 score={finalScore}
                 formData={formData}
+                matchCounts={matchCounts}
                 onCheckout={handleCheckout}
                 checkoutLoading={checkoutLoading}
                 onSkip={() => navigate('/dashboard')}
