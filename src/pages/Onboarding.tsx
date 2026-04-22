@@ -101,7 +101,7 @@ const Onboarding = () => {
 
   const [loading, setLoading] = useState(true);
   const [prenom, setPrenom] = useState('');
-  const [currentStep, setCurrentStep] = useState(1);
+  const [currentStep, setCurrentStep] = useState(0);
   const [saving, setSaving] = useState(false);
   const [metiers, setMetiers] = useState<MetierRow[]>([]);
   const [metiersLoading, setMetiersLoading] = useState(false);
