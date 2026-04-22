@@ -260,6 +260,7 @@ const Onboarding = () => {
     { zone: '', paysId: '' },
   ]);
   const [paysByZone, setPaysByZone] = useState<Record<string, PaysRow[]>>({});
+  const [paysLoadingZone, setPaysLoadingZone] = useState<Record<string, boolean>>({});
 
   // Step 8 — résultat
   const [finalScore, setFinalScore] = useState<number | null>(null);
@@ -390,14 +391,19 @@ const Onboarding = () => {
   // Charger pays pour une zone donnée
   const loadPaysForZone = async (zone: string) => {
     if (!zone || paysByZone[zone]) return;
+    setPaysLoadingZone((prev) => ({ ...prev, [zone]: true }));
     const { data, error } = await supabase
       .from('pays')
-      .select('id, nom, icone, zone')
+      .select('id, nom, icone, zone, type')
       .eq('zone', zone)
       .eq('is_active', true)
       .order('order_display', { ascending: true });
+    setPaysLoadingZone((prev) => ({ ...prev, [zone]: false }));
     if (error) {
-      toast.error('Impossible de charger la liste des pays.');
+      console.error('Erreur chargement pays:', error);
+      toast.error('Impossible de charger la liste des pays.', {
+        description: error.message,
+      });
       return;
     }
     setPaysByZone((prev) => ({ ...prev, [zone]: (data as PaysRow[]) ?? [] }));
