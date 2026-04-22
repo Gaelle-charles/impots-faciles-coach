@@ -512,6 +512,51 @@ const Onboarding = () => {
     const score = calculerScore(formData);
     const plan = getRecommendedPlan(score);
 
+    // 1. UPDATE des réponses brutes de l'écran 7 (tranche_revenus)
+    const { error: trancheError } = await supabase
+      .from('profiles')
+      .update({ tranche_revenus: formData.tranche_revenus })
+      .eq('id', user.id);
+    if (trancheError) {
+      console.error('UPDATE tranche_revenus error:', trancheError);
+      toast.error('Erreur lors de la sauvegarde de la tranche de revenus.');
+      return;
+    }
+
+    // 2. UPDATE scoring + plan_recommande
+    const { error: scoreError } = await supabase
+      .from('profiles')
+      .update({
+        plan_recommande: plan,
+        score_complexite: score,
+      })
+      .eq('id', user.id);
+    if (scoreError) {
+      console.error('UPDATE score/plan error:', scoreError);
+      toast.error('Erreur lors du calcul du plan recommandé.');
+      return;
+    }
+
+    // 3. Recalcul du matching profils / métiers (APRÈS les UPDATE ci-dessus)
+    console.log('AVANT recalculerMatching pour', user.id);
+    try {
+      await recalculerMatching(user.id);
+      console.log('APRES recalculerMatching OK');
+    } catch (e) {
+      console.error('Erreur matching:', e);
+      toast.error('Erreur lors du calcul des recommandations.');
+    }
+
+    // 4. Re-SELECT pour récupérer les valeurs fraichement calculées
+    const { data: refreshed, error: selectError } = await supabase
+      .from('profiles')
+      .select('profils_detectes, metiers_detectes, pays_concernes')
+      .eq('id', user.id)
+      .maybeSingle();
+    if (selectError) {
+      console.error('SELECT profil rafraîchi error:', selectError);
+    }
+
     // Récupérer noms métier et pays pour le label
     let metierNom: string | undefined;
     if (formData.metier_id) {
@@ -538,35 +583,19 @@ const Onboarding = () => {
 
     const label = getProfilLabel(formData, metierNom, paysNoms);
 
-    const { error } = await supabase
+    // 5. UPDATE onboarding_done + onboarding_completed_at
+    const { error: doneError } = await supabase
       .from('profiles')
       .update({
-        plan_recommande: plan,
-        score_complexite: score,
         onboarding_completed_at: new Date().toISOString(),
         onboarding_done: true,
       })
       .eq('id', user.id);
-
-    if (error) {
+    if (doneError) {
+      console.error('UPDATE onboarding_done error:', doneError);
       toast.error('Erreur lors de la finalisation. Réessayez.');
       return;
     }
-
-    // Calcul du matching profils / métiers
-    try {
-      await recalculerMatching(user.id);
-    } catch (e) {
-      console.error('Erreur matching:', e);
-      toast.error('Erreur lors du calcul des recommandations.');
-    }
-
-    // Re-SELECT pour récupérer les compteurs à jour
-    const { data: refreshed } = await supabase
-      .from('profiles')
-      .select('profils_detectes, metiers_detectes, pays_concernes')
-      .eq('id', user.id)
-      .maybeSingle();
 
     setMatchCounts({
       profils: refreshed?.profils_detectes?.length ?? 0,
@@ -574,6 +603,7 @@ const Onboarding = () => {
       pays: refreshed?.pays_concernes?.length ?? 0,
     });
 
+    // 6. Navigation vers l'écran 8
     setFinalScore(score);
     setFinalPlan(plan);
     setFinalLabel(label);
