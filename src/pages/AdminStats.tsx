@@ -12,7 +12,7 @@ import {
   BarChart, Bar, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell,
 } from 'recharts';
 import {
-  TrendingUp, Users, BookOpen, Target, Activity, Award, Clock, ArrowUpRight, ArrowDownRight,
+  TrendingUp, Users, BookOpen, Target, Activity, Award, Clock, ArrowUpRight, ArrowDownRight, Euro,
 } from 'lucide-react';
 import { RevenueStats } from '@/components/admin/RevenueStats';
 
