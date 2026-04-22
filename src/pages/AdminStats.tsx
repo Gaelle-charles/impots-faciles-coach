@@ -180,11 +180,19 @@ const AdminStats = () => {
       </div>
 
       {/* Revenue / business KPIs */}
-      <div>
-        <h2 className="font-heading text-xl font-bold text-foreground mb-4 flex items-center gap-2">
+      <div className="space-y-6">
+        <h2 className="font-heading text-xl font-bold text-foreground flex items-center gap-2">
           <Euro className="h-5 w-5" /> Revenus & abonnements
         </h2>
-        <RevenueStats profiles={profiles} />
+        <StripeRevenueStats />
+        <details>
+          <summary className="cursor-pointer text-sm text-muted-foreground hover:text-foreground">
+            Voir aussi l'estimation interne (basée sur profiles.plan)
+          </summary>
+          <div className="mt-4">
+            <RevenueStats profiles={profiles} />
+          </div>
+        </details>
       </div>
 
       <div className="grid gap-6 lg:grid-cols-2">
