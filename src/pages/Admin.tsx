@@ -26,6 +26,7 @@ import {
 import { Users, BookOpen, Target, Activity } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
 import { useAccess } from '@/hooks/useAccess';
+import { RevenueStats } from '@/components/admin/RevenueStats';
 
 interface ProfileRow {
   prenom: string | null;
@@ -34,6 +35,8 @@ interface ProfileRow {
   plan: string;
   created_at: string;
   role: string;
+  is_active?: boolean | null;
+  date_paiement?: string | null;
 }
 
 interface ProgressionRow {
