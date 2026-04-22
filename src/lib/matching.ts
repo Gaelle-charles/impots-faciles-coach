@@ -58,16 +58,10 @@ export function detecterProfils(profile: Partial<Profile>): string[] {
 }
 
 /**
- * Retourne les UUIDs de métiers (principal + secondaire), filtre les null.
+ * Retourne l'UUID du métier principal, ou un tableau vide si absent.
  */
 export function detecterMetiers(profile: Partial<Profile>): string[] {
-  const ids: string[] = [];
-  if (profile.metier_id) ids.push(profile.metier_id);
-  // metier_secondaire_id n'existe pas formellement dans le schéma actuel ;
-  // on lit défensivement au cas où il serait ajouté ultérieurement.
-  const secondaire = (profile as Record<string, unknown>).metier_secondaire_id;
-  if (typeof secondaire === 'string' && secondaire) ids.push(secondaire);
-  return Array.from(new Set(ids));
+  return profile.metier_id ? [profile.metier_id] : [];
 }
 
 /**
