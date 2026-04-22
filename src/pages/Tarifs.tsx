@@ -41,7 +41,7 @@ const plans = [
     popular: false,
     features: [
       'Tout Expert +',
-      'Formation sur les impôts IA avancée',
+      'Parcours pédagogique IA personnalisé',
       '5 webinaires thématiques',
     ],
   },
