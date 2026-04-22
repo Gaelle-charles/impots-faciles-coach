@@ -68,22 +68,36 @@ export function detecterMetiers(profile: Partial<Profile>): string[] {
  * Recalcule profils_detectes et metiers_detectes pour un user puis persiste.
  */
 export async function recalculerMatching(userId: string): Promise<void> {
-  const { data: profile, error: selectError } = await supabase
-    .from('profiles')
-    .select('*')
-    .eq('id', userId)
-    .maybeSingle();
+  try {
+    const { data: profile, error: selectError } = await supabase
+      .from('profiles')
+      .select('*')
+      .eq('id', userId)
+      .maybeSingle();
 
-  if (selectError) throw selectError;
-  if (!profile) throw new Error('Profil introuvable');
+    if (selectError) {
+      console.error('recalculerMatching SELECT ERROR:', selectError);
+      throw selectError;
+    }
+    if (!profile) {
+      console.error('recalculerMatching: profil introuvable pour', userId);
+      throw new Error('Profil introuvable');
+    }
 
-  const profils_detectes = detecterProfils(profile);
-  const metiers_detectes = detecterMetiers(profile);
+    const profils_detectes = detecterProfils(profile);
+    const metiers_detectes = detecterMetiers(profile);
 
-  const { error: updateError } = await supabase
-    .from('profiles')
-    .update({ profils_detectes, metiers_detectes })
-    .eq('id', userId);
+    const { error: updateError } = await supabase
+      .from('profiles')
+      .update({ profils_detectes, metiers_detectes })
+      .eq('id', userId);
 
-  if (updateError) throw updateError;
+    if (updateError) {
+      console.error('recalculerMatching ERROR:', updateError);
+      throw updateError;
+    }
+  } catch (e) {
+    console.error('recalculerMatching EXCEPTION:', e);
+    throw e;
+  }
 }
