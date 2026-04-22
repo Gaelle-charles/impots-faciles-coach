@@ -87,7 +87,7 @@ const Admin = () => {
     const init = async () => {
       setLoading(true);
       const [profRes, progRes, modRes, resRes] = await Promise.all([
-        supabase.from('profiles').select('prenom, nom, email, plan, created_at, role'),
+        supabase.from('profiles').select('prenom, nom, email, plan, created_at, role, is_active, date_paiement'),
         supabase.from('progressions').select('module_id, completion_date, user_id, created_at'),
         supabase.from('modules').select('id, titre, order').order('order', { ascending: true }),
         supabase.from('resultat_quiz').select('pourcentage'),
