@@ -94,11 +94,11 @@ const SITUATION_INTL_OPTIONS = [
 ];
 
 const ZONES_OPTIONS = [
-  { value: 'Afrique', label: '🌍 Afrique' },
-  { value: 'Asie', label: '🌏 Asie' },
-  { value: 'Europe', label: '🇪🇺 Europe' },
-  { value: 'Amériques', label: '🌎 Amériques' },
-  { value: 'Moyen-Orient', label: '🌍 Moyen-Orient' },
+  { value: 'afrique', label: '🌍 Afrique' },
+  { value: 'asie', label: '🌏 Asie' },
+  { value: 'europe', label: '🇪🇺 Europe' },
+  { value: 'ameriques', label: '🌎 Amériques' },
+  { value: 'moyen_orient', label: '🌍 Moyen-Orient' },
 ];
 
 const TRANCHE_REVENUS_OPTIONS = [
@@ -260,6 +260,7 @@ const Onboarding = () => {
     { zone: '', paysId: '' },
   ]);
   const [paysByZone, setPaysByZone] = useState<Record<string, PaysRow[]>>({});
+  const [paysLoadingZone, setPaysLoadingZone] = useState<Record<string, boolean>>({});
 
   // Step 8 — résultat
   const [finalScore, setFinalScore] = useState<number | null>(null);
@@ -390,14 +391,19 @@ const Onboarding = () => {
   // Charger pays pour une zone donnée
   const loadPaysForZone = async (zone: string) => {
     if (!zone || paysByZone[zone]) return;
+    setPaysLoadingZone((prev) => ({ ...prev, [zone]: true }));
     const { data, error } = await supabase
       .from('pays')
-      .select('id, nom, icone, zone')
+      .select('id, nom, icone, zone, type')
       .eq('zone', zone)
       .eq('is_active', true)
       .order('order_display', { ascending: true });
+    setPaysLoadingZone((prev) => ({ ...prev, [zone]: false }));
     if (error) {
-      toast.error('Impossible de charger la liste des pays.');
+      console.error('Erreur chargement pays:', error);
+      toast.error('Impossible de charger la liste des pays.', {
+        description: error.message,
+      });
       return;
     }
     setPaysByZone((prev) => ({ ...prev, [zone]: (data as PaysRow[]) ?? [] }));
@@ -766,6 +772,7 @@ const Onboarding = () => {
                 }
                 selectors={paysSelectors}
                 paysByZone={paysByZone}
+                paysLoadingZone={paysLoadingZone}
                 onUpdateSelector={updateSelector}
                 onAddSelector={addSelector}
                 onRemoveSelector={removeSelector}
@@ -1238,6 +1245,7 @@ function Step6({
   onSituationChange,
   selectors,
   paysByZone,
+  paysLoadingZone,
   onUpdateSelector,
   onAddSelector,
   onRemoveSelector,
@@ -1246,6 +1254,7 @@ function Step6({
   onSituationChange: (v: string) => void;
   selectors: { zone: string; paysId: string }[];
   paysByZone: Record<string, PaysRow[]>;
+  paysLoadingZone: Record<string, boolean>;
   onUpdateSelector: (idx: number, patch: Partial<{ zone: string; paysId: string }>) => void;
   onAddSelector: () => void;
   onRemoveSelector: (idx: number) => void;
@@ -1307,18 +1316,32 @@ function Step6({
                   <Select
                     value={sel.paysId}
                     onValueChange={(v) => onUpdateSelector(idx, { paysId: v })}
-                    disabled={!sel.zone || !paysByZone[sel.zone]}
+                    disabled={!sel.zone || !!paysLoadingZone[sel.zone]}
                   >
                     <SelectTrigger>
-                      <SelectValue placeholder="Choisir un pays" />
+                      <SelectValue
+                        placeholder={
+                          !sel.zone
+                            ? 'Choisir une zone d\u2019abord'
+                            : paysLoadingZone[sel.zone]
+                              ? 'Chargement\u2026'
+                              : 'Choisir un pays'
+                        }
+                      />
                     </SelectTrigger>
                     <SelectContent>
-                      {(paysByZone[sel.zone] ?? []).map((p) => (
-                        <SelectItem key={p.id} value={p.id}>
-                          {p.icone ? `${p.icone} ` : ''}
-                          {p.nom}
-                        </SelectItem>
-                      ))}
+                      {sel.zone && !paysLoadingZone[sel.zone] && (paysByZone[sel.zone]?.length ?? 0) === 0 ? (
+                        <div className="px-2 py-3 text-center text-sm text-muted-foreground">
+                          Aucun pays disponible dans cette zone
+                        </div>
+                      ) : (
+                        (paysByZone[sel.zone] ?? []).map((p) => (
+                          <SelectItem key={p.id} value={p.id}>
+                            {p.icone ? `${p.icone} ` : ''}
+                            {p.nom}
+                          </SelectItem>
+                        ))
+                      )}
                     </SelectContent>
                   </Select>
                 </div>
