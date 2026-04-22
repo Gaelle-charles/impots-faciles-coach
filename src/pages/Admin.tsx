@@ -56,7 +56,8 @@ interface ResultRow {
 const Admin = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
-  const { isLoading: accessLoading, hasAdminAccess } = useAccess();
+  const { isLoading: accessLoading, hasAdminAccess, role } = useAccess();
+  const isAdmin = role === 'admin';
 
   const [loading, setLoading] = useState(true);
   const [profiles, setProfiles] = useState<ProfileRow[]>([]);
