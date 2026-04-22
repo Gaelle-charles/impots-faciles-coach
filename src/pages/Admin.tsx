@@ -56,7 +56,8 @@ interface ResultRow {
 const Admin = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
-  const { isLoading: accessLoading, hasAdminAccess } = useAccess();
+  const { isLoading: accessLoading, hasAdminAccess, role } = useAccess();
+  const isAdmin = role === 'admin';
 
   const [loading, setLoading] = useState(true);
   const [profiles, setProfiles] = useState<ProfileRow[]>([]);
@@ -67,7 +68,7 @@ const Admin = () => {
   // Access guard
   useEffect(() => {
     if (accessLoading) return;
-    if (!hasAdminAccess()) {
+    if (!isAdmin) {
       toast({
         title: 'Accès restreint',
         description: 'Accès réservé aux administrateurs',
@@ -75,10 +76,10 @@ const Admin = () => {
       });
       navigate('/dashboard', { replace: true });
     }
-  }, [accessLoading, hasAdminAccess, navigate]);
+  }, [accessLoading, isAdmin, navigate]);
 
   useEffect(() => {
-    if (!user || accessLoading || !hasAdminAccess()) return;
+    if (!user || accessLoading || !isAdmin) return;
 
     const init = async () => {
       setLoading(true);
@@ -101,7 +102,7 @@ const Admin = () => {
     };
 
     init();
-  }, [user, accessLoading, hasAdminAccess]);
+  }, [user, accessLoading, isAdmin]);
 
   // Stats
   const totalUsers = profiles.length;
