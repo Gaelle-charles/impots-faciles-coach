@@ -70,6 +70,12 @@ const Profil = () => {
   const [deleteConfirm, setDeleteConfirm] = useState('');
   const [deleting, setDeleting] = useState(false);
 
+  // Complete profile (for users missing prenom/nom)
+  const [completeOpen, setCompleteOpen] = useState(false);
+  const [completePrenom, setCompletePrenom] = useState('');
+  const [completeNom, setCompleteNom] = useState('');
+  const [completing, setCompleting] = useState(false);
+
   useEffect(() => {
     if (!user) return;
 
@@ -86,6 +92,12 @@ const Profil = () => {
         setProfile(profRes.data);
         setPrenom(profRes.data.prenom ?? '');
         setNom(profRes.data.nom ?? '');
+        // Auto-open completion modal if prenom or nom is missing
+        if (!profRes.data.prenom?.trim() || !profRes.data.nom?.trim()) {
+          setCompletePrenom(profRes.data.prenom ?? '');
+          setCompleteNom(profRes.data.nom ?? '');
+          setCompleteOpen(true);
+        }
       }
       setTotalModules(modRes.data?.length ?? 0);
       setCompletedModules(progRes.data?.filter((p) => !!p.completion_date).length ?? 0);
@@ -155,6 +167,28 @@ const Profil = () => {
     await signOut();
     navigate('/');
     toast({ title: 'Compte supprimé', description: 'Ton compte a été supprimé.' });
+  };
+
+  const handleCompleteProfile = async () => {
+    if (!user) return;
+    const tp = completePrenom.trim();
+    const tn = completeNom.trim();
+    if (tp.length < 2 || tn.length < 2) {
+      toast({ title: 'Erreur', description: 'Prénom et nom doivent contenir au moins 2 caractères.', variant: 'destructive' });
+      return;
+    }
+    setCompleting(true);
+    const { error } = await supabase.from('profiles').update({ prenom: tp, nom: tn }).eq('id', user.id);
+    setCompleting(false);
+    if (error) {
+      toast({ title: 'Erreur', description: 'Impossible de sauvegarder.', variant: 'destructive' });
+      return;
+    }
+    setProfile((prev) => (prev ? { ...prev, prenom: tp, nom: tn } : prev));
+    setPrenom(tp);
+    setNom(tn);
+    setCompleteOpen(false);
+    toast({ title: 'Profil complété ✓', description: 'Merci !' });
   };
 
   const memberSince = profile?.created_at
@@ -346,6 +380,52 @@ const Profil = () => {
               onClick={handleDeleteAccount}
             >
               {deleting ? 'Suppression...' : 'Confirmer la suppression'}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Complete profile dialog (auto-open if prenom/nom missing) */}
+      <Dialog open={completeOpen} onOpenChange={(open) => {
+        // Prevent closing if still missing required fields
+        if (!open && (!profile?.prenom?.trim() || !profile?.nom?.trim())) return;
+        setCompleteOpen(open);
+      }}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Complétez votre profil</DialogTitle>
+            <DialogDescription>
+              Pour finaliser votre compte, merci d'indiquer votre prénom et votre nom.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="complete-prenom">Prénom *</Label>
+              <Input
+                id="complete-prenom"
+                value={completePrenom}
+                onChange={(e) => setCompletePrenom(e.target.value)}
+                placeholder="Votre prénom"
+                maxLength={100}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="complete-nom">Nom *</Label>
+              <Input
+                id="complete-nom"
+                value={completeNom}
+                onChange={(e) => setCompleteNom(e.target.value)}
+                placeholder="Votre nom"
+                maxLength={100}
+              />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button
+              onClick={handleCompleteProfile}
+              disabled={completing || !completePrenom.trim() || !completeNom.trim()}
+            >
+              {completing ? 'Enregistrement...' : 'Enregistrer'}
             </Button>
           </DialogFooter>
         </DialogContent>
