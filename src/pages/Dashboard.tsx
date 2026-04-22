@@ -218,7 +218,7 @@ const Dashboard = () => {
         );
       })()}
 
-      <div className="grid gap-4 grid-cols-2 lg:grid-cols-4">
+      <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
         {stats.map((s) => (
           <Card key={s.label} className="border-border bg-background shadow-sm">
             <CardContent className="flex items-center gap-4 p-5">

@@ -93,7 +93,7 @@ const Tarifs = () => {
     <div className="flex min-h-screen flex-col bg-background">
       <Header />
 
-      <div className="flex flex-1 flex-col items-center px-4 py-20">
+      <div className="mx-auto flex w-full max-w-7xl flex-1 flex-col items-center px-4 py-20 sm:px-6 lg:px-8">
         {wasRedirected && (
           <div className="mb-8 flex w-full max-w-3xl items-start gap-3 rounded-lg border border-accent/40 bg-accent/10 p-4 text-sm text-foreground">
             <Info className="mt-0.5 h-5 w-5 shrink-0 text-accent" />
@@ -115,7 +115,7 @@ const Tarifs = () => {
           Choisissez la formule qui vous convient pour maîtriser et réduire vos impôts.
         </p>
 
-        <div className="mt-14 grid w-full max-w-4xl gap-8 sm:grid-cols-2 lg:grid-cols-3 lg:items-stretch">
+        <div className="mt-14 grid w-full max-w-6xl gap-8 grid-cols-1 md:grid-cols-3 lg:items-stretch">
           {plans.map((plan) => {
             const isRecommended = plan.slug === recommended;
             return (
