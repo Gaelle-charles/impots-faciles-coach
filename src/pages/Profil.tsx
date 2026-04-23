@@ -74,6 +74,7 @@ const Profil = () => {
 
   // Billing portal
   const [openingPortal, setOpeningPortal] = useState(false);
+  const [portalOpen, setPortalOpen] = useState(false);
 
   // Complete profile (for users missing prenom/nom)
   const [completeOpen, setCompleteOpen] = useState(false);
