@@ -121,6 +121,32 @@ const Profil = () => {
     return p + n || '?';
   }, [profile]);
 
+  const handleManageBilling = async () => {
+    setOpeningPortal(true);
+    try {
+      const { data, error } = await supabase.functions.invoke('create-billing-portal-session');
+      const url = (data as { url?: string; error?: string })?.url;
+      const errMsg = (data as { error?: string })?.error ?? error?.message;
+      if (errMsg || !url) {
+        toast({
+          title: 'Erreur',
+          description: 'Impossible d\'accéder à la gestion de votre abonnement.',
+          variant: 'destructive',
+        });
+        setOpeningPortal(false);
+        return;
+      }
+      window.location.href = url;
+    } catch {
+      toast({
+        title: 'Erreur',
+        description: 'Impossible d\'accéder à la gestion de votre abonnement.',
+        variant: 'destructive',
+      });
+      setOpeningPortal(false);
+    }
+  };
+
   const handleSave = async () => {
     if (!user) return;
     const tp = prenom.trim();
