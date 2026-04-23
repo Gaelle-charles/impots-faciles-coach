@@ -945,18 +945,26 @@ function Step1({
         className="space-y-3"
       >
         {SITUATION_OPTIONS.map((opt) => (
-          <label
-            key={opt.value}
-            htmlFor={`sit-${opt.value}`}
-            className={`flex cursor-pointer items-center gap-3 rounded-xl border-2 p-4 transition-colors ${
-              value === opt.value
-                ? 'border-primary bg-primary/5'
-                : 'border-border hover:border-primary/40'
-            }`}
-          >
-            <RadioGroupItem value={opt.value} id={`sit-${opt.value}`} />
-            <span className="text-sm font-medium text-foreground">{opt.label}</span>
-          </label>
+          <div key={opt.value}>
+            <label
+              htmlFor={`sit-${opt.value}`}
+              className={`flex cursor-pointer items-center gap-3 rounded-xl border-2 p-4 transition-colors ${
+                value === opt.value
+                  ? 'border-primary bg-primary/5'
+                  : 'border-border hover:border-primary/40'
+              }`}
+            >
+              <RadioGroupItem value={opt.value} id={`sit-${opt.value}`} />
+              <span className="text-sm font-medium text-foreground">{opt.label}</span>
+            </label>
+            {opt.value === 'dirigeant' && value === 'dirigeant' && (
+              <div className="mt-2 ml-2 rounded-lg border border-yellow-vivid/40 bg-yellow-vivid/10 p-3 text-xs leading-relaxed text-foreground">
+                ⚠️ Impôts Facile traite uniquement votre <strong>déclaration personnelle</strong>{' '}
+                (IR, salaires + dividendes perçus). Pour la fiscalité de votre société (IS, BIC
+                professionnel, TVA d'entreprise…), consultez un expert-comptable.
+              </div>
+            )}
+          </div>
         ))}
       </RadioGroup>
     </div>
@@ -1600,6 +1608,11 @@ function Step8({
           );
         })}
       </div>
+
+      <p className="mx-auto max-w-2xl text-center text-xs text-muted-foreground leading-relaxed">
+        ⚠️ Note : le passage à un plan inférieur n'est pas possible en cours d'abonnement.
+        Choisissez avec soin.
+      </p>
 
       <div className="text-center">
         <button

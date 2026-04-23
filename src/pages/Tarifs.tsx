@@ -1,9 +1,9 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useSearchParams, useLocation, useNavigate } from 'react-router-dom';
 import { Header } from '@/components/Header';
 import { Footer } from '@/components/Footer';
 import { Button } from '@/components/ui/button';
-import { Check, Info, Loader2 } from 'lucide-react';
+import { Check, Info, Loader2, Lock } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
@@ -47,6 +47,21 @@ const plans = [
   },
 ];
 
+// Plan tier ordering (higher = better). Free / nouveau plans = 0.
+const PLAN_TIER: Record<string, number> = {
+  nouveau: 0,
+  gratuit: 0,
+  free: 0,
+  starter: 1,
+  expert: 2,
+  premium: 3,
+};
+
+function tierOf(slug: string | null | undefined): number {
+  if (!slug) return 0;
+  return PLAN_TIER[slug.toLowerCase()] ?? 0;
+}
+
 interface RedirectState {
   recommendedPlan?: string;
   reason?: string;
@@ -59,6 +74,26 @@ const Tarifs = () => {
   const { user } = useAuth();
   const state = (location.state ?? {}) as RedirectState;
   const [loadingPlan, setLoadingPlan] = useState<string | null>(null);
+  const [currentPlan, setCurrentPlan] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!user) {
+      setCurrentPlan(null);
+      return;
+    }
+    let cancelled = false;
+    (async () => {
+      const { data } = await supabase
+        .from('profiles')
+        .select('plan')
+        .eq('id', user.id)
+        .maybeSingle();
+      if (!cancelled) setCurrentPlan(data?.plan ?? null);
+    })();
+    return () => { cancelled = true; };
+  }, [user]);
+
+  const currentTier = tierOf(currentPlan);
 
   const handleCheckout = async (planSlug: string) => {
     if (!user) {
@@ -94,6 +129,13 @@ const Tarifs = () => {
       <Header />
 
       <div className="mx-auto flex w-full max-w-7xl flex-1 flex-col items-center px-4 py-20 sm:px-6 lg:px-8">
+        {/* Bannière "particuliers uniquement" */}
+        <div className="mb-6 w-full max-w-3xl rounded-lg border border-border bg-muted/40 p-3 text-xs text-muted-foreground">
+          Ces formations sont destinées à la <strong>déclaration de revenus des particuliers</strong>.
+          Pour les obligations fiscales de votre structure professionnelle (SAS, SARL, SCI, etc.),
+          consultez un expert-comptable.
+        </div>
+
         {wasRedirected && (
           <div className="mb-8 flex w-full max-w-3xl items-start gap-3 rounded-lg border border-accent/40 bg-accent/10 p-4 text-sm text-foreground">
             <Info className="mt-0.5 h-5 w-5 shrink-0 text-accent" />
@@ -118,19 +160,44 @@ const Tarifs = () => {
         <div className="mt-14 grid w-full max-w-6xl gap-8 grid-cols-1 md:grid-cols-3 lg:items-stretch">
           {plans.map((plan) => {
             const isRecommended = plan.slug === recommended;
+            const planTier = tierOf(plan.slug);
+            const isCurrent = !!currentPlan && currentTier === planTier;
+            const isDowngrade = currentTier > planTier;
+            const isUpgrade = currentTier > 0 && planTier > currentTier;
+            const disabled = isCurrent || isDowngrade;
+
+            let ctaLabel: React.ReactNode;
+            if (loadingPlan === plan.slug) {
+              ctaLabel = <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Redirection…</>;
+            } else if (isCurrent) {
+              ctaLabel = 'Votre plan actuel';
+            } else if (isDowngrade) {
+              ctaLabel = <><Lock className="mr-2 h-4 w-4" /> Plan inférieur — non disponible</>;
+            } else if (isUpgrade) {
+              ctaLabel = `Upgrader vers ${plan.name}`;
+            } else {
+              ctaLabel = `Payer ${plan.price}€`;
+            }
+
             return (
               <div
                 key={plan.name}
                 className={cn(
                   'relative flex flex-col rounded-xl border p-8 transition-all',
-                  isRecommended
-                    ? 'border-primary bg-background shadow-2xl shadow-primary/30 ring-4 ring-primary lg:scale-105 lg:-my-2'
-                    : plan.popular
-                      ? 'border-accent bg-background shadow-lg shadow-accent/20 ring-2 ring-accent'
-                      : 'border-border bg-card',
+                  disabled
+                    ? 'border-border bg-muted/30 opacity-60'
+                    : isRecommended
+                      ? 'border-primary bg-background shadow-2xl shadow-primary/30 ring-4 ring-primary lg:scale-105 lg:-my-2'
+                      : plan.popular
+                        ? 'border-accent bg-background shadow-lg shadow-accent/20 ring-2 ring-accent'
+                        : 'border-border bg-card',
                 )}
               >
-                {isRecommended ? (
+                {isCurrent ? (
+                  <span className="absolute -top-3 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-full bg-foreground px-4 py-1 text-xs font-bold text-background shadow-md">
+                    ✓ Votre plan actuel
+                  </span>
+                ) : isRecommended ? (
                   <span className="absolute -top-3 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-full bg-primary px-4 py-1 text-xs font-bold text-primary-foreground shadow-md">
                     ⭐ Plan recommandé pour votre accès
                   </span>
@@ -166,26 +233,27 @@ const Tarifs = () => {
 
                 <Button
                   onClick={() => handleCheckout(plan.slug)}
-                  disabled={loadingPlan !== null}
-                  variant="cta"
+                  disabled={loadingPlan !== null || disabled}
+                  variant={disabled ? 'outline' : 'cta'}
                   size={isRecommended ? 'lg' : 'default'}
                   className={cn(
                     'mt-8 w-full',
-                    isRecommended && 'text-base font-bold shadow-lg',
+                    isRecommended && !disabled && 'text-base font-bold shadow-lg',
                   )}
                 >
-                  {loadingPlan === plan.slug ? (
-                    <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Redirection…</>
-                  ) : (
-                    <>Payer {plan.price}€</>
-                  )}
+                  {ctaLabel}
                 </Button>
               </div>
             );
           })}
         </div>
 
-        <p className="mt-12 max-w-3xl text-center text-xs text-muted-foreground leading-relaxed">
+        <p className="mt-8 max-w-2xl text-center text-xs text-muted-foreground leading-relaxed">
+          ⚠️ Note : le passage à un plan inférieur n'est pas possible en cours d'abonnement.
+          Choisissez avec soin.
+        </p>
+
+        <p className="mt-4 max-w-3xl text-center text-xs text-muted-foreground leading-relaxed">
           Les formations Impôts Facile apportent une information pédagogique générale et ne remplacent
           pas un conseil personnalisé d'un professionnel réglementé.
         </p>

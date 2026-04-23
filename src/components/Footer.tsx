@@ -78,6 +78,10 @@ export function Footer() {
             experts-comptables, notaires). Pour toute situation nécessitant un avis professionnel,
             nous vous invitons à consulter un avocat fiscaliste ou un expert-comptable.
           </p>
+          <p className="mx-auto max-w-3xl leading-relaxed font-medium text-primary-foreground/75">
+            Plateforme dédiée aux particuliers — ne traite pas les obligations fiscales des
+            structures professionnelles (SAS, SARL, SCI, IS, BIC professionnel, etc.).
+          </p>
           <p>© {new Date().getFullYear()} Impôts Facile — Tous droits réservés</p>
         </div>
       </div>
