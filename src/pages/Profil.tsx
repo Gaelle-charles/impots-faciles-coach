@@ -40,7 +40,7 @@ interface ProfileData {
 }
 
 const planConfig: Record<string, { label: string; color: string }> = {
-  nouveau: { label: 'Nouveau', color: 'bg-muted text-muted-foreground' },
+  nouveau: { label: 'Gratuit', color: 'bg-muted text-muted-foreground' },
   essentiel: { label: 'Essentiel', color: 'bg-blue-100 text-blue-800' },
   pro: { label: 'Pro', color: 'bg-primary/10 text-primary' },
   expert: { label: 'Expert', color: 'bg-accent/10 text-accent' },

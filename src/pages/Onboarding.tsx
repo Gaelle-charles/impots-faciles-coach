@@ -888,14 +888,14 @@ function Step0({ prenom }: { prenom: string }) {
           {prenom ? `Bienvenue sur Impôts Facile, ${prenom} !` : 'Bienvenue sur Impôts Facile !'}
         </h1>
         <p className="text-lg text-muted-foreground">
-          Personnalisons votre expérience fiscale en 2 minutes
+          Personnalisons votre expérience en 2 minutes
         </p>
       </div>
 
       <div className="space-y-4 rounded-xl bg-secondary/50 p-6 text-left">
         {[
           { Icon: Sparkles, title: 'Personnalisation', text: 'Nous allons vous poser quelques questions pour adapter le contenu à votre situation' },
-          { Icon: Target, title: 'Recommandation', text: 'À la fin, nous vous suggérerons le plan le plus adapté à votre profil fiscal' },
+          { Icon: Target, title: 'Recommandation', text: 'À la fin, nous vous suggérerons le plan le plus adapté à votre profil' },
           { Icon: ShieldCheck, title: 'Confidentialité', text: 'Vos réponses sont stockées de manière sécurisée et modifiables à tout moment dans votre profil' },
         ].map(({ Icon, title, text }) => (
           <div key={title} className="flex items-start gap-4">
@@ -1468,7 +1468,7 @@ function Step8({
 }) {
   const justification =
     plan === 'starter'
-      ? 'Votre situation fiscale est simple. Le plan Starter couvre tous les essentiels.'
+      ? 'Votre situation est simple. Le plan Starter couvre tous les essentiels.'
       : plan === 'expert'
       ? `Votre profil présente plusieurs spécificités (score ${score}). Le plan Expert vous donne accès aux fiches métier et au parcours adaptatif.`
       : `Votre situation est complexe (score ${score}). Le plan Premium ajoute le parcours pédagogique IA personnalisé et les webinaires.`;
@@ -1486,7 +1486,7 @@ function Step8({
     <div className="space-y-8 animate-in fade-in duration-500">
       <div className="space-y-3 text-center">
         <div className="text-6xl" aria-hidden>✨</div>
-        <h1 className="font-heading text-3xl font-bold text-foreground">Votre profil fiscal</h1>
+        <h1 className="font-heading text-3xl font-bold text-foreground">Votre profil</h1>
       </div>
 
       <Card className="border-primary/30 bg-primary/5">
@@ -1574,7 +1574,7 @@ function Step8({
               <h3 className="font-heading text-lg font-bold text-foreground">{p.name}</h3>
               <p className="mt-2">
                 <span className="font-heading text-3xl font-bold text-foreground">{p.price}€</span>
-                <span className="ml-1 text-xs text-muted-foreground">/ accès</span>
+                <span className="ml-1 text-xs text-muted-foreground">/ an</span>
               </p>
               <ul className="mt-4 flex-1 space-y-2">
                 {p.features.map((f) => (

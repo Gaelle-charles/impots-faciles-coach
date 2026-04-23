@@ -71,7 +71,7 @@ export function AppSidebar({ collapsed = false }: { collapsed?: boolean }) {
               {profile.prenom ?? ''} {profile.nom ?? ''}
             </p>
             <Badge className="mt-0.5 bg-sidebar-primary text-sidebar-primary-foreground text-xs capitalize">
-              {profile.plan}
+              {profile.plan === 'nouveau' ? 'Gratuit' : profile.plan}
             </Badge>
           </div>
         </div>

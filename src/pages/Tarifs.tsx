@@ -152,7 +152,7 @@ const Tarifs = () => {
                   >
                     {plan.price}€
                   </span>
-                  <span className="ml-1 text-sm text-muted-foreground">/ accès</span>
+                  <span className="ml-1 text-sm text-muted-foreground">/ an</span>
                 </p>
 
                 <ul className="mt-8 flex-1 space-y-3">

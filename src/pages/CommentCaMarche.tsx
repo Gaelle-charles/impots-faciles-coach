@@ -73,7 +73,7 @@ const profiles = [
 
 const trustPoints = [
   { icon: '✅', title: 'Pas de jargon', text: 'Chaque notion est expliquée simplement, avec des exemples concrets tirés de la vraie vie.' },
-  { icon: '🔒', title: 'Aucune donnée fiscale collectée', text: 'Tu apprends à déclarer, mais tu ne saisis jamais tes vraies données ici. Zéro risque.' },
+  { icon: '🔒', title: 'Aucune donnée d\'impôts collectée', text: 'Tu apprends à déclarer, mais tu ne saisis jamais tes vraies données ici. Zéro risque.' },
   { icon: '📱', title: 'Accessible partout', text: 'Sur mobile, tablette ou ordinateur. Tu avances dans le métro, dans ton canapé, où tu veux.' },
   { icon: '🎯', title: 'Personnalisé selon ta progression', text: "Le parcours s'adapte à ce que tu sais déjà. Plus tu avances, plus c'est ciblé." },
 ];
