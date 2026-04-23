@@ -47,6 +47,10 @@ import MentionsLegales from "./pages/legal/MentionsLegales";
 import LegalDisclaimer from "./pages/legal/Disclaimer";
 import RenonciationRetractation from "./pages/legal/RenonciationRetractation";
 import Remboursement from "./pages/legal/Remboursement";
+import ImpotsTeam from "./pages/ImpotsTeam";
+import ImpotsTeamSouscription from "./pages/ImpotsTeamSouscription";
+import ImpotsTeamBienvenue from "./pages/ImpotsTeamBienvenue";
+import ImpotsTeamDashboard from "./pages/ImpotsTeamDashboard";
 
 const queryClient = new QueryClient();
 
@@ -68,6 +72,12 @@ const App = () => (
             <Route path="/comment-ca-marche" element={<CommentCaMarche />} />
             <Route path="/paiement-succes" element={<PaiementSucces />} />
             <Route path="/auth/callback" element={<AuthCallback />} />
+
+            {/* Impôts Team (B2B) */}
+            <Route path="/impots-team" element={<ImpotsTeam />} />
+            <Route path="/impots-team/souscription" element={<ImpotsTeamSouscription />} />
+            <Route path="/impots-team/bienvenue" element={<ProtectedRoute><ImpotsTeamBienvenue /></ProtectedRoute>} />
+            <Route path="/impots-team/dashboard" element={<ProtectedRoute><ImpotsTeamDashboard /></ProtectedRoute>} />
 
             {/* Legal pages (public) */}
             <Route path="/cgv" element={<Cgv />} />

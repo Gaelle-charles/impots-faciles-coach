@@ -5,6 +5,7 @@ const navLinks = [
   { label: 'Modules', to: '/modules' },
   { label: 'Tarifs', to: '/tarifs' },
   { label: 'Comment ça marche', to: '/comment-ca-marche' },
+  { label: 'Impôts Team', to: '/impots-team' },
 ];
 
 const legalLinks = [
