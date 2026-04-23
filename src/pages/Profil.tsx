@@ -71,6 +71,9 @@ const Profil = () => {
   const [deleteConfirm, setDeleteConfirm] = useState('');
   const [deleting, setDeleting] = useState(false);
 
+  // Billing portal
+  const [openingPortal, setOpeningPortal] = useState(false);
+
   // Complete profile (for users missing prenom/nom)
   const [completeOpen, setCompleteOpen] = useState(false);
   const [completePrenom, setCompletePrenom] = useState('');
