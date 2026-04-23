@@ -165,12 +165,16 @@ Deno.serve(async (req) => {
 
     const origin = req.headers.get("origin") ?? req.headers.get("referer")?.replace(/\/$/, "") ?? "";
 
+    const teamCoupon = Deno.env.get("STRIPE_COUPON_TEAM_10");
+
     const session = await stripe.checkout.sessions.create({
       mode: "subscription",
       line_items: [{ price: priceId, quantity: nbLic }],
       payment_method_types: ["card", "sepa_debit"],
       customer_email: user.email ?? undefined,
       client_reference_id: orgId!,
+      billing_address_collection: "required",
+      ...(teamCoupon ? { discounts: [{ coupon: teamCoupon }] } : {}),
       metadata: { organization_id: orgId!, type: "b2b", plan },
       subscription_data: {
         metadata: { organization_id: orgId!, type: "b2b", plan },
