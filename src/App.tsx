@@ -40,6 +40,13 @@ import AuthCallback from "./pages/AuthCallback";
 import CommentCaMarche from "./pages/CommentCaMarche";
 import PaiementSucces from "./pages/PaiementSucces";
 import NotFound from "./pages/NotFound";
+import Cgv from "./pages/legal/Cgv";
+import Cgu from "./pages/legal/Cgu";
+import Confidentialite from "./pages/legal/Confidentialite";
+import MentionsLegales from "./pages/legal/MentionsLegales";
+import LegalDisclaimer from "./pages/legal/Disclaimer";
+import RenonciationRetractation from "./pages/legal/RenonciationRetractation";
+import Remboursement from "./pages/legal/Remboursement";
 
 const queryClient = new QueryClient();
 
@@ -61,6 +68,15 @@ const App = () => (
             <Route path="/comment-ca-marche" element={<CommentCaMarche />} />
             <Route path="/paiement-succes" element={<PaiementSucces />} />
             <Route path="/auth/callback" element={<AuthCallback />} />
+
+            {/* Legal pages (public) */}
+            <Route path="/cgv" element={<Cgv />} />
+            <Route path="/cgu" element={<Cgu />} />
+            <Route path="/confidentialite" element={<Confidentialite />} />
+            <Route path="/mentions-legales" element={<MentionsLegales />} />
+            <Route path="/disclaimer" element={<LegalDisclaimer />} />
+            <Route path="/renonciation-retractation" element={<RenonciationRetractation />} />
+            <Route path="/remboursement" element={<Remboursement />} />
             <Route path="/onboarding" element={<ProtectedRoute><Onboarding /></ProtectedRoute>} />
 
             {/* Protected routes with sidebar layout */}
