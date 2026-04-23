@@ -37,6 +37,7 @@ interface ProfileData {
   email: string | null;
   plan: string;
   created_at: string;
+  stripe_subscription_id: string | null;
 }
 
 const planConfig: Record<string, { label: string; color: string }> = {
@@ -82,7 +83,7 @@ const Profil = () => {
     const fetchAll = async () => {
       setLoading(true);
       const [profRes, modRes, progRes, resRes] = await Promise.all([
-        supabase.from('profiles').select('prenom, nom, email, plan, created_at').eq('id', user.id).maybeSingle(),
+        supabase.from('profiles').select('prenom, nom, email, plan, created_at, stripe_subscription_id').eq('id', user.id).maybeSingle(),
         supabase.from('modules').select('id'),
         supabase.from('progressions').select('completion_date').eq('user_id', user.id),
         supabase.from('resultat_quiz').select('pourcentage').eq('user_id', user.id),
@@ -159,14 +160,25 @@ const Profil = () => {
   const handleDeleteAccount = async () => {
     if (deleteConfirm !== 'SUPPRIMER' || !user) return;
     setDeleting(true);
-
-    // Delete profile (cascade will handle related data via FK)
-    await supabase.from('profiles').delete().eq('id', user.id);
-
-    // Sign out (admin delete not available client-side)
-    await signOut();
-    navigate('/');
-    toast({ title: 'Compte supprimé', description: 'Ton compte a été supprimé.' });
+    try {
+      const { data, error } = await supabase.functions.invoke('delete-user-account');
+      if (error || (data && (data as { error?: string }).error)) {
+        const msg = (data as { error?: string })?.error ?? error?.message ?? 'Erreur inconnue';
+        toast({ title: 'Échec de la suppression', description: msg, variant: 'destructive' });
+        setDeleting(false);
+        return;
+      }
+      await signOut();
+      navigate('/');
+      toast({ title: 'Compte supprimé', description: 'Votre compte a été supprimé.' });
+    } catch (e) {
+      toast({
+        title: 'Échec de la suppression',
+        description: (e as Error).message,
+        variant: 'destructive',
+      });
+      setDeleting(false);
+    }
   };
 
   const handleCompleteProfile = async () => {
@@ -354,24 +366,61 @@ const Profil = () => {
       </Card>
 
       {/* Delete confirmation dialog */}
-      <Dialog open={deleteOpen} onOpenChange={setDeleteOpen}>
+      <Dialog
+        open={deleteOpen}
+        onOpenChange={(open) => {
+          if (deleting) return;
+          setDeleteOpen(open);
+          if (!open) setDeleteConfirm('');
+        }}
+      >
         <DialogContent>
           <DialogHeader>
-            <DialogTitle className="text-destructive">Supprimer mon compte</DialogTitle>
-            <DialogDescription>
-              Cette action est irréversible. Toutes tes données seront supprimées.
-            </DialogDescription>
+            <DialogTitle className="text-destructive font-heading">
+              Supprimer définitivement votre compte ?
+            </DialogTitle>
           </DialogHeader>
+
+          <div className="rounded-md border-2 border-destructive bg-destructive/10 p-4 text-sm text-destructive">
+            <p className="font-semibold mb-1">⚠️ Action DÉFINITIVE et IRRÉVERSIBLE</p>
+            <p>
+              Toutes vos données seront effacées sous 30 jours : votre profil,
+              votre progression dans les modules, vos simulations sauvegardées,
+              votre certificat.
+            </p>
+          </div>
+
+          {profile?.stripe_subscription_id && (
+            <div className="rounded-md border border-yellow-300 bg-yellow-50 p-3 text-sm text-yellow-900 dark:border-yellow-800 dark:bg-yellow-950/40 dark:text-yellow-200">
+              Votre abonnement <span className="font-semibold">{plan.label}</span> sera
+              annulé automatiquement à la fin de la période en cours
+              (vous conservez l'accès jusque-là).
+            </div>
+          )}
+
           <div className="space-y-2">
-            <Label>Tape <span className="font-bold">SUPPRIMER</span> pour confirmer</Label>
+            <Label htmlFor="delete-confirm">
+              Pour confirmer, tapez exactement : <span className="font-bold">SUPPRIMER</span>
+            </Label>
             <Input
+              id="delete-confirm"
               value={deleteConfirm}
               onChange={(e) => setDeleteConfirm(e.target.value)}
               placeholder="SUPPRIMER"
+              autoComplete="off"
+              disabled={deleting}
             />
           </div>
+
           <DialogFooter>
-            <Button variant="outline" onClick={() => { setDeleteOpen(false); setDeleteConfirm(''); }}>
+            <Button
+              variant="outline"
+              onClick={() => {
+                setDeleteOpen(false);
+                setDeleteConfirm('');
+              }}
+              disabled={deleting}
+            >
               Annuler
             </Button>
             <Button
@@ -379,7 +428,7 @@ const Profil = () => {
               disabled={deleteConfirm !== 'SUPPRIMER' || deleting}
               onClick={handleDeleteAccount}
             >
-              {deleting ? 'Suppression...' : 'Confirmer la suppression'}
+              {deleting ? 'Suppression...' : 'Supprimer définitivement'}
             </Button>
           </DialogFooter>
         </DialogContent>
