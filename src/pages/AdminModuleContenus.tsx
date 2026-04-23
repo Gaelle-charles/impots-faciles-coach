@@ -106,7 +106,7 @@ function SortableStepRow({
             size="icon"
             className="h-8 w-8"
             onClick={onPreview}
-            title="👁️ Aperçu de cette étape"
+            title="Aperçu de cette étape"
           >
             <Eye className="h-3.5 w-3.5" />
           </Button>
