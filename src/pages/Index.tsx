@@ -139,6 +139,10 @@ const Index = () => {
             Maîtrisez l'impôt sur le revenu, la TVA, les régimes fiscaux et bien plus
             grâce à des modules clairs et des simulateurs pratiques.
           </p>
+          <p className="mt-3 max-w-xl mx-auto text-sm text-primary-foreground/70">
+            Plateforme dédiée à la déclaration des revenus des particuliers (IR 2042) —
+            pas de conseil pour les structures professionnelles.
+          </p>
           <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
             <Link to="/inscription">
               <Button variant="cta" size="lg" className="gap-2 text-base px-8 py-6 shadow-lg">

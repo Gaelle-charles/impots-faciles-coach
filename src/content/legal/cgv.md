@@ -377,6 +377,14 @@ En cas de litige judiciaire non résolu par voie amiable ou de médiation, et à
 
 ---
 
+### Article 12 bis — Modification d'abonnement en cours de période
+
+L'utilisateur peut **upgrader** son abonnement vers un plan supérieur à tout moment (avec calcul au prorata de la période restante). Le passage à un plan inférieur (downgrade) n'est en revanche **pas possible en cours de période** : l'utilisateur doit attendre la fin de sa période d'abonnement en cours et ne pas renouveler, puis souscrire au plan de son choix lors d'une nouvelle commande. Cette règle garantit la stabilité du service acheté initialement et la cohérence pédagogique du parcours commencé.
+
+L'annulation pure et simple de l'abonnement (sans changement de plan) reste possible à tout moment dans les conditions prévues à l'article 6 et conformément à la loi Chatel : la résiliation prend effet à la fin de la période en cours, sans renouvellement automatique.
+
+---
+
 ### Article 13 — Droit applicable et langue du contrat
 
 Les présentes CGV sont régies par le droit français. Toute clause des présentes CGV qui serait déclarée nulle ou inapplicable par une décision de justice ne saurait entraîner la nullité des autres clauses.
