@@ -47,6 +47,7 @@ import {
   arrayMove,
 } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
+import { ModulePreviewDialog } from '@/components/admin/ModulePreviewDialog';
 
 // ─── Types ───
 interface ModuleRow {
@@ -256,6 +257,9 @@ const AdminModules = () => {
   const [deleteModule, setDeleteModule] = useState<ModuleRow | null>(null);
   const [deleteConfirm, setDeleteConfirm] = useState('');
   const [deleting, setDeleting] = useState(false);
+
+  // Preview modal
+  const [previewModule, setPreviewModule] = useState<ModuleRow | null>(null);
 
   const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 5 } }));
 
@@ -550,6 +554,7 @@ const AdminModules = () => {
                     onEdit={() => {}}
                     onDelete={() => {}}
                     onToggle={() => {}}
+                    onPreview={() => {}}
                   />
                 );
               })}
@@ -566,6 +571,7 @@ const AdminModules = () => {
               onEdit={() => openEdit(mod)}
               onDelete={() => { setDeleteModule(mod); setDeleteConfirm(''); }}
               onToggle={(checked) => handleToggle(mod, checked)}
+              onPreview={() => setPreviewModule(mod)}
             />
           ))}
         </div>
@@ -741,6 +747,14 @@ const AdminModules = () => {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      {/* ─── Preview Modal ─── */}
+      <ModulePreviewDialog
+        open={!!previewModule}
+        onOpenChange={(o) => { if (!o) setPreviewModule(null); }}
+        moduleId={previewModule?.id ?? null}
+        moduleTitle={previewModule?.titre}
+      />
     </div>
   );
 };
