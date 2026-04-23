@@ -1609,6 +1609,11 @@ function Step8({
         })}
       </div>
 
+      <p className="mx-auto max-w-2xl text-center text-xs text-muted-foreground leading-relaxed">
+        ⚠️ Note : le passage à un plan inférieur n'est pas possible en cours d'abonnement.
+        Choisissez avec soin.
+      </p>
+
       <div className="text-center">
         <button
           type="button"
