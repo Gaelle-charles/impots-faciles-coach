@@ -159,6 +159,9 @@ const AdminModuleContenus = () => {
   const [deleteStep, setDeleteStep] = useState<ContenuRow | null>(null);
   const [deleting, setDeleting] = useState(false);
 
+  // Preview
+  const [previewStep, setPreviewStep] = useState<ContenuRow | null>(null);
+
   const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 5 } }));
 
   // ─── Fetch ───
@@ -393,6 +396,7 @@ const AdminModuleContenus = () => {
                   reorderMode
                   onEdit={() => {}}
                   onDelete={() => {}}
+                  onPreview={() => {}}
                 />
               ))}
             </div>
@@ -407,6 +411,7 @@ const AdminModuleContenus = () => {
               reorderMode={false}
               onEdit={() => openEdit(step)}
               onDelete={() => setDeleteStep(step)}
+              onPreview={() => setPreviewStep(step)}
             />
           ))}
         </div>
