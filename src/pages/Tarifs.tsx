@@ -248,6 +248,58 @@ const Tarifs = () => {
           })}
         </div>
 
+        {/* Bloc Impôts Team — offre entreprises */}
+        <div className="mt-16 w-full max-w-6xl">
+          <div className="relative overflow-hidden rounded-2xl border-2 border-primary/30 bg-gradient-to-br from-primary/5 via-background to-accent/5 p-8 sm:p-10">
+            <div className="flex flex-col items-start gap-6 lg:flex-row lg:items-center lg:justify-between">
+              <div className="flex-1">
+                <div className="flex items-center gap-3">
+                  <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary text-primary-foreground">
+                    <Users className="h-6 w-6" />
+                  </div>
+                  <span className="rounded-full bg-primary/10 px-3 py-1 text-xs font-semibold uppercase tracking-wider text-primary">
+                    Pour les entreprises
+                  </span>
+                </div>
+                <h2 className="mt-4 font-heading text-2xl font-bold text-foreground sm:text-3xl">
+                  Impôts Team — Offre multi-licences
+                </h2>
+                <p className="mt-3 max-w-2xl text-sm text-muted-foreground sm:text-base">
+                  Offrez à vos collaborateurs la formation la plus claire pour comprendre leurs impôts personnels.
+                  À partir de 2 licences, profitez d'une <strong className="text-foreground">remise de 10%</strong> sur chaque licence.
+                </p>
+                <ul className="mt-4 grid gap-2 sm:grid-cols-2">
+                  {[
+                    'Tarifs dégressifs dès 2 licences',
+                    'Dashboard administrateur dédié',
+                    'Paiement par carte ou SEPA',
+                    'Facturation annuelle TTC',
+                  ].map((f) => (
+                    <li key={f} className="flex items-start gap-2 text-sm text-muted-foreground">
+                      <Check className="mt-0.5 h-4 w-4 shrink-0 text-accent" />
+                      {f}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+              <div className="flex shrink-0 flex-col items-stretch gap-3 lg:items-end">
+                <Button
+                  size="lg"
+                  variant="cta"
+                  onClick={() => navigate('/impots-team')}
+                  className="font-bold shadow-lg"
+                >
+                  Découvrir Impôts Team
+                  <ArrowRight className="ml-2 h-4 w-4" />
+                </Button>
+                <p className="text-center text-xs text-muted-foreground lg:text-right">
+                  Simulateur de tarif inclus
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
         <p className="mt-8 max-w-2xl text-center text-xs text-muted-foreground leading-relaxed">
           ⚠️ Note : le passage à un plan inférieur n'est pas possible en cours d'abonnement.
           Choisissez avec soin.
