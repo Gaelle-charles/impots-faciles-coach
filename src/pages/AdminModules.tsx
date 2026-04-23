@@ -182,7 +182,7 @@ function SortableModuleRow({
             onClick={onPreview}
             title="Aperçu admin (modal, sans toucher la progression)"
           >
-            <Eye className="h-3.5 w-3.5" /> <span className="hidden sm:inline">👁️ Aperçu</span>
+            <Eye className="h-3.5 w-3.5" /> <span className="hidden sm:inline">Aperçu</span>
           </Button>
           <Button
             variant="outline"
