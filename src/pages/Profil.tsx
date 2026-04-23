@@ -38,6 +38,7 @@ interface ProfileData {
   plan: string;
   created_at: string;
   stripe_subscription_id: string | null;
+  stripe_customer_id: string | null;
 }
 
 const planConfig: Record<string, { label: string; color: string }> = {
@@ -71,6 +72,9 @@ const Profil = () => {
   const [deleteConfirm, setDeleteConfirm] = useState('');
   const [deleting, setDeleting] = useState(false);
 
+  // Billing portal
+  const [openingPortal, setOpeningPortal] = useState(false);
+
   // Complete profile (for users missing prenom/nom)
   const [completeOpen, setCompleteOpen] = useState(false);
   const [completePrenom, setCompletePrenom] = useState('');
@@ -83,7 +87,7 @@ const Profil = () => {
     const fetchAll = async () => {
       setLoading(true);
       const [profRes, modRes, progRes, resRes] = await Promise.all([
-        supabase.from('profiles').select('prenom, nom, email, plan, created_at, stripe_subscription_id').eq('id', user.id).maybeSingle(),
+        supabase.from('profiles').select('prenom, nom, email, plan, created_at, stripe_subscription_id, stripe_customer_id').eq('id', user.id).maybeSingle(),
         supabase.from('modules').select('id'),
         supabase.from('progressions').select('completion_date').eq('user_id', user.id),
         supabase.from('resultat_quiz').select('pourcentage').eq('user_id', user.id),
@@ -116,6 +120,32 @@ const Profil = () => {
     const n = (profile?.nom?.[0] ?? '').toUpperCase();
     return p + n || '?';
   }, [profile]);
+
+  const handleManageBilling = async () => {
+    setOpeningPortal(true);
+    try {
+      const { data, error } = await supabase.functions.invoke('create-billing-portal-session');
+      const url = (data as { url?: string; error?: string })?.url;
+      const errMsg = (data as { error?: string })?.error ?? error?.message;
+      if (errMsg || !url) {
+        toast({
+          title: 'Erreur',
+          description: 'Impossible d\'accéder à la gestion de votre abonnement.',
+          variant: 'destructive',
+        });
+        setOpeningPortal(false);
+        return;
+      }
+      window.location.href = url;
+    } catch {
+      toast({
+        title: 'Erreur',
+        description: 'Impossible d\'accéder à la gestion de votre abonnement.',
+        variant: 'destructive',
+      });
+      setOpeningPortal(false);
+    }
+  };
 
   const handleSave = async () => {
     if (!user) return;
@@ -278,14 +308,40 @@ const Profil = () => {
             Mon abonnement
           </CardTitle>
         </CardHeader>
-        <CardContent className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <span className="text-sm text-muted-foreground">Plan actuel :</span>
-            <Badge className={plan.color}>{plan.label}</Badge>
+        <CardContent className="space-y-3">
+          <div className="flex items-center justify-between flex-wrap gap-3">
+            <div className="flex items-center gap-3">
+              <span className="text-sm text-muted-foreground">Plan actuel :</span>
+              <Badge className={plan.color}>{plan.label}</Badge>
+            </div>
+            {profile?.stripe_customer_id && profile.plan !== 'nouveau' ? (
+              <Button
+                variant="outline"
+                size="sm"
+                className="gap-1"
+                disabled={openingPortal}
+                onClick={handleManageBilling}
+              >
+                {openingPortal ? 'Ouverture...' : 'Gérer mon abonnement'}{' '}
+                <ArrowRight className="h-4 w-4" />
+              </Button>
+            ) : (
+              <Button
+                variant="outline"
+                size="sm"
+                className="gap-1"
+                onClick={() => navigate('/tarifs')}
+              >
+                Voir les offres <ArrowRight className="h-4 w-4" />
+              </Button>
+            )}
           </div>
-          <Button variant="outline" size="sm" className="gap-1" onClick={() => navigate('/tarifs')}>
-            Changer de plan <ArrowRight className="h-4 w-4" />
-          </Button>
+          {profile?.stripe_customer_id && profile.plan !== 'nouveau' && (
+            <p className="text-xs text-muted-foreground">
+              Vous pourrez y modifier votre plan, mettre à jour votre moyen de
+              paiement, consulter vos factures ou annuler votre abonnement.
+            </p>
+          )}
         </CardContent>
       </Card>
 

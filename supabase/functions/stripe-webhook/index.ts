@@ -40,6 +40,19 @@ Deno.serve(async (req) => {
     Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
   );
 
+  // Map Stripe price IDs → internal plan names
+  const PRICE_TO_PLAN: Record<string, string> = {
+    [Deno.env.get("STRIPE_PRICE_ID_STARTER") ?? ""]: "starter",
+    [Deno.env.get("STRIPE_PRICE_ID_EXPERT") ?? ""]: "expert",
+    [Deno.env.get("STRIPE_PRICE_ID_PREMIUM") ?? ""]: "premium",
+  };
+  const PLAN_HIERARCHY: Record<string, number> = {
+    nouveau: 0,
+    starter: 1,
+    expert: 2,
+    premium: 3,
+  };
+
   try {
     if (event.type === "checkout.session.completed") {
       const session = event.data.object as Stripe.Checkout.Session;
@@ -67,7 +80,69 @@ Deno.serve(async (req) => {
         return new Response(JSON.stringify({ error: error.message }), { status: 500 });
       }
 
-      console.log(`Profile updated for user ${userId} → plan ${plan}`);
+      console.log(`[webhook] checkout.session.completed → user ${userId} → plan ${plan}`);
+    }
+
+    if (event.type === "customer.subscription.updated") {
+      const subscription = event.data.object as Stripe.Subscription;
+      const newPriceId = subscription.items.data[0]?.price.id;
+      const newPlan = PRICE_TO_PLAN[newPriceId];
+
+      console.log(
+        `[webhook] customer.subscription.updated → sub ${subscription.id} → priceId ${newPriceId} → plan ${newPlan}`,
+      );
+
+      if (!newPlan) {
+        console.error(`[webhook] Unknown priceId ${newPriceId} — ignoring`);
+        return new Response(JSON.stringify({ received: true }), { status: 200 });
+      }
+
+      // Fetch current plan to enforce no-downgrade safety net
+      const { data: current } = await supabase
+        .from("profiles")
+        .select("plan")
+        .eq("stripe_subscription_id", subscription.id)
+        .maybeSingle();
+
+      const currentPlan = current?.plan ?? "nouveau";
+      if (PLAN_HIERARCHY[newPlan] < PLAN_HIERARCHY[currentPlan]) {
+        console.error(
+          `[webhook] Downgrade refusé: ${currentPlan} → ${newPlan} (sub ${subscription.id})`,
+        );
+        return new Response(
+          JSON.stringify({ error: "Downgrade not allowed" }),
+          { status: 200, headers: { "Content-Type": "application/json" } },
+        );
+      }
+
+      const { error } = await supabase
+        .from("profiles")
+        .update({ plan: newPlan, date_paiement: new Date().toISOString() })
+        .eq("stripe_subscription_id", subscription.id);
+
+      if (error) {
+        console.error("[webhook] Failed to update plan on sub.updated", error);
+        return new Response(JSON.stringify({ error: error.message }), { status: 500 });
+      }
+
+      console.log(`[webhook] Plan mis à jour: ${currentPlan} → ${newPlan}`);
+    }
+
+    if (event.type === "customer.subscription.deleted") {
+      const subscription = event.data.object as Stripe.Subscription;
+      console.log(`[webhook] customer.subscription.deleted → sub ${subscription.id}`);
+
+      const { error } = await supabase
+        .from("profiles")
+        .update({ plan: "nouveau", stripe_subscription_id: null })
+        .eq("stripe_subscription_id", subscription.id);
+
+      if (error) {
+        console.error("[webhook] Failed to clear plan on sub.deleted", error);
+        return new Response(JSON.stringify({ error: error.message }), { status: 500 });
+      }
+
+      console.log(`[webhook] Abonnement annulé, plan → nouveau`);
     }
 
     return new Response(JSON.stringify({ received: true }), {
