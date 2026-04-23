@@ -122,7 +122,11 @@ const Profil = () => {
     return p + n || '?';
   }, [profile]);
 
-  const handleManageBilling = async () => {
+  const handleManageBilling = () => {
+    setPortalOpen(true);
+  };
+
+  const handleConfirmPortal = async () => {
     setOpeningPortal(true);
     try {
       const { data, error } = await supabase.functions.invoke('create-billing-portal-session');
