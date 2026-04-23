@@ -725,7 +725,18 @@ export type Database = {
           total_steps: number
         }[]
       }
+      get_user_organization: {
+        Args: { p_user_id: string }
+        Returns: {
+          logo_url: string
+          org_id: string
+          plan: string
+          raison_sociale: string
+          role: string
+        }[]
+      }
       is_admin: { Args: never; Returns: boolean }
+      is_org_admin: { Args: { p_user_id: string }; Returns: boolean }
       user_can_access_module: { Args: { _module_id: string }; Returns: boolean }
     }
     Enums: {
