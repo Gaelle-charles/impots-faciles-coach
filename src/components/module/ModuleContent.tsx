@@ -16,6 +16,8 @@ interface ModuleContentProps {
   isCompleted: boolean;
   onPrev: () => void;
   onNext: () => void;
+  /** When true, displays an admin preview banner and is purely visual (no DB mutations expected from caller). */
+  isPreviewMode?: boolean;
 }
 
 export function ModuleContent({
@@ -27,6 +29,7 @@ export function ModuleContent({
   isCompleted,
   onPrev,
   onNext,
+  isPreviewMode = false,
 }: ModuleContentProps) {
   const contenuHtml = useMemo(() => {
     if (!currentContenu?.contenu) return '';
@@ -40,6 +43,11 @@ export function ModuleContent({
 
   return (
     <div className="flex flex-1 flex-col p-6 lg:p-10">
+      {isPreviewMode && (
+        <div className="mb-6 rounded-lg border border-yellow-300 bg-yellow-50 px-4 py-2.5 text-sm font-medium text-yellow-900 dark:border-yellow-800 dark:bg-yellow-950/40 dark:text-yellow-200">
+          🛠️ Mode aperçu admin — votre progression n'est pas enregistrée
+        </div>
+      )}
       {/* Progress bar */}
       <div className="mb-8">
         <div className="mb-2 flex items-center justify-between text-sm text-muted-foreground">

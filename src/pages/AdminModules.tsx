@@ -47,6 +47,7 @@ import {
   arrayMove,
 } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
+import { ModulePreviewDialog } from '@/components/admin/ModulePreviewDialog';
 
 // ─── Types ───
 interface ModuleRow {
@@ -86,12 +87,14 @@ function SortableModuleRow({
   onEdit,
   onDelete,
   onToggle,
+  onPreview,
 }: {
   mod: ModuleStats;
   reorderMode: boolean;
   onEdit: () => void;
   onDelete: () => void;
   onToggle: (checked: boolean) => void;
+  onPreview: () => void;
 }) {
   const navigate = useNavigate();
   const {
@@ -176,10 +179,10 @@ function SortableModuleRow({
             variant="outline"
             size="sm"
             className="h-8 gap-1.5 text-xs"
-            onClick={() => window.open(`/module/${mod.module_slug}`, '_blank', 'noopener,noreferrer')}
-            title="Voir comme un utilisateur (nouvel onglet)"
+            onClick={onPreview}
+            title="Aperçu admin (modal, sans toucher la progression)"
           >
-            <Eye className="h-3.5 w-3.5" /> <span className="hidden sm:inline">Aperçu</span>
+            <Eye className="h-3.5 w-3.5" /> <span className="hidden sm:inline">👁️ Aperçu</span>
           </Button>
           <Button
             variant="outline"
@@ -254,6 +257,9 @@ const AdminModules = () => {
   const [deleteModule, setDeleteModule] = useState<ModuleRow | null>(null);
   const [deleteConfirm, setDeleteConfirm] = useState('');
   const [deleting, setDeleting] = useState(false);
+
+  // Preview modal
+  const [previewModule, setPreviewModule] = useState<ModuleRow | null>(null);
 
   const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 5 } }));
 
@@ -548,6 +554,7 @@ const AdminModules = () => {
                     onEdit={() => {}}
                     onDelete={() => {}}
                     onToggle={() => {}}
+                    onPreview={() => {}}
                   />
                 );
               })}
@@ -564,6 +571,7 @@ const AdminModules = () => {
               onEdit={() => openEdit(mod)}
               onDelete={() => { setDeleteModule(mod); setDeleteConfirm(''); }}
               onToggle={(checked) => handleToggle(mod, checked)}
+              onPreview={() => setPreviewModule(mod)}
             />
           ))}
         </div>
@@ -739,6 +747,14 @@ const AdminModules = () => {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      {/* ─── Preview Modal ─── */}
+      <ModulePreviewDialog
+        open={!!previewModule}
+        onOpenChange={(o) => { if (!o) setPreviewModule(null); }}
+        moduleId={previewModule?.id ?? null}
+        moduleTitle={previewModule?.titre}
+      />
     </div>
   );
 };
