@@ -527,6 +527,16 @@ const AdminModuleContenus = () => {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      {/* ─── Preview Modal ─── */}
+      <ModulePreviewDialog
+        open={!!previewStep}
+        onOpenChange={(o) => { if (!o) setPreviewStep(null); }}
+        moduleId={moduleId ?? null}
+        moduleTitle={moduleInfo?.titre}
+        initialStepOrdre={previewStep?.ordre}
+        initialTab="step"
+      />
     </div>
   );
 };
