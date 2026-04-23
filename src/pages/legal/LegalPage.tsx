@@ -1,8 +1,8 @@
+import { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { ArrowLeft, AlertTriangle } from 'lucide-react';
-import { Helmet } from 'react-helmet-async';
 
 export interface LegalPageProps {
   title: string;
@@ -27,13 +27,14 @@ const LEGAL_LINKS = [
 ];
 
 export function LegalPage({ title, slug, markdown, showDraftBanner, todos }: LegalPageProps) {
+  useEffect(() => {
+    const prev = document.title;
+    document.title = `${title} — Impôts Facile`;
+    return () => { document.title = prev; };
+  }, [title]);
+
   return (
     <div className="min-h-screen bg-white text-black">
-      <Helmet>
-        <title>{title} — Impôts Facile</title>
-        <meta name="description" content={`${title} — Impôts Facile`} />
-      </Helmet>
-
       {/* Top nav */}
       <header className="border-b border-gray-200">
         <div className="mx-auto flex max-w-[800px] items-center justify-between px-6 py-4">
