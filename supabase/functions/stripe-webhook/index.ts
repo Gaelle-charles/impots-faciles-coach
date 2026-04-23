@@ -56,6 +56,36 @@ Deno.serve(async (req) => {
   try {
     if (event.type === "checkout.session.completed") {
       const session = event.data.object as Stripe.Checkout.Session;
+      const isB2B = session.metadata?.type === "b2b";
+
+      // === B2B (Impôts Team) ===
+      if (isB2B) {
+        const orgId = session.metadata?.organization_id ?? session.client_reference_id;
+        if (!orgId) {
+          console.error("[webhook][B2B] Missing organization_id", session.id);
+          return new Response(JSON.stringify({ received: true }), { status: 200 });
+        }
+
+        const { error } = await supabase
+          .from("organizations")
+          .update({
+            statut: "active",
+            stripe_customer_id: typeof session.customer === "string" ? session.customer : null,
+            stripe_subscription_id:
+              typeof session.subscription === "string" ? session.subscription : null,
+            date_paiement: new Date().toISOString(),
+          })
+          .eq("id", orgId);
+
+        if (error) {
+          console.error("[webhook][B2B] Failed to activate org", error);
+          return new Response(JSON.stringify({ error: error.message }), { status: 500 });
+        }
+        console.log(`[webhook][B2B] checkout.session.completed → org ${orgId} active`);
+        return new Response(JSON.stringify({ received: true }), { status: 200 });
+      }
+
+      // === B2C ===
       const userId = session.client_reference_id ?? session.metadata?.user_id;
       const plan = session.metadata?.plan;
 
@@ -85,6 +115,27 @@ Deno.serve(async (req) => {
 
     if (event.type === "customer.subscription.updated") {
       const subscription = event.data.object as Stripe.Subscription;
+      const isB2B = subscription.metadata?.type === "b2b";
+
+      // === B2B : maj nb_licences via quantity ===
+      if (isB2B) {
+        const newQty = subscription.items.data[0]?.quantity ?? null;
+        console.log(
+          `[webhook][B2B] customer.subscription.updated → sub ${subscription.id} → qty ${newQty}`,
+        );
+        if (newQty && newQty >= 2) {
+          const { error } = await supabase
+            .from("organizations")
+            .update({ nb_licences: newQty })
+            .eq("stripe_subscription_id", subscription.id);
+          if (error) {
+            console.error("[webhook][B2B] Failed update nb_licences", error);
+          }
+        }
+        return new Response(JSON.stringify({ received: true }), { status: 200 });
+      }
+
+      // === B2C : changement de plan + safety anti-downgrade ===
       const newPriceId = subscription.items.data[0]?.price.id;
       const newPlan = PRICE_TO_PLAN[newPriceId];
 
@@ -97,7 +148,6 @@ Deno.serve(async (req) => {
         return new Response(JSON.stringify({ received: true }), { status: 200 });
       }
 
-      // Fetch current plan to enforce no-downgrade safety net
       const { data: current } = await supabase
         .from("profiles")
         .select("plan")
@@ -130,7 +180,20 @@ Deno.serve(async (req) => {
 
     if (event.type === "customer.subscription.deleted") {
       const subscription = event.data.object as Stripe.Subscription;
-      console.log(`[webhook] customer.subscription.deleted → sub ${subscription.id}`);
+      const isB2B = subscription.metadata?.type === "b2b";
+      console.log(`[webhook] customer.subscription.deleted → sub ${subscription.id} (B2B=${isB2B})`);
+
+      if (isB2B) {
+        const { error } = await supabase
+          .from("organizations")
+          .update({ statut: "cancelled" })
+          .eq("stripe_subscription_id", subscription.id);
+        if (error) {
+          console.error("[webhook][B2B] Failed cancel org", error);
+          return new Response(JSON.stringify({ error: error.message }), { status: 500 });
+        }
+        return new Response(JSON.stringify({ received: true }), { status: 200 });
+      }
 
       const { error } = await supabase
         .from("profiles")
