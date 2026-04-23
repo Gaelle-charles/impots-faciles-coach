@@ -26,7 +26,7 @@ import type { Tables } from '@/integrations/supabase/types';
 import { ModuleSidebarContent } from '@/components/module/ModuleSidebarContent';
 import { ModuleContent } from '@/components/module/ModuleContent';
 
-type ModuleRow = Tables<'modules'>;
+type ModuleRow = Tables<'modules'> & { nb_steps_total: number };
 type ContenuRow = Tables<'contenus'>;
 type ProgressionRow = Tables<'progressions'>;
 
@@ -48,20 +48,17 @@ const Module = () => {
 
 
   const rawStep = progression?.step ?? 0;
-  const totalSteps = contenus.length;
+  // Source de vérité: nb_steps_total depuis la vue (= COUNT(contenus) en temps réel)
+  const totalSteps = module?.nb_steps_total ?? contenus.length;
   const isCompleted = !!progression?.completion_date;
   // Clamp step to valid content range so we never index out of bounds
-  const currentStep = isCompleted
-    ? Math.min(rawStep, totalSteps - 1)
-    : Math.min(rawStep, totalSteps - 1);
+  const currentStep = Math.min(rawStep, Math.max(0, totalSteps - 1));
   const progressPercent = isCompleted
     ? 100
-    : module?.total_step && module.total_step > 0
-      ? (rawStep / module.total_step) * 100
-      : totalSteps > 0
-        ? (rawStep / totalSteps) * 100
-        : 0;
-  const isLastStep = !isCompleted && rawStep === totalSteps - 1;
+    : totalSteps > 0
+      ? (Math.min(rawStep, totalSteps) / totalSteps) * 100
+      : 0;
+  const isLastStep = !isCompleted && totalSteps > 0 && rawStep === totalSteps - 1;
   const currentContenu = contenus[Math.max(0, currentStep)] ?? null;
 
   const fetchData = useCallback(async () => {
@@ -70,9 +67,9 @@ const Module = () => {
     setLoading(true);
     setError(null);
 
-    // 1. Fetch module
-    const modRes = await supabase
-      .from('modules')
+    // 1. Fetch module via la vue (inclut nb_steps_total dynamique)
+    const modRes = await (supabase as any)
+      .from('modules_with_counts')
       .select('*')
       .eq('module_slug', slug)
       .maybeSingle();
@@ -189,7 +186,7 @@ const Module = () => {
 
   const handleComplete = async () => {
     if (!progression) return;
-    const finalStep = module?.total_step ?? totalSteps;
+    const finalStep = totalSteps;
     await supabase
       .from('progressions')
       .update({ step: finalStep, completion_date: new Date().toISOString() })

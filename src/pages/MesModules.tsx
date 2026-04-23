@@ -11,7 +11,7 @@ import { Lock } from 'lucide-react';
 import type { Tables } from '@/integrations/supabase/types';
 import { useAccess } from '@/hooks/useAccess';
 
-type ModuleRow = Tables<'modules'>;
+type ModuleRow = Tables<'modules'> & { nb_steps_total: number };
 type ProgressionRow = Tables<'progressions'>;
 type ResultatRow = Tables<'resultat_quiz'>;
 
@@ -32,7 +32,7 @@ const MesModules = () => {
     const fetch = async () => {
       setLoading(true);
       const [modRes, progRes, resRes] = await Promise.all([
-        supabase.from('modules').select('*').order('order', { ascending: true }),
+        (supabase as any).from('modules_with_counts').select('*').order('order', { ascending: true }),
         supabase.from('progressions').select('*').eq('user_id', user.id),
         supabase.from('resultat_quiz').select('*').eq('user_id', user.id).order('date_quiz', { ascending: false }),
       ]);
@@ -85,8 +85,13 @@ const MesModules = () => {
           const lastQuiz = lastResultMap.get(mod.id);
           const isCompleted = !!prog?.completion_date;
           const step = prog?.step ?? 0;
-          const totalStep = mod.total_step || 1;
-          const progressPct = isCompleted ? 100 : Math.min(Math.round((step / totalStep) * 100), 100);
+          const totalStep = mod.nb_steps_total ?? 0;
+          const isEmpty = totalStep === 0;
+          const progressPct = isEmpty
+            ? 0
+            : isCompleted
+              ? 100
+              : Math.min(Math.round((step / totalStep) * 100), 100);
           const requiredPlan = mod.accessibilite?.[0] ?? 'starter';
 
           let statusLabel: string;
@@ -94,7 +99,12 @@ const MesModules = () => {
           let btnLabel: string;
           let btnVariant: 'default' | 'outline';
 
-          if (isCompleted) {
+          if (isEmpty) {
+            statusLabel = 'En préparation';
+            statusColor = 'bg-muted text-muted-foreground';
+            btnLabel = 'Contenu en préparation';
+            btnVariant = 'outline';
+          } else if (isCompleted) {
             statusLabel = 'Terminé ✓';
             statusColor = 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200';
             btnLabel = 'Revoir';
@@ -129,11 +139,11 @@ const MesModules = () => {
                   )}
                 </div>
 
-                {hasAccess && (
+                {hasAccess && !isEmpty && (
                   <>
                     <Progress value={progressPct} className="h-2" />
                     <p className="text-xs text-muted-foreground">
-                      {step}/{totalStep} étapes complétées
+                      {Math.min(step, totalStep)}/{totalStep} étapes complétées
                     </p>
 
                     {lastQuiz && (
@@ -147,18 +157,27 @@ const MesModules = () => {
                   </>
                 )}
 
+                {hasAccess && isEmpty && (
+                  <p className="text-xs text-muted-foreground italic">
+                    Contenu en préparation, disponible bientôt.
+                  </p>
+                )}
+
                 <Button
                   size="sm"
                   className="w-full"
                   variant={btnVariant}
-                  disabled={!hasAccess}
+                  disabled={!hasAccess || isEmpty}
+                  title={hasAccess && isEmpty ? 'Contenu en préparation' : undefined}
                   onClick={() =>
-                    hasAccess
+                    hasAccess && !isEmpty
                       ? navigate(`/module/${mod.module_slug}`)
-                      : navigate(`/tarifs?recommended=${requiredPlan}&redirected=1`)
+                      : !hasAccess
+                        ? navigate(`/tarifs?recommended=${requiredPlan}&redirected=1`)
+                        : undefined
                   }
                 >
-                  {hasAccess ? btnLabel : `Débloquer avec ${capitalize(requiredPlan)}`}
+                  {!hasAccess ? `Débloquer avec ${capitalize(requiredPlan)}` : btnLabel}
                 </Button>
               </CardContent>
 

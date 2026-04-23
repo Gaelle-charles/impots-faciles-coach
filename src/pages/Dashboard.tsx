@@ -20,7 +20,7 @@ import type { Tables } from '@/integrations/supabase/types';
 import { useAccess } from '@/hooks/useAccess';
 import PersonalizedFiches from '@/components/dashboard/PersonalizedFiches';
 
-type ModuleRow = Tables<'modules'>;
+type ModuleRow = Tables<'modules'> & { nb_steps_total: number };
 type ProgressionRow = Tables<'progressions'>;
 type ResultatRow = Tables<'resultat_quiz'>;
 
@@ -49,7 +49,7 @@ const Dashboard = () => {
     setLoading(true);
     const [profRes, modRes, progRes, resRes] = await Promise.all([
       supabase.from('profiles').select('prenom, nom, plan').eq('id', user.id).maybeSingle(),
-      supabase.from('modules').select('*').order('order', { ascending: true }),
+      (supabase as any).from('modules_with_counts').select('*').order('order', { ascending: true }),
       supabase.from('progressions').select('*').eq('user_id', user.id),
       supabase.from('resultat_quiz').select('*').eq('user_id', user.id).order('date_quiz', { ascending: false }),
     ]);
@@ -177,8 +177,9 @@ const Dashboard = () => {
           const latest = inProgress[0]; // already sorted or pick first
           const mod = modules.find((m) => m.id === latest.module_id);
           if (mod) {
-            const totalStep = mod.total_step || 1;
-            const pct = Math.min(Math.round((latest.step / totalStep) * 100), 100);
+            const totalStep = mod.nb_steps_total || 0;
+            const safeStep = Math.min(latest.step, totalStep);
+            const pct = totalStep > 0 ? Math.min(Math.round((safeStep / totalStep) * 100), 100) : 0;
             return (
               <Card className="border-border bg-secondary shadow-sm">
                 <CardContent className="p-6 space-y-4">
@@ -189,7 +190,7 @@ const Dashboard = () => {
                     <h3 className="font-heading text-base font-semibold text-foreground">{mod.titre}</h3>
                     <Progress value={pct} className="h-2" />
                     <p className="text-xs text-muted-foreground">
-                      Étape {latest.step} sur {mod.total_step}
+                      Étape {safeStep} sur {totalStep}
                     </p>
                   </div>
                   <Button onClick={() => navigate(`/module/${mod.module_slug}`)} className="gap-2">
@@ -251,8 +252,10 @@ const Dashboard = () => {
             {modules.map((mod) => {
               const hasAccess = hasModuleAccess(mod);
               const prog = progMap.get(mod.id);
-              const totalStep = mod.total_step || 1;
-              const pct = prog ? Math.min(Math.round((prog.step / totalStep) * 100), 100) : 0;
+              const totalStep = mod.nb_steps_total ?? 0;
+              const isEmpty = totalStep === 0;
+              const safeStep = prog ? Math.min(prog.step, totalStep) : 0;
+              const pct = isEmpty ? 0 : prog ? Math.min(Math.round((safeStep / totalStep) * 100), 100) : 0;
               const isCompleted = !!prog?.completion_date;
               const requiredPlan = mod.accessibilite?.[0] ?? 'starter';
 
@@ -266,31 +269,44 @@ const Dashboard = () => {
                           Terminé
                         </Badge>
                       )}
+                      {isEmpty && hasAccess && (
+                        <Badge className="bg-muted text-muted-foreground">En préparation</Badge>
+                      )}
                     </div>
-                    {hasAccess && (
+                    {hasAccess && !isEmpty && (
                       <>
                         <Progress value={pct} className="h-2" />
                         <p className="text-xs text-muted-foreground">
-                          Étape {prog?.step ?? 0} sur {mod.total_step}
+                          Étape {safeStep} sur {totalStep}
                         </p>
                       </>
                     )}
+                    {hasAccess && isEmpty && (
+                      <p className="text-xs text-muted-foreground italic">
+                        Contenu en préparation, disponible bientôt.
+                      </p>
+                    )}
                     <Button
                       onClick={() =>
-                        hasAccess
+                        hasAccess && !isEmpty
                           ? navigate(`/module/${mod.module_slug}`)
-                          : navigate(`/tarifs?recommended=${requiredPlan}&redirected=1`)
+                          : !hasAccess
+                            ? navigate(`/tarifs?recommended=${requiredPlan}&redirected=1`)
+                            : undefined
                       }
-                      disabled={!hasAccess}
+                      disabled={!hasAccess || isEmpty}
+                      title={hasAccess && isEmpty ? 'Contenu en préparation' : undefined}
                       className="w-full"
                     >
-                      {hasAccess
-                        ? isCompleted
-                          ? 'Revoir'
-                          : prog
-                            ? 'Continuer'
-                            : 'Commencer'
-                        : `Débloquer avec ${capitalize(requiredPlan)}`}
+                      {!hasAccess
+                        ? `Débloquer avec ${capitalize(requiredPlan)}`
+                        : isEmpty
+                          ? 'Contenu en préparation'
+                          : isCompleted
+                            ? 'Revoir'
+                            : prog
+                              ? 'Continuer'
+                              : 'Commencer'}
                     </Button>
                   </CardContent>
                   {!hasAccess && (
