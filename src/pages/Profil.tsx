@@ -74,6 +74,7 @@ const Profil = () => {
 
   // Billing portal
   const [openingPortal, setOpeningPortal] = useState(false);
+  const [portalOpen, setPortalOpen] = useState(false);
 
   // Complete profile (for users missing prenom/nom)
   const [completeOpen, setCompleteOpen] = useState(false);
@@ -121,7 +122,11 @@ const Profil = () => {
     return p + n || '?';
   }, [profile]);
 
-  const handleManageBilling = async () => {
+  const handleManageBilling = () => {
+    setPortalOpen(true);
+  };
+
+  const handleConfirmPortal = async () => {
     setOpeningPortal(true);
     try {
       const { data, error } = await supabase.functions.invoke('create-billing-portal-session');
@@ -344,6 +349,49 @@ const Profil = () => {
           )}
         </CardContent>
       </Card>
+
+      {/* ── Modal redirection Stripe Portal ── */}
+      <Dialog open={portalOpen} onOpenChange={(open) => {
+        if (openingPortal) return;
+        setPortalOpen(open);
+      }}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle className="font-heading">Gérer votre abonnement</DialogTitle>
+          </DialogHeader>
+          <DialogDescription className="space-y-3 text-sm text-muted-foreground">
+            <p>Vous allez être redirigé vers notre page de gestion d'abonnement sécurisée Stripe.</p>
+            <p>Vous pourrez y :</p>
+            <ul className="list-none space-y-1 pl-1">
+              <li className="flex items-center gap-2"><span>✅</span> Modifier votre moyen de paiement</li>
+              <li className="flex items-center gap-2"><span>✅</span> Consulter et télécharger vos factures</li>
+              <li className="flex items-center gap-2"><span>✅</span> Upgrader vers un plan supérieur (avec calcul au prorata)</li>
+              <li className="flex items-center gap-2"><span>✅</span> Annuler votre abonnement (fin de la période en cours)</li>
+            </ul>
+            <div className="rounded-md border border-destructive/30 bg-destructive/10 p-3 text-destructive text-xs">
+              <p className="font-semibold mb-1">⚠️ Important</p>
+              <p>Le passage à un plan inférieur n'est pas possible en cours d'abonnement. Cette règle est précisée dans nos CGV.</p>
+            </div>
+          </DialogDescription>
+          <DialogFooter className="gap-2 sm:gap-0">
+            <Button
+              variant="outline"
+              onClick={() => setPortalOpen(false)}
+              disabled={openingPortal}
+            >
+              Annuler
+            </Button>
+            <Button
+              className="gap-2"
+              disabled={openingPortal}
+              onClick={handleConfirmPortal}
+            >
+              {openingPortal ? 'Redirection...' : 'Continuer vers la gestion'}
+              <ArrowRight className="h-4 w-4" />
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
       {/* ── Sécurité ── */}
       <Card className="border-border bg-background shadow-sm">
