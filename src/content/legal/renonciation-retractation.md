@@ -16,11 +16,11 @@ Il doit être conservé dans les archives de commande d'Annul'Impôts à titre d
 
 ---
 
-**☐ [Case à cocher — obligatoire pour valider la commande avec accès immédiat]**
+**☐ [À compléter avant lancement]**
 
 > « Je reconnais avoir expressément demandé un accès immédiat au contenu numérique commandé avant l'expiration du délai légal de rétractation de 14 jours.
 >
-> En cochant cette case, **j'accepte expressément et en toute connaissance de cause de perdre définitivement mon droit de rétractation** dès lors que l'accès à la plateforme [Impôts Facile / Annul'Impôts / Impôts Gagnants] sera activé par Annul'Impôts, conformément à l'article L221-28, alinéa 13° du Code de la consommation.
+> En cochant cette case, **j'accepte expressément et en toute connaissance de cause de perdre définitivement mon droit de rétractation** dès lors que l'accès à la plateforme [À compléter avant lancement] sera activé par Annul'Impôts, conformément à l'article L221-28, alinéa 13° du Code de la consommation.
 >
 > J'ai pris connaissance des Conditions Générales de Vente et de la présente renonciation avant de valider ma commande. »
 

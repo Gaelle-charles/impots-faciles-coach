@@ -10,7 +10,7 @@
 
 **Version courte alternative (pour affichage en espace réduit) :**
 
-> ⚠️ *Estimation pédagogique — Non opposable à la DGFIP. Pour votre situation fiscale personnelle, consultez un expert-comptable ou un avocat fiscaliste. [Voir notre avertissement légal complet]*
+> ⚠️ *Estimation pédagogique — Non opposable à la DGFIP. Pour votre situation fiscale personnelle, consultez un expert-comptable ou un avocat fiscaliste. [À compléter avant lancement]*
 
 ---
 

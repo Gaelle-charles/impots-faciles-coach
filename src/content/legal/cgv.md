@@ -10,15 +10,15 @@ Les présentes Conditions Générales de Vente (ci-après « CGV ») sont conclu
 
 **Le Vendeur :**
 
-- **Raison sociale :** [RAISON SOCIALE — ex. : ANNUL'IMPÔTS ou NOM PRÉNOM pour auto-entrepreneur]
-- **Forme juridique :** [Micro-entreprise / SASU / EURL / SAS — à compléter selon statut choisi]
-- **Capital social :** [Montant en euros — ou mention « N/A » pour auto-entrepreneur]
-- **Numéro SIRET :** [14 chiffres — à remplir dès immatriculation]
-- **Numéro TVA intracommunautaire :** [FR + 11 chiffres — si assujetti à la TVA]
-- **Adresse du siège social :** [Numéro, rue, code postal, ville, France]
+- **Raison sociale :** [À compléter avant lancement]
+- **Forme juridique :** [À compléter avant lancement]
+- **Capital social :** [À compléter avant lancement]
+- **Numéro SIRET :** [À compléter avant lancement]
+- **Numéro TVA intracommunautaire :** [À compléter avant lancement]
+- **Adresse du siège social :** [À compléter avant lancement]
 - **Adresse email de contact :** contact@annulimpots.fr
-- **Téléphone :** [Numéro de téléphone — optionnel mais recommandé]
-- **Responsable de la publication :** [Prénom NOM du responsable légal]
+- **Téléphone :** [À compléter avant lancement]
+- **Responsable de la publication :** [À compléter avant lancement]
 
 **Et :**
 
@@ -109,10 +109,10 @@ Les prix sont affichés en euros (€) toutes taxes comprises (TTC) sur les site
 
 #### 4.2 TVA et statut fiscal du vendeur
 
-[**À compléter selon statut :**]
+[À compléter avant lancement]
 
 - **Si auto-entrepreneur en franchise de TVA (CA < seuil)** : « Les prix sont affichés en euros. Le Vendeur bénéficie de la franchise en base de TVA conformément à l'article 293 B du Code général des impôts. La TVA n'est pas applicable. »
-- **Si assujetti à la TVA** : « Les prix sont affichés TTC. Le taux de TVA applicable est de [20% / taux réduit applicable]. Le montant HT est indiqué sur la facture. »
+- **Si assujetti à la TVA** : « Les prix sont affichés TTC. Le taux de TVA applicable est de [À compléter avant lancement]. Le montant HT est indiqué sur la facture. »
 
 #### 4.3 Promotions et offres spéciales
 
@@ -145,7 +145,7 @@ La validation de la commande constitue un accord ferme et définitif entre le Cl
 
 - **Carte bancaire** (Visa, Mastercard, American Express) — via Stripe
 - **PayPal**
-- [Tout autre moyen de paiement intégré sur la plateforme à compléter]
+- [À compléter avant lancement]
 
 #### 5.3 Sécurisation des paiements
 
@@ -185,7 +185,7 @@ Conformément à l'article L221-28, 13° du Code de la consommation, **le droit 
 
 Pour exercer son droit de rétractation (dans les cas où il n'y a pas eu renonciation expresse), le Client doit notifier sa décision avant l'expiration du délai de 14 jours, par l'un des moyens suivants :
 
-- **Email** : contact@annulimpots.fr avec pour objet « RÉTRACTATION — Numéro de commande [XXXX] »
+- **Email** : contact@annulimpots.fr avec pour objet « RÉTRACTATION — Numéro de commande [À compléter avant lancement] »
 - **Formulaire de rétractation** : en utilisant le modèle joint en Annexe A des présentes CGV
 
 #### 6.4 Coaching individuel (Annul'Impôts Coaching)
@@ -206,7 +206,7 @@ Pour les sessions de coaching individuel :
 
 À l'attention d'Annul'Impôts
 Email : contact@annulimpots.fr
-Adresse : [ADRESSE POSTALE DU VENDEUR]
+Adresse : [À compléter avant lancement]
 
 Je/Nous (*) vous notifie/notifions (*) par la présente ma/notre (*) rétractation du contrat portant sur la vente du bien (*)/pour la prestation de service (*) ci-dessous :
 
@@ -257,15 +257,15 @@ Pour les cas liés à un dysfonctionnement technique avéré, voir la Politique 
 Après validation du paiement :
 - Un email de confirmation est envoyé à l'adresse renseignée lors de la commande
 - Les identifiants d'accès à la plateforme sont communiqués dans cet email (ou création de compte initiée)
-- L'accès à l'espace personnel sur la plateforme est effectif sous **[immédiatement / délai maximum de 24 heures]**
+- L'accès à l'espace personnel sur la plateforme est effectif sous **[À compléter avant lancement]**
 
 #### 8.2 Durée d'accès
 
 | Offre | Durée d'accès |
 |---|---|
-| Impôts Facile | [12 mois à compter de la date d'activation / Accès illimité — À DÉFINIR] |
-| Annul'Impôts Coaching | Accès à l'espace client pendant la durée du coaching + [6 mois / 12 mois — À DÉFINIR] |
-| Impôts Gagnants | [12 mois / Accès illimité — À DÉFINIR] |
+| Impôts Facile | [À compléter avant lancement] |
+| Annul'Impôts Coaching | Accès à l'espace client pendant la durée du coaching + [À compléter avant lancement] |
+| Impôts Gagnants | [À compléter avant lancement] |
 
 *Note : Il est fortement recommandé d'opter pour une durée d'accès définie (ex. 12 mois renouvelables) pour des raisons de gestion technique et de mise à jour des contenus.*
 
@@ -342,7 +342,7 @@ Les données personnelles collectées dans le cadre des commandes passées sur l
 
 Pour toute information sur le traitement de vos données personnelles, vos droits et les modalités pour les exercer, veuillez consulter notre **Politique de Confidentialité** disponible sur chaque plateforme.
 
-**Responsable du traitement :** [RAISON SOCIALE], [ADRESSE], contact : contact@annulimpots.fr
+**Responsable du traitement :** [À compléter avant lancement], [À compléter avant lancement], contact : contact@annulimpots.fr
 
 **Vos droits :** Accès, rectification, effacement, limitation, portabilité et opposition, à exercer à l'adresse contact@annulimpots.fr. Droit de réclamation auprès de la CNIL (www.cnil.fr).
 
@@ -360,9 +360,9 @@ En cas de litige ou de réclamation, le Client est invité à contacter en premi
 
 Conformément aux articles L616-1 et R616-1 du Code de la consommation, Annul'Impôts propose un dispositif de médiation de la consommation. En cas d'échec de la réclamation auprès du service client, le Client peut recourir gratuitement au médiateur de la consommation désigné :
 
-**Médiateur compétent :** [NOM DU MÉDIATEUR — ex. : Médiateur du Commerce Électronique (FEVAD) ou médiateur sectoriel agréé]
-**Site internet :** [URL du médiateur]
-**Adresse postale :** [Adresse du médiateur]
+**Médiateur compétent :** [À compléter avant lancement]
+**Site internet :** [À compléter avant lancement]
+**Adresse postale :** [À compléter avant lancement]
 
 *Note : L'adhésion à un dispositif de médiation agréé est obligatoire pour tout professionnel vendant à des consommateurs en France. Il convient de désigner un médiateur sectoriel agréé par la Commission d'Évaluation et de Contrôle de la Médiation de la Consommation (CECMC) avant la mise en ligne.*
 

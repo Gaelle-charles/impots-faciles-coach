@@ -8,12 +8,12 @@
 
 Le responsable du traitement des données personnelles collectées sur les plateformes Impôts Facile, Annul'Impôts et Impôts Gagnants est :
 
-- **Dénomination :** [RAISON SOCIALE — ex. : ANNUL'IMPÔTS ou NOM PRÉNOM]
-- **Forme juridique :** [Micro-entreprise / SASU / EURL]
-- **SIRET :** [14 chiffres]
-- **Adresse :** [Adresse postale complète]
+- **Dénomination :** [À compléter avant lancement]
+- **Forme juridique :** [À compléter avant lancement]
+- **SIRET :** [À compléter avant lancement]
+- **Adresse :** [À compléter avant lancement]
 - **Email de contact RGPD :** contact@annulimpots.fr
-- **Délégué à la Protection des Données (DPO) :** [NOM DU DPO si désigné — optionnel pour les petites structures mais recommandé / ou indiquer : « Aucun DPO désigné — contact RGPD : contact@annulimpots.fr »]
+- **Délégué à la Protection des Données (DPO) :** [À compléter avant lancement]
 
 *Note : La désignation d'un DPO est obligatoire pour les organismes traitant à grande échelle des données sensibles. Si le traitement de données fiscales est substantiel, il est recommandé de désigner un DPO ou d'en mentionner un externe.*
 
@@ -91,7 +91,7 @@ Conformément à l'article 6 du RGPD, chaque traitement repose sur l'une des bas
 | Données marketing (newsletter) | Jusqu'au retrait du consentement ou 3 ans d'inactivité |
 | Données de navigation (logs) | 13 mois maximum (recommandation CNIL) |
 | Données de situation fiscale (simulateurs) | Non conservées au-delà de la session (traitement côté client) |
-| Données partagées en coaching | Durée du coaching + [6 mois maximum — À DÉFINIR], puis suppression |
+| Données partagées en coaching | Durée du coaching + [À compléter avant lancement], puis suppression |
 | Cookies de mesure d'audience | 13 mois maximum |
 | Cookies de personnalisation | 13 mois maximum |
 
@@ -106,10 +106,10 @@ Les données personnelles sont susceptibles d'être transmises aux prestataires 
 | Prestataire | Rôle | Pays |
 |---|---|---|
 | **Stripe Inc.** | Traitement des paiements | États-Unis (CCT) |
-| **[Hébergeur — ex. : OVH / AWS / Scaleway]** | Hébergement des plateformes | [France / UE / USA — à préciser] |
-| **[Outil emailing — ex. : Mailchimp / Brevo]** | Envoi des emails transactionnels et marketing | [À préciser] |
-| **[Calendly ou équivalent]** | Gestion des prises de RDV coaching | [À préciser] |
-| **[Outil analytics — ex. : Google Analytics / Plausible]** | Analyse d'audience | [À préciser] |
+| **[À compléter avant lancement]** | Hébergement des plateformes | [À compléter avant lancement] |
+| **[À compléter avant lancement]** | Envoi des emails transactionnels et marketing | [À compléter avant lancement] |
+| **[À compléter avant lancement]** | Gestion des prises de RDV coaching | [À compléter avant lancement] |
+| **[À compléter avant lancement]** | Analyse d'audience | [À compléter avant lancement] |
 
 **Annul'Impôts s'engage formellement à ne jamais vendre, louer ou céder les données personnelles de ses clients à des tiers à des fins commerciales ou publicitaires.**
 
@@ -119,7 +119,7 @@ Les données personnelles sont susceptibles d'être transmises aux prestataires 
 
 Certains prestataires (notamment Stripe Inc. et Mailchimp) sont établis aux États-Unis. Ces transferts hors UE sont encadrés par les **clauses contractuelles types (CCT)** adoptées par la Commission européenne conformément à la décision d'exécution 2021/914 du 4 juin 2021, garantissant un niveau de protection adéquat des données personnelles.
 
-[Si TikTok Pixel est utilisé] : Le pixel TikTok peut impliquer un transfert de données vers des serveurs situés en dehors de l'UE. Ce transfert est conditionné à votre consentement via le bandeau de gestion des cookies. Pour plus d'informations, consultez la politique de confidentialité de TikTok.
+[À compléter avant lancement] : Le pixel TikTok peut impliquer un transfert de données vers des serveurs situés en dehors de l'UE. Ce transfert est conditionné à votre consentement via le bandeau de gestion des cookies. Pour plus d'informations, consultez la politique de confidentialité de TikTok.
 
 ---
 
@@ -176,7 +176,7 @@ Lors de votre première visite sur les plateformes Annul'Impôts, un **bandeau d
 - Refuser les cookies non essentiels
 - Personnaliser vos préférences par catégorie
 
-**Pour modifier vos préférences :** [Lien vers le panneau de gestion des cookies — à configurer sur la plateforme]
+**Pour modifier vos préférences :** [À compléter avant lancement]
 
 Vous pouvez également paramétrer votre navigateur pour bloquer ou supprimer les cookies. Attention, le blocage des cookies essentiels peut altérer le fonctionnement des plateformes.
 

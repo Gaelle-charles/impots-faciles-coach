@@ -51,7 +51,7 @@ Chez Annul'Impôts, nous voulons que vous soyez entièrement satisfait de votre 
 La procédure est simple et rapide :
 
 1. **Envoyez un email** à **contact@annulimpots.fr**
-2. **Objet :** « Demande de remboursement — Commande n° [votre numéro de commande] »
+2. **Objet :** « Demande de remboursement — Commande n° [À compléter avant lancement] »
 3. **Indiquez :** votre nom, votre email de commande, le motif de votre demande
 4. **Nous vous répondons sous 48h** (jours ouvrés)
 5. Si votre demande est acceptée, le remboursement est effectué **sous 14 jours** sur votre moyen de paiement initial

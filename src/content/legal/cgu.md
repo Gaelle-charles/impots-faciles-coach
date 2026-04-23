@@ -1,6 +1,6 @@
 ## DOCUMENT 2 — CONDITIONS GÉNÉRALES D'UTILISATION (CGU)
 
-*Applicables aux plateformes Impôts Facile, Annul'Impôts et Impôts Gagnants exploitées par [RAISON SOCIALE].*
+*Applicables aux plateformes Impôts Facile, Annul'Impôts et Impôts Gagnants exploitées par [À compléter avant lancement].*
 
 ---
 
@@ -8,9 +8,9 @@
 
 Les présentes Conditions Générales d'Utilisation (ci-après « CGU ») ont pour objet de définir les modalités et conditions d'accès et d'utilisation des plateformes numériques exploitées par Annul'Impôts, à savoir :
 
-- **Impôts Facile** — [URL à compléter]
-- **Annul'Impôts** — [URL à compléter]
-- **Impôts Gagnants** — [URL à compléter]
+- **Impôts Facile** — [À compléter avant lancement]
+- **Annul'Impôts** — [À compléter avant lancement]
+- **Impôts Gagnants** — [À compléter avant lancement]
 
 Les CGU complètent les Conditions Générales de Vente (CGV) et la Politique de Confidentialité, qui forment avec elles un ensemble contractuel applicable à l'ensemble des utilisateurs des plateformes.
 
@@ -49,7 +49,7 @@ Annul'Impôts ne saurait être tenu responsable des accès frauduleux résultant
 
 #### 2.4 Accès gratuit — Audit Annul'Impôts Coaching
 
-L'audit fiscal de 30 minutes proposé dans le cadre de l'offre Annul'Impôts Coaching est accessible gratuitement, sans engagement d'achat. Un formulaire de prise de rendez-vous est mis à disposition via [Calendly ou outil équivalent]. L'utilisateur prend connaissance des CGU en réservant l'audit.
+L'audit fiscal de 30 minutes proposé dans le cadre de l'offre Annul'Impôts Coaching est accessible gratuitement, sans engagement d'achat. Un formulaire de prise de rendez-vous est mis à disposition via [À compléter avant lancement]. L'utilisateur prend connaissance des CGU en réservant l'audit.
 
 ---
 
@@ -149,7 +149,7 @@ Annul'Impôts se réserve le droit de modifier les présentes CGU à tout moment
 
 #### 7.2 Notification
 
-En cas de modification substantielle des CGU, les utilisateurs titulaires d'un compte seront informés par email à l'adresse renseignée lors de la création de leur compte, avec un préavis minimum de **[30 jours]** avant l'entrée en vigueur des nouvelles CGU.
+En cas de modification substantielle des CGU, les utilisateurs titulaires d'un compte seront informés par email à l'adresse renseignée lors de la création de leur compte, avec un préavis minimum de **[À compléter avant lancement]** avant l'entrée en vigueur des nouvelles CGU.
 
 #### 7.3 Acceptation par utilisation continue
 
