@@ -13,7 +13,7 @@ import {
 } from '@/components/ui/dialog';
 import { toast } from '@/hooks/use-toast';
 import {
-  ArrowLeft, Plus, Pencil, Trash2, Save, X, GripVertical, AlertTriangle, BookOpen, FileQuestion,
+  ArrowLeft, Plus, Pencil, Trash2, Save, X, GripVertical, AlertTriangle, BookOpen, FileQuestion, Eye,
 } from 'lucide-react';
 import {
   DndContext, closestCenter, PointerSensor, useSensor, useSensors, type DragEndEvent,
@@ -23,6 +23,7 @@ import {
 } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { MarkdownEditor } from '@/components/admin/MarkdownEditor';
+import { ModulePreviewDialog } from '@/components/admin/ModulePreviewDialog';
 
 // ─── Types ───
 interface ContenuRow {
@@ -47,11 +48,13 @@ function SortableStepRow({
   reorderMode,
   onEdit,
   onDelete,
+  onPreview,
 }: {
   step: ContenuRow;
   reorderMode: boolean;
   onEdit: () => void;
   onDelete: () => void;
+  onPreview: () => void;
 }) {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
     id: step.id,
@@ -98,6 +101,15 @@ function SortableStepRow({
 
       {!reorderMode && (
         <div className="flex items-center gap-2 shrink-0">
+          <Button
+            variant="outline"
+            size="icon"
+            className="h-8 w-8"
+            onClick={onPreview}
+            title="👁️ Aperçu de cette étape"
+          >
+            <Eye className="h-3.5 w-3.5" />
+          </Button>
           <Button variant="outline" size="icon" className="h-8 w-8" onClick={onEdit}>
             <Pencil className="h-3.5 w-3.5" />
           </Button>
