@@ -56,6 +56,13 @@ export type Database = {
             referencedRelation: "modules"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "contenus_module_id_fkey"
+            columns: ["module_id"]
+            isOneToOne: false
+            referencedRelation: "modules_with_counts"
+            referencedColumns: ["id"]
+          },
         ]
       }
       fiches_profils: {
@@ -387,6 +394,13 @@ export type Database = {
             referencedRelation: "modules"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "progressions_module_id_fkey"
+            columns: ["module_id"]
+            isOneToOne: false
+            referencedRelation: "modules_with_counts"
+            referencedColumns: ["id"]
+          },
         ]
       }
       quizz: {
@@ -431,6 +445,13 @@ export type Database = {
             referencedRelation: "modules"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "quizz_module_id_fkey"
+            columns: ["module_id"]
+            isOneToOne: false
+            referencedRelation: "modules_with_counts"
+            referencedColumns: ["id"]
+          },
         ]
       }
       resultat_quiz: {
@@ -467,6 +488,13 @@ export type Database = {
             columns: ["module_id"]
             isOneToOne: false
             referencedRelation: "modules"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "resultat_quiz_module_id_fkey"
+            columns: ["module_id"]
+            isOneToOne: false
+            referencedRelation: "modules_with_counts"
             referencedColumns: ["id"]
           },
         ]
@@ -511,9 +539,69 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      modules_with_counts: {
+        Row: {
+          accessibilite: string[] | null
+          created_at: string | null
+          id: string | null
+          is_published: boolean | null
+          module_slug: string | null
+          nb_steps_total: number | null
+          order: number | null
+          text_resultat_expert: string | null
+          text_resultat_faible: string | null
+          text_resultat_moyen: string | null
+          titre: string | null
+          total_step: number | null
+        }
+        Insert: {
+          accessibilite?: string[] | null
+          created_at?: string | null
+          id?: string | null
+          is_published?: boolean | null
+          module_slug?: string | null
+          nb_steps_total?: never
+          order?: number | null
+          text_resultat_expert?: string | null
+          text_resultat_faible?: string | null
+          text_resultat_moyen?: string | null
+          titre?: string | null
+          total_step?: number | null
+        }
+        Update: {
+          accessibilite?: string[] | null
+          created_at?: string | null
+          id?: string | null
+          is_published?: boolean | null
+          module_slug?: string | null
+          nb_steps_total?: never
+          order?: number | null
+          text_resultat_expert?: string | null
+          text_resultat_faible?: string | null
+          text_resultat_moyen?: string | null
+          titre?: string | null
+          total_step?: number | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
+      get_module_progress: {
+        Args: { p_module_id: string; p_user_id: string }
+        Returns: {
+          nb_completed: number
+          nb_total: number
+        }[]
+      }
+      get_user_global_progress: {
+        Args: { p_user_id: string }
+        Returns: {
+          completed_steps: number
+          modules_accessible: number
+          modules_completed: number
+          total_steps: number
+        }[]
+      }
       is_admin: { Args: never; Returns: boolean }
       user_can_access_module: { Args: { _module_id: string }; Returns: boolean }
     }
