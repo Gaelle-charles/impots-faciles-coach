@@ -185,6 +185,119 @@ export type Database = {
         }
         Relationships: []
       }
+      organization_members: {
+        Row: {
+          accepted_at: string | null
+          email: string
+          id: string
+          invitation_token: string | null
+          invited_at: string
+          organization_id: string
+          removed_at: string | null
+          role: string
+          user_id: string | null
+        }
+        Insert: {
+          accepted_at?: string | null
+          email: string
+          id?: string
+          invitation_token?: string | null
+          invited_at?: string
+          organization_id: string
+          removed_at?: string | null
+          role?: string
+          user_id?: string | null
+        }
+        Update: {
+          accepted_at?: string | null
+          email?: string
+          id?: string
+          invitation_token?: string | null
+          invited_at?: string
+          organization_id?: string
+          removed_at?: string | null
+          role?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "organization_members_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "organization_members_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      organizations: {
+        Row: {
+          admin_user_id: string | null
+          adresse: string | null
+          created_at: string
+          date_paiement: string | null
+          id: string
+          logo_url: string | null
+          nb_licences: number
+          plan: string
+          raison_sociale: string
+          siret: string
+          statut: string
+          stripe_customer_id: string | null
+          stripe_subscription_id: string | null
+          tva_intra: string | null
+          updated_at: string
+        }
+        Insert: {
+          admin_user_id?: string | null
+          adresse?: string | null
+          created_at?: string
+          date_paiement?: string | null
+          id?: string
+          logo_url?: string | null
+          nb_licences: number
+          plan: string
+          raison_sociale: string
+          siret: string
+          statut?: string
+          stripe_customer_id?: string | null
+          stripe_subscription_id?: string | null
+          tva_intra?: string | null
+          updated_at?: string
+        }
+        Update: {
+          admin_user_id?: string | null
+          adresse?: string | null
+          created_at?: string
+          date_paiement?: string | null
+          id?: string
+          logo_url?: string | null
+          nb_licences?: number
+          plan?: string
+          raison_sociale?: string
+          siret?: string
+          statut?: string
+          stripe_customer_id?: string | null
+          stripe_subscription_id?: string | null
+          tva_intra?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "organizations_admin_user_id_fkey"
+            columns: ["admin_user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       pays: {
         Row: {
           code_iso: string | null
@@ -250,6 +363,7 @@ export type Database = {
           nom: string | null
           onboarding_completed_at: string | null
           onboarding_done: boolean
+          organization_id: string | null
           pays_concernes: string[] | null
           pension_alimentaire: boolean | null
           personne_handicap: boolean | null
@@ -292,6 +406,7 @@ export type Database = {
           nom?: string | null
           onboarding_completed_at?: string | null
           onboarding_done?: boolean
+          organization_id?: string | null
           pays_concernes?: string[] | null
           pension_alimentaire?: boolean | null
           personne_handicap?: boolean | null
@@ -334,6 +449,7 @@ export type Database = {
           nom?: string | null
           onboarding_completed_at?: string | null
           onboarding_done?: boolean
+          organization_id?: string | null
           pays_concernes?: string[] | null
           pension_alimentaire?: boolean | null
           personne_handicap?: boolean | null
@@ -357,6 +473,13 @@ export type Database = {
             columns: ["metier_id"]
             isOneToOne: false
             referencedRelation: "metiers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "profiles_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
             referencedColumns: ["id"]
           },
         ]
