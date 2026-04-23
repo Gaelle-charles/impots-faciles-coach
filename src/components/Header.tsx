@@ -8,7 +8,6 @@ import logo from '@/assets/logo.png';
 import { cn } from '@/lib/utils';
 
 const navLinks = [
-  { label: 'Modules', to: '/modules' },
   { label: 'Tarifs', to: '/tarifs' },
   { label: 'Comment ça marche', to: '/comment-ca-marche' },
   { label: 'Pour les entreprises', to: '/impots-team' },
