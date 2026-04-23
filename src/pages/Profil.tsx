@@ -237,11 +237,11 @@ const Profil = () => {
           <div className="grid gap-4 sm:grid-cols-2">
             <div className="space-y-2">
               <Label htmlFor="prenom">Prénom *</Label>
-              <Input id="prenom" value={prenom} onChange={(e) => setPrenom(e.target.value)} placeholder="Marie" maxLength={100} />
+              <Input id="prenom" value={prenom} onChange={(e) => setPrenom(e.target.value)} placeholder="Votre prénom" maxLength={100} />
             </div>
             <div className="space-y-2">
               <Label htmlFor="nom">Nom *</Label>
-              <Input id="nom" value={nom} onChange={(e) => setNom(e.target.value)} placeholder="Dupont" maxLength={100} />
+              <Input id="nom" value={nom} onChange={(e) => setNom(e.target.value)} placeholder="Votre nom" maxLength={100} />
             </div>
           </div>
 
