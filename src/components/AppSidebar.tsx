@@ -7,7 +7,6 @@ import { Badge } from '@/components/ui/badge';
 import logo from '@/assets/logo.png';
 import {
   LayoutDashboard,
-  BookOpen,
   BarChart3,
   Calculator,
   User,
