@@ -144,7 +144,7 @@ const Dashboard = () => {
           {profile?.prenom ? `Bonjour ${profile.prenom} 👋` : 'Tableau de bord'}
         </h1>
         <p className="mt-1 text-muted-foreground">
-          Voici où tu en es dans ta formation fiscale.
+          Voici où tu en es dans ta formation sur les impôts.
         </p>
       </div>
 

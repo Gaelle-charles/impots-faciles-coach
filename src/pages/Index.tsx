@@ -129,7 +129,7 @@ const Index = () => {
 
         <div className="relative z-10 max-w-3xl mx-auto">
           <span className="inline-block mb-4 px-4 py-1.5 rounded-full bg-primary-foreground/10 border border-primary-foreground/20 text-primary-foreground text-sm font-medium backdrop-blur-sm">
-            🎓 La plateforme n°1 de formation fiscale
+            🎓 La plateforme n°1 de formation sur les impôts
           </span>
           <h1 className="font-heading text-4xl sm:text-5xl md:text-6xl font-bold leading-tight text-primary-foreground">
             Les impôts, enfin{' '}
@@ -256,7 +256,7 @@ const Index = () => {
             Prêt à maîtriser vos impôts ?
           </h2>
           <p className="mt-4 text-white/80 max-w-md mx-auto">
-            Rejoignez Impôts Facile et commencez votre formation fiscale dès aujourd'hui.
+            Rejoignez Impôts Facile et commencez votre formation sur les impôts dès aujourd'hui.
           </p>
           <Link to="/inscription">
             <Button variant="cta" size="lg" className="mt-8 gap-2 text-base px-8 py-6 shadow-lg">

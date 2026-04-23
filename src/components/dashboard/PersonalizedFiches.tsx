@@ -329,11 +329,11 @@ export const PersonalizedFiches = () => {
         )
       )}
 
-      {/* === PREMIUM : passeport fiscal === */}
+      {/* === PREMIUM : passeport personnalisé === */}
       {plan === 'premium' && showPasseport && (
         <div>
           <h3 className="font-heading text-lg font-bold text-foreground mb-4">
-            Votre passeport fiscal
+            Votre passeport personnalisé
           </h3>
           <Card className="border-border bg-gradient-to-br from-primary/5 to-primary/10 shadow-sm">
             <CardContent className="p-6 space-y-3">
@@ -344,7 +344,7 @@ export const PersonalizedFiches = () => {
                     Régime détecté : {profile.situation_principale === 'independant' ? 'Indépendant' : 'Dirigeant'}
                   </h4>
                   <p className="text-sm text-muted-foreground">
-                    Votre passeport fiscal personnalisé sera bientôt disponible.
+                    Votre passeport personnalisé sera bientôt disponible.
                   </p>
                 </div>
               </div>
@@ -353,13 +353,13 @@ export const PersonalizedFiches = () => {
         </div>
       )}
 
-      {/* === EXPERT : teaser passeport fiscal === */}
+      {/* === EXPERT : teaser passeport personnalisé === */}
       {plan === 'expert' && showPasseport && (
         <LockedSection
-          title="Votre passeport fiscal"
+          title="Votre passeport personnalisé"
           count={1}
           requiredPlan="premium"
-          description="Débloquez votre passeport fiscal personnalisé avec le plan Premium."
+          description="Débloquez votre passeport personnalisé avec le plan Premium."
         />
       )}
     </section>
