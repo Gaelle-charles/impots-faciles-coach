@@ -130,42 +130,7 @@ export default function ImpotsTeamSouscription() {
     }
     setSubmitting(true);
     try {
-      // Créer le compte si pas connecté
-      if (!user) {
-        if (!email || !password || password.length < 8 || !prenom || !nom) {
-          toast({
-            title: 'Compte invalide',
-            description: 'Email, mot de passe (min 8) et identité requis.',
-            variant: 'destructive',
-          });
-          setSubmitting(false);
-          return;
-        }
-        const { error: signUpErr } = await supabase.auth.signUp({
-          email,
-          password,
-          options: {
-            emailRedirectTo: `${window.location.origin}/auth/callback`,
-            data: { prenom, nom, role: 'admin_org' },
-          },
-        });
-        if (signUpErr) {
-          toast({ title: 'Erreur compte', description: signUpErr.message, variant: 'destructive' });
-          setSubmitting(false);
-          return;
-        }
-        // Connexion immédiate (session) — autoConfirm peut ne pas être actif → on tente sign-in
-        const { error: signInErr } = await supabase.auth.signInWithPassword({ email, password });
-        if (signInErr) {
-          toast({
-            title: 'Vérifiez votre email',
-            description: 'Confirmez votre email puis connectez-vous pour finaliser.',
-          });
-          setSubmitting(false);
-          return;
-        }
-      }
-
+      const nowIso = new Date().toISOString();
       const { data, error } = await supabase.functions.invoke('create-team-checkout-session', {
         body: {
           raison_sociale: raisonSociale.trim(),
@@ -174,6 +139,8 @@ export default function ImpotsTeamSouscription() {
           tva_intra: tva.trim(),
           plan,
           nb_licences: nbLicences,
+          cgv_accepted_at: nowIso,
+          cgu_accepted_at: nowIso,
         },
       });
 
