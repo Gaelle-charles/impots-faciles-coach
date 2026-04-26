@@ -73,7 +73,61 @@ export default function ImpotsTeamSouscription() {
     setStep('compte');
   };
 
+  const goToAcceptation = async () => {
+    // Côté étape "compte" : valider le compte / créer si besoin, puis passer à l'étape acceptation
+    setSubmitting(true);
+    try {
+      if (!user) {
+        if (!email || !password || password.length < 8 || !prenom || !nom) {
+          toast({
+            title: 'Compte invalide',
+            description: 'Email, mot de passe (min 8) et identité requis.',
+            variant: 'destructive',
+          });
+          setSubmitting(false);
+          return;
+        }
+        const { error: signUpErr } = await supabase.auth.signUp({
+          email,
+          password,
+          options: {
+            emailRedirectTo: `${window.location.origin}/auth/callback`,
+            data: { prenom, nom, role: 'admin_org' },
+          },
+        });
+        if (signUpErr) {
+          toast({ title: 'Erreur compte', description: signUpErr.message, variant: 'destructive' });
+          setSubmitting(false);
+          return;
+        }
+        const { error: signInErr } = await supabase.auth.signInWithPassword({ email, password });
+        if (signInErr) {
+          toast({
+            title: 'Vérifiez votre email',
+            description: 'Confirmez votre email puis connectez-vous pour finaliser.',
+          });
+          setSubmitting(false);
+          return;
+        }
+      }
+      setStep('acceptation');
+    } catch (err) {
+      console.error(err);
+      toast({ title: 'Erreur', description: (err as Error).message, variant: 'destructive' });
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
   const handleSubmit = async () => {
+    if (!acceptCgv || !acceptCgu) {
+      toast({
+        title: 'Acceptation requise',
+        description: 'Vous devez accepter les CGV et les CGU pour continuer.',
+        variant: 'destructive',
+      });
+      return;
+    }
     setSubmitting(true);
     try {
       // Créer le compte si pas connecté
