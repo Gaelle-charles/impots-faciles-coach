@@ -172,6 +172,11 @@ export default function ImpotsTeamSouscription() {
             </Link>
           </div>
 
+          <div className="mb-3 text-xs font-medium text-muted-foreground">
+            Étape {step === 'entreprise' ? 1 : step === 'compte' ? 2 : 3} / 3 —{' '}
+            {step === 'entreprise' ? 'Entreprise' : step === 'compte' ? 'Compte administrateur' : 'Conditions & paiement'}
+          </div>
+
           <Card>
             <CardHeader>
               <CardTitle>
