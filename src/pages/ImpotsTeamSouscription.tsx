@@ -10,7 +10,8 @@ import { Textarea } from '@/components/ui/textarea';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
-import { Loader2 } from 'lucide-react';
+import { Loader2, ExternalLink } from 'lucide-react';
+import { Checkbox } from '@/components/ui/checkbox';
 
 const PRICES = {
   starter: { individuel: 49, team: 44, label: 'Starter' },
