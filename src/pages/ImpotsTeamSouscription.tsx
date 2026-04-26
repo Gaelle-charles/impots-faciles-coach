@@ -29,7 +29,9 @@ export default function ImpotsTeamSouscription() {
   const initialPlan = (params.get('plan') as Plan) || 'expert';
   const initialNb = Math.max(2, parseInt(params.get('nb') || '10', 10) || 10);
 
-  const [step, setStep] = useState<'entreprise' | 'compte'>('entreprise');
+  const [step, setStep] = useState<'entreprise' | 'compte' | 'acceptation'>('entreprise');
+  const [acceptCgv, setAcceptCgv] = useState(false);
+  const [acceptCgu, setAcceptCgu] = useState(false);
   const [submitting, setSubmitting] = useState(false);
 
   // Étape A
