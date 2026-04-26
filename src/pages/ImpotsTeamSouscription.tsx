@@ -283,7 +283,88 @@ export default function ImpotsTeamSouscription() {
                     <Button variant="outline" onClick={() => setStep('entreprise')} disabled={submitting}>
                       Retour
                     </Button>
-                    <Button className="flex-1" onClick={handleSubmit} disabled={submitting}>
+                    <Button className="flex-1" onClick={goToAcceptation} disabled={submitting}>
+                      {submitting ? (
+                        <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Préparation…</>
+                      ) : (
+                        'Continuer'
+                      )}
+                    </Button>
+                  </div>
+                </>
+              )}
+
+              {step === 'acceptation' && (
+                <>
+                  <div className="rounded-lg border bg-background p-4 space-y-1 text-sm">
+                    <p className="font-medium">Récapitulatif</p>
+                    <p className="text-muted-foreground">
+                      Plan <span className="text-foreground font-medium">{PRICES[plan].label}</span> ·{' '}
+                      <span className="text-foreground font-medium">{nbLicences}</span> licences
+                    </p>
+                    <p className="text-muted-foreground">
+                      Total annuel TTC :{' '}
+                      <span className="text-primary font-semibold">
+                        {total.toLocaleString('fr-FR')} €
+                      </span>
+                    </p>
+                  </div>
+
+                  <div className="space-y-3 rounded-lg border bg-background p-4">
+                    <p className="text-sm font-medium">Acceptation des conditions</p>
+
+                    <label className="flex items-start gap-3 cursor-pointer">
+                      <Checkbox
+                        checked={acceptCgv}
+                        onCheckedChange={(v) => setAcceptCgv(v === true)}
+                        className="mt-0.5"
+                      />
+                      <span className="text-sm leading-relaxed">
+                        J'ai lu et j'accepte les{' '}
+                        <Link
+                          to="/legal/cgv"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-primary underline inline-flex items-center gap-1"
+                        >
+                          Conditions Générales de Vente
+                          <ExternalLink className="h-3 w-3" />
+                        </Link>
+                        .
+                      </span>
+                    </label>
+
+                    <label className="flex items-start gap-3 cursor-pointer">
+                      <Checkbox
+                        checked={acceptCgu}
+                        onCheckedChange={(v) => setAcceptCgu(v === true)}
+                        className="mt-0.5"
+                      />
+                      <span className="text-sm leading-relaxed">
+                        J'ai lu et j'accepte les{' '}
+                        <Link
+                          to="/legal/cgu"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-primary underline inline-flex items-center gap-1"
+                        >
+                          Conditions Générales d'Utilisation
+                          <ExternalLink className="h-3 w-3" />
+                        </Link>
+                        .
+                      </span>
+                    </label>
+                  </div>
+
+                  <div className="flex gap-3">
+                    <Button variant="outline" onClick={() => setStep('compte')} disabled={submitting}>
+                      Retour
+                    </Button>
+                    <Button
+                      className="flex-1"
+                      onClick={handleSubmit}
+                      disabled={submitting || !acceptCgv || !acceptCgu}
+                    >
                       {submitting ? (
                         <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Redirection…</>
                       ) : (
