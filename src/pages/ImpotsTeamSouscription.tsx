@@ -10,7 +10,8 @@ import { Textarea } from '@/components/ui/textarea';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
-import { Loader2 } from 'lucide-react';
+import { Loader2, ExternalLink } from 'lucide-react';
+import { Checkbox } from '@/components/ui/checkbox';
 
 const PRICES = {
   starter: { individuel: 49, team: 44, label: 'Starter' },
@@ -28,7 +29,9 @@ export default function ImpotsTeamSouscription() {
   const initialPlan = (params.get('plan') as Plan) || 'expert';
   const initialNb = Math.max(2, parseInt(params.get('nb') || '10', 10) || 10);
 
-  const [step, setStep] = useState<'entreprise' | 'compte'>('entreprise');
+  const [step, setStep] = useState<'entreprise' | 'compte' | 'acceptation'>('entreprise');
+  const [acceptCgv, setAcceptCgv] = useState(false);
+  const [acceptCgu, setAcceptCgu] = useState(false);
   const [submitting, setSubmitting] = useState(false);
 
   // Étape A
@@ -70,10 +73,10 @@ export default function ImpotsTeamSouscription() {
     setStep('compte');
   };
 
-  const handleSubmit = async () => {
+  const goToAcceptation = async () => {
+    // Côté étape "compte" : valider le compte / créer si besoin, puis passer à l'étape acceptation
     setSubmitting(true);
     try {
-      // Créer le compte si pas connecté
       if (!user) {
         if (!email || !password || password.length < 8 || !prenom || !nom) {
           toast({
@@ -97,7 +100,6 @@ export default function ImpotsTeamSouscription() {
           setSubmitting(false);
           return;
         }
-        // Connexion immédiate (session) — autoConfirm peut ne pas être actif → on tente sign-in
         const { error: signInErr } = await supabase.auth.signInWithPassword({ email, password });
         if (signInErr) {
           toast({
@@ -108,7 +110,27 @@ export default function ImpotsTeamSouscription() {
           return;
         }
       }
+      setStep('acceptation');
+    } catch (err) {
+      console.error(err);
+      toast({ title: 'Erreur', description: (err as Error).message, variant: 'destructive' });
+    } finally {
+      setSubmitting(false);
+    }
+  };
 
+  const handleSubmit = async () => {
+    if (!acceptCgv || !acceptCgu) {
+      toast({
+        title: 'Acceptation requise',
+        description: 'Vous devez accepter les CGV et les CGU pour continuer.',
+        variant: 'destructive',
+      });
+      return;
+    }
+    setSubmitting(true);
+    try {
+      const nowIso = new Date().toISOString();
       const { data, error } = await supabase.functions.invoke('create-team-checkout-session', {
         body: {
           raison_sociale: raisonSociale.trim(),
@@ -117,6 +139,8 @@ export default function ImpotsTeamSouscription() {
           tva_intra: tva.trim(),
           plan,
           nb_licences: nbLicences,
+          cgv_accepted_at: nowIso,
+          cgu_accepted_at: nowIso,
         },
       });
 
@@ -146,6 +170,11 @@ export default function ImpotsTeamSouscription() {
             <Link to="/impots-team" className="text-sm text-muted-foreground hover:underline">
               ← Retour à Impôts Team
             </Link>
+          </div>
+
+          <div className="mb-3 text-xs font-medium text-muted-foreground">
+            Étape {step === 'entreprise' ? 1 : step === 'compte' ? 2 : 3} / 3 —{' '}
+            {step === 'entreprise' ? 'Entreprise' : step === 'compte' ? 'Compte administrateur' : 'Conditions & paiement'}
           </div>
 
           <Card>
@@ -254,7 +283,88 @@ export default function ImpotsTeamSouscription() {
                     <Button variant="outline" onClick={() => setStep('entreprise')} disabled={submitting}>
                       Retour
                     </Button>
-                    <Button className="flex-1" onClick={handleSubmit} disabled={submitting}>
+                    <Button className="flex-1" onClick={goToAcceptation} disabled={submitting}>
+                      {submitting ? (
+                        <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Préparation…</>
+                      ) : (
+                        'Continuer'
+                      )}
+                    </Button>
+                  </div>
+                </>
+              )}
+
+              {step === 'acceptation' && (
+                <>
+                  <div className="rounded-lg border bg-background p-4 space-y-1 text-sm">
+                    <p className="font-medium">Récapitulatif</p>
+                    <p className="text-muted-foreground">
+                      Plan <span className="text-foreground font-medium">{PRICES[plan].label}</span> ·{' '}
+                      <span className="text-foreground font-medium">{nbLicences}</span> licences
+                    </p>
+                    <p className="text-muted-foreground">
+                      Total annuel TTC :{' '}
+                      <span className="text-primary font-semibold">
+                        {total.toLocaleString('fr-FR')} €
+                      </span>
+                    </p>
+                  </div>
+
+                  <div className="space-y-3 rounded-lg border bg-background p-4">
+                    <p className="text-sm font-medium">Acceptation des conditions</p>
+
+                    <label className="flex items-start gap-3 cursor-pointer">
+                      <Checkbox
+                        checked={acceptCgv}
+                        onCheckedChange={(v) => setAcceptCgv(v === true)}
+                        className="mt-0.5"
+                      />
+                      <span className="text-sm leading-relaxed">
+                        J'ai lu et j'accepte les{' '}
+                        <Link
+                          to="/legal/cgv"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-primary underline inline-flex items-center gap-1"
+                        >
+                          Conditions Générales de Vente
+                          <ExternalLink className="h-3 w-3" />
+                        </Link>
+                        .
+                      </span>
+                    </label>
+
+                    <label className="flex items-start gap-3 cursor-pointer">
+                      <Checkbox
+                        checked={acceptCgu}
+                        onCheckedChange={(v) => setAcceptCgu(v === true)}
+                        className="mt-0.5"
+                      />
+                      <span className="text-sm leading-relaxed">
+                        J'ai lu et j'accepte les{' '}
+                        <Link
+                          to="/legal/cgu"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-primary underline inline-flex items-center gap-1"
+                        >
+                          Conditions Générales d'Utilisation
+                          <ExternalLink className="h-3 w-3" />
+                        </Link>
+                        .
+                      </span>
+                    </label>
+                  </div>
+
+                  <div className="flex gap-3">
+                    <Button variant="outline" onClick={() => setStep('compte')} disabled={submitting}>
+                      Retour
+                    </Button>
+                    <Button
+                      className="flex-1"
+                      onClick={handleSubmit}
+                      disabled={submitting || !acceptCgv || !acceptCgu}
+                    >
                       {submitting ? (
                         <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Redirection…</>
                       ) : (
