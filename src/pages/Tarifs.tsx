@@ -102,6 +102,14 @@ const Tarifs = () => {
       navigate(`/connexion?redirect=${encodeURIComponent('/tarifs')}`);
       return;
     }
+    if (isOrgAdmin) {
+      const ok = window.confirm(
+        `Vous êtes rattaché à l'organisation « ${org?.raison_sociale ?? ''} » (plan ${org?.plan ?? ''}). ` +
+        `Souscrire un abonnement B2C personnel doublonnera votre licence orga et vous serez facturé séparément. ` +
+        `Continuer quand même ?`
+      );
+      if (!ok) return;
+    }
     try {
       setLoadingPlan(planSlug);
       const { data, error } = await supabase.functions.invoke('create-checkout-session', {
