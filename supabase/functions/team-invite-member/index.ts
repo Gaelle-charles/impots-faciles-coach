@@ -187,7 +187,7 @@ Deno.serve(async (req) => {
     }
 
     const baseUrl = Deno.env.get("PUBLIC_APP_URL") ?? "https://impotsfacile.com";
-    const acceptUrl = `${baseUrl.replace(/\/$/, "")}/invitation/${inv.token}`;
+    const acceptUrl = `${baseUrl.replace(/\/$/, "")}/impots-team/invitation/${inv.token}`;
 
     // Inviter name
     const { data: inviterProfile } = await admin
