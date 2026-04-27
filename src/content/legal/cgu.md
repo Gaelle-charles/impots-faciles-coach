@@ -1,171 +1,233 @@
-## DOCUMENT 2 — CONDITIONS GÉNÉRALES D'UTILISATION (CGU)
+# CONDITIONS GÉNÉRALES D'UTILISATION — Impôts Facile
 
-*Applicables aux plateformes Impôts Facile, Annul'Impôts et Impôts Gagnants exploitées par [À compléter avant lancement].*
+**Mis à jour : avril 2026 · Version 1.0**
 
----
-
-### Article 1 — Objet
-
-Les présentes Conditions Générales d'Utilisation (ci-après « CGU ») ont pour objet de définir les modalités et conditions d'accès et d'utilisation des plateformes numériques exploitées par Annul'Impôts, à savoir :
-
-- **Impôts Facile** — [À compléter avant lancement]
-- **Annul'Impôts** — [À compléter avant lancement]
-- **Impôts Gagnants** — [À compléter avant lancement]
-
-Les CGU complètent les Conditions Générales de Vente (CGV) et la Politique de Confidentialité, qui forment avec elles un ensemble contractuel applicable à l'ensemble des utilisateurs des plateformes.
-
-Tout accès et toute utilisation des plateformes emportent acceptation pleine et entière des présentes CGU. Si l'utilisateur n'accepte pas ces conditions, il doit s'abstenir d'utiliser les plateformes.
+> Document applicable à la plateforme Impôts Facile (https://impotsfacile.com) éditée par ANNUL IMPOTS.
 
 ---
 
-### Article 2 — Accès aux plateformes
+## Article 1 — Objet
 
-#### 2.1 Conditions d'accès
+Les présentes Conditions Générales d'Utilisation (« **CGU** ») définissent les modalités d'accès et d'utilisation de la plateforme **Impôts Facile** exploitée par ANNUL IMPOTS.
 
-L'accès aux plateformes est réservé aux personnes physiques :
-- **Majeures** (âgées d'au moins 18 ans à la date de création du compte)
-- Disposant d'une connexion internet et d'un équipement informatique compatible
-- Résidant en France métropolitaine, dans les DOM-TOM, ou à l'étranger (diaspora internationale)
+Les CGU complètent les Conditions Générales de Vente (CGV) et la Politique de Confidentialité, formant ensemble un cadre contractuel applicable à tout utilisateur de la plateforme.
 
-Les personnes mineures ne sont pas autorisées à créer un compte ou à passer commande. Le cas échéant, leur représentant légal est seul habilité à agir en leur nom.
+Tout accès et toute utilisation de la plateforme emportent acceptation pleine et entière des présentes CGU. À défaut, l'utilisateur doit s'abstenir d'utiliser la plateforme.
 
-#### 2.2 Création de compte utilisateur
+---
 
-L'accès aux contenus payants nécessite la création d'un compte utilisateur en fournissant :
-- Un prénom et un nom
-- Une adresse email valide
-- Un mot de passe (choisi par l'utilisateur selon les critères de sécurité indiqués)
+## Article 2 — Identification de l'éditeur
 
-L'utilisateur s'engage à fournir des informations exactes, complètes et à jour. Toute fausse déclaration engage sa seule responsabilité.
+| Champ | Valeur |
+|---|---|
+| Dénomination | ANNUL IMPOTS |
+| Forme juridique | SARL au capital de 500 € |
+| SIREN | 895 319 226 |
+| Siège social | 340 Route de la Bouaye, 97190 Le Gosier, Guadeloupe |
+| Représentante légale | Madame Laure CHANTEUR |
+| Email | contact@impotsfacile.com |
+| Site | https://impotsfacile.com |
 
-#### 2.3 Confidentialité des identifiants
+---
 
-L'utilisateur est seul responsable de la confidentialité de ses identifiants de connexion (email et mot de passe). Il s'engage à :
-- Ne pas communiquer ses identifiants à des tiers
-- Informer immédiatement Annul'Impôts de toute utilisation non autorisée de son compte (contact@annulimpots.fr)
+## Article 3 — Accès à la plateforme
+
+### 3.1 Conditions d'accès
+La plateforme est accessible aux personnes physiques :
+- **Majeures** (18 ans minimum à la création du compte)
+- Disposant d'une connexion internet et d'un équipement compatible
+- Résidant en France métropolitaine, dans les DOM-TOM, ou à l'étranger
+
+Les **mineurs** ne sont pas autorisés à créer un compte ou à passer commande. Le représentant légal est seul habilité à agir en leur nom.
+
+### 3.2 Catégories d'utilisateurs
+La plateforme distingue plusieurs profils :
+
+**Utilisateurs B2C (particuliers)**
+- Compte créé directement sur la plateforme
+- Souscription à un plan Starter, Expert ou Premium
+- Accès au parcours pédagogique complet selon le plan choisi
+
+**Administrateurs B2B (Impôts Team)**
+- Représentent une organisation (entreprise, association, CSE, etc.)
+- Gèrent les licences de leur équipe depuis le tableau de bord `/impots-team/dashboard`
+- Accès en mode **aperçu** à la plateforme (lecture seule, sans sauvegarde de progressions ni certificat) tant qu'ils n'activent pas une licence personnelle
+- Peuvent activer une licence personnelle pour suivre eux-mêmes le parcours certifiant (occupation d'une licence)
+
+**Bénéficiaires B2B (collaborateurs invités)**
+- Invités par l'Administrateur de leur organisation
+- Accès au parcours pédagogique complet selon le plan de l'organisation
+
+### 3.3 Création de compte
+La création d'un compte nécessite :
+- Prénom et nom
+- Email valide et accessible
+- Mot de passe respectant les critères de sécurité indiqués
+
+L'utilisateur s'engage à fournir des informations **exactes, complètes et à jour**. Toute fausse déclaration engage sa seule responsabilité.
+
+### 3.4 Confidentialité des identifiants
+L'utilisateur est seul responsable de la confidentialité de ses identifiants. Il s'engage à :
+- Ne pas les communiquer à des tiers
+- Informer immédiatement ANNUL IMPOTS de toute utilisation non autorisée (`contact@impotsfacile.com`)
 - Se déconnecter à l'issue de chaque session sur tout équipement partagé
 
-Annul'Impôts ne saurait être tenu responsable des accès frauduleux résultant de la négligence de l'utilisateur dans la conservation de ses identifiants.
+ANNUL IMPOTS ne peut être tenu responsable des accès frauduleux résultant de la négligence de l'utilisateur.
 
-#### 2.4 Accès gratuit — Audit Annul'Impôts Coaching
-
-L'audit fiscal de 30 minutes proposé dans le cadre de l'offre Annul'Impôts Coaching est accessible gratuitement, sans engagement d'achat. Un formulaire de prise de rendez-vous est mis à disposition via [À compléter avant lancement]. L'utilisateur prend connaissance des CGU en réservant l'audit.
+### 3.5 Module gratuit
+Un module pédagogique gratuit (Module 0) est accessible à toute personne créant un compte, sans souscription requise.
 
 ---
 
-### Article 3 — Comportement de l'utilisateur
+## Article 4 — Utilisation de la plateforme
 
-#### 3.1 Utilisations autorisées
+### 4.1 Utilisations autorisées
+L'utilisateur accède aux contenus dans le cadre d'un usage **strictement personnel et pédagogique**, conformément à la licence accordée par les CGV.
 
-L'utilisateur est autorisé à accéder aux contenus des plateformes dans le cadre d'un usage **strictement personnel et pédagogique**, conformément à la licence accordée par les CGV.
-
-#### 3.2 Utilisations interdites
-
-L'utilisateur s'engage formellement à ne pas :
+### 4.2 Utilisations interdites
 
 **Concernant les contenus :**
-- Reproduire, copier, télécharger massivement, imprimer ou diffuser les contenus à des fins autres que personnelles
-- Revendre, louer, sous-licencier ou céder tout ou partie des contenus à des tiers
-- Utiliser les contenus dans un cadre professionnel, commercial ou lucratif (formation tierce, conseil, séminaires, etc.)
-- Modifier, adapter, décompiler, déassembler ou créer des œuvres dérivées à partir des simulateurs ou outils
+- Reproduction, copie, téléchargement massif, impression à des fins non personnelles
+- Revente, location, sous-licence ou cession à des tiers
+- Usage professionnel ou commercial (formation, conseil, séminaires)
+- Modification, décompilation, désassemblage des simulateurs et outils
+- Création d'œuvres dérivées
 
 **Concernant les comptes :**
-- Partager ses identifiants de connexion avec un ou plusieurs tiers
-- Créer plusieurs comptes pour contourner les restrictions d'accès
-- Accéder frauduleusement au compte d'un autre utilisateur
+- Partage des identifiants de connexion avec un tiers
+- Création de plusieurs comptes pour contourner les restrictions
+- Accès frauduleux au compte d'un autre utilisateur
+- Pour les Administrateurs B2B : invitation de personnes physiques fictives ou d'identités usurpées pour multiplier les licences
 
-**Concernant les plateformes :**
-- Tenter de porter atteinte à la sécurité, à l'intégrité ou aux performances des plateformes (notamment par des attaques DDoS, injections SQL, tentatives de hacking)
-- Publier des contenus illicites, injurieux, diffamatoires, portant atteinte à la vie privée ou aux droits de tiers
-- Utiliser des robots, scrapers ou tout outil automatisé pour extraire des données des plateformes
+**Concernant la plateforme :**
+- Tentatives de porter atteinte à la sécurité, l'intégrité ou les performances (DDoS, injections SQL, hacking)
+- Publication de contenus illicites, injurieux, diffamatoires
+- Utilisation de robots, scrapers, outils automatisés d'extraction
+- Tentatives de contournement des restrictions techniques (paywall, droits d'accès aux modules)
 
-Toute violation de ces dispositions est susceptible d'entraîner la suspension immédiate du compte, sans remboursement, ainsi que des poursuites civiles et/ou pénales.
+Toute violation peut entraîner la **suspension immédiate du compte** sans remboursement, ainsi que des poursuites civiles et/ou pénales.
 
----
+### 4.3 Règles spécifiques aux Administrateurs B2B
+L'Administrateur d'une organisation s'engage à :
+- N'inviter que des **personnes physiques réelles, nommément identifiées** (collaborateurs, membres, bénéficiaires)
+- Ne pas attribuer une licence à un tiers extérieur à son organisation pour son seul bénéfice
+- Tenir à jour la liste des bénéficiaires et retirer les personnes ayant quitté l'organisation
+- Respecter le RGPD lors de l'invitation de ses bénéficiaires (information préalable, base légale)
 
-### Article 4 — Contenu soumis par l'utilisateur
-
-#### 4.1 Données transmises dans le cadre du coaching
-
-Dans le cadre du coaching individuel (offre Annul'Impôts Coaching), l'utilisateur peut être amené à partager des éléments de sa situation fiscale personnelle (revenus, charges, avis d'imposition, etc.) avec le coach ou via les outils de la plateforme.
-
-Ces données sont traitées de manière strictement confidentielle et utilisées exclusivement aux fins de la prestation pédagogique souscrite. Elles ne sont pas partagées avec des tiers à des fins commerciales. Pour le détail du traitement, voir la Politique de Confidentialité.
-
-#### 4.2 Précaution recommandée
-
-Il est recommandé à l'utilisateur de ne partager que les informations strictement nécessaires à l'accompagnement pédagogique. Annul'Impôts n'est pas tenu de recevoir, conserver ou traiter des documents fiscaux originaux (avis d'imposition, déclarations, etc.). Toute transmission de tels documents est faite sous la seule responsabilité de l'utilisateur.
-
-#### 4.3 Propos et commentaires
-
-Si la plateforme permet à l'utilisateur de laisser des commentaires, questions ou évaluations, l'utilisateur garantit qu'ils sont licites, non diffamatoires et respectueux des droits des tiers. Annul'Impôts se réserve le droit de supprimer tout contenu non conforme.
+### 4.4 Règles spécifiques aux bénéficiaires B2B
+Le bénéficiaire invité par une organisation utilise la plateforme à titre **strictement personnel** pour sa propre formation fiscale. Il ne peut :
+- Partager son compte avec un tiers
+- Utiliser les contenus dans un cadre professionnel autre que sa formation personnelle
+- Accéder à la plateforme après son retrait par l'Administrateur (la licence est libérée pour un autre bénéficiaire)
 
 ---
 
-### Article 5 — Disponibilité du service
+## Article 5 — Données saisies par l'utilisateur
 
-#### 5.1 Engagement de moyens
+### 5.1 Données fiscales saisies dans les simulateurs
+Les utilisateurs peuvent saisir des informations relatives à leur situation fiscale (revenus, charges, composition du foyer) pour utiliser les simulateurs.
 
-Annul'Impôts s'engage à mettre en œuvre tous les moyens raisonnables pour assurer la disponibilité des plateformes 24h/24 et 7j/7. Toutefois, **aucune garantie de disponibilité continue et ininterrompue n'est accordée**.
+**Ces données sont traitées avec un niveau de sécurité renforcé** :
+- Stockage chiffré
+- Accès restreint aux strictes nécessités du service
+- Non-partage avec des tiers à des fins commerciales
+- Suppression conforme aux délais de la Politique de Confidentialité
 
-#### 5.2 Interruptions planifiées
+L'utilisateur est libre de ne saisir que les informations qu'il juge nécessaires. Aucune saisie n'est obligatoire pour accéder aux contenus pédagogiques.
 
-Des interruptions de service peuvent intervenir notamment pour :
-- Opérations de maintenance préventive ou corrective
-- Mises à jour des contenus pédagogiques et des barèmes fiscaux
-- Améliorations techniques et fonctionnelles des plateformes
+### 5.2 Caractère pédagogique des résultats
+Les résultats des simulateurs sont des **estimations pédagogiques** ne tenant pas compte de l'ensemble des spécificités du foyer fiscal de l'utilisateur. Voir le Disclaimer fiscal pour le détail.
+
+### 5.3 Commentaires et interactions
+Si la plateforme permet à l'utilisateur de laisser des commentaires, questions ou évaluations, l'utilisateur garantit qu'ils sont licites, non diffamatoires et respectueux des droits des tiers. ANNUL IMPOTS se réserve le droit de supprimer tout contenu non conforme.
+
+---
+
+## Article 6 — Disponibilité et maintenance
+
+### 6.1 Engagement de moyens
+ANNUL IMPOTS s'engage à mettre en œuvre tous les moyens raisonnables pour assurer la disponibilité de la plateforme **24h/24 et 7j/7**. Aucune garantie de disponibilité continue et ininterrompue n'est accordée.
+
+### 6.2 Interruptions planifiées
+Pour :
+- Maintenance préventive ou corrective
+- Mises à jour des contenus pédagogiques (notamment lors des évolutions législatives annuelles)
+- Améliorations techniques
 - Migrations d'hébergement
 
-L'utilisateur sera informé des maintenances programmées avec un préavis raisonnable par email ou via un bandeau d'information sur le site.
+L'utilisateur est informé avec un préavis raisonnable par email ou bandeau d'information.
 
-#### 5.3 Interruptions non planifiées
+### 6.3 Interruptions non planifiées
+ANNUL IMPOTS s'engage à mettre en œuvre les moyens pour rétablir le service rapidement et à informer les utilisateurs.
 
-En cas d'interruption non planifiée (panne technique, incident de sécurité, force majeure), Annul'Impôts s'engage à mettre en œuvre les moyens nécessaires pour rétablir le service dans les meilleurs délais et à informer les utilisateurs via les canaux disponibles.
-
-#### 5.4 Limitation de responsabilité
-
-Annul'Impôts ne saurait être tenu responsable des préjudices résultant d'interruptions de service, qu'elles soient planifiées ou non.
+### 6.4 Limitation de responsabilité
+ANNUL IMPOTS n'est pas responsable des préjudices résultant d'interruptions de service, planifiées ou non.
 
 ---
 
-### Article 6 — Liens hypertextes vers des sites tiers
+## Article 7 — Mise à jour annuelle des contenus
 
-Les plateformes Annul'Impôts peuvent contenir des liens hypertextes vers des sites officiels ou d'information tiers, notamment :
-- impots.gouv.fr (Direction Générale des Finances Publiques)
-- service-public.fr
-- legifrance.gouv.fr
-- cnil.fr
+Les contenus pédagogiques (modules, fiches, simulateurs) sont mis à jour annuellement pour refléter :
+- Les évolutions législatives (lois de finances, lois de finances rectificatives)
+- Les barèmes fiscaux publiés par la DGFIP
+- Les évolutions doctrinales (BOFiP)
 
-Ces liens sont fournis à titre indicatif et pédagogique. **Annul'Impôts ne saurait être tenu responsable du contenu, de la disponibilité ou des pratiques de ces sites tiers.** La mise en ligne d'un lien ne constitue pas une approbation du contenu du site référencé.
-
-De même, Annul'Impôts n'autorise pas la mise en place de liens hypertextes vers ses plateformes sans autorisation écrite préalable, à l'exception des liens profonds vers des pages publiques dans un cadre non commercial.
+Cette mise à jour est effectuée dans un délai raisonnable suivant la publication officielle des nouvelles règles. Les utilisateurs sont informés des évolutions majeures par email ou notification dans la plateforme.
 
 ---
 
-### Article 7 — Modification des CGU
+## Article 8 — Liens hypertextes
 
-#### 7.1 Droit de modification
+La plateforme peut contenir des liens vers des sites tiers officiels (impots.gouv.fr, service-public.fr, legifrance.gouv.fr, cnil.fr) à titre indicatif et pédagogique.
 
-Annul'Impôts se réserve le droit de modifier les présentes CGU à tout moment, notamment pour tenir compte des évolutions législatives, réglementaires, technologiques ou commerciales.
+ANNUL IMPOTS n'est pas responsable du contenu, de la disponibilité ou des pratiques de ces sites tiers. La présence d'un lien ne constitue pas une approbation.
 
-#### 7.2 Notification
-
-En cas de modification substantielle des CGU, les utilisateurs titulaires d'un compte seront informés par email à l'adresse renseignée lors de la création de leur compte, avec un préavis minimum de **[À compléter avant lancement]** avant l'entrée en vigueur des nouvelles CGU.
-
-#### 7.3 Acceptation par utilisation continue
-
-La poursuite de l'utilisation des plateformes après la date d'entrée en vigueur des CGU modifiées vaut acceptation des nouvelles conditions. Si l'utilisateur refuse les nouvelles CGU, il doit cesser d'utiliser les plateformes et peut demander la suppression de son compte en contactant contact@annulimpots.fr.
+ANNUL IMPOTS n'autorise pas la mise en place de liens vers la plateforme sans autorisation préalable, sauf liens profonds vers des pages publiques dans un cadre non commercial.
 
 ---
 
-### Article 8 — Droit applicable et litiges
+## Article 9 — Suspension et clôture du compte
 
-Les présentes CGU sont soumises au droit français. Tout litige relatif à leur interprétation ou leur exécution sera soumis aux dispositions de l'Article 12 des CGV (médiation et tribunaux compétents).
+### 9.1 Suspension par ANNUL IMPOTS
+ANNUL IMPOTS peut suspendre l'accès au compte sans préavis en cas :
+- D'utilisation frauduleuse ou abusive (violations CGU, scraping, partage d'identifiants)
+- De non-paiement à l'échéance
+- De suspicion d'usage non conforme aux présentes CGU
+
+### 9.2 Clôture à l'initiative de l'utilisateur
+L'utilisateur peut demander la clôture de son compte à tout moment :
+- Depuis l'espace personnel : « Supprimer mon compte »
+- Par email à `contact@impotsfacile.com`
+
+La clôture entraîne :
+- L'anonymisation des données personnelles (sauf obligations légales de conservation)
+- La résiliation de l'abonnement à la fin de la période en cours (loi Chatel)
+- La suppression de l'accès à la plateforme
+
+### 9.3 Cas spécifique B2B
+Si un Administrateur B2B clôture son compte alors que des licences sont actives :
+- Les licences attribuées aux bénéficiaires restent valables jusqu'à la fin de la période payée
+- Aucune nouvelle invitation ne pourra être émise
+- Le renouvellement automatique est désactivé
 
 ---
 
-*CGU version 1.0 — Avril 2026*
-*Mis à jour : Avril 2026 — À faire valider par un avocat avant mise en ligne*
+## Article 10 — Modification des CGU
+
+ANNUL IMPOTS se réserve le droit de modifier les CGU à tout moment pour tenir compte des évolutions législatives, technologiques ou commerciales.
+
+En cas de modification substantielle, les utilisateurs sont informés par email avec un préavis minimum de **30 jours**. La poursuite de l'utilisation après cette date vaut acceptation des CGU modifiées.
+
+L'utilisateur refusant les nouvelles CGU peut clôturer son compte conformément à l'Article 9.2.
 
 ---
 
+## Article 11 — Droit applicable et litiges
+
+Les présentes CGU sont soumises au **droit français**.
+
+Tout litige relatif à leur interprétation ou leur exécution est soumis aux dispositions de l'**Article 13 des CGV** (médiation et tribunaux compétents).
+
 ---
+
+**CGU — Version 1.0 — Avril 2026**
