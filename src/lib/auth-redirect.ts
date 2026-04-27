@@ -16,7 +16,7 @@ export async function getPostLoginRedirect(userId: string): Promise<string> {
   const org = Array.isArray(orgData) ? orgData[0] : orgData;
 
   if (profile?.role === 'admin') return '/admin';
-  if (org?.org_id) return '/impots-team/dashboard';
+  if (org?.org_id && org?.role === 'admin') return '/impots-team/dashboard';
   if (profile?.onboarding_done === false) return '/onboarding';
   return '/dashboard';
 }

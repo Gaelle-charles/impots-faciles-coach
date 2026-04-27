@@ -1,9 +1,10 @@
 import { Link } from 'react-router-dom';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Menu, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/contexts/AuthContext';
 import { useAccess } from '@/hooks/useAccess';
+import { supabase } from '@/integrations/supabase/client';
 import logo from '@/assets/logo.png';
 import { cn } from '@/lib/utils';
 
@@ -21,6 +22,20 @@ export function Header({ variant = 'light' }: HeaderProps) {
   const { user, signOut } = useAuth();
   const { hasAdminAccess } = useAccess();
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [accountHref, setAccountHref] = useState('/dashboard');
+
+  useEffect(() => {
+    let cancelled = false;
+    if (!user) { setAccountHref('/dashboard'); return; }
+    (async () => {
+      const { data } = await supabase.rpc('get_user_organization', { p_user_id: user.id });
+      const org = Array.isArray(data) ? data[0] : data;
+      if (cancelled) return;
+      // Admin d'orga → dashboard B2B. Membre simple ou pas d'orga → dashboard B2C.
+      setAccountHref(org?.org_id && org?.role === 'admin' ? '/impots-team/dashboard' : '/dashboard');
+    })();
+    return () => { cancelled = true; };
+  }, [user]);
 
   const isDark = variant === 'dark';
   const isAdmin = hasAdminAccess();
@@ -76,7 +91,7 @@ export function Header({ variant = 'light' }: HeaderProps) {
         <div className="hidden items-center gap-3 md:flex">
           {user ? (
             <>
-              <Link to="/dashboard">
+              <Link to={accountHref}>
                 <Button variant={isDark ? 'cta' : 'default'} size="sm">
                   Mon compte
                 </Button>
@@ -158,7 +173,7 @@ export function Header({ variant = 'light' }: HeaderProps) {
           <div className="mt-4 flex flex-col gap-2">
             {user ? (
               <>
-                <Link to="/dashboard" onClick={() => setMobileOpen(false)}>
+                <Link to={accountHref} onClick={() => setMobileOpen(false)}>
                   <Button variant={isDark ? 'cta' : 'default'} size="sm" className="w-full">
                     Mon compte
                   </Button>
