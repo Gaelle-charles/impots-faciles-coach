@@ -38,6 +38,7 @@ const Module = () => {
   const navigate = useNavigate();
   const isMobile = useIsMobile();
   const { hasModuleAccess, isLoading: accessLoading, isOrgAdminPreview } = useAccess();
+  const { org, isOrgAdmin, hasLicense } = useOrgRole();
 
   const [module, setModule] = useState<ModuleRow | null>(null);
   const [contenus, setContenus] = useState<ContenuRow[]>([]);
