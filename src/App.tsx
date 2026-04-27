@@ -21,6 +21,11 @@ import Module from "./pages/Module";
 import Quizz from "./pages/Quizz";
 import Simulateur from "./pages/Simulateur";
 import SimulateurFrais from "./pages/SimulateurFrais";
+import MesSimulateurs from "./pages/MesSimulateurs";
+import SimulateurPAS from "./pages/SimulateurPAS";
+import SimulateurPlusValueImmo from "./pages/SimulateurPlusValueImmo";
+import SimulateurLMNP from "./pages/SimulateurLMNP";
+import SimulateurPinel from "./pages/SimulateurPinel";
 import FicheMetier from "./pages/FicheMetier";
 import Profil from "./pages/Profil";
 import MesModules from "./pages/MesModules";
@@ -96,8 +101,13 @@ const App = () => (
             {/* Protected routes with sidebar layout */}
             <Route element={<ProtectedRoute><AppLayout /></ProtectedRoute>}>
               <Route path="/dashboard" element={<Dashboard />} />
+              <Route path="/mes-simulateurs" element={<MesSimulateurs />} />
               <Route path="/simulateur" element={<Simulateur />} />
               <Route path="/simulateur-de-frais" element={<SimulateurFrais />} />
+              <Route path="/simulateur/pas" element={<SimulateurPAS />} />
+              <Route path="/simulateur/plus-value-immo" element={<SimulateurPlusValueImmo />} />
+              <Route path="/simulateur/lmnp" element={<SimulateurLMNP />} />
+              <Route path="/simulateur/pinel" element={<SimulateurPinel />} />
               <Route path="/fiche-metier/:id" element={<FicheMetier />} />
               <Route path="/profil" element={<Profil />} />
               <Route path="/mes-modules" element={<MesModules />} />
