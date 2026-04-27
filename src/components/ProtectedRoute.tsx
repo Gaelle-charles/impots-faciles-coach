@@ -12,32 +12,42 @@ export function ProtectedRoute({ children, adminOnly = false }: { children: Reac
   const [roleLoading, setRoleLoading] = useState(adminOnly);
   const [onboardingDone, setOnboardingDone] = useState<boolean | null>(null);
   const [onboardingLoading, setOnboardingLoading] = useState(true);
+  const [isOrgAdmin, setIsOrgAdmin] = useState<boolean | null>(null);
+  const [orgLoading, setOrgLoading] = useState(true);
 
   useEffect(() => {
     if (!user) {
       setOnboardingLoading(false);
+      setOrgLoading(false);
       return;
     }
 
-    const fetchProfile = async () => {
-      const { data } = await supabase
-        .from('profiles')
-        .select('role, onboarding_done')
-        .eq('id', user.id)
-        .single();
+    const fetchAll = async () => {
+      const [{ data: profile }, { data: orgData }] = await Promise.all([
+        supabase
+          .from('profiles')
+          .select('role, onboarding_done')
+          .eq('id', user.id)
+          .single(),
+        supabase.rpc('get_user_organization', { p_user_id: user.id }),
+      ]);
 
       if (adminOnly) {
-        setRole(data?.role ?? 'client');
+        setRole(profile?.role ?? 'client');
         setRoleLoading(false);
       }
-      setOnboardingDone(data?.onboarding_done ?? false);
+      setOnboardingDone(profile?.onboarding_done ?? false);
       setOnboardingLoading(false);
+
+      const org = Array.isArray(orgData) ? orgData[0] : orgData;
+      setIsOrgAdmin(!!(org?.org_id && org?.role === 'admin'));
+      setOrgLoading(false);
     };
 
-    fetchProfile();
+    fetchAll();
   }, [user, adminOnly]);
 
-  if (loading || (adminOnly && roleLoading) || onboardingLoading) {
+  if (loading || (adminOnly && roleLoading) || onboardingLoading || orgLoading) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-background">
         <div className="font-heading text-xl text-muted-foreground">Chargement...</div>
@@ -57,7 +67,13 @@ export function ProtectedRoute({ children, adminOnly = false }: { children: Reac
     return <Navigate to="/admin/login" replace />;
   }
 
-  // Redirect to onboarding if not completed (skip for admin routes and onboarding itself)
+  // Modèle B : un admin d'orga n'a accès qu'à son espace de gestion (et aux pages publiques).
+  // Toute tentative d'accès aux routes B2C protégées (dashboard, modules, simulateur, profil…) → redirect.
+  if (!adminOnly && isOrgAdmin && !isB2BRoute) {
+    return <Navigate to="/impots-team/dashboard" replace />;
+  }
+
+  // Redirect to onboarding if not completed (skip for admin routes, B2B routes, and onboarding itself)
   if (
     !adminOnly &&
     onboardingDone === false &&

@@ -186,14 +186,8 @@ Deno.serve(async (req) => {
       }
       orgId = org.id;
 
-      // Insert admin member
-      await admin.from("organization_members").insert({
-        organization_id: orgId,
-        user_id: user.id,
-        email: user.email,
-        role: "admin",
-        accepted_at: new Date().toISOString(),
-      });
+      // Modèle B : l'admin n'est PAS un membre. Il gère l'orga uniquement,
+      // n'occupe pas de licence et n'a pas accès aux modules.
 
       // Lier le profile à l'org
       await admin
