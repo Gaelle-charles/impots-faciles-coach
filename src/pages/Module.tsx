@@ -331,6 +331,7 @@ const Module = () => {
           onNext={handleNext}
         />
       </div>
+      </div>
 
       <Dialog open={showCompletion} onOpenChange={setShowCompletion}>
         <DialogContent className="sm:max-w-md">
