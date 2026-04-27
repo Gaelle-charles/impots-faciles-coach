@@ -397,7 +397,9 @@ export default function ImpotsTeamDashboard() {
                 <CardHeader>
                   <CardTitle>Collaborateurs</CardTitle>
                   <p className="text-sm text-muted-foreground">
-                    {usedLicences} / {org.nb_licences} licences utilisées · {remainingLicences} disponible{remainingLicences > 1 ? 's' : ''}
+                    Votre équipe : {usedLicences} personne{usedLicences > 1 ? 's' : ''} au total
+                    {' '}(vous + {Math.max(0, usedLicences - 1)} collaborateur{Math.max(0, usedLicences - 1) > 1 ? 's' : ''})
+                    {' · '}{org.nb_licences} licence{org.nb_licences > 1 ? 's' : ''} au total
                   </p>
                 </CardHeader>
                 <CardContent className="space-y-6">
@@ -414,7 +416,7 @@ export default function ImpotsTeamDashboard() {
                     </div>
                     {remainingLicences <= 0 && (
                       <p className="mt-2 text-xs text-amber-700">
-                        Toutes les licences sont prises. Augmentez-les dans l'onglet « Mon abonnement ».
+                        Capacité maximale atteinte. Pour ajouter d'autres collaborateurs, augmentez vos licences dans « Mon abonnement ».
                       </p>
                     )}
                   </div>
