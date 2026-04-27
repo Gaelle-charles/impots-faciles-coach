@@ -180,6 +180,32 @@ const Quizz = () => {
     );
   }
 
+  // --- Mode aperçu admin orga : pas de quiz certifiant ---
+  if (isOrgAdminPreview) {
+    return (
+      <div className="min-h-screen bg-muted/30 flex items-center justify-center px-4">
+        <div className="max-w-md text-center space-y-4">
+          <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-yellow-vivid/20">
+            <Lock className="h-5 w-5" />
+          </div>
+          <h1 className="font-heading text-2xl font-bold text-foreground">Quiz indisponible en mode aperçu</h1>
+          <p className="text-muted-foreground">
+            Le quiz de certification est réservé aux comptes ayant une licence active.
+            Activez votre licence personnelle pour passer le quiz et obtenir le certificat.
+          </p>
+          <div className="flex flex-col gap-2 sm:flex-row sm:justify-center">
+            <Link to="/impots-team/dashboard?tab=membres">
+              <Button>Activer ma licence personnelle</Button>
+            </Link>
+            <Button variant="outline" onClick={() => navigate(`/module/${slug}`)}>
+              Retour au module
+            </Button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   // --- No questions ---
   if (total === 0) {
     return (
