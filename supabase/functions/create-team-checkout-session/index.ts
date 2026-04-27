@@ -60,6 +60,10 @@ Deno.serve(async (req) => {
     }
 
     const authHeader = req.headers.get("Authorization");
+    const bearer = authHeader?.replace(/^Bearer\s+/i, "").trim() ?? "";
+    // supabase.functions.invoke() envoie toujours l'anon key. On ne considère
+    // l'appel comme "authentifié user" que si le token diffère de l'anon key.
+    const hasUserJwt = bearer.length > 0 && bearer !== ANON_KEY;
     const hasInlineAdminPayload = [admin_email, admin_password, admin_prenom, admin_nom].every(
       (value) => typeof value === "string" && value.trim().length > 0,
     );
@@ -78,19 +82,25 @@ Deno.serve(async (req) => {
 
     let user: { id: string; email: string } | null = null;
 
-    if (authHeader) {
+    if (hasUserJwt) {
       const userClient = createClient(SUPABASE_URL, ANON_KEY, {
-        global: { headers: { Authorization: authHeader } },
+        global: { headers: { Authorization: `Bearer ${bearer}` } },
       });
       const { data: userData, error: userErr } = await userClient.auth.getUser();
       if (userErr || !userData?.user?.email) {
-        return new Response(JSON.stringify({ error: "Token invalide" }), {
-          status: 401,
-          headers: { ...corsHeaders, "Content-Type": "application/json" },
-        });
+        // Si on a aussi un payload inline, on bascule en création serveur.
+        if (!hasInlineAdminPayload) {
+          return new Response(JSON.stringify({ error: "Token invalide" }), {
+            status: 401,
+            headers: { ...corsHeaders, "Content-Type": "application/json" },
+          });
+        }
+      } else {
+        user = { id: userData.user.id, email: userData.user.email };
       }
-      user = { id: userData.user.id, email: userData.user.email };
-    } else {
+    }
+
+    if (!user) {
       if (!hasInlineAdminPayload) {
         return new Response(JSON.stringify({ error: "Non authentifié" }), {
           status: 401,
