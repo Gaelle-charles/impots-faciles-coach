@@ -46,6 +46,17 @@ Deno.serve(async (req) => {
       });
     }
 
+    // Acceptations légales obligatoires (CGV + CGU + renonciation rétractation)
+    const cgvAt = body?.cgv_accepted_at as string | undefined;
+    const cguAt = body?.cgu_accepted_at as string | undefined;
+    const waiverAt = body?.waiver_accepted_at as string | undefined;
+    if (!cgvAt || !cguAt || !waiverAt) {
+      return new Response(
+        JSON.stringify({ error: "Acceptation des CGV, CGU et renonciation au droit de rétractation requise" }),
+        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } },
+      );
+    }
+
     const priceId = PRICE_IDS[plan];
     if (!priceId) {
       return new Response(
