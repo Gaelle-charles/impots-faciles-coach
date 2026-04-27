@@ -265,8 +265,20 @@ const Module = () => {
     />
   );
 
+  const adminInitials = ((user?.email?.[0] ?? '') + (user?.email?.[1] ?? '')).toUpperCase();
+  const showTeamSidebar = isOrgAdmin && !isMobile;
+
   return (
     <div className="flex h-screen overflow-hidden bg-background">
+      {showTeamSidebar && (
+        <TeamSidebar
+          orgName={org?.raison_sociale ?? ''}
+          orgLogoUrl={org?.logo_url ?? null}
+          adminInitials={adminInitials}
+          hasLicense={hasLicense}
+        />
+      )}
+      <div className={`flex flex-1 overflow-hidden ${showTeamSidebar ? 'ml-sidebar' : ''}`}>
       {!isMobile && (
         <aside className="hidden w-[280px] shrink-0 border-r border-border bg-background shadow-sm md:flex md:flex-col">
           {sidebarContent}
