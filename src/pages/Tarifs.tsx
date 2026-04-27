@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Check, Info, Loader2, Lock, Users, ArrowRight } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useAuth } from '@/contexts/AuthContext';
+import { useOrgRole } from '@/hooks/useOrgRole';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 
