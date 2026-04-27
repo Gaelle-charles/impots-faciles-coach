@@ -31,7 +31,8 @@ export function Header({ variant = 'light' }: HeaderProps) {
       const { data } = await supabase.rpc('get_user_organization', { p_user_id: user.id });
       const org = Array.isArray(data) ? data[0] : data;
       if (cancelled) return;
-      setAccountHref(org?.org_id ? '/impots-team/dashboard' : '/dashboard');
+      // Admin d'orga → dashboard B2B. Membre simple ou pas d'orga → dashboard B2C.
+      setAccountHref(org?.org_id && org?.role === 'admin' ? '/impots-team/dashboard' : '/dashboard');
     })();
     return () => { cancelled = true; };
   }, [user]);
