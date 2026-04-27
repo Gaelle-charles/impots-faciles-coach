@@ -20,8 +20,6 @@ const PRICES = {
 } as const;
 type Plan = keyof typeof PRICES;
 
-const B2B_SIGNUP_REDIRECT_KEY = 'b2bSignupInProgress';
-
 export default function ImpotsTeamSouscription() {
   const navigate = useNavigate();
   const [params] = useSearchParams();
@@ -49,7 +47,6 @@ export default function ImpotsTeamSouscription() {
   const [password, setPassword] = useState('');
   const [prenom, setPrenom] = useState('');
   const [nom, setNom] = useState('');
-  const [needsEmailVerification, setNeedsEmailVerification] = useState(false);
 
   const total = useMemo(() => PRICES[plan].team * nbLicences, [plan, nbLicences]);
 
@@ -96,53 +93,11 @@ export default function ImpotsTeamSouscription() {
         });
 
         if (!firstSignInErr && signInData.user) {
-          setNeedsEmailVerification(false);
           setStep('acceptation');
           setSubmitting(false);
           return;
         }
-
-        const { error: signUpErr } = await supabase.auth.signUp({
-          email,
-          password,
-          options: {
-            emailRedirectTo: `${window.location.origin}/impots-team/souscription?plan=${plan}&nb=${nbLicences}`,
-            data: { prenom, nom, role: 'admin_org' },
-          },
-        });
-        if (signUpErr) {
-          if (/already registered|already exists|already been registered/i.test(signUpErr.message)) {
-            toast({
-              title: 'Compte déjà existant',
-              description: 'Connectez-vous avec ce compte pour continuer la souscription équipe.',
-              variant: 'destructive',
-            });
-            setSubmitting(false);
-            return;
-          }
-
-          toast({ title: 'Erreur compte', description: signUpErr.message, variant: 'destructive' });
-          setSubmitting(false);
-          return;
-        }
-
-        sessionStorage.setItem(B2B_SIGNUP_REDIRECT_KEY, '1');
-
-        const { error: signInErr } = await supabase.auth.signInWithPassword({ email, password });
-        if (signInErr) {
-          setNeedsEmailVerification(true);
-          setStep('acceptation');
-          toast({
-            title: 'Compte créé',
-            description: 'Votre confirmation email peut être finalisée après le paiement.',
-          });
-          setSubmitting(false);
-          return;
-        }
-
-        sessionStorage.removeItem(B2B_SIGNUP_REDIRECT_KEY);
       }
-      setNeedsEmailVerification(false);
       setStep('acceptation');
     } catch (err) {
       console.error(err);
@@ -179,7 +134,6 @@ export default function ImpotsTeamSouscription() {
             admin_password: password,
             admin_prenom: prenom.trim(),
             admin_nom: nom.trim(),
-            signup_created_now: needsEmailVerification,
           } : {}),
         },
       });
