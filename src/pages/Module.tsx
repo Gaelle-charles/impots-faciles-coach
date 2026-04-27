@@ -21,10 +21,12 @@ import { Loader2, Menu, RefreshCw, Eye } from 'lucide-react';
 import { Skeleton } from '@/components/ui/skeleton';
 import { toast } from '@/hooks/use-toast';
 import { useAccess } from '@/hooks/useAccess';
+import { useOrgRole } from '@/hooks/useOrgRole';
 import type { Tables } from '@/integrations/supabase/types';
 
 import { ModuleSidebarContent } from '@/components/module/ModuleSidebarContent';
 import { ModuleContent } from '@/components/module/ModuleContent';
+import { TeamSidebar } from '@/components/TeamSidebar';
 
 type ModuleRow = Tables<'modules'> & { nb_steps_total: number };
 type ContenuRow = Tables<'contenus'>;
