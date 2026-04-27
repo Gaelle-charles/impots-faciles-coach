@@ -308,12 +308,6 @@ export default function ImpotsTeamSouscription() {
 
               {step === 'acceptation' && (
                 <>
-                  {needsEmailVerification && !user ? (
-                    <div className="rounded-lg border border-border bg-muted/40 p-4 text-sm text-muted-foreground">
-                      Votre compte a été créé. Vous pouvez finaliser le paiement maintenant ; la confirmation email pourra être terminée juste après l'achat.
-                    </div>
-                  ) : null}
-
                   <div className="rounded-lg border bg-background p-4 space-y-1 text-sm">
                     <p className="font-medium">Récapitulatif</p>
                     <p className="text-muted-foreground">
