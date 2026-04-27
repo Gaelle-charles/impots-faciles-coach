@@ -92,10 +92,13 @@ const App = () => (
             <Route path="/cgv" element={<Cgv />} />
             <Route path="/cgu" element={<Cgu />} />
             <Route path="/confidentialite" element={<Confidentialite />} />
+            <Route path="/politique-confidentialite" element={<Confidentialite />} />
             <Route path="/mentions-legales" element={<MentionsLegales />} />
             <Route path="/disclaimer" element={<LegalDisclaimer />} />
+            <Route path="/disclaimer-fiscal" element={<LegalDisclaimer />} />
             <Route path="/renonciation-retractation" element={<RenonciationRetractation />} />
             <Route path="/remboursement" element={<Remboursement />} />
+            <Route path="/politique-remboursement" element={<Remboursement />} />
             <Route path="/onboarding" element={<ProtectedRoute><Onboarding /></ProtectedRoute>} />
 
             {/* Protected routes with sidebar layout */}
