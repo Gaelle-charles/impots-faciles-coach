@@ -74,37 +74,17 @@ export default function ImpotsTeamSouscription() {
   };
 
   const goToAcceptation = async () => {
-    setSubmitting(true);
-    try {
-      if (!user) {
-        if (!email || !password || password.length < 8 || !prenom || !nom) {
-          toast({
-            title: 'Compte invalide',
-            description: 'Email, mot de passe (min 8) et identité requis.',
-            variant: 'destructive',
-          });
-          setSubmitting(false);
-          return;
-        }
-
-        const { data: signInData, error: firstSignInErr } = await supabase.auth.signInWithPassword({
-          email,
-          password,
+    if (!user) {
+      if (!email || !password || password.length < 8 || !prenom || !nom) {
+        toast({
+          title: 'Compte invalide',
+          description: 'Email, mot de passe (min 8) et identité requis.',
+          variant: 'destructive',
         });
-
-        if (!firstSignInErr && signInData.user) {
-          setStep('acceptation');
-          setSubmitting(false);
-          return;
-        }
+        return;
       }
-      setStep('acceptation');
-    } catch (err) {
-      console.error(err);
-      toast({ title: 'Erreur', description: (err as Error).message, variant: 'destructive' });
-    } finally {
-      setSubmitting(false);
     }
+    setStep('acceptation');
   };
 
   const handleSubmit = async () => {
