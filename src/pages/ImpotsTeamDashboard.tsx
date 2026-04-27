@@ -152,6 +152,7 @@ export default function ImpotsTeamDashboard() {
     }
   };
 
+  // Modèle B : l'admin n'occupe PAS de licence. Les licences = collaborateurs (membres + invitations en attente).
   const activeMembersCount = members.filter((m) => !m.removed_at).length;
   const pendingCount = invitations.length;
   const usedLicences = activeMembersCount + pendingCount;
@@ -397,9 +398,11 @@ export default function ImpotsTeamDashboard() {
                 <CardHeader>
                   <CardTitle>Collaborateurs</CardTitle>
                   <p className="text-sm text-muted-foreground">
-                    Votre équipe : {usedLicences} personne{usedLicences > 1 ? 's' : ''} au total
-                    {' '}(vous + {Math.max(0, usedLicences - 1)} collaborateur{Math.max(0, usedLicences - 1) > 1 ? 's' : ''})
-                    {' · '}{org.nb_licences} licence{org.nb_licences > 1 ? 's' : ''} au total
+                    {usedLicences} / {org.nb_licences} licence{org.nb_licences > 1 ? 's' : ''} utilisée{usedLicences > 1 ? 's' : ''}
+                    {' · '}{remainingLicences} disponible{remainingLicences > 1 ? 's' : ''}
+                  </p>
+                  <p className="mt-1 text-xs text-muted-foreground">
+                    Votre compte administrateur n'occupe pas de licence et n'a pas accès aux modules.
                   </p>
                 </CardHeader>
                 <CardContent className="space-y-6">
