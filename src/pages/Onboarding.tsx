@@ -1476,6 +1476,7 @@ function Step8({
   org,
   isOrgAdmin,
   hasOrgLicense,
+  orgLoading,
   onNavigate,
 }: {
   profilLabel: string;
@@ -1490,8 +1491,23 @@ function Step8({
   org: { raison_sociale: string; plan: string; role: string } | null;
   isOrgAdmin: boolean;
   hasOrgLicense: boolean;
+  orgLoading: boolean;
   onNavigate: (to: string) => void;
 }) {
+  // Garde durcissement : tant que useOrgRole charge, on ne risque pas d'afficher
+  // par défaut le CAS 1 (cartes tarifaires) à un membre d'orga.
+  if (orgLoading) {
+    return (
+      <div className="flex flex-col items-center justify-center gap-3 py-16">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+        <p className="text-sm text-muted-foreground">Chargement de votre profil…</p>
+      </div>
+    );
+  }
+
+  // Tout user rattaché à une orga (admin, admin_with_license, member) NE doit JAMAIS voir les cartes tarifaires.
+  const isInOrg = !!org;
+
   const justification =
     plan === 'starter'
       ? 'Votre situation est simple. Le plan Starter couvre tous les essentiels.'
