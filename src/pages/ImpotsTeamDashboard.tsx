@@ -541,11 +541,13 @@ export default function ImpotsTeamDashboard() {
                             <div className="min-w-0">
                               <p className="truncate font-medium">{m.email}</p>
                               <p className="text-xs text-muted-foreground">
-                                {m.role === 'admin' ? 'Administrateur' : 'Membre'} ·{' '}
+                                {m.role === 'admin' ? 'Administrateur'
+                                  : m.role === 'admin_with_license' ? 'Administrateur (licence personnelle)'
+                                  : 'Collaborateur'} ·{' '}
                                 {m.removed_at ? 'Retiré' : m.accepted_at ? 'Actif' : 'En attente'}
                               </p>
                             </div>
-                            {m.role !== 'admin' && !m.removed_at && (
+                            {m.role !== 'admin' && m.role !== 'admin_with_license' && !m.removed_at && (
                               <AlertDialog>
                                 <AlertDialogTrigger asChild>
                                   <Button size="sm" variant="ghost" disabled={busyId === m.id}>
