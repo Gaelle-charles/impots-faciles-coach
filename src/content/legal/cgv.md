@@ -1,401 +1,366 @@
-## DOCUMENT 1 — CONDITIONS GÉNÉRALES DE VENTE (CGV)
+# CONDITIONS GÉNÉRALES DE VENTE — Impôts Facile
 
-*Conformes au Code de la consommation français, à la directive européenne 2011/83/UE relative aux droits des consommateurs, et à la loi n° 2004-575 du 21 juin 2004 pour la confiance dans l'économie numérique (LCEN).*
+**Mis à jour : avril 2026 · Version 1.0**
+
+> Document conforme au Code de la consommation français, à la directive européenne 2011/83/UE relative aux droits des consommateurs, à la loi n° 2004-575 du 21 juin 2004 (LCEN), à la loi Chatel pour la résiliation des abonnements et à la loi Hamon pour le droit de rétractation.
 
 ---
 
-### Article 1 — Identification du vendeur
+## Article 1 — Identification du Vendeur
 
-Les présentes Conditions Générales de Vente (ci-après « CGV ») sont conclues entre :
+Les présentes Conditions Générales de Vente (ci-après « **CGV** ») sont conclues entre :
 
 **Le Vendeur :**
 
-- **Raison sociale :** [À compléter avant lancement]
-- **Forme juridique :** [À compléter avant lancement]
-- **Capital social :** [À compléter avant lancement]
-- **Numéro SIRET :** [À compléter avant lancement]
-- **Numéro TVA intracommunautaire :** [À compléter avant lancement]
-- **Adresse du siège social :** [À compléter avant lancement]
-- **Adresse email de contact :** contact@annulimpots.fr
-- **Téléphone :** [À compléter avant lancement]
-- **Responsable de la publication :** [À compléter avant lancement]
-
-**Et :**
-
-**Le Client :** toute personne physique majeure ou toute personne morale procédant à un achat sur l'un des sites exploités par Annul'Impôts.
-
----
-
-### Article 2 — Champ d'application
-
-#### 2.1 Objet
-
-Les présentes CGV ont pour objet de définir les droits et obligations des parties dans le cadre de la vente en ligne de formations digitales, de contenus pédagogiques et de prestations de coaching proposés par Annul'Impôts.
-
-#### 2.2 Applicabilité
-
-Les présentes CGV s'appliquent à toute commande passée sur les plateformes exploitées par Annul'Impôts, à savoir :
-
-- **Impôts Facile** — plateforme de formation pédagogique à la déclaration de revenus
-- **Annul'Impôts** — plateforme de coaching fiscal individuel
-- **Impôts Gagnants** — programme premium de stratégie patrimoniale pédagogique
-
-#### 2.3 Acceptation
-
-Toute commande implique l'acceptation pleine et entière des présentes CGV. Le Client reconnaît avoir pris connaissance des CGV avant de valider sa commande. Les CGV prévalent sur tout autre document du Client, sauf accord écrit préalable du Vendeur.
-
-#### 2.4 Clients internationaux
-
-Les présentes CGV s'appliquent également aux clients résidant hors de France (diaspora internationale), sous réserve des dispositions légales applicables dans leur pays de résidence. Les prix sont affichés en euros. Toute taxe locale applicable dans le pays de résidence du client est à la charge exclusive de celui-ci.
-
----
-
-### Article 3 — Produits et services
-
-#### 3.1 — Offre « Impôts Facile »
-
-**Nature :** Plateforme pédagogique d'autoformation à la déclaration de revenus en France.
-
-**Contenu de l'offre :**
-- Accès à des modules de formation vidéo et/ou textuels structurés par thématiques fiscales
-- Fiches pédagogiques téléchargeables sur les principales cases de la déclaration de revenus
-- Simulateurs fiscaux d'estimation (impôt sur le revenu, quotient familial, etc.)
-- Mise à jour annuelle selon les barèmes fiscaux publiés par la DGFIP
-
-**Précision essentielle :** Les contenus d'Impôts Facile ont un caractère exclusivement pédagogique et informatif. Ils ne constituent pas un conseil fiscal personnalisé, une prestation de conseil juridique ou comptable réglementée au sens de la loi n° 90-1258 du 31 décembre 1990.
-
-#### 3.2 — Offre « Annul'Impôts Coaching »
-
-**Nature :** Accompagnement individuel à caractère pédagogique autour de la situation fiscale du client.
-
-**Contenu de l'offre :**
-- Audit fiscal initial de 30 minutes (offert, sans engagement)
-- Sessions de coaching individuel payantes (visioconférence ou appel téléphonique)
-- Analyse pédagogique de la situation déclarative du client
-- Recommandations d'optimisation à titre informatif et pédagogique
-
-**Précision essentielle :** Le coaching proposé par Annul'Impôts constitue une prestation de conseil pédagogique et d'accompagnement. Il ne constitue pas une mission de conseil fiscal réglementée au sens de l'ordonnance n° 45-2138 du 19 septembre 1945, ni une mission d'expertise comptable, ni une consultation juridique au sens de la loi du 31 décembre 1971. Le client reste seul responsable de ses déclarations fiscales et de ses choix en matière d'optimisation.
-
-#### 3.3 — Offre « Impôts Gagnants »
-
-**Nature :** Programme premium de stratégie d'optimisation fiscale et patrimoniale à caractère pédagogique.
-
-**Contenu de l'offre :**
-- Accès à l'ensemble des modules de formation avancés
-- Simulateurs d'optimisation avancés (niches fiscales, investissements défiscalisants, etc.)
-- Contenus exclusifs : études de cas, guides pratiques, fiches comparatives
-- Accès prioritaire aux mises à jour de contenus
-- Support pédagogique par email ou messagerie dédiée
-
-**Précision essentielle :** Le programme Impôts Gagnants a pour unique vocation de fournir des outils pédagogiques permettant au client de mieux comprendre les mécanismes d'optimisation fiscale légaux existants. Il ne constitue en aucun cas un conseil fiscal personnalisé, une stratégie patrimoniale sur mesure, ni une recommandation d'investissement au sens de la réglementation MIF II. Pour toute décision patrimoniale ou fiscale engageant votre responsabilité, il est impératif de consulter un expert-comptable, un conseiller en gestion de patrimoine (CGP) agréé ou un avocat fiscaliste.
-
----
-
-### Article 4 — Prix
-
-#### 4.1 Tarifs en vigueur
-
-Les prix sont affichés en euros (€) toutes taxes comprises (TTC) sur les sites Annul'Impôts.
-
-**Tarifs 2026 (susceptibles de modification) :**
-
-| Offre | Prix TTC |
+| Champ | Valeur |
 |---|---|
-| Impôts Facile | 54,00 € |
-| Annul'Impôts Coaching | 97,00 € |
-| Impôts Gagnants | 139,00 € |
+| Dénomination sociale | **ANNUL IMPOTS** |
+| Forme juridique | SARL au capital de 500 € |
+| SIREN | 895 319 226 |
+| SIRET (siège) | 89531922600018 |
+| Numéro RCS | Pointe-à-Pitre 895 319 226 |
+| TVA intracommunautaire | FR45895319226 |
+| Code APE / NAF | 7022Z (Conseil pour les affaires et autres conseils de gestion) |
+| Siège social | 340 Route de la Bouaye, 97190 Le Gosier, Guadeloupe |
+| Date d'immatriculation | 18/03/2021 |
+| Représentant légal | Madame Laure CHANTEUR, Gérante |
+| Site internet | https://impotsfacile.com |
+| Email contact général | contact@impotsfacile.com |
+| Email service client | info@impotsfacile.com |
 
-*Note : Des sessions de coaching individuelles peuvent être proposées à l'unité selon un tarif communiqué lors de l'audit initial gratuit.*
-
-#### 4.2 TVA et statut fiscal du vendeur
-
-[À compléter avant lancement]
-
-- **Si auto-entrepreneur en franchise de TVA (CA < seuil)** : « Les prix sont affichés en euros. Le Vendeur bénéficie de la franchise en base de TVA conformément à l'article 293 B du Code général des impôts. La TVA n'est pas applicable. »
-- **Si assujetti à la TVA** : « Les prix sont affichés TTC. Le taux de TVA applicable est de [À compléter avant lancement]. Le montant HT est indiqué sur la facture. »
-
-#### 4.3 Promotions et offres spéciales
-
-Annul'Impôts se réserve le droit de proposer des offres promotionnelles limitées dans le temps. Ces offres sont clairement identifiées sur le site avec leur durée de validité. Les promotions ne sont pas cumulables sauf mention contraire expressément indiquée.
-
-#### 4.4 Modification des prix
-
-Annul'Impôts se réserve le droit de modifier ses tarifs à tout moment. Les prix applicables sont ceux en vigueur au moment de la validation de la commande par le client.
+**Et le Client :**
+- Pour les offres B2C : toute personne physique majeure agissant à des fins non professionnelles
+- Pour les offres B2B (Impôts Team) : toute personne morale (entreprise, association, CSE, etc.) souscrivant pour le compte de ses membres ou collaborateurs personnes physiques
 
 ---
 
-### Article 5 — Modalités de commande et de paiement
+## Article 2 — Objet et champ d'application
 
-#### 5.1 Processus de commande
+### 2.1 Objet
+Vente en ligne d'un service de formation pédagogique à la fiscalité des particuliers via la plateforme **Impôts Facile** exploitée par ANNUL IMPOTS.
 
-La commande s'effectue exclusivement en ligne selon les étapes suivantes :
+### 2.2 Acceptation
+Toute commande implique l'acceptation pleine et entière des présentes CGV, par le biais d'une case à cocher obligatoire.
 
-1. Sélection de l'offre souhaitée sur le site
-2. Création d'un compte client ou connexion au compte existant
-3. Saisie des coordonnées de facturation
-4. Sélection du moyen de paiement
-5. Lecture et acceptation des présentes CGV (case à cocher obligatoire)
-6. Si applicable : acceptation de la renonciation au droit de rétractation pour accès immédiat au contenu numérique (case à cocher obligatoire — voir Article 6)
-7. Validation définitive de la commande en cliquant sur « Payer »
-8. Réception d'un email de confirmation de commande avec récapitulatif et facture
+### 2.3 Restriction d'usage essentielle — Service réservé aux particuliers
 
-La validation de la commande constitue un accord ferme et définitif entre le Client et Annul'Impôts.
+⚠️ **La plateforme traite EXCLUSIVEMENT de la fiscalité des particuliers** (impôt sur le revenu, prélèvements sociaux des particuliers, dispositifs d'optimisation IR).
 
-#### 5.2 Moyens de paiement acceptés
+**Elle ne couvre PAS** :
+- L'impôt sur les sociétés (IS)
+- La TVA des entreprises
+- La fiscalité professionnelle (BIC, BNC, BA en mode professionnel)
+- Les obligations déclaratives des structures (SAS, SARL, SCI, etc.)
 
-- **Carte bancaire** (Visa, Mastercard, American Express) — via Stripe
-- **PayPal**
-- [À compléter avant lancement]
+Pour l'offre B2B, l'entreprise s'engage à mettre la plateforme à disposition de ses collaborateurs **pour leur usage personnel** (déclaration de revenus à titre privé).
 
-#### 5.3 Sécurisation des paiements
-
-Les transactions par carte bancaire sont traitées par **Stripe Inc.**, prestataire de paiement sécurisé certifié PCI-DSS. Les données bancaires du client sont chiffrées et ne transitent jamais par les serveurs d'Annul'Impôts. Annul'Impôts ne stocke à aucun moment les données de carte bancaire du client.
-
-En cas de refus de paiement par l'organisme bancaire, la commande est automatiquement annulée et le client en est informé par email.
-
-#### 5.4 Confirmation de commande et facturation
-
-Un email de confirmation est adressé au client dans les minutes suivant la validation du paiement. Cet email contient :
-- Le récapitulatif de la commande
-- La facture au format PDF
-- Les instructions d'accès à la plateforme ou au service
+### 2.4 Clients internationaux
+Les CGV s'appliquent aux clients résidant hors de France métropolitaine (DOM-TOM, diaspora). Prix en euros, taxes locales à la charge du Client.
 
 ---
 
-### Article 6 — Droit de rétractation
+## Article 3 — Description des offres
 
-#### 6.1 Principe général
+### 3.1 Offres B2C — Impôts Facile Particulier
 
-Conformément aux articles L221-18 et suivants du Code de la consommation, le Client dispose d'un délai de **14 jours calendaires** à compter de la date de validation de sa commande pour exercer son droit de rétractation, sans avoir à justifier de motif ni à payer de pénalités.
+| Plan | Prix annuel TTC | Contenu |
+|---|---|---|
+| **Starter** | 49 € / an | 7 modules pédagogiques essentiels, simulateurs de base, contenu personnalisé selon profil |
+| **Expert** | 79 € / an | Tout Starter + fiches profil contribuable + fiches métier + fiches pays + simulateurs avancés + parcours adaptatif IA |
+| **Premium** | 119 € / an | Tout Expert + parcours pédagogique IA hyperpersonnalisé + 5 webinaires thématiques + fiches pays approfondies |
 
-Ce droit s'applique aux commandes passées à distance (en ligne) par des consommateurs personnes physiques agissant à des fins non professionnelles.
+Un module gratuit (Module 0) est accessible sans engagement à toute personne créant un compte.
 
-#### 6.2 Exception applicable aux contenus numériques à accès immédiat
+### 3.2 Offres B2B — Impôts Team
 
-Conformément à l'article L221-28, 13° du Code de la consommation, **le droit de rétractation ne peut être exercé** pour les contrats de fourniture de contenus numériques non fournis sur support matériel dont l'exécution a commencé **avec l'accord préalable exprès du consommateur** et **après renoncement exprès à son droit de rétractation**.
+| Plan | Prix par licence/an TTC | Remise quantitative |
+|---|---|---|
+| **Impôts Team Starter** | 44 € / licence / an | -10 % vs B2C unitaire |
+| **Impôts Team Expert** | 71 € / licence / an | -10 % vs B2C unitaire |
+| **Impôts Team Premium** | 107 € / licence / an | -10 % vs B2C unitaire |
 
-**Conséquence pratique :** Lors de la commande, si le Client coche la case de renonciation expresse au droit de rétractation (voir Article 6.3 et Document 6 ci-joint), il reconnaît expressément :
-- Avoir demandé l'accès immédiat au contenu numérique avant l'expiration du délai de 14 jours
-- Accepter de perdre définitivement son droit de rétractation dès lors que l'accès à la plateforme est activé
-- Avoir pris connaissance et accepté cette perte de droit avant la validation de sa commande
+**Conditions spécifiques Impôts Team :**
+- Souscription minimum : **2 licences**
+- Facturation annuelle en une seule fois à l'entreprise souscriptrice
+- **Compte Administrateur gratuit** : ne consomme pas de licence, accès en mode aperçu (lecture seule, sans sauvegarde de progression ni certificat)
+- L'Administrateur invite ses bénéficiaires par email depuis son tableau de bord
+- Modification du nombre de licences à tout moment avec proration immédiate
+- L'Administrateur peut activer une licence personnelle pour suivre lui-même le parcours certifiant
+- Branding personnalisé (logo de l'organisation visible aux bénéficiaires)
+- Le retrait d'un bénéficiaire libère la licence pour réattribution
 
-**Si le Client ne coche pas cette case**, l'accès au contenu numérique sera activé uniquement à l'issue du délai de rétractation de 14 jours.
+### 3.3 Disclaimer fiscal essentiel
 
-#### 6.3 Modalités d'exercice du droit de rétractation
+⚠️ **AVERTISSEMENT LÉGAL**
 
-Pour exercer son droit de rétractation (dans les cas où il n'y a pas eu renonciation expresse), le Client doit notifier sa décision avant l'expiration du délai de 14 jours, par l'un des moyens suivants :
+Les contenus et outils proposés ont un **caractère exclusivement pédagogique et informatif**. Ils ne constituent PAS :
+- Un conseil fiscal personnalisé
+- Une prestation réglementée au sens de la loi n° 90-1258 du 31 décembre 1990
+- Une mission d'expertise comptable (ordonnance n° 45-2138 du 19 septembre 1945)
+- Une consultation juridique (loi du 31 décembre 1971)
+- Une recommandation d'investissement (réglementation MIF II)
 
-- **Email** : contact@annulimpots.fr avec pour objet « RÉTRACTATION — Numéro de commande [À compléter avant lancement] »
-- **Formulaire de rétractation** : en utilisant le modèle joint en Annexe A des présentes CGV
+Pour toute décision fiscale, le Client doit consulter un expert-comptable inscrit à l'Ordre, un avocat fiscaliste ou un CGP certifié.
 
-#### 6.4 Coaching individuel (Annul'Impôts Coaching)
-
-Pour les sessions de coaching individuel :
-- L'audit gratuit de 30 minutes ne donne pas lieu à un droit de rétractation (prestation gratuite)
-- Pour les sessions payantes réservées mais non encore réalisées, le Client peut se rétracter dans les 14 jours suivant la commande, à condition que la session n'ait pas encore eu lieu
-- Si la session a lieu à la demande expresse du client dans le délai de 14 jours, le droit de rétractation est perdu proportionnellement à la prestation réalisée
-
-#### 6.5 Annexe A — Formulaire type de rétractation
-
-*(Conformément à l'Annexe A de la directive 2011/83/UE)*
-
----
-
-**FORMULAIRE DE RÉTRACTATION**
-*(À compléter et renvoyer uniquement si vous souhaitez vous rétracter du contrat)*
-
-À l'attention d'Annul'Impôts
-Email : contact@annulimpots.fr
-Adresse : [À compléter avant lancement]
-
-Je/Nous (*) vous notifie/notifions (*) par la présente ma/notre (*) rétractation du contrat portant sur la vente du bien (*)/pour la prestation de service (*) ci-dessous :
-
-- **Commandé le :** ____________________
-- **Numéro de commande :** ____________________
-- **Offre concernée :** ☐ Impôts Facile ☐ Annul'Impôts Coaching ☐ Impôts Gagnants
-- **Nom du/des consommateur(s) :** ____________________
-- **Adresse du/des consommateur(s) :** ____________________
-- **Email de contact :** ____________________
-- **IBAN pour remboursement (si différent de la méthode de paiement initiale) :** ____________________
-
-**Signature du/des consommateur(s) :** ____________________
-**Date :** ____________________
-
-*(*) Rayer la mention inutile.*
+**Les simulateurs ne sont pas opposables à l'administration fiscale (DGFIP).**
 
 ---
 
-### Article 7 — Modalités de remboursement
+## Article 4 — Prix et paiement
 
-#### 7.1 Délai de remboursement
+### 4.1 Prix
+Affichés en euros TTC (TVA française au taux légal en vigueur, 20 %).
 
-En cas de rétractation valablement exercée conformément à l'Article 6, Annul'Impôts procède au remboursement intégral de la somme versée par le Client, **dans un délai maximum de 14 jours calendaires** à compter de la réception de la notification de rétractation.
+### 4.2 Modification des tarifs
+ANNUL IMPOTS peut modifier ses tarifs à tout moment. Les renouvellements sont facturés au tarif en vigueur, sous réserve de notification au Client par email **au moins 30 jours avant** l'échéance (loi Chatel).
 
-#### 7.2 Moyen de remboursement
+### 4.3 Moyens de paiement acceptés
+- Carte bancaire (Visa, Mastercard, American Express) via **Stripe Inc.**
+- Le prélèvement SEPA sera proposé pour les offres B2B dans une version ultérieure
 
-Le remboursement est effectué par le même moyen de paiement que celui utilisé lors de la commande :
-- Carte bancaire : crédit sur la carte ayant servi au paiement
-- PayPal : crédit sur le compte PayPal ayant servi au paiement
+### 4.4 Sécurisation
+Les transactions sont traitées par **Stripe Inc.**, certifié PCI-DSS. ANNUL IMPOTS ne stocke jamais les données bancaires complètes.
 
-En cas d'impossibilité technique, le remboursement peut être effectué par virement bancaire sur présentation d'un RIB.
-
-#### 7.3 Cas d'absence de remboursement
-
-Aucun remboursement ne sera effectué :
-- Si le Client a coché la case de renonciation expresse au droit de rétractation et que l'accès au contenu numérique a été activé
-- Si le délai de rétractation de 14 jours est expiré sans exercice du droit de rétractation
-- En dehors de l'exercice du droit de rétractation légal (insatisfaction subjective après accès au contenu)
-
-Pour les cas liés à un dysfonctionnement technique avéré, voir la Politique de Remboursement (Document 7).
+### 4.5 Confirmation et facturation
+Email de confirmation + facture PDF dans les minutes suivant le paiement. Pour le B2B, facture libellée au nom de l'entreprise avec mentions légales.
 
 ---
 
-### Article 8 — Accès au service et livraison
+## Article 5 — Processus de commande
 
-#### 8.1 Modalités d'accès
+### 5.1 Commande B2C
+1. Création d'un compte particulier
+2. Onboarding personnalisé (questionnaire 7 étapes)
+3. Recommandation automatique d'un plan
+4. Sélection libre du plan
+5. Coordonnées de facturation
+6. Acceptation des CGV (case obligatoire)
+7. Acceptation explicite de la renonciation au droit de rétractation pour accès immédiat (case obligatoire — voir Article 6)
+8. Paiement via Stripe
+9. Activation immédiate
 
-Après validation du paiement :
-- Un email de confirmation est envoyé à l'adresse renseignée lors de la commande
-- Les identifiants d'accès à la plateforme sont communiqués dans cet email (ou création de compte initiée)
-- L'accès à l'espace personnel sur la plateforme est effectif sous **[À compléter avant lancement]**
-
-#### 8.2 Durée d'accès
-
-| Offre | Durée d'accès |
-|---|---|
-| Impôts Facile | [À compléter avant lancement] |
-| Annul'Impôts Coaching | Accès à l'espace client pendant la durée du coaching + [À compléter avant lancement] |
-| Impôts Gagnants | [À compléter avant lancement] |
-
-*Note : Il est fortement recommandé d'opter pour une durée d'accès définie (ex. 12 mois renouvelables) pour des raisons de gestion technique et de mise à jour des contenus.*
-
-#### 8.3 Conditions techniques requises
-
-Pour accéder aux plateformes, le Client doit disposer :
-- D'une connexion internet fonctionnelle
-- D'un navigateur web à jour (Chrome, Firefox, Safari, Edge — versions récentes)
-- D'une adresse email valide pour recevoir les communications
-- Le cas échéant, d'un logiciel de lecture de PDF pour les fiches téléchargeables
-
-Annul'Impôts ne saurait être tenu responsable des difficultés d'accès liées à l'équipement informatique du Client, à sa connexion internet ou aux incompatibilités de son environnement technique.
-
-#### 8.4 Disponibilité et maintenance
-
-Annul'Impôts s'engage à mettre en œuvre les meilleurs efforts pour assurer la disponibilité des plateformes. Des interruptions temporaires peuvent survenir pour des opérations de maintenance, mises à jour de sécurité ou améliorations techniques. Le Client sera informé des maintenances programmées dans un délai raisonnable.
+### 5.2 Commande B2B (Impôts Team)
+1. Page de souscription Entreprise (`/impots-team`)
+2. Sélection plan + nombre de licences (min 2)
+3. Étape 1 : informations entreprise (raison sociale, SIRET, adresse, TVA)
+4. Étape 2 : création du compte Administrateur
+5. Étape 3 : acceptation CGV + renonciation rétractation
+6. Paiement via Stripe avec remise TEAM10 automatique
+7. Activation immédiate du tableau de bord Administrateur
 
 ---
 
-### Article 9 — Responsabilité et disclaimer fiscal obligatoire
+## Article 6 — Droit de rétractation et renonciation expresse
 
-#### 9.1 Nature des prestations — Clause de disclaimer fiscal essentielle
+### 6.1 Principe légal (loi Hamon)
+Articles L221-18 et suivants du Code de la consommation : le Client consommateur dispose de **14 jours calendaires** pour se rétracter sans motif ni pénalités.
 
-> ⚠️ **AVERTISSEMENT LÉGAL IMPORTANT**
->
-> **Les contenus proposés par Annul'Impôts (formations, fiches, simulateurs, coaching pédagogique, modules Impôts Facile, Annul'Impôts et Impôts Gagnants) ont un caractère exclusivement pédagogique et informatif. Ils ne constituent pas un conseil fiscal personnalisé, une prestation de conseil juridique ou comptable réglementée au sens de la loi n° 90-1258 du 31 décembre 1990 relative à l'exercice sous forme de sociétés des professions libérales, ni une mission d'expertise comptable au sens de l'ordonnance n° 45-2138 du 19 septembre 1945.**
->
-> **Pour toute décision fiscale engageant votre responsabilité personnelle, notamment en matière de déclaration de revenus, d'optimisation fiscale ou de choix patrimoniaux, consultez impérativement un expert-comptable inscrit à l'Ordre ou un avocat fiscaliste agréé.**
+### 6.2 Exception contenus numériques (article L221-28, 13°)
+Le droit de rétractation **ne peut être exercé** pour les contenus numériques dont l'exécution a commencé avec l'accord exprès du Client et son renoncement exprès au droit de rétractation.
 
-#### 9.2 Limitation de responsabilité sur les simulateurs
+### 6.3 Renonciation expresse
+Lors de la commande, le Client coche obligatoirement :
 
-Les simulateurs mis à disposition sur les plateformes Annul'Impôts sont des **outils d'estimation à vocation pédagogique exclusivement**. Ils se basent sur les barèmes fiscaux officiels publiés par la Direction Générale des Finances Publiques (DGFIP) dans la Brochure IR en vigueur.
+> ☐ « Je reconnais avoir expressément demandé un accès immédiat au contenu numérique commandé avant l'expiration du délai légal de rétractation de 14 jours. En cochant cette case, j'accepte expressément et en toute connaissance de cause de perdre définitivement mon droit de rétractation dès lors que l'accès à la plateforme Impôts Facile sera activé par ANNUL IMPOTS, conformément à l'article L221-28, alinéa 13° du Code de la consommation. J'ai pris connaissance des Conditions Générales de Vente et de la présente renonciation avant de valider ma commande. »
 
-**Ces simulations :**
-- Ne constituent pas des calculs officiels d'imposition
-- Ne sont pas opposables à l'administration fiscale (DGFIP)
-- Ne tiennent pas compte de l'ensemble des spécificités de la situation personnelle du client
-- Peuvent contenir des erreurs ou imprécisions malgré le soin apporté à leur développement
+S'il ne coche pas, l'accès est activé après l'expiration du délai de 14 jours.
 
-Annul'Impôts **ne saurait être tenu responsable** des conséquences financières, fiscales ou légales résultant de décisions prises par le Client sur la base des résultats affichés par les simulateurs ou des contenus pédagogiques.
+### 6.4 Modalités d'exercice
+- Email à `contact@impotsfacile.com` (objet : « RÉTRACTATION — Numéro de commande [n°] »)
+- Formulaire type en Annexe A
 
-#### 9.3 Limitation générale de responsabilité
+### 6.5 Cas spécifique B2B
+Le droit de rétractation légal s'applique aux **consommateurs personnes physiques**. Pour les souscriptions B2B par une personne morale, ce droit ne s'applique pas de plein droit.
 
-La responsabilité d'Annul'Impôts ne peut être engagée qu'en cas de faute prouvée et est limitée au montant des sommes effectivement versées par le Client dans le cadre de la commande concernée. Annul'Impôts ne saurait être tenu responsable des dommages indirects, pertes de revenus, préjudices fiscaux ou économiques du Client.
+À titre commercial, ANNUL IMPOTS accorde aux clients B2B une garantie satisfait-ou-remboursé de **7 jours calendaires** suivant la souscription, à condition qu'aucune licence n'ait été activée par un bénéficiaire (autre que le compte Administrateur).
 
----
+### 6.6 Annexe A — Formulaire type de rétractation
 
-### Article 10 — Propriété intellectuelle
+```
+À l'attention d'ANNUL IMPOTS
+Email : contact@impotsfacile.com
+Adresse : 340 Route de la Bouaye, 97190 Le Gosier, Guadeloupe
 
-#### 10.1 Titularité des droits
+Je notifie par la présente ma rétractation du contrat portant sur :
+Commande passée le : ____________
+Numéro de commande : ____________
+Plan souscrit : ☐ Starter  ☐ Expert  ☐ Premium
+☐ Impôts Team Starter  ☐ Impôts Team Expert  ☐ Impôts Team Premium
 
-L'ensemble des contenus publiés sur les plateformes Impôts Facile, Annul'Impôts et Impôts Gagnants — incluant sans limitation les textes, modules de formation, fiches pédagogiques, simulateurs, graphiques, vidéos, podcasts, bases de données, logiciels, marques et logos — sont la propriété exclusive d'Annul'Impôts et sont protégés par les dispositions du Code de la propriété intellectuelle français et les conventions internationales applicables.
-
-#### 10.2 Licence d'utilisation personnelle
-
-La commande confère au Client une **licence d'utilisation personnelle, non exclusive, non cessible et non transférable** pour les contenus de la plateforme, dans le seul but d'un usage pédagogique personnel.
-
-#### 10.3 Utilisations interdites
-
-Sont strictement interdites, sans autorisation écrite préalable d'Annul'Impôts :
-- La reproduction, copie, téléchargement massif ou impression des contenus à des fins autres que l'usage personnel
-- La revente, location, prêt ou cession des contenus à des tiers
-- La modification, adaptation ou décompilation des simulateurs et outils
-- L'utilisation des contenus dans un cadre professionnel ou commercial (formation, conseil, etc.)
-- Le partage des identifiants de connexion ou l'accès au compte par une personne autre que le titulaire
-
-Toute violation des droits de propriété intellectuelle est susceptible d'engager la responsabilité civile et/ou pénale du contrevenant.
+Nom du Client : __________________________________
+Adresse : ________________________________________
+Email : __________________________________________
+IBAN pour remboursement : ________________________
+Signature : _____________  Date : _____________
+```
 
 ---
 
-### Article 11 — Protection des données personnelles (RGPD)
+## Article 7 — Modalités de remboursement
 
-Les données personnelles collectées dans le cadre des commandes passées sur les plateformes Annul'Impôts sont traitées conformément au Règlement (UE) 2016/679 du 27 avril 2016 (RGPD) et à la loi n° 78-17 du 6 janvier 1978 modifiée (loi Informatique et Libertés).
+### 7.1 Délai
+Remboursement intégral dans **14 jours calendaires** maximum à compter de la réception de la notification.
 
-Pour toute information sur le traitement de vos données personnelles, vos droits et les modalités pour les exercer, veuillez consulter notre **Politique de Confidentialité** disponible sur chaque plateforme.
+### 7.2 Moyen
+Même moyen de paiement que la commande initiale. Virement bancaire en cas d'impossibilité technique.
 
-**Responsable du traitement :** [À compléter avant lancement], [À compléter avant lancement], contact : contact@annulimpots.fr
+### 7.3 Cas d'absence de remboursement
+- Renonciation expresse cochée + accès activé (B2C)
+- Délai de 14 jours expiré
+- Insatisfaction subjective hors cadre légal
+- Pour B2B : hors garantie commerciale 7 jours
 
-**Vos droits :** Accès, rectification, effacement, limitation, portabilité et opposition, à exercer à l'adresse contact@annulimpots.fr. Droit de réclamation auprès de la CNIL (www.cnil.fr).
-
----
-
-### Article 12 — Médiation et règlement des litiges
-
-#### 12.1 Service client
-
-En cas de litige ou de réclamation, le Client est invité à contacter en premier lieu le service client d'Annul'Impôts :
-- **Email :** contact@annulimpots.fr
-- **Délai de réponse :** sous 5 jours ouvrés
-
-#### 12.2 Médiation de la consommation
-
-Conformément aux articles L616-1 et R616-1 du Code de la consommation, Annul'Impôts propose un dispositif de médiation de la consommation. En cas d'échec de la réclamation auprès du service client, le Client peut recourir gratuitement au médiateur de la consommation désigné :
-
-**Médiateur compétent :** [À compléter avant lancement]
-**Site internet :** [À compléter avant lancement]
-**Adresse postale :** [À compléter avant lancement]
-
-*Note : L'adhésion à un dispositif de médiation agréé est obligatoire pour tout professionnel vendant à des consommateurs en France. Il convient de désigner un médiateur sectoriel agréé par la Commission d'Évaluation et de Contrôle de la Médiation de la Consommation (CECMC) avant la mise en ligne.*
-
-#### 12.3 Règlement en ligne des litiges (RLL)
-
-Conformément au Règlement (UE) n° 524/2013, la Commission européenne met à disposition une plateforme de règlement en ligne des litiges (RLL) accessible à l'adresse suivante :
-**https://ec.europa.eu/consumers/odr**
-
-#### 12.4 Tribunal compétent
-
-En cas de litige judiciaire non résolu par voie amiable ou de médiation, et à défaut de disposition d'ordre public contraire, compétence est attribuée aux tribunaux français compétents du ressort du domicile du défendeur, ou, au choix du Client consommateur, du lieu de livraison du service.
+### 7.4 Dysfonctionnement technique
+En cas de panne supérieure à 48h consécutives ou incapacité avérée d'accès, remboursement intégral ou avoir possible sur demande à `contact@impotsfacile.com`.
 
 ---
 
-### Article 12 bis — Modification d'abonnement en cours de période
+## Article 8 — Durée, renouvellement et résiliation
 
-L'utilisateur peut **upgrader** son abonnement vers un plan supérieur à tout moment (avec calcul au prorata de la période restante). Le passage à un plan inférieur (downgrade) n'est en revanche **pas possible en cours de période** : l'utilisateur doit attendre la fin de sa période d'abonnement en cours et ne pas renouveler, puis souscrire au plan de son choix lors d'une nouvelle commande. Cette règle garantit la stabilité du service acheté initialement et la cohérence pédagogique du parcours commencé.
+### 8.1 Durée
+Abonnements à durée déterminée d'**un (1) an** à compter de la souscription.
 
-L'annulation pure et simple de l'abonnement (sans changement de plan) reste possible à tout moment dans les conditions prévues à l'article 6 et conformément à la loi Chatel : la résiliation prend effet à la fin de la période en cours, sans renouvellement automatique.
+### 8.2 Renouvellement automatique
+Reconduction automatique pour 1 an sauf résiliation, par prélèvement sur le moyen de paiement enregistré.
+
+### 8.3 Notification préalable (loi Chatel)
+ANNUL IMPOTS informe le Client consommateur par email entre **3 mois et 1 mois** avant la date d'échéance de la possibilité de ne pas reconduire l'abonnement. À défaut, le Client peut résilier gratuitement à tout moment et obtenir le remboursement de la période non utilisée.
+
+### 8.4 Résiliation par le Client
+À tout moment :
+- **B2C** : depuis « Gérer mon abonnement » → portail Stripe
+- **B2B** : depuis le tableau de bord Administrateur → « Gérer la facturation »
+
+La résiliation prend effet **à la fin de la période en cours** (loi Chatel). L'accès est conservé jusqu'à cette date.
+
+### 8.5 Modification d'abonnement en cours de période
+
+**Upgrade** (plan supérieur) : possible à tout moment avec proration immédiate par Stripe.
+
+**Downgrade** (plan inférieur) : ❌ **NON POSSIBLE en cours de période**. Le Client doit attendre la fin de la période, ne pas renouveler, puis souscrire au plan inférieur lors d'une nouvelle commande. Cette restriction est rappelée :
+- Avant l'accès au portail Stripe (modal d'avertissement)
+- Dans les présentes CGV (acceptées à la commande)
+- Sur la page tarifs
+
+### 8.6 Résiliation par ANNUL IMPOTS
+Possible sans préavis ni indemnité en cas de :
+- Non-paiement
+- Utilisation frauduleuse (violations CGU, partage d'identifiants, scraping)
+- Non-respect des CGV/CGU
+
+Suspension immédiate de l'accès, sans remboursement.
 
 ---
 
-### Article 13 — Droit applicable et langue du contrat
+## Article 9 — Accès et conditions techniques
 
-Les présentes CGV sont régies par le droit français. Toute clause des présentes CGV qui serait déclarée nulle ou inapplicable par une décision de justice ne saurait entraîner la nullité des autres clauses.
+### 9.1 Activation
+Immédiate après paiement et acceptation de la renonciation au droit de rétractation. Email de confirmation + identifiants.
 
-La langue du contrat est le **français**. En cas de traduction dans une autre langue à titre informatif, la version française fait foi.
+### 9.2 Durée d'accès
+Pendant toute la durée de l'abonnement. Désactivation à la résiliation effective.
+
+### 9.3 Prérequis techniques
+- Connexion internet
+- Navigateur web à jour (Chrome, Firefox, Safari, Edge)
+- Email valide et accessible
+- Appareil compatible (PC, tablette, smartphone récents)
+
+ANNUL IMPOTS n'est pas responsable des difficultés liées à l'équipement du Client.
+
+### 9.4 Disponibilité
+Engagement de moyens 24/7. Maintenances notifiées dans un délai raisonnable.
 
 ---
 
-*CGV version 1.0 — Avril 2026*
-*Mis à jour : Avril 2026 — À faire valider par un avocat avant mise en ligne*
+## Article 10 — Responsabilité
+
+### 10.1 Caractère pédagogique
+Le Client reconnaît que les contenus ont un caractère **exclusivement pédagogique** (Article 3.3). Il s'engage à ne pas se fonder sur ces contenus pour des décisions fiscales sans consultation préalable d'un professionnel agréé.
+
+### 10.2 Limitation sur les simulateurs
+- Estimations pédagogiques, non opposables à la DGFIP
+- Ne tiennent pas compte de toutes les spécificités personnelles
+- Possibilité d'imprécisions malgré le soin apporté
+
+ANNUL IMPOTS n'est pas responsable des conséquences financières/fiscales/légales des décisions prises par le Client sur la base de ces estimations.
+
+### 10.3 Limitation générale
+Responsabilité limitée au montant des sommes versées par le Client au cours des 12 derniers mois. Pas de responsabilité pour les dommages indirects, pertes de revenus, préjudices fiscaux ou économiques.
+
+### 10.4 Force majeure
+Article 1218 du Code civil (pannes réseau, attaques informatiques, catastrophes naturelles, conflits sociaux, décisions des autorités publiques).
 
 ---
 
+## Article 11 — Propriété intellectuelle
+
+### 11.1 Titularité
+Tous les contenus (textes, modules, fiches, simulateurs, graphiques, vidéos, logos, charte graphique) sont la propriété exclusive d'ANNUL IMPOTS.
+
+### 11.2 Licence d'utilisation
+**Personnelle, non exclusive, non cessible, non transférable**, à usage pédagogique personnel.
+
+Pour le B2B, chaque licence donne lieu à une licence individuelle au bénéfice d'**une seule personne physique nommément identifiée**. Le partage entre plusieurs personnes est strictement interdit.
+
+### 11.3 Utilisations interdites
+- Reproduction, copie, téléchargement massif à des fins non personnelles
+- Revente, location, cession à des tiers
+- Modification, décompilation des outils
+- Usage professionnel ou commercial (formation tierce, conseil)
+- Partage d'identifiants
+- Scraping et extraction massive
+
+Suspension immédiate sans remboursement + poursuites possibles.
+
 ---
+
+## Article 12 — Données personnelles
+
+Traitement conforme au RGPD (UE 2016/679) et à la loi Informatique et Libertés.
+
+Voir la **Politique de Confidentialité** sur la plateforme pour le détail.
+
+**Responsable du traitement** : ANNUL IMPOTS — `contact@impotsfacile.com`
+
+**Vos droits** : accès, rectification, effacement, limitation, portabilité, opposition → `contact@impotsfacile.com`
+
+**Autorité de contrôle** : CNIL — `www.cnil.fr` — 3 Place de Fontenoy, TSA 80715, 75334 PARIS CEDEX 07
+
+---
+
+## Article 13 — Médiation et règlement des litiges
+
+### 13.1 Service client
+- Email : `info@impotsfacile.com`
+- Délai de réponse : 5 jours ouvrés
+
+### 13.2 Médiation de la consommation
+> **Médiateur compétent** : *[À VALIDER avant lancement — Recommandation : Médiateur du e-commerce de la FEVAD]*
+> *Site internet : [À COMPLÉTER]*
+> *Adresse postale : [À COMPLÉTER]*
+
+### 13.3 Plateforme européenne RLL
+`https://ec.europa.eu/consumers/odr` (Règlement UE n° 524/2013)
+
+### 13.4 Tribunal compétent
+- **Clients consommateurs** : tribunal du lieu de domicile du Client au moment de la conclusion du contrat ou de son choix (article R631-3 du Code de la consommation)
+- **Clients B2B (personnes morales)** : compétence exclusive du **Tribunal de Commerce de Pointe-à-Pitre (Guadeloupe)**
+
+---
+
+## Article 14 — Droit applicable et langue
+
+Droit français applicable. Langue du contrat : français (la version française fait foi en cas de traduction).
+
+Toute clause nulle ou inapplicable n'entraîne pas la nullité des autres.
+
+---
+
+## Article 15 — Modification des CGV
+
+Modifications possibles avec préavis minimum de **30 jours** par email. La poursuite de l'utilisation après cette date vaut acceptation.
+
+---
+
+**CGV — Version 1.0 — Avril 2026**
