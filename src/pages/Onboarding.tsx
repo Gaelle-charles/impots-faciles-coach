@@ -1700,8 +1700,8 @@ function Step8({
         </div>
       )}
 
-      {/* CAS 4 — Membre d'orga */}
-      {isOrgAdmin && org?.role === 'member' && (
+      {/* CAS 4 — Membre d'orga (rôle member, pas admin) */}
+      {!isOrgAdmin && org?.role === 'member' && (
         <div className="space-y-4">
           <div className="rounded-xl border-2 border-primary/40 bg-primary/5 p-5 text-center">
             <p className="text-base text-foreground">
