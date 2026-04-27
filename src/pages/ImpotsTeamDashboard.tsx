@@ -596,6 +596,28 @@ export default function ImpotsTeamDashboard() {
           </Tabs>
         </div>
       </main>
+
+      {/* Modal activation licence admin */}
+      <AlertDialog open={showActivate} onOpenChange={setShowActivate}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Activer ma licence personnelle ?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Vous accédez déjà à un aperçu de la plateforme. Si vous souhaitez suivre le parcours
+              complet, sauvegarder vos progressions et obtenir le certificat, activez votre licence
+              personnelle. Cela occupera 1 licence sur les {org?.nb_licences ?? '—'} disponibles.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={activating}>Annuler</AlertDialogCancel>
+            <AlertDialogAction onClick={handleActivateLicense} disabled={activating}>
+              {activating ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
+              Activer ma licence personnelle
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
       <Footer />
     </div>
   );
