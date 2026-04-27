@@ -23,9 +23,9 @@ import Simulateur from "./pages/Simulateur";
 import SimulateurFrais from "./pages/SimulateurFrais";
 import MesSimulateurs from "./pages/MesSimulateurs";
 import SimulateurPAS from "./pages/SimulateurPAS";
-import SimulateurPlusValueImmo from "./pages/SimulateurPlusValueImmo";
-import SimulateurLMNP from "./pages/SimulateurLMNP";
-import SimulateurPinel from "./pages/SimulateurPinel";
+import SimulateurIRBareme from "./pages/SimulateurIRBareme";
+import SimulateurQuotientFamilial from "./pages/SimulateurQuotientFamilial";
+import SimulateurCreditsReductions from "./pages/SimulateurCreditsReductions";
 import FicheMetier from "./pages/FicheMetier";
 import Profil from "./pages/Profil";
 import MesModules from "./pages/MesModules";
@@ -104,10 +104,10 @@ const App = () => (
               <Route path="/mes-simulateurs" element={<MesSimulateurs />} />
               <Route path="/simulateur" element={<Simulateur />} />
               <Route path="/simulateur-de-frais" element={<SimulateurFrais />} />
+              <Route path="/simulateur/ir-bareme" element={<SimulateurIRBareme />} />
+              <Route path="/simulateur/quotient-familial" element={<SimulateurQuotientFamilial />} />
               <Route path="/simulateur/pas" element={<SimulateurPAS />} />
-              <Route path="/simulateur/plus-value-immo" element={<SimulateurPlusValueImmo />} />
-              <Route path="/simulateur/lmnp" element={<SimulateurLMNP />} />
-              <Route path="/simulateur/pinel" element={<SimulateurPinel />} />
+              <Route path="/simulateur/credits-reductions" element={<SimulateurCreditsReductions />} />
               <Route path="/fiche-metier/:id" element={<FicheMetier />} />
               <Route path="/profil" element={<Profil />} />
               <Route path="/mes-modules" element={<MesModules />} />
