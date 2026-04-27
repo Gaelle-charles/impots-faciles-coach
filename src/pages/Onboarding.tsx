@@ -1588,7 +1588,7 @@ function Step8({
       </div>
 
       {/* Bloc tarification — conditionnel selon le statut de l'utilisateur */}
-      {!isOrgAdmin && (
+      {!isInOrg && (
         <>
           <div className="rounded-xl border-2 border-accent bg-accent/10 p-5 text-center">
             <p className="font-heading text-lg font-bold text-foreground">
