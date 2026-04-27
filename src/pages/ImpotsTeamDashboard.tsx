@@ -448,6 +448,34 @@ export default function ImpotsTeamDashboard() {
                     )}
                   </div>
 
+                  {/* Bloc "Suivre la formation moi aussi" */}
+                  <div className="rounded-lg border bg-background p-4">
+                    <h3 className="text-sm font-medium">Suivre la formation moi aussi</h3>
+                    {adminHasLicense ? (
+                      <p className="mt-1 text-xs text-muted-foreground">
+                        Votre licence personnelle est active : vous avez accès au parcours complet certifiant.
+                      </p>
+                    ) : (
+                      <>
+                        <p className="mt-1 text-xs text-muted-foreground">
+                          Vous accédez à un aperçu de la plateforme. Activez votre licence personnelle pour suivre le parcours complet, sauvegarder vos progressions et obtenir le certificat (occupe 1 licence sur les {org.nb_licences} disponibles).
+                        </p>
+                        <Button
+                          size="sm" className="mt-3"
+                          onClick={() => setShowActivate(true)}
+                          disabled={remainingLicences <= 0}
+                        >
+                          Activer ma licence personnelle
+                        </Button>
+                        {remainingLicences <= 0 && (
+                          <p className="mt-2 text-xs text-amber-700">
+                            Capacité atteinte. Augmentez vos licences pour activer votre accès complet.
+                          </p>
+                        )}
+                      </>
+                    )}
+                  </div>
+
                   {invitations.length > 0 && (
                     <div>
                       <h3 className="mb-2 text-sm font-medium">Invitations en attente</h3>
