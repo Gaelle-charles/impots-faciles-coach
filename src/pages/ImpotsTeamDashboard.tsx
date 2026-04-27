@@ -475,9 +475,14 @@ export default function ImpotsTeamDashboard() {
                   <div className="rounded-lg border bg-background p-4">
                     <h3 className="text-sm font-medium">Suivre la formation moi aussi</h3>
                     {adminHasLicense ? (
-                      <p className="mt-1 text-xs text-muted-foreground">
-                        Votre licence personnelle est active : vous avez accès au parcours complet certifiant.
-                      </p>
+                      <>
+                        <p className="mt-1 text-xs text-muted-foreground">
+                          Votre licence personnelle est active : vous avez accès au parcours complet certifiant.
+                        </p>
+                        <Link to="/dashboard">
+                          <Button size="sm" className="mt-3">Accéder à mon parcours</Button>
+                        </Link>
+                      </>
                     ) : (
                       <>
                         <p className="mt-1 text-xs text-muted-foreground">
@@ -536,11 +541,13 @@ export default function ImpotsTeamDashboard() {
                             <div className="min-w-0">
                               <p className="truncate font-medium">{m.email}</p>
                               <p className="text-xs text-muted-foreground">
-                                {m.role === 'admin' ? 'Administrateur' : 'Membre'} ·{' '}
+                                {m.role === 'admin' ? 'Administrateur'
+                                  : m.role === 'admin_with_license' ? 'Administrateur (licence personnelle)'
+                                  : 'Collaborateur'} ·{' '}
                                 {m.removed_at ? 'Retiré' : m.accepted_at ? 'Actif' : 'En attente'}
                               </p>
                             </div>
-                            {m.role !== 'admin' && !m.removed_at && (
+                            {m.role !== 'admin' && m.role !== 'admin_with_license' && !m.removed_at && (
                               <AlertDialog>
                                 <AlertDialogTrigger asChild>
                                   <Button size="sm" variant="ghost" disabled={busyId === m.id}>
