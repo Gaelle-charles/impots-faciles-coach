@@ -20,6 +20,8 @@ const PRICES = {
 } as const;
 type Plan = keyof typeof PRICES;
 
+const B2B_SIGNUP_REDIRECT_KEY = 'b2bSignupInProgress';
+
 export default function ImpotsTeamSouscription() {
   const navigate = useNavigate();
   const [params] = useSearchParams();
@@ -47,6 +49,7 @@ export default function ImpotsTeamSouscription() {
   const [password, setPassword] = useState('');
   const [prenom, setPrenom] = useState('');
   const [nom, setNom] = useState('');
+  const [needsEmailVerification, setNeedsEmailVerification] = useState(false);
 
   const total = useMemo(() => PRICES[plan].team * nbLicences, [plan, nbLicences]);
 
@@ -74,7 +77,6 @@ export default function ImpotsTeamSouscription() {
   };
 
   const goToAcceptation = async () => {
-    // Côté étape "compte" : valider le compte / créer si besoin, puis passer à l'étape acceptation
     setSubmitting(true);
     try {
       if (!user) {
@@ -91,7 +93,7 @@ export default function ImpotsTeamSouscription() {
           email,
           password,
           options: {
-            emailRedirectTo: `${window.location.origin}/auth/callback`,
+            emailRedirectTo: `${window.location.origin}/impots-team/souscription?plan=${plan}&nb=${nbLicences}`,
             data: { prenom, nom, role: 'admin_org' },
           },
         });
@@ -100,15 +102,22 @@ export default function ImpotsTeamSouscription() {
           setSubmitting(false);
           return;
         }
+
+        sessionStorage.setItem(B2B_SIGNUP_REDIRECT_KEY, '1');
+
         const { error: signInErr } = await supabase.auth.signInWithPassword({ email, password });
         if (signInErr) {
+          setNeedsEmailVerification(true);
+          setStep('acceptation');
           toast({
-            title: 'Vérifiez votre email',
-            description: 'Confirmez votre email puis connectez-vous pour finaliser.',
+            title: 'Compte créé',
+            description: 'Votre confirmation email peut être finalisée après le paiement.',
           });
           setSubmitting(false);
           return;
         }
+
+        sessionStorage.removeItem(B2B_SIGNUP_REDIRECT_KEY);
       }
       setStep('acceptation');
     } catch (err) {
@@ -296,6 +305,12 @@ export default function ImpotsTeamSouscription() {
 
               {step === 'acceptation' && (
                 <>
+                  {needsEmailVerification && !user ? (
+                    <div className="rounded-lg border border-border bg-muted/40 p-4 text-sm text-muted-foreground">
+                      Votre compte a été créé. Vous pouvez finaliser le paiement maintenant ; la confirmation email pourra être terminée juste après l'achat.
+                    </div>
+                  ) : null}
+
                   <div className="rounded-lg border bg-background p-4 space-y-1 text-sm">
                     <p className="font-medium">Récapitulatif</p>
                     <p className="text-muted-foreground">
