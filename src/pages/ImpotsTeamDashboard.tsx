@@ -475,9 +475,14 @@ export default function ImpotsTeamDashboard() {
                   <div className="rounded-lg border bg-background p-4">
                     <h3 className="text-sm font-medium">Suivre la formation moi aussi</h3>
                     {adminHasLicense ? (
-                      <p className="mt-1 text-xs text-muted-foreground">
-                        Votre licence personnelle est active : vous avez accès au parcours complet certifiant.
-                      </p>
+                      <>
+                        <p className="mt-1 text-xs text-muted-foreground">
+                          Votre licence personnelle est active : vous avez accès au parcours complet certifiant.
+                        </p>
+                        <Link to="/dashboard">
+                          <Button size="sm" className="mt-3">Accéder à mon parcours</Button>
+                        </Link>
+                      </>
                     ) : (
                       <>
                         <p className="mt-1 text-xs text-muted-foreground">
