@@ -242,6 +242,45 @@ Deno.serve(async (req) => {
       cancel_url: `${origin}/impots-team`,
     });
 
+    // Journalisation des acceptations légales B2B (preuve juridique immuable)
+    try {
+      const ip =
+        req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ??
+        req.headers.get("cf-connecting-ip") ??
+        req.headers.get("x-real-ip") ??
+        null;
+      const userAgent = req.headers.get("user-agent") ?? null;
+      const baseRow = {
+        user_id: user.id,
+        user_email: user.email,
+        context: "b2b_checkout",
+        plan,
+        document_version: "1.0-2026-04",
+        ip_address: ip,
+        user_agent: userAgent,
+        metadata: {
+          stripe_session_id: session.id,
+          organization_id: orgId,
+          nb_licences: nbLic,
+        },
+      };
+      await admin.from("legal_acceptances").insert([
+        { ...baseRow, document_type: "cgv", accepted_at: cgv_accepted_at },
+        { ...baseRow, document_type: "cgu", accepted_at: cgu_accepted_at },
+        {
+          ...baseRow,
+          document_type: "b2b_guarantee_notice",
+          accepted_at: cgv_accepted_at,
+          metadata: {
+            ...baseRow.metadata,
+            note: "Garantie commerciale 7 jours satisfait-ou-remboursé (B2B, sous conditions)",
+          },
+        },
+      ]);
+    } catch (logErr) {
+      console.error("[create-team-checkout-session] legal_acceptances insert failed:", logErr);
+    }
+
     return new Response(JSON.stringify({ url: session.url, organization_id: orgId }), {
       status: 200,
       headers: { ...corsHeaders, "Content-Type": "application/json" },
