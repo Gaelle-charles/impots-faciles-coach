@@ -82,19 +82,25 @@ Deno.serve(async (req) => {
 
     let user: { id: string; email: string } | null = null;
 
-    if (authHeader) {
+    if (hasUserJwt) {
       const userClient = createClient(SUPABASE_URL, ANON_KEY, {
-        global: { headers: { Authorization: authHeader } },
+        global: { headers: { Authorization: `Bearer ${bearer}` } },
       });
       const { data: userData, error: userErr } = await userClient.auth.getUser();
       if (userErr || !userData?.user?.email) {
-        return new Response(JSON.stringify({ error: "Token invalide" }), {
-          status: 401,
-          headers: { ...corsHeaders, "Content-Type": "application/json" },
-        });
+        // Si on a aussi un payload inline, on bascule en création serveur.
+        if (!hasInlineAdminPayload) {
+          return new Response(JSON.stringify({ error: "Token invalide" }), {
+            status: 401,
+            headers: { ...corsHeaders, "Content-Type": "application/json" },
+          });
+        }
+      } else {
+        user = { id: userData.user.id, email: userData.user.email };
       }
-      user = { id: userData.user.id, email: userData.user.email };
-    } else {
+    }
+
+    if (!user) {
       if (!hasInlineAdminPayload) {
         return new Response(JSON.stringify({ error: "Non authentifié" }), {
           status: 401,
