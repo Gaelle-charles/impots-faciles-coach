@@ -146,6 +146,21 @@ const Tarifs = () => {
           consultez un expert-comptable.
         </div>
 
+        {isOrgAdmin && org && (
+          <div className="mb-6 w-full max-w-3xl rounded-lg border-2 border-yellow-vivid/60 bg-yellow-vivid/10 p-4 text-sm text-foreground">
+            ⚠️ Vous êtes rattaché à l'organisation <strong>{org.raison_sociale}</strong> (plan{' '}
+            <strong className="capitalize">{org.plan}</strong>). Vous avez déjà un accès via votre licence
+            orga — souscrire un abonnement personnel ici doublonnera votre facturation.{' '}
+            <button
+              type="button"
+              onClick={() => navigate('/impots-team/dashboard')}
+              className="underline underline-offset-2 hover:no-underline"
+            >
+              Aller au dashboard équipe
+            </button>
+          </div>
+        )}
+
         {wasRedirected && (
           <div className="mb-8 flex w-full max-w-3xl items-start gap-3 rounded-lg border border-accent/40 bg-accent/10 p-4 text-sm text-foreground">
             <Info className="mt-0.5 h-5 w-5 shrink-0 text-accent" />
