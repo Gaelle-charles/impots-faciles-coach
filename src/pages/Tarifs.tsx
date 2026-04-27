@@ -73,6 +73,7 @@ const Tarifs = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const { user } = useAuth();
+  const { org, isOrgAdmin } = useOrgRole();
   const state = (location.state ?? {}) as RedirectState;
   const [loadingPlan, setLoadingPlan] = useState<string | null>(null);
   const [currentPlan, setCurrentPlan] = useState<string | null>(null);
