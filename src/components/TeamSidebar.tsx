@@ -46,7 +46,7 @@ export function TeamSidebar({
 
   const learnerItems = [
     { to: '/mes-modules', label: 'Mes modules', icon: BookOpen },
-    { to: '/simulateur', label: 'Mes simulateurs', icon: Calculator },
+    { to: '/mes-simulateurs', label: 'Mes simulateurs', icon: Calculator },
     { to: '/dashboard', label: 'Mes progressions', icon: BarChart3 },
   ];
 

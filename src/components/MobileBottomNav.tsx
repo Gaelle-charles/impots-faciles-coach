@@ -4,7 +4,7 @@ import { LayoutDashboard, BookOpen, Calculator, BarChart3, User } from 'lucide-r
 const items = [
   { to: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
   { to: '/mes-modules', label: 'Modules', icon: BookOpen },
-  { to: '/simulateur', label: 'Simulateur', icon: Calculator },
+  { to: '/mes-simulateurs', label: 'Simulateurs', icon: Calculator },
   { to: '/dashboard#resultats', label: 'Résultats', icon: BarChart3 },
   { to: '/profil', label: 'Profil', icon: User },
 ];
