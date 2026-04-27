@@ -33,7 +33,7 @@ Le responsable du traitement des données personnelles collectées sur les plate
 
 #### 2.2 Données de situation fiscale — Traitement spécifique
 
-> ⚠️ **Données à caractère particulier** — Les informations relatives à la situation fiscale (revenus, charges déductibles, composition du foyer fiscal, etc.) saisies dans les simulateurs ou partagées dans le cadre du coaching pédagogique sont des données personnelles à caractère sensible au regard de leur nature confidentielle. Elles font l'objet de mesures de protection renforcées.
+> ️ **Données à caractère particulier** — Les informations relatives à la situation fiscale (revenus, charges déductibles, composition du foyer fiscal, etc.) saisies dans les simulateurs ou partagées dans le cadre du coaching pédagogique sont des données personnelles à caractère sensible au regard de leur nature confidentielle. Elles font l'objet de mesures de protection renforcées.
 
 | Donnée | Source | Traitement |
 |---|---|---|

@@ -44,7 +44,7 @@ Toute commande implique l'acceptation pleine et entière des présentes CGV, par
 
 ### 2.3 Restriction d'usage essentielle — Service réservé aux particuliers
 
-⚠️ **La plateforme traite EXCLUSIVEMENT de la fiscalité des particuliers** (impôt sur le revenu, prélèvements sociaux des particuliers, dispositifs d'optimisation IR).
+️ **La plateforme traite EXCLUSIVEMENT de la fiscalité des particuliers** (impôt sur le revenu, prélèvements sociaux des particuliers, dispositifs d'optimisation IR).
 
 **Elle ne couvre PAS** :
 - L'impôt sur les sociétés (IS)
@@ -91,7 +91,7 @@ Un module gratuit (Module 0) est accessible sans engagement à toute personne cr
 
 ### 3.3 Disclaimer fiscal essentiel
 
-⚠️ **AVERTISSEMENT LÉGAL**
+️ **AVERTISSEMENT LÉGAL**
 
 Les contenus et outils proposés ont un **caractère exclusivement pédagogique et informatif**. Ils ne constituent PAS :
 - Un conseil fiscal personnalisé
@@ -161,7 +161,7 @@ Le droit de rétractation **ne peut être exercé** pour les contenus numérique
 ### 6.3 Renonciation expresse
 Lors de la commande, le Client coche obligatoirement :
 
-> ☐ « Je reconnais avoir expressément demandé un accès immédiat au contenu numérique commandé avant l'expiration du délai légal de rétractation de 14 jours. En cochant cette case, j'accepte expressément et en toute connaissance de cause de perdre définitivement mon droit de rétractation dès lors que l'accès à la plateforme Impôts Facile sera activé par ANNUL IMPOTS, conformément à l'article L221-28, alinéa 13° du Code de la consommation. J'ai pris connaissance des Conditions Générales de Vente et de la présente renonciation avant de valider ma commande. »
+> « Je reconnais avoir expressément demandé un accès immédiat au contenu numérique commandé avant l'expiration du délai légal de rétractation de 14 jours. En cochant cette case, j'accepte expressément et en toute connaissance de cause de perdre définitivement mon droit de rétractation dès lors que l'accès à la plateforme Impôts Facile sera activé par ANNUL IMPOTS, conformément à l'article L221-28, alinéa 13° du Code de la consommation. J'ai pris connaissance des Conditions Générales de Vente et de la présente renonciation avant de valider ma commande. »
 
 S'il ne coche pas, l'accès est activé après l'expiration du délai de 14 jours.
 
@@ -184,14 +184,14 @@ Adresse : 340 Route de la Bouaye, 97190 Le Gosier, Guadeloupe
 Je notifie par la présente ma rétractation du contrat portant sur :
 Commande passée le : ____________
 Numéro de commande : ____________
-Plan souscrit : ☐ Starter  ☐ Expert  ☐ Premium
-☐ Impôts Team Starter  ☐ Impôts Team Expert  ☐ Impôts Team Premium
+Plan souscrit : Starter Expert Premium
+ Impôts Team Starter Impôts Team Expert Impôts Team Premium
 
 Nom du Client : __________________________________
 Adresse : ________________________________________
 Email : __________________________________________
 IBAN pour remboursement : ________________________
-Signature : _____________  Date : _____________
+Signature : _____________ Date : _____________
 ```
 
 ---
@@ -237,7 +237,7 @@ La résiliation prend effet **à la fin de la période en cours** (loi Chatel). 
 
 **Upgrade** (plan supérieur) : possible à tout moment avec proration immédiate par Stripe.
 
-**Downgrade** (plan inférieur) : ❌ **NON POSSIBLE en cours de période**. Le Client doit attendre la fin de la période, ne pas renouveler, puis souscrire au plan inférieur lors d'une nouvelle commande. Cette restriction est rappelée :
+**Downgrade** (plan inférieur) : **NON POSSIBLE en cours de période**. Le Client doit attendre la fin de la période, ne pas renouveler, puis souscrire au plan inférieur lors d'une nouvelle commande. Cette restriction est rappelée :
 - Avant l'accès au portail Stripe (modal d'avertissement)
 - Dans les présentes CGV (acceptées à la commande)
 - Sur la page tarifs

@@ -27,7 +27,7 @@ export default function SimulateurLayout({ emoji, title, subtitle, children }: P
       </div>
 
       <div className="rounded-lg bg-yellow-vivid/15 border border-yellow-vivid/30 p-4 text-sm text-foreground">
-        <span className="font-semibold">⚠️ Estimation pédagogique.</span>{" "}
+        <span className="font-semibold">Estimation pédagogique.</span>{" "}
         Non opposable à la DGFIP. Pour votre situation personnelle, consultez un
         expert-comptable ou un avocat fiscaliste, ou rendez-vous sur{" "}
         <a
