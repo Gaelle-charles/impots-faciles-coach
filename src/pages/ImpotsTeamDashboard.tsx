@@ -116,6 +116,10 @@ export default function ImpotsTeamDashboard() {
   };
 
   useEffect(() => {
+    setActiveTab(initialTab);
+  }, [initialTab]);
+
+  useEffect(() => {
     if (authLoading) return;
     if (!user) { setLoading(false); return; }
     (async () => {
