@@ -250,7 +250,7 @@ function getProfilLabel(p: FormData, metierNom?: string, paysNoms?: string[]): s
 const Onboarding = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
-
+  const { org, isOrgAdmin, hasLicense } = useOrgRole();
   const [loading, setLoading] = useState(true);
   const [prenom, setPrenom] = useState('');
   const [currentStep, setCurrentStep] = useState(0);
