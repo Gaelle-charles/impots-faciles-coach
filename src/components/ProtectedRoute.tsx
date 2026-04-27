@@ -67,9 +67,13 @@ export function ProtectedRoute({ children, adminOnly = false }: { children: Reac
     return <Navigate to="/admin/login" replace />;
   }
 
-  // Modèle B : un admin d'orga n'a accès qu'à son espace de gestion (et aux pages publiques).
-  // Toute tentative d'accès aux routes B2C protégées (dashboard, modules, simulateur, profil…) → redirect.
-  if (!adminOnly && isOrgAdmin && !isB2BRoute) {
+  // Modèle B : un admin d'orga sans licence est cantonné à son espace de gestion,
+  // mais peut consulter les modules/simulateurs en mode aperçu.
+  const previewAllowed = location.pathname.startsWith('/module/')
+    || location.pathname.startsWith('/simulateur')
+    || location.pathname.startsWith('/fiche-metier/')
+    || location.pathname.startsWith('/quizz/');
+  if (!adminOnly && isOrgAdmin && !isB2BRoute && !previewAllowed) {
     return <Navigate to="/impots-team/dashboard" replace />;
   }
 
