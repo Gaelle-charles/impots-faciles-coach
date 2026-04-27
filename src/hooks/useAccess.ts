@@ -1,6 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
+import { useOrgRole } from '@/hooks/useOrgRole';
 
 export type Plan = 'nouveau' | 'starter' | 'expert' | 'premium';
 export type Role = 'client' | 'admin';
@@ -20,6 +21,7 @@ const PAID_FULL_ACCESS: Plan[] = ['expert', 'premium'];
 
 export function useAccess() {
   const { user, loading: authLoading } = useAuth();
+  const { isOrgAdmin, isOrgAdminPreview, loading: orgLoading } = useOrgRole();
 
   const { data: profile, isLoading: profileLoading } = useQuery({
     queryKey: ['access-profile', user?.id],
@@ -37,7 +39,7 @@ export function useAccess() {
     },
   });
 
-  const isLoading = authLoading || (!!user && profileLoading);
+  const isLoading = authLoading || orgLoading || (!!user && profileLoading);
   const isAuthenticated = !!user;
   const plan = (profile?.plan ?? 'nouveau') as Plan;
   const role = (profile?.role ?? 'client') as Role;
@@ -46,18 +48,22 @@ export function useAccess() {
   const hasModuleAccess = (module: ModuleLike | null | undefined): boolean => {
     if (!profile || !module) return false;
     if (isAdmin) return true;
+    // Admin orga (avec ou sans licence) : aperçu/accès de tous les modules
+    if (isOrgAdmin) return true;
     return Array.isArray(module.accessibilite) && module.accessibilite.includes(plan);
   };
 
   const hasFicheMetierAccess = (): boolean => {
     if (!profile) return false;
     if (isAdmin) return true;
+    if (isOrgAdmin) return true;
     return PAID_FULL_ACCESS.includes(plan);
   };
 
   const hasSimulateurCompletAccess = (): boolean => {
     if (!profile) return false;
     if (isAdmin) return true;
+    if (isOrgAdmin) return true;
     return PAID_FULL_ACCESS.includes(plan);
   };
 
@@ -73,6 +79,7 @@ export function useAccess() {
     role,
     isLoading,
     isAuthenticated,
+    isOrgAdminPreview, // admin orga sans licence perso → mode aperçu (pas de sauvegarde)
     hasModuleAccess,
     hasFicheMetierAccess,
     hasSimulateurCompletAccess,
