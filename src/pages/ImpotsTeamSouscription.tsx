@@ -74,7 +74,6 @@ export default function ImpotsTeamSouscription() {
   };
 
   const goToAcceptation = async () => {
-    // Côté étape "compte" : valider le compte / créer si besoin, puis passer à l'étape acceptation
     setSubmitting(true);
     try {
       if (!user) {
@@ -87,25 +86,14 @@ export default function ImpotsTeamSouscription() {
           setSubmitting(false);
           return;
         }
-        const { error: signUpErr } = await supabase.auth.signUp({
+
+        const { data: signInData, error: firstSignInErr } = await supabase.auth.signInWithPassword({
           email,
           password,
-          options: {
-            emailRedirectTo: `${window.location.origin}/auth/callback`,
-            data: { prenom, nom, role: 'admin_org' },
-          },
         });
-        if (signUpErr) {
-          toast({ title: 'Erreur compte', description: signUpErr.message, variant: 'destructive' });
-          setSubmitting(false);
-          return;
-        }
-        const { error: signInErr } = await supabase.auth.signInWithPassword({ email, password });
-        if (signInErr) {
-          toast({
-            title: 'Vérifiez votre email',
-            description: 'Confirmez votre email puis connectez-vous pour finaliser.',
-          });
+
+        if (!firstSignInErr && signInData.user) {
+          setStep('acceptation');
           setSubmitting(false);
           return;
         }
@@ -141,6 +129,12 @@ export default function ImpotsTeamSouscription() {
           nb_licences: nbLicences,
           cgv_accepted_at: nowIso,
           cgu_accepted_at: nowIso,
+          ...(!user ? {
+            admin_email: email.trim().toLowerCase(),
+            admin_password: password,
+            admin_prenom: prenom.trim(),
+            admin_nom: nom.trim(),
+          } : {}),
         },
       });
 
@@ -153,6 +147,24 @@ export default function ImpotsTeamSouscription() {
         setSubmitting(false);
         return;
       }
+
+      if (!user) {
+        const { error: signInErr } = await supabase.auth.signInWithPassword({
+          email: email.trim().toLowerCase(),
+          password,
+        });
+
+        if (signInErr) {
+          toast({
+            title: 'Connexion impossible',
+            description: 'Le paiement a été préparé, mais la connexion au compte admin a échoué. Réessayez.',
+            variant: 'destructive',
+          });
+          setSubmitting(false);
+          return;
+        }
+      }
+
       window.location.href = data.url;
     } catch (err) {
       console.error(err);

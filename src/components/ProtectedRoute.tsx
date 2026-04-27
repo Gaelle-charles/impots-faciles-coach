@@ -7,6 +7,7 @@ import type { ReactNode } from 'react';
 export function ProtectedRoute({ children, adminOnly = false }: { children: ReactNode; adminOnly?: boolean }) {
   const { user, loading } = useAuth();
   const location = useLocation();
+  const isB2BRoute = location.pathname.startsWith('/impots-team');
   const [role, setRole] = useState<string | null>(null);
   const [roleLoading, setRoleLoading] = useState(adminOnly);
   const [onboardingDone, setOnboardingDone] = useState<boolean | null>(null);
@@ -60,7 +61,8 @@ export function ProtectedRoute({ children, adminOnly = false }: { children: Reac
   if (
     !adminOnly &&
     onboardingDone === false &&
-    location.pathname !== '/onboarding'
+    location.pathname !== '/onboarding' &&
+    !isB2BRoute
   ) {
     return <Navigate to="/onboarding" replace />;
   }
