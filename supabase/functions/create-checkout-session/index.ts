@@ -93,6 +93,65 @@ Deno.serve(async (req) => {
       },
     });
 
+    // Journalisation des acceptations légales (preuve juridique immuable)
+    try {
+      const ip =
+        req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ??
+        req.headers.get("cf-connecting-ip") ??
+        req.headers.get("x-real-ip") ??
+        null;
+      const userAgent = req.headers.get("user-agent") ?? null;
+      const serviceClient = createClient(
+        Deno.env.get("SUPABASE_URL")!,
+        Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
+        { auth: { persistSession: false, autoRefreshToken: false } },
+      );
+      await serviceClient.from("legal_acceptances").insert([
+        {
+          user_id: user.id,
+          user_email: email ?? null,
+          context: "b2c_checkout",
+          plan,
+          document_type: "cgv",
+          document_version: "1.0-2026-04",
+          accepted_at: cgvAt,
+          ip_address: ip,
+          user_agent: userAgent,
+          metadata: { stripe_session_id: session.id },
+        },
+        {
+          user_id: user.id,
+          user_email: email ?? null,
+          context: "b2c_checkout",
+          plan,
+          document_type: "cgu",
+          document_version: "1.0-2026-04",
+          accepted_at: cguAt,
+          ip_address: ip,
+          user_agent: userAgent,
+          metadata: { stripe_session_id: session.id },
+        },
+        {
+          user_id: user.id,
+          user_email: email ?? null,
+          context: "b2c_checkout",
+          plan,
+          document_type: "waiver_retraction",
+          document_version: "1.0-2026-04",
+          accepted_at: waiverAt,
+          ip_address: ip,
+          user_agent: userAgent,
+          metadata: {
+            stripe_session_id: session.id,
+            legal_basis: "Article L221-28 13° Code de la consommation",
+          },
+        },
+      ]);
+    } catch (logErr) {
+      // On ne bloque pas le checkout sur un échec de log, mais on trace.
+      console.error("[create-checkout-session] legal_acceptances insert failed:", logErr);
+    }
+
     return new Response(JSON.stringify({ url: session.url }), {
       status: 200,
       headers: { ...corsHeaders, "Content-Type": "application/json" },
