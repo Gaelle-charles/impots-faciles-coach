@@ -22,6 +22,19 @@ export function Header({ variant = 'light' }: HeaderProps) {
   const { user, signOut } = useAuth();
   const { hasAdminAccess } = useAccess();
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [accountHref, setAccountHref] = useState('/dashboard');
+
+  useEffect(() => {
+    let cancelled = false;
+    if (!user) { setAccountHref('/dashboard'); return; }
+    (async () => {
+      const { data } = await supabase.rpc('get_user_organization', { p_user_id: user.id });
+      const org = Array.isArray(data) ? data[0] : data;
+      if (cancelled) return;
+      setAccountHref(org?.org_id ? '/impots-team/dashboard' : '/dashboard');
+    })();
+    return () => { cancelled = true; };
+  }, [user]);
 
   const isDark = variant === 'dark';
   const isAdmin = hasAdminAccess();
