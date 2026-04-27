@@ -89,6 +89,19 @@ export default function ImpotsTeamSouscription() {
           setSubmitting(false);
           return;
         }
+
+        const { data: signInData, error: firstSignInErr } = await supabase.auth.signInWithPassword({
+          email,
+          password,
+        });
+
+        if (!firstSignInErr && signInData.user) {
+          setNeedsEmailVerification(false);
+          setStep('acceptation');
+          setSubmitting(false);
+          return;
+        }
+
         const { error: signUpErr } = await supabase.auth.signUp({
           email,
           password,
@@ -98,6 +111,17 @@ export default function ImpotsTeamSouscription() {
           },
         });
         if (signUpErr) {
+          if (/already registered|already exists|already been registered/i.test(signUpErr.message)) {
+            setNeedsEmailVerification(true);
+            setStep('acceptation');
+            toast({
+              title: 'Compte existant détecté',
+              description: 'Le paiement peut continuer sans repasser par la confirmation email.',
+            });
+            setSubmitting(false);
+            return;
+          }
+
           toast({ title: 'Erreur compte', description: signUpErr.message, variant: 'destructive' });
           setSubmitting(false);
           return;
@@ -119,6 +143,7 @@ export default function ImpotsTeamSouscription() {
 
         sessionStorage.removeItem(B2B_SIGNUP_REDIRECT_KEY);
       }
+      setNeedsEmailVerification(false);
       setStep('acceptation');
     } catch (err) {
       console.error(err);
@@ -150,6 +175,12 @@ export default function ImpotsTeamSouscription() {
           nb_licences: nbLicences,
           cgv_accepted_at: nowIso,
           cgu_accepted_at: nowIso,
+          ...(!user ? {
+            admin_email: email.trim().toLowerCase(),
+            admin_password: password,
+            admin_prenom: prenom.trim(),
+            admin_nom: nom.trim(),
+          } : {}),
         },
       });
 
@@ -162,6 +193,24 @@ export default function ImpotsTeamSouscription() {
         setSubmitting(false);
         return;
       }
+
+      if (!user) {
+        const { error: signInErr } = await supabase.auth.signInWithPassword({
+          email: email.trim().toLowerCase(),
+          password,
+        });
+
+        if (signInErr) {
+          toast({
+            title: 'Connexion impossible',
+            description: 'Le paiement a été préparé, mais la connexion au compte admin a échoué. Réessayez.',
+            variant: 'destructive',
+          });
+          setSubmitting(false);
+          return;
+        }
+      }
+
       window.location.href = data.url;
     } catch (err) {
       console.error(err);
