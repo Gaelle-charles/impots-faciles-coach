@@ -843,6 +843,11 @@ const Onboarding = () => {
                 onCheckout={handleCheckout}
                 checkoutLoading={checkoutLoading}
                 onSkip={() => navigate('/dashboard')}
+                prenom={prenom}
+                org={org}
+                isOrgAdmin={isOrgAdmin}
+                hasOrgLicense={hasLicense}
+                onNavigate={(to) => navigate(to)}
               />
             )}
           </CardContent>
