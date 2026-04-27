@@ -1494,9 +1494,69 @@ function Step8({
   orgLoading: boolean;
   onNavigate: (to: string) => void;
 }) {
-  // Garde durcissement : tant que useOrgRole charge, on ne risque pas d'afficher
-  // par défaut le CAS 1 (cartes tarifaires) à un membre d'orga.
-  if (orgLoading) {
+  const { user } = useAuth();
+  const [directOrgMembership, setDirectOrgMembership] = useState(false);
+  const [directOrgRole, setDirectOrgRole] = useState<string | null>(org?.role ?? null);
+  const [directOrgId, setDirectOrgId] = useState<string | null>(null);
+  const [directOrgLoading, setDirectOrgLoading] = useState(true);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    if (!user?.id) {
+      setDirectOrgMembership(false);
+      setDirectOrgRole(org?.role ?? null);
+      setDirectOrgId(null);
+      setDirectOrgLoading(false);
+      return;
+    }
+
+    setDirectOrgLoading(true);
+
+    supabase
+      .from('organization_members')
+      .select('organization_id, role')
+      .eq('user_id', user.id)
+      .is('removed_at', null)
+      .not('accepted_at', 'is', null)
+      .limit(1)
+      .maybeSingle()
+      .then(({ data, error }) => {
+        if (cancelled) return;
+
+        if (error) {
+          console.error('Step8 direct org lookup failed', error);
+          setDirectOrgMembership(!!org);
+          setDirectOrgRole(org?.role ?? null);
+          setDirectOrgId(null);
+        } else {
+          setDirectOrgMembership(!!data || !!org);
+          setDirectOrgRole((data?.role as string | null) ?? org?.role ?? null);
+          setDirectOrgId(data?.organization_id ?? null);
+        }
+
+        setDirectOrgLoading(false);
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [user?.id, org]);
+
+  const isInOrg = !!org || directOrgMembership;
+  const effectiveOrgRole = org?.role ?? directOrgRole;
+
+  console.log('Step8 debug', {
+    userId: user?.id,
+    organizationId: directOrgId,
+    role: effectiveOrgRole,
+    isInOrg,
+    isOrgAdmin,
+    hasOrgLicense,
+    orgLoading: orgLoading || directOrgLoading,
+  });
+
+  if (orgLoading || directOrgLoading) {
     return (
       <div className="flex flex-col items-center justify-center gap-3 py-16">
         <Loader2 className="h-8 w-8 animate-spin text-primary" />
@@ -1504,9 +1564,6 @@ function Step8({
       </div>
     );
   }
-
-  // Tout user rattaché à une orga (admin, admin_with_license, member) NE doit JAMAIS voir les cartes tarifaires.
-  const isInOrg = !!org;
 
   const justification =
     plan === 'starter'
@@ -1664,7 +1721,7 @@ function Step8({
       )}
 
       {/* CAS 2 — Admin orga sans licence personnelle */}
-      {isOrgAdmin && org?.role === 'admin' && !hasOrgLicense && (
+      {isOrgAdmin && effectiveOrgRole === 'admin' && !hasOrgLicense && (
         <div className="space-y-4">
           <div className="rounded-xl border-2 border-primary/40 bg-primary/5 p-5 text-center">
             <p className="text-base text-foreground">
@@ -1683,7 +1740,7 @@ function Step8({
       )}
 
       {/* CAS 3 — Admin avec licence personnelle */}
-      {isOrgAdmin && org?.role === 'admin_with_license' && (
+      {isOrgAdmin && effectiveOrgRole === 'admin_with_license' && (
         <div className="space-y-4">
           <div className="rounded-xl border-2 border-primary/40 bg-primary/5 p-5 text-center">
             <p className="text-base text-foreground">
@@ -1701,7 +1758,7 @@ function Step8({
       )}
 
       {/* CAS 4 — Membre d'orga (rôle member, pas admin) */}
-      {!isOrgAdmin && org?.role === 'member' && (
+      {!isOrgAdmin && effectiveOrgRole === 'member' && (
         <div className="space-y-4">
           <div className="rounded-xl border-2 border-primary/40 bg-primary/5 p-5 text-center">
             <p className="text-base text-foreground">
