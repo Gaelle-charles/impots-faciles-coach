@@ -9,6 +9,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useOrgRole } from '@/hooks/useOrgRole';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
+import { CheckoutAcceptanceDialog } from '@/components/CheckoutAcceptanceDialog';
 
 const plans = [
   {
@@ -77,6 +78,7 @@ const Tarifs = () => {
   const state = (location.state ?? {}) as RedirectState;
   const [loadingPlan, setLoadingPlan] = useState<string | null>(null);
   const [currentPlan, setCurrentPlan] = useState<string | null>(null);
+  const [pendingPlan, setPendingPlan] = useState<string | null>(null);
 
   useEffect(() => {
     if (!user) {
@@ -97,7 +99,7 @@ const Tarifs = () => {
 
   const currentTier = tierOf(currentPlan);
 
-  const handleCheckout = async (planSlug: string) => {
+  const handleCheckout = (planSlug: string) => {
     if (!user) {
       navigate(`/connexion?redirect=${encodeURIComponent('/tarifs')}`);
       return;
@@ -110,10 +112,20 @@ const Tarifs = () => {
       );
       if (!ok) return;
     }
+    // Ouvre le dialogue d'acceptation (CGV/CGU/renonciation) avant la redirection Stripe
+    setPendingPlan(planSlug);
+  };
+
+  const confirmCheckout = async (acceptances: {
+    cgv_accepted_at: string;
+    cgu_accepted_at: string;
+    waiver_accepted_at: string;
+  }) => {
+    if (!pendingPlan) return;
     try {
-      setLoadingPlan(planSlug);
+      setLoadingPlan(pendingPlan);
       const { data, error } = await supabase.functions.invoke('create-checkout-session', {
-        body: { plan: planSlug },
+        body: { plan: pendingPlan, ...acceptances },
       });
       if (error) throw error;
       if (!data?.url) throw new Error('URL Stripe manquante');
@@ -123,6 +135,7 @@ const Tarifs = () => {
       const message = err instanceof Error ? err.message : 'Une erreur est survenue';
       toast.error('Erreur de paiement', { description: message });
       setLoadingPlan(null);
+      setPendingPlan(null);
     }
   };
 
@@ -337,6 +350,20 @@ const Tarifs = () => {
       </div>
 
       <Footer />
+
+      <CheckoutAcceptanceDialog
+        open={pendingPlan !== null}
+        onOpenChange={(open) => {
+          if (!open) {
+            setPendingPlan(null);
+            setLoadingPlan(null);
+          }
+        }}
+        planLabel={plans.find((p) => p.slug === pendingPlan)?.name ?? ''}
+        planPrice={plans.find((p) => p.slug === pendingPlan)?.price ?? 0}
+        loading={loadingPlan !== null}
+        onConfirm={confirmCheckout}
+      />
     </div>
   );
 };

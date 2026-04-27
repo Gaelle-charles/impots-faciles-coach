@@ -312,7 +312,7 @@ export default function ImpotsTeamSouscription() {
                         className="mt-0.5"
                       />
                       <span className="text-sm leading-relaxed">
-                        J'ai lu et j'accepte les{' '}
+                        Je reconnais avoir lu et accepté les{' '}
                         <Link
                           to="/legal/cgv"
                           target="_blank"
@@ -321,8 +321,10 @@ export default function ImpotsTeamSouscription() {
                         >
                           Conditions Générales de Vente
                           <ExternalLink className="h-3 w-3" />
-                        </Link>
-                        .
+                        </Link>{' '}
+                        applicables à l'offre Impôts Team. Je comprends que la garantie commerciale
+                        satisfait-ou-remboursé de 7 jours s'applique uniquement si aucune licence n'a
+                        été activée par un bénéficiaire (autre que le compte Administrateur).
                       </span>
                     </label>
 
@@ -346,6 +348,13 @@ export default function ImpotsTeamSouscription() {
                         .
                       </span>
                     </label>
+
+                    <p className="text-xs text-muted-foreground italic pt-1 border-t border-border/50">
+                      Le droit de rétractation prévu par le Code de la consommation ne s'applique pas
+                      aux personnes morales. ANNUL IMPOTS accorde à titre commercial une garantie
+                      satisfait-ou-remboursé de 7 jours calendaires suivant la souscription, sous
+                      réserve qu'aucune licence n'ait été activée par un bénéficiaire.
+                    </p>
                   </div>
 
                   <div className="flex gap-3">
