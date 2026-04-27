@@ -71,7 +71,7 @@ Deno.serve(async (req) => {
       .eq("id", inv.id);
 
     const baseUrl = Deno.env.get("PUBLIC_APP_URL") ?? "https://impotsfacile.com";
-    const acceptUrl = `${baseUrl.replace(/\/$/, "")}/invitation/${inv.token}`;
+    const acceptUrl = `${baseUrl.replace(/\/$/, "")}/impots-team/invitation/${inv.token}`;
 
     const { data: inviterProfile } = await admin.from("profiles").select("prenom, nom, email").eq("id", u.user.id).maybeSingle();
     const inviterName = [inviterProfile?.prenom, inviterProfile?.nom].filter(Boolean).join(" ").trim() || inviterProfile?.email || "Votre administrateur";

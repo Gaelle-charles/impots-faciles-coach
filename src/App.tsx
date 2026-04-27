@@ -79,6 +79,8 @@ const App = () => (
             <Route path="/impots-team/souscription" element={<ImpotsTeamSouscription />} />
             <Route path="/impots-team/bienvenue" element={<ProtectedRoute><ImpotsTeamBienvenue /></ProtectedRoute>} />
             <Route path="/impots-team/dashboard" element={<ProtectedRoute><ImpotsTeamDashboard /></ProtectedRoute>} />
+            <Route path="/impots-team/invitation/:token" element={<InvitationAccept />} />
+            {/* Alias rétro-compatible pour les anciens emails */}
             <Route path="/invitation/:token" element={<InvitationAccept />} />
 
             {/* Legal pages (public) */}

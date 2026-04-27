@@ -197,7 +197,7 @@ export default function ImpotsTeam() {
             <AccordionItem value="q4">
               <AccordionTrigger>Quels moyens de paiement ?</AccordionTrigger>
               <AccordionContent>
-                Carte bancaire, facturation annuelle. Le prélèvement SEPA sera proposé prochainement.
+                Carte bancaire uniquement, facturation annuelle. D'autres moyens de paiement seront proposés prochainement.
               </AccordionContent>
             </AccordionItem>
             <AccordionItem value="q5">
