@@ -380,7 +380,7 @@ export default function ImpotsTeamDashboard() {
         <div className={`mx-auto w-full max-w-4xl py-10 ${isMobile ? 'px-4 pb-24' : 'px-6 lg:px-8'}`}>
           <div className="mb-6 flex items-center justify-between gap-4">
             <div className="flex items-center gap-4">
-              {org.logo_url && !isMobile === false && (
+              {org.logo_url && isMobile && (
                 <img src={org.logo_url} alt={org.raison_sociale} className="h-12 w-12 rounded object-contain bg-background border" />
               )}
               <div>
