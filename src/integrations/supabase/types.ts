@@ -682,7 +682,10 @@ export type Database = {
           donnees: Json
           id: string
           impot_net: number | null
+          inputs: Json
           nom: string | null
+          results: Json
+          simulator_id: string
           taux_moyen: number | null
           user_id: string
         }
@@ -691,7 +694,10 @@ export type Database = {
           donnees: Json
           id?: string
           impot_net?: number | null
+          inputs: Json
           nom?: string | null
+          results: Json
+          simulator_id?: string
           taux_moyen?: number | null
           user_id: string
         }
@@ -700,7 +706,10 @@ export type Database = {
           donnees?: Json
           id?: string
           impot_net?: number | null
+          inputs?: Json
           nom?: string | null
+          results?: Json
+          simulator_id?: string
           taux_moyen?: number | null
           user_id?: string
         }

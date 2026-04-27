@@ -24,7 +24,9 @@ export function useOrgRole() {
   const { data, isLoading } = useQuery({
     queryKey: ['org-role', user?.id],
     enabled: !!user?.id,
-    staleTime: 60 * 1000,
+    staleTime: 0,
+    refetchOnMount: 'always',
+    refetchOnWindowFocus: true,
     queryFn: async (): Promise<OrgInfo | null> => {
       if (!user?.id) return null;
       const { data, error } = await supabase.rpc('get_user_organization', { p_user_id: user.id });
