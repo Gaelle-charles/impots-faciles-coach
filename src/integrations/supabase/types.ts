@@ -101,6 +101,51 @@ export type Database = {
         }
         Relationships: []
       }
+      legal_acceptances: {
+        Row: {
+          accepted_at: string
+          context: string
+          created_at: string
+          document_type: string
+          document_version: string
+          id: string
+          ip_address: string | null
+          metadata: Json | null
+          plan: string | null
+          user_agent: string | null
+          user_email: string | null
+          user_id: string
+        }
+        Insert: {
+          accepted_at: string
+          context: string
+          created_at?: string
+          document_type: string
+          document_version?: string
+          id?: string
+          ip_address?: string | null
+          metadata?: Json | null
+          plan?: string | null
+          user_agent?: string | null
+          user_email?: string | null
+          user_id: string
+        }
+        Update: {
+          accepted_at?: string
+          context?: string
+          created_at?: string
+          document_type?: string
+          document_version?: string
+          id?: string
+          ip_address?: string | null
+          metadata?: Json | null
+          plan?: string | null
+          user_agent?: string | null
+          user_email?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       metiers: {
         Row: {
           categorie: string | null
