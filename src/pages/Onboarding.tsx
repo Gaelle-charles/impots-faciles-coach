@@ -250,7 +250,7 @@ function getProfilLabel(p: FormData, metierNom?: string, paysNoms?: string[]): s
 const Onboarding = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
-  const { org, isOrgAdmin, hasLicense } = useOrgRole();
+  const { org, isOrgAdmin, hasLicense, loading: orgLoading } = useOrgRole();
   const [loading, setLoading] = useState(true);
   const [prenom, setPrenom] = useState('');
   const [currentStep, setCurrentStep] = useState(0);
@@ -847,6 +847,7 @@ const Onboarding = () => {
                 org={org}
                 isOrgAdmin={isOrgAdmin}
                 hasOrgLicense={hasLicense}
+                orgLoading={orgLoading}
                 onNavigate={(to) => navigate(to)}
               />
             )}
@@ -1475,6 +1476,7 @@ function Step8({
   org,
   isOrgAdmin,
   hasOrgLicense,
+  orgLoading,
   onNavigate,
 }: {
   profilLabel: string;
@@ -1489,8 +1491,23 @@ function Step8({
   org: { raison_sociale: string; plan: string; role: string } | null;
   isOrgAdmin: boolean;
   hasOrgLicense: boolean;
+  orgLoading: boolean;
   onNavigate: (to: string) => void;
 }) {
+  // Garde durcissement : tant que useOrgRole charge, on ne risque pas d'afficher
+  // par défaut le CAS 1 (cartes tarifaires) à un membre d'orga.
+  if (orgLoading) {
+    return (
+      <div className="flex flex-col items-center justify-center gap-3 py-16">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+        <p className="text-sm text-muted-foreground">Chargement de votre profil…</p>
+      </div>
+    );
+  }
+
+  // Tout user rattaché à une orga (admin, admin_with_license, member) NE doit JAMAIS voir les cartes tarifaires.
+  const isInOrg = !!org;
+
   const justification =
     plan === 'starter'
       ? 'Votre situation est simple. Le plan Starter couvre tous les essentiels.'
@@ -1571,7 +1588,7 @@ function Step8({
       </div>
 
       {/* Bloc tarification — conditionnel selon le statut de l'utilisateur */}
-      {!isOrgAdmin && (
+      {!isInOrg && (
         <>
           <div className="rounded-xl border-2 border-accent bg-accent/10 p-5 text-center">
             <p className="font-heading text-lg font-bold text-foreground">
@@ -1683,8 +1700,8 @@ function Step8({
         </div>
       )}
 
-      {/* CAS 4 — Membre d'orga */}
-      {isOrgAdmin && org?.role === 'member' && (
+      {/* CAS 4 — Membre d'orga (rôle member, pas admin) */}
+      {!isOrgAdmin && org?.role === 'member' && (
         <div className="space-y-4">
           <div className="rounded-xl border-2 border-primary/40 bg-primary/5 p-5 text-center">
             <p className="text-base text-foreground">
