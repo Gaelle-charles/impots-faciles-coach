@@ -86,7 +86,11 @@ export function Footer() {
             Plateforme dédiée aux particuliers — ne traite pas les obligations fiscales des
             structures professionnelles (SAS, SARL, SCI, IS, BIC professionnel, etc.).
           </p>
-          <p>© {new Date().getFullYear()} Impôts Facile — Tous droits réservés</p>
+          <p className="mx-auto max-w-3xl leading-relaxed text-primary-foreground/70 italic">
+            Estimation pédagogique — Non opposable à la DGFIP. Pour votre situation personnelle,
+            consultez un expert-comptable ou un avocat fiscaliste.
+          </p>
+          <p>© {new Date().getFullYear()} Impôts Facile — Édité par ANNUL IMPOTS — Tous droits réservés</p>
         </div>
       </div>
     </footer>
