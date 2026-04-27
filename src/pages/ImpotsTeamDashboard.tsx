@@ -125,6 +125,8 @@ export default function ImpotsTeamDashboard() {
       if (o) {
         setNewNb(o.nb_licences);
         await reloadMembers(o.id);
+        const { data: hasLic } = await supabase.rpc('org_admin_has_license', { p_user_id: user.id });
+        setAdminHasLicense(!!hasLic);
       }
       setLoading(false);
     })();
