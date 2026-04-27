@@ -90,7 +90,7 @@ export function Header({ variant = 'light' }: HeaderProps) {
         <div className="hidden items-center gap-3 md:flex">
           {user ? (
             <>
-              <Link to="/dashboard">
+              <Link to={accountHref}>
                 <Button variant={isDark ? 'cta' : 'default'} size="sm">
                   Mon compte
                 </Button>
@@ -172,7 +172,7 @@ export function Header({ variant = 'light' }: HeaderProps) {
           <div className="mt-4 flex flex-col gap-2">
             {user ? (
               <>
-                <Link to="/dashboard" onClick={() => setMobileOpen(false)}>
+                <Link to={accountHref} onClick={() => setMobileOpen(false)}>
                   <Button variant={isDark ? 'cta' : 'default'} size="sm" className="w-full">
                     Mon compte
                   </Button>
