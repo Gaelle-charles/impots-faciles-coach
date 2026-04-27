@@ -359,14 +359,28 @@ export default function ImpotsTeamDashboard() {
     ? new Date(new Date(org.date_paiement).getTime() + 365 * 24 * 3600 * 1000).toLocaleDateString('fr-FR')
     : '—';
 
+  const adminInitials = (
+    (user?.email?.[0] ?? '') + (user?.email?.[1] ?? '')
+  ).toUpperCase();
+
   return (
-    <div className="flex min-h-screen flex-col">
-      <Header />
-      <main className="flex-1 bg-muted/30 px-6 py-10">
-        <div className="mx-auto max-w-4xl">
+    <div className="min-h-screen bg-dashboard-bg">
+      {!isMobile && (
+        <TeamSidebar
+          orgName={org.raison_sociale}
+          orgLogoUrl={org.logo_url}
+          adminInitials={adminInitials}
+          hasLicense={adminHasLicense}
+          activeTeamTab={activeTab}
+          onTeamTabChange={setActiveTab}
+        />
+      )}
+      {isMobile && <Header />}
+      <main className={`min-h-screen ${isMobile ? '' : 'ml-sidebar'}`}>
+        <div className={`mx-auto w-full max-w-4xl py-10 ${isMobile ? 'px-4 pb-24' : 'px-6 lg:px-8'}`}>
           <div className="mb-6 flex items-center justify-between gap-4">
             <div className="flex items-center gap-4">
-              {org.logo_url && (
+              {org.logo_url && !isMobile === false && (
                 <img src={org.logo_url} alt={org.raison_sociale} className="h-12 w-12 rounded object-contain bg-background border" />
               )}
               <div>
@@ -379,8 +393,8 @@ export default function ImpotsTeamDashboard() {
             </Badge>
           </div>
 
-          <Tabs defaultValue={initialTab} className="w-full">
-            <TabsList>
+          <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as 'abonnement' | 'membres' | 'branding')} className="w-full">
+            <TabsList className={isMobile ? '' : 'hidden'}>
               <TabsTrigger value="abonnement">Mon abonnement</TabsTrigger>
               <TabsTrigger value="membres">Mes collaborateurs</TabsTrigger>
               <TabsTrigger value="branding">Personnalisation</TabsTrigger>
