@@ -6,7 +6,7 @@ import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
-import { fmtEur, MENTION_LEGALE_SIMULATEUR } from "@/lib/calculs-fiscaux";
+import { fmtEur, MENTION_LEGALE_SIMULATEUR, MENTION_OPTIMISATION_FISCALE } from "@/lib/calculs-fiscaux";
 
 /**
  * Simulateur Crédits & Réductions d'impôt 2026
@@ -435,6 +435,18 @@ export default function SimulateurCreditsReductions() {
       </Card>
 
       <p className="mt-6 text-xs text-muted-foreground italic">{MENTION_LEGALE_SIMULATEUR}</p>
+
+      <div className="mt-3 rounded-lg border border-amber-300 bg-amber-50 p-4 text-xs text-amber-900">
+        <p className="font-semibold mb-1">Optimisation fiscale — Avertissement complémentaire</p>
+        <p className="leading-relaxed">
+          Les dispositifs d'optimisation présentés (PER, dons, FCPI/FIP, souscription PME, etc.) sont
+          décrits à titre informatif. Leur applicabilité dépend de votre situation personnelle, de
+          votre tranche marginale d'imposition, de votre horizon de placement et de votre tolérance
+          au risque. Avant tout engagement (versement, souscription, investissement), consultez un
+          conseiller en gestion de patrimoine certifié et lisez attentivement les documents
+          contractuels du produit concerné.
+        </p>
+      </div>
     </SimulateurLayout>
   );
 }
