@@ -847,6 +847,7 @@ const Onboarding = () => {
                 org={org}
                 isOrgAdmin={isOrgAdmin}
                 hasOrgLicense={hasLicense}
+                orgLoading={orgLoading}
                 onNavigate={(to) => navigate(to)}
               />
             )}
