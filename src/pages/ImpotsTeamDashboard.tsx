@@ -71,6 +71,28 @@ export default function ImpotsTeamDashboard() {
   const [busyId, setBusyId] = useState<string | null>(null);
 
   const [logoUploading, setLogoUploading] = useState(false);
+  const [showActivate, setShowActivate] = useState(false);
+  const [activating, setActivating] = useState(false);
+  const [adminHasLicense, setAdminHasLicense] = useState(false);
+
+  const handleActivateLicense = async () => {
+    if (!user || !org) return;
+    setActivating(true);
+    try {
+      const { data, error } = await supabase.rpc('activate_admin_license');
+      const res = data as { success?: boolean; error?: string } | null;
+      if (error || !res?.success) {
+        toast({ title: 'Erreur', description: res?.error || error?.message || 'Activation impossible', variant: 'destructive' });
+        return;
+      }
+      toast({ title: 'Licence activée', description: 'Accès au parcours complet débloqué.' });
+      setShowActivate(false);
+      setAdminHasLicense(true);
+      await reloadMembers(org.id);
+    } finally {
+      setActivating(false);
+    }
+  };
 
   const reloadMembers = async (orgId: string) => {
     const [{ data: m }, { data: inv }] = await Promise.all([
