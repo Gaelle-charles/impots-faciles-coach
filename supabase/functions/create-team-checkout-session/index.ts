@@ -60,6 +60,10 @@ Deno.serve(async (req) => {
     }
 
     const authHeader = req.headers.get("Authorization");
+    const bearer = authHeader?.replace(/^Bearer\s+/i, "").trim() ?? "";
+    // supabase.functions.invoke() envoie toujours l'anon key. On ne considère
+    // l'appel comme "authentifié user" que si le token diffère de l'anon key.
+    const hasUserJwt = bearer.length > 0 && bearer !== ANON_KEY;
     const hasInlineAdminPayload = [admin_email, admin_password, admin_prenom, admin_nom].every(
       (value) => typeof value === "string" && value.trim().length > 0,
     );
