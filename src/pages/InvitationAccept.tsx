@@ -93,7 +93,7 @@ export default function InvitationAccept() {
       email: inv.email,
       password,
       options: {
-        emailRedirectTo: `${window.location.origin}/invitation/${token}`,
+        emailRedirectTo: `${window.location.origin}/impots-team/invitation/${token}`,
         data: { prenom, nom },
       },
     });
