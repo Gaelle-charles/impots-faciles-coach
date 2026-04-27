@@ -30,7 +30,16 @@ Deno.serve(async (req) => {
       admin_password,
       admin_prenom,
       admin_nom,
+      cgv_accepted_at,
+      cgu_accepted_at,
     } = body ?? {};
+
+    if (!cgv_accepted_at || !cgu_accepted_at) {
+      return new Response(
+        JSON.stringify({ error: "Acceptation des CGV et CGU requise" }),
+        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } },
+      );
+    }
 
     // --- Validations ---
     if (!raison_sociale || typeof raison_sociale !== "string" || raison_sociale.trim().length < 2) {
