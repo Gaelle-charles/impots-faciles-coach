@@ -9,10 +9,13 @@ const navLinks = [
 ];
 
 const legalLinks = [
-  { label: 'Mentions légales', to: '/mentions-legales' },
-  { label: 'Politique de confidentialité', to: '/confidentialite' },
-  { label: 'CGU', to: '/cgu' },
   { label: 'CGV', to: '/cgv' },
+  { label: 'CGU', to: '/cgu' },
+  { label: 'Politique de confidentialité', to: '/politique-confidentialite' },
+  { label: 'Mentions légales', to: '/mentions-legales' },
+  { label: 'Disclaimer fiscal', to: '/disclaimer-fiscal' },
+  { label: 'Renonciation rétractation', to: '/renonciation-retractation' },
+  { label: 'Politique de remboursement', to: '/politique-remboursement' },
 ];
 
 export function Footer() {
