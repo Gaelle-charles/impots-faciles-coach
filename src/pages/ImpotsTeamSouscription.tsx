@@ -112,11 +112,10 @@ export default function ImpotsTeamSouscription() {
         });
         if (signUpErr) {
           if (/already registered|already exists|already been registered/i.test(signUpErr.message)) {
-            setNeedsEmailVerification(true);
-            setStep('acceptation');
             toast({
-              title: 'Compte existant détecté',
-              description: 'Le paiement peut continuer sans repasser par la confirmation email.',
+              title: 'Compte déjà existant',
+              description: 'Connectez-vous avec ce compte pour continuer la souscription équipe.',
+              variant: 'destructive',
             });
             setSubmitting(false);
             return;
@@ -180,6 +179,7 @@ export default function ImpotsTeamSouscription() {
             admin_password: password,
             admin_prenom: prenom.trim(),
             admin_nom: nom.trim(),
+            signup_created_now: needsEmailVerification,
           } : {}),
         },
       });
