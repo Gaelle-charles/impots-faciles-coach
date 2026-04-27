@@ -22,6 +22,8 @@ import { Badge } from '@/components/ui/badge';
 import { Sparkles, Target, ShieldCheck, Clock, Check, Loader2, X, Plus, FileText, Briefcase, Globe } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { recalculerMatching } from '@/lib/matching';
+import { useOrgRole } from '@/hooks/useOrgRole';
+import { Link } from 'react-router-dom';
 
 const TOTAL_STEPS = 7;
 
