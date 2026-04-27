@@ -1471,6 +1471,11 @@ function Step8({
   onCheckout,
   checkoutLoading,
   onSkip,
+  prenom,
+  org,
+  isOrgAdmin,
+  hasOrgLicense,
+  onNavigate,
 }: {
   profilLabel: string;
   plan: 'starter' | 'expert' | 'premium';
@@ -1480,6 +1485,11 @@ function Step8({
   onCheckout: (slug: string) => void;
   checkoutLoading: string | null;
   onSkip: () => void;
+  prenom: string;
+  org: { raison_sociale: string; plan: string; role: string } | null;
+  isOrgAdmin: boolean;
+  hasOrgLicense: boolean;
+  onNavigate: (to: string) => void;
 }) {
   const justification =
     plan === 'starter'
