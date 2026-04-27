@@ -332,3 +332,6 @@ export const fmtPct = (n: number, decimals = 1): string =>
 
 export const MENTION_LEGALE_SIMULATEUR =
   "Cet outil est pédagogique. Les résultats sont indicatifs et ne constituent pas un conseil fiscal personnalisé. Pour une déclaration officielle, utilisez le simulateur officiel impots.gouv.fr.";
+
+export const MENTION_OPTIMISATION_FISCALE =
+  "Optimisation fiscale — Avertissement complémentaire. Les dispositifs d'optimisation présentés (PER, dons, FCPI/FIP, PME, etc.) sont décrits à titre informatif. Leur applicabilité dépend de votre situation personnelle, de votre tranche marginale d'imposition, de votre horizon de placement et de votre tolérance au risque. Avant tout engagement (versement, souscription, investissement), consultez un conseiller en gestion de patrimoine certifié et lisez attentivement les documents contractuels du produit concerné.";
