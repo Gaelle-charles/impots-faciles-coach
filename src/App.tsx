@@ -51,6 +51,7 @@ import ImpotsTeam from "./pages/ImpotsTeam";
 import ImpotsTeamSouscription from "./pages/ImpotsTeamSouscription";
 import ImpotsTeamBienvenue from "./pages/ImpotsTeamBienvenue";
 import ImpotsTeamDashboard from "./pages/ImpotsTeamDashboard";
+import InvitationAccept from "./pages/InvitationAccept";
 
 const queryClient = new QueryClient();
 
@@ -78,6 +79,7 @@ const App = () => (
             <Route path="/impots-team/souscription" element={<ImpotsTeamSouscription />} />
             <Route path="/impots-team/bienvenue" element={<ProtectedRoute><ImpotsTeamBienvenue /></ProtectedRoute>} />
             <Route path="/impots-team/dashboard" element={<ProtectedRoute><ImpotsTeamDashboard /></ProtectedRoute>} />
+            <Route path="/invitation/:token" element={<InvitationAccept />} />
 
             {/* Legal pages (public) */}
             <Route path="/cgv" element={<Cgv />} />

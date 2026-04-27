@@ -195,9 +195,9 @@ export default function ImpotsTeam() {
               </AccordionContent>
             </AccordionItem>
             <AccordionItem value="q4">
-              <AccordionTrigger>Paiement par carte ou virement ?</AccordionTrigger>
+              <AccordionTrigger>Quels moyens de paiement ?</AccordionTrigger>
               <AccordionContent>
-                Carte bancaire et virement SEPA acceptés, facturation annuelle.
+                Carte bancaire, facturation annuelle. Le prélèvement SEPA sera proposé prochainement.
               </AccordionContent>
             </AccordionItem>
             <AccordionItem value="q5">
