@@ -1,11 +1,12 @@
 import { useState, useEffect, useCallback } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, Link } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
+import { useAccess } from '@/hooks/useAccess';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 import { Skeleton } from '@/components/ui/skeleton';
-import { CheckCircle2, XCircle } from 'lucide-react';
+import { CheckCircle2, XCircle, Lock } from 'lucide-react';
 import type { Tables } from '@/integrations/supabase/types';
 
 type QuizzRow = Tables<'quizz'>;
@@ -25,6 +26,7 @@ function getResultMessage(
 const Quizz = () => {
   const { id: slug } = useParams<{ id: string }>();
   const { user } = useAuth();
+  const { isOrgAdminPreview } = useAccess();
   const navigate = useNavigate();
 
   const [moduleTitle, setModuleTitle] = useState('');
