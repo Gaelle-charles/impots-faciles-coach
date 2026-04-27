@@ -10,27 +10,27 @@ Chez Annul'Impôts, nous voulons que vous soyez entièrement satisfait de votre 
 
 ---
 
-### 🟢 CAS 1 — Vous avez commandé, mais pas encore accédé au contenu
+### CAS 1 — Vous avez commandé, mais pas encore accédé au contenu
 
 **Vous n'avez pas encore ouvert votre espace formation et vous changez d'avis dans les 14 jours suivant votre commande ?**
 
-→ ✅ **Remboursement intégral garanti**, sans justification, dans un délai de 14 jours ouvrés.
+→ **Remboursement intégral garanti**, sans justification, dans un délai de 14 jours ouvrés.
 
 **Condition :** Vous ne devez pas avoir coché la case « accès immédiat » lors de votre commande.
 
 ---
 
-### 🔴 CAS 2 — Vous avez demandé un accès immédiat à votre contenu
+### CAS 2 — Vous avez demandé un accès immédiat à votre contenu
 
 **Si vous avez coché la case lors de votre commande stipulant que vous souhaitez accéder immédiatement à votre formation, avant l'expiration du délai de rétractation de 14 jours :**
 
-→ ❌ **Pas de remboursement possible**, conformément à la loi française (article L221-28 du Code de la consommation) que vous avez acceptée lors de la commande.
+→ **Pas de remboursement possible**, conformément à la loi française (article L221-28 du Code de la consommation) que vous avez acceptée lors de la commande.
 
 **Exception :** En cas de **dysfonctionnement technique avéré** (impossibilité totale d'accéder à la plateforme malgré les vérifications techniques) constaté et signalé sous 48h, un remboursement intégral ou un accès de remplacement vous sera proposé.
 
 ---
 
-### 🟡 CAS 3 — Coaching individuel (Annul'Impôts Coaching)
+### CAS 3 — Coaching individuel (Annul'Impôts Coaching)
 
 **Audit gratuit de 30 minutes :**
 - Gratuit et sans engagement → aucune question de remboursement ne se pose.
@@ -39,14 +39,14 @@ Chez Annul'Impôts, nous voulons que vous soyez entièrement satisfait de votre 
 
 | Situation | Ce qu'on fait |
 |---|---|
-| Annulation **plus de 48h avant** la session | ✅ Remboursement intégral ou report de la session à votre convenance |
-| Annulation **moins de 48h avant** la session | 🔄 Avoir/crédit du même montant valable 6 mois pour une future session |
-| Non-présentation sans prévenir (no-show) | ❌ Session due — pas de remboursement ni de report |
-| Session non réalisée du fait d'Annul'Impôts | ✅ Remboursement intégral ou report à votre convenance |
+| Annulation **plus de 48h avant** la session | Remboursement intégral ou report de la session à votre convenance |
+| Annulation **moins de 48h avant** la session | Avoir/crédit du même montant valable 6 mois pour une future session |
+| Non-présentation sans prévenir (no-show) | Session due — pas de remboursement ni de report |
+| Session non réalisée du fait d'Annul'Impôts | Remboursement intégral ou report à votre convenance |
 
 ---
 
-### 📋 Comment faire une demande de remboursement ?
+### Comment faire une demande de remboursement ?
 
 La procédure est simple et rapide :
 
@@ -58,7 +58,7 @@ La procédure est simple et rapide :
 
 ---
 
-### ❓ Une question sur votre remboursement ?
+### Une question sur votre remboursement ?
 
 Notre équipe est disponible à l'adresse **contact@annulimpots.fr**. Nous nous engageons à traiter toutes les demandes avec sérieux et bienveillance.
 

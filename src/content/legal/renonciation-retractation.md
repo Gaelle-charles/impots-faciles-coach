@@ -16,7 +16,7 @@ Il doit être conservé dans les archives de commande d'Annul'Impôts à titre d
 
 ---
 
-**☐ [À compléter avant lancement]**
+** [À compléter avant lancement]**
 
 > « Je reconnais avoir expressément demandé un accès immédiat au contenu numérique commandé avant l'expiration du délai légal de rétractation de 14 jours.
 >

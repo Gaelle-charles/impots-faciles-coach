@@ -42,7 +42,7 @@ Toute reproduction, représentation, modification, publication ou transmission d
 
 ### 5. Avertissement légal — Disclaimer fiscal
 
-> ⚠️ Les contenus proposés sur les plateformes Annul'Impôts ont un caractère exclusivement **pédagogique et informatif**. Ils ne constituent pas un conseil fiscal personnalisé, une prestation de conseil juridique ou comptable réglementée. Pour toute décision fiscale, consultez un expert-comptable ou un avocat fiscaliste agréé. Les simulations fournies ne sont pas opposables à l'administration fiscale (DGFIP).
+> ️ Les contenus proposés sur les plateformes Annul'Impôts ont un caractère exclusivement **pédagogique et informatif**. Ils ne constituent pas un conseil fiscal personnalisé, une prestation de conseil juridique ou comptable réglementée. Pour toute décision fiscale, consultez un expert-comptable ou un avocat fiscaliste agréé. Les simulations fournies ne sont pas opposables à l'administration fiscale (DGFIP).
 
 ### 6. Données personnelles et cookies
 
