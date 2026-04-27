@@ -350,6 +350,20 @@ const Tarifs = () => {
       </div>
 
       <Footer />
+
+      <CheckoutAcceptanceDialog
+        open={pendingPlan !== null}
+        onOpenChange={(open) => {
+          if (!open) {
+            setPendingPlan(null);
+            setLoadingPlan(null);
+          }
+        }}
+        planLabel={plans.find((p) => p.slug === pendingPlan)?.name ?? ''}
+        planPrice={plans.find((p) => p.slug === pendingPlan)?.price ?? 0}
+        loading={loadingPlan !== null}
+        onConfirm={confirmCheckout}
+      />
     </div>
   );
 };
