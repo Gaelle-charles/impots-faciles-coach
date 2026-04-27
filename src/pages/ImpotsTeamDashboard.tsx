@@ -55,9 +55,12 @@ interface Invitation {
 export default function ImpotsTeamDashboard() {
   const { user, loading: authLoading } = useAuth();
   const { toast } = useToast();
+  const isMobile = useIsMobile();
   const [params] = useSearchParams();
-  const initialTab = params.get('tab') === 'membres' ? 'membres'
+  const initialTab: 'abonnement' | 'membres' | 'branding' =
+    params.get('tab') === 'membres' ? 'membres'
     : params.get('tab') === 'branding' ? 'branding' : 'abonnement';
+  const [activeTab, setActiveTab] = useState<'abonnement' | 'membres' | 'branding'>(initialTab);
 
   const [loading, setLoading] = useState(true);
   const [org, setOrg] = useState<Org | null>(null);
