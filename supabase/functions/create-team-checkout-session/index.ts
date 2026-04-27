@@ -14,29 +14,9 @@ Deno.serve(async (req) => {
   }
 
   try {
-    const authHeader = req.headers.get("Authorization");
-    if (!authHeader) {
-      return new Response(JSON.stringify({ error: "Non authentifié" }), {
-        status: 401,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
-    }
-
     const SUPABASE_URL = Deno.env.get("SUPABASE_URL")!;
     const ANON_KEY = Deno.env.get("SUPABASE_ANON_KEY")!;
     const SERVICE_ROLE = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
-
-    const userClient = createClient(SUPABASE_URL, ANON_KEY, {
-      global: { headers: { Authorization: authHeader } },
-    });
-    const { data: userData, error: userErr } = await userClient.auth.getUser();
-    if (userErr || !userData?.user) {
-      return new Response(JSON.stringify({ error: "Token invalide" }), {
-        status: 401,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
-    }
-    const user = userData.user;
 
     const body = await req.json().catch(() => ({}));
     const {
@@ -46,6 +26,10 @@ Deno.serve(async (req) => {
       tva_intra,
       plan,
       nb_licences,
+      admin_email,
+      admin_password,
+      admin_prenom,
+      admin_nom,
     } = body ?? {};
 
     // --- Validations ---
@@ -75,6 +59,11 @@ Deno.serve(async (req) => {
       });
     }
 
+    const authHeader = req.headers.get("Authorization");
+    const hasInlineAdminPayload = [admin_email, admin_password, admin_prenom, admin_nom].every(
+      (value) => typeof value === "string" && value.trim().length > 0,
+    );
+
     const priceId = TEAM_PRICE_IDS[plan];
     if (!priceId) {
       return new Response(
@@ -86,6 +75,63 @@ Deno.serve(async (req) => {
     const admin = createClient(SUPABASE_URL, SERVICE_ROLE, {
       auth: { persistSession: false, autoRefreshToken: false },
     });
+
+    let user: { id: string; email: string } | null = null;
+
+    if (authHeader) {
+      const userClient = createClient(SUPABASE_URL, ANON_KEY, {
+        global: { headers: { Authorization: authHeader } },
+      });
+      const { data: userData, error: userErr } = await userClient.auth.getUser();
+      if (userErr || !userData?.user?.email) {
+        return new Response(JSON.stringify({ error: "Token invalide" }), {
+          status: 401,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+      user = { id: userData.user.id, email: userData.user.email };
+    } else {
+      if (!hasInlineAdminPayload) {
+        return new Response(JSON.stringify({ error: "Non authentifié" }), {
+          status: 401,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+
+      const normalizedEmail = String(admin_email).trim().toLowerCase();
+      const { data: existingProfile } = await admin
+        .from("profiles")
+        .select("id, email")
+        .ilike("email", normalizedEmail)
+        .maybeSingle();
+
+      if (existingProfile?.id) {
+        return new Response(
+          JSON.stringify({ error: "Un compte existe déjà pour cet email. Connectez-vous pour continuer." }),
+          { status: 409, headers: { ...corsHeaders, "Content-Type": "application/json" } },
+        );
+      }
+
+      const { data: createdUser, error: createUserErr } = await admin.auth.admin.createUser({
+        email: normalizedEmail,
+        password: String(admin_password),
+        email_confirm: true,
+        user_metadata: {
+          prenom: String(admin_prenom).trim(),
+          nom: String(admin_nom).trim(),
+          role: "admin_org",
+        },
+      });
+
+      if (createUserErr || !createdUser.user?.email) {
+        return new Response(
+          JSON.stringify({ error: createUserErr?.message ?? "Création du compte admin impossible" }),
+          { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } },
+        );
+      }
+
+      user = { id: createdUser.user.id, email: createdUser.user.email };
+    }
 
     const cleanSiret = String(siret).replace(/\s/g, "");
 
@@ -134,7 +180,7 @@ Deno.serve(async (req) => {
       await admin.from("organization_members").insert({
         organization_id: orgId,
         user_id: user.id,
-        email: user.email!,
+        email: user.email,
         role: "admin",
         accepted_at: new Date().toISOString(),
       });
@@ -171,7 +217,7 @@ Deno.serve(async (req) => {
       mode: "subscription",
       line_items: [{ price: priceId, quantity: nbLic }],
       payment_method_types: ["card"],
-      customer_email: user.email ?? undefined,
+      customer_email: user.email,
       client_reference_id: orgId!,
       billing_address_collection: "required",
       ...(teamCoupon ? { discounts: [{ coupon: teamCoupon }] } : {}),
