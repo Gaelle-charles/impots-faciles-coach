@@ -764,6 +764,8 @@ export type Database = {
     }
     Functions: {
       accept_invitation: { Args: { p_token: string }; Returns: Json }
+      activate_admin_license: { Args: never; Returns: Json }
+      deactivate_admin_license: { Args: never; Returns: Json }
       get_invitation_by_token: {
         Args: { p_token: string }
         Returns: {
@@ -805,6 +807,8 @@ export type Database = {
       is_admin: { Args: never; Returns: boolean }
       is_admin_of_org: { Args: { p_org_id: string }; Returns: boolean }
       is_org_admin: { Args: { p_user_id: string }; Returns: boolean }
+      is_user_org_admin: { Args: { p_user_id: string }; Returns: boolean }
+      org_admin_has_license: { Args: { p_user_id: string }; Returns: boolean }
       user_can_access_module: { Args: { _module_id: string }; Returns: boolean }
     }
     Enums: {

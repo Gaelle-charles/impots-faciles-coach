@@ -1,4 +1,4 @@
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, Link } from 'react-router-dom';
 import { useEffect, useState, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
@@ -17,7 +17,7 @@ import {
   SheetContent,
   SheetTrigger,
 } from '@/components/ui/sheet';
-import { Loader2, Menu, RefreshCw } from 'lucide-react';
+import { Loader2, Menu, RefreshCw, Eye } from 'lucide-react';
 import { Skeleton } from '@/components/ui/skeleton';
 import { toast } from '@/hooks/use-toast';
 import { useAccess } from '@/hooks/useAccess';
@@ -35,23 +35,21 @@ const Module = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
   const isMobile = useIsMobile();
-  const { hasModuleAccess, isLoading: accessLoading } = useAccess();
+  const { hasModuleAccess, isLoading: accessLoading, isOrgAdminPreview } = useAccess();
 
   const [module, setModule] = useState<ModuleRow | null>(null);
   const [contenus, setContenus] = useState<ContenuRow[]>([]);
   const [progression, setProgression] = useState<ProgressionRow | null>(null);
+  // Step local utilisé en mode aperçu (admin orga sans licence) : pas de persistance DB
+  const [previewStep, setPreviewStep] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [showCompletion, setShowCompletion] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
-
-
-  const rawStep = progression?.step ?? 0;
-  // Source de vérité: nb_steps_total depuis la vue (= COUNT(contenus) en temps réel)
+  const rawStep = isOrgAdminPreview ? previewStep : (progression?.step ?? 0);
   const totalSteps = module?.nb_steps_total ?? contenus.length;
-  const isCompleted = !!progression?.completion_date;
-  // Clamp step to valid content range so we never index out of bounds
+  const isCompleted = !isOrgAdminPreview && !!progression?.completion_date;
   const currentStep = Math.min(rawStep, Math.max(0, totalSteps - 1));
   const progressPercent = isCompleted
     ? 100
@@ -67,7 +65,6 @@ const Module = () => {
     setLoading(true);
     setError(null);
 
-    // 1. Fetch module via la vue (inclut nb_steps_total dynamique)
     const modRes = await (supabase as any)
       .from('modules_with_counts')
       .select('*')
@@ -89,20 +86,11 @@ const Module = () => {
     const mod = modRes.data;
     setModule(mod);
 
-    // 2. Fetch contenus + progression in parallel
-    const [contRes, progRes] = await Promise.all([
-      supabase
-        .from('contenus')
-        .select('*')
-        .eq('module_id', mod.id)
-        .order('ordre', { ascending: true }),
-      supabase
-        .from('progressions')
-        .select('*')
-        .eq('module_id', mod.id)
-        .eq('user_id', user.id)
-        .maybeSingle(),
-    ]);
+    const contRes = await supabase
+      .from('contenus')
+      .select('*')
+      .eq('module_id', mod.id)
+      .order('ordre', { ascending: true });
 
     if (contRes.error) {
       setError('Erreur lors du chargement des contenus.');
@@ -111,6 +99,19 @@ const Module = () => {
     }
 
     setContenus(contRes.data ?? []);
+
+    // Mode aperçu admin orga : pas de progression DB
+    if (isOrgAdminPreview) {
+      setLoading(false);
+      return;
+    }
+
+    const progRes = await supabase
+      .from('progressions')
+      .select('*')
+      .eq('module_id', mod.id)
+      .eq('user_id', user.id)
+      .maybeSingle();
 
     if (progRes.error) {
       setError('Erreur lors du chargement de la progression.');
@@ -136,13 +137,12 @@ const Module = () => {
     }
 
     setLoading(false);
-  }, [slug, user, navigate]);
+  }, [slug, user, navigate, isOrgAdminPreview]);
 
   useEffect(() => {
     fetchData();
   }, [fetchData]);
 
-  // Access control via useAccess — only check after both module + access profile are loaded
   useEffect(() => {
     if (loading || accessLoading) return;
     if (!module) return;
@@ -160,6 +160,11 @@ const Module = () => {
 
   const updateStep = useCallback(
     async (newStep: number) => {
+      // Mode aperçu : pas de persistance, juste un state local
+      if (isOrgAdminPreview) {
+        setPreviewStep(Math.max(0, Math.min(totalSteps - 1, newStep)));
+        return;
+      }
       if (!progression) return;
       const { data } = await supabase
         .from('progressions')
@@ -169,7 +174,7 @@ const Module = () => {
         .single();
       if (data) setProgression(data);
     },
-    [progression],
+    [progression, isOrgAdminPreview, totalSteps],
   );
 
   const handlePrev = () => {
@@ -185,6 +190,14 @@ const Module = () => {
   };
 
   const handleComplete = async () => {
+    if (isOrgAdminPreview) {
+      // Aperçu : on ne sauvegarde pas, on indique simplement la fin
+      toast({
+        title: 'Fin du module (aperçu)',
+        description: 'Activez votre licence personnelle pour valider et obtenir le certificat.',
+      });
+      return;
+    }
     if (!progression) return;
     const finalStep = totalSteps;
     await supabase
@@ -200,7 +213,6 @@ const Module = () => {
     setSidebarOpen(false);
   };
 
-  // Error state
   if (error) {
     return (
       <div className="flex h-screen flex-col items-center justify-center gap-4">
@@ -213,8 +225,6 @@ const Module = () => {
     );
   }
 
-
-  // Loading skeleton
   if (loading || accessLoading) {
     return (
       <div className="flex h-screen overflow-hidden bg-background">
@@ -280,6 +290,21 @@ const Module = () => {
 
       <div className="flex flex-1 flex-col overflow-y-auto">
         {isMobile && <div className="h-14" />}
+        {isOrgAdminPreview && (
+          <div className="flex flex-wrap items-center justify-between gap-3 border-b border-yellow-vivid/40 bg-yellow-vivid/15 px-6 py-3 text-sm">
+            <div className="flex items-center gap-2 text-foreground">
+              <Eye className="h-4 w-4" />
+              <span>
+                <strong>Mode aperçu</strong> — vos progressions ne sont pas sauvegardées
+              </span>
+            </div>
+            <Link to="/impots-team/dashboard?tab=membres">
+              <Button size="sm" variant="default">
+                Activer ma licence personnelle
+              </Button>
+            </Link>
+          </div>
+        )}
         <ModuleContent
           currentContenu={currentContenu}
           currentStep={currentStep}

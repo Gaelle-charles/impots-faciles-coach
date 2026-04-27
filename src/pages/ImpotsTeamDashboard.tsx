@@ -71,6 +71,28 @@ export default function ImpotsTeamDashboard() {
   const [busyId, setBusyId] = useState<string | null>(null);
 
   const [logoUploading, setLogoUploading] = useState(false);
+  const [showActivate, setShowActivate] = useState(false);
+  const [activating, setActivating] = useState(false);
+  const [adminHasLicense, setAdminHasLicense] = useState(false);
+
+  const handleActivateLicense = async () => {
+    if (!user || !org) return;
+    setActivating(true);
+    try {
+      const { data, error } = await supabase.rpc('activate_admin_license');
+      const res = data as { success?: boolean; error?: string } | null;
+      if (error || !res?.success) {
+        toast({ title: 'Erreur', description: res?.error || error?.message || 'Activation impossible', variant: 'destructive' });
+        return;
+      }
+      toast({ title: 'Licence activée', description: 'Accès au parcours complet débloqué.' });
+      setShowActivate(false);
+      setAdminHasLicense(true);
+      await reloadMembers(org.id);
+    } finally {
+      setActivating(false);
+    }
+  };
 
   const reloadMembers = async (orgId: string) => {
     const [{ data: m }, { data: inv }] = await Promise.all([
@@ -103,6 +125,8 @@ export default function ImpotsTeamDashboard() {
       if (o) {
         setNewNb(o.nb_licences);
         await reloadMembers(o.id);
+        const { data: hasLic } = await supabase.rpc('org_admin_has_license', { p_user_id: user.id });
+        setAdminHasLicense(!!hasLic);
       }
       setLoading(false);
     })();
@@ -424,6 +448,34 @@ export default function ImpotsTeamDashboard() {
                     )}
                   </div>
 
+                  {/* Bloc "Suivre la formation moi aussi" */}
+                  <div className="rounded-lg border bg-background p-4">
+                    <h3 className="text-sm font-medium">Suivre la formation moi aussi</h3>
+                    {adminHasLicense ? (
+                      <p className="mt-1 text-xs text-muted-foreground">
+                        Votre licence personnelle est active : vous avez accès au parcours complet certifiant.
+                      </p>
+                    ) : (
+                      <>
+                        <p className="mt-1 text-xs text-muted-foreground">
+                          Vous accédez à un aperçu de la plateforme. Activez votre licence personnelle pour suivre le parcours complet, sauvegarder vos progressions et obtenir le certificat (occupe 1 licence sur les {org.nb_licences} disponibles).
+                        </p>
+                        <Button
+                          size="sm" className="mt-3"
+                          onClick={() => setShowActivate(true)}
+                          disabled={remainingLicences <= 0}
+                        >
+                          Activer ma licence personnelle
+                        </Button>
+                        {remainingLicences <= 0 && (
+                          <p className="mt-2 text-xs text-amber-700">
+                            Capacité atteinte. Augmentez vos licences pour activer votre accès complet.
+                          </p>
+                        )}
+                      </>
+                    )}
+                  </div>
+
                   {invitations.length > 0 && (
                     <div>
                       <h3 className="mb-2 text-sm font-medium">Invitations en attente</h3>
@@ -544,6 +596,28 @@ export default function ImpotsTeamDashboard() {
           </Tabs>
         </div>
       </main>
+
+      {/* Modal activation licence admin */}
+      <AlertDialog open={showActivate} onOpenChange={setShowActivate}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Activer ma licence personnelle ?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Vous accédez déjà à un aperçu de la plateforme. Si vous souhaitez suivre le parcours
+              complet, sauvegarder vos progressions et obtenir le certificat, activez votre licence
+              personnelle. Cela occupera 1 licence sur les {org?.nb_licences ?? '—'} disponibles.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={activating}>Annuler</AlertDialogCancel>
+            <AlertDialogAction onClick={handleActivateLicense} disabled={activating}>
+              {activating ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
+              Activer ma licence personnelle
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
       <Footer />
     </div>
   );
