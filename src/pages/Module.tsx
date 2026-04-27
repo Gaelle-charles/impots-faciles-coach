@@ -21,10 +21,12 @@ import { Loader2, Menu, RefreshCw, Eye } from 'lucide-react';
 import { Skeleton } from '@/components/ui/skeleton';
 import { toast } from '@/hooks/use-toast';
 import { useAccess } from '@/hooks/useAccess';
+import { useOrgRole } from '@/hooks/useOrgRole';
 import type { Tables } from '@/integrations/supabase/types';
 
 import { ModuleSidebarContent } from '@/components/module/ModuleSidebarContent';
 import { ModuleContent } from '@/components/module/ModuleContent';
+import { TeamSidebar } from '@/components/TeamSidebar';
 
 type ModuleRow = Tables<'modules'> & { nb_steps_total: number };
 type ContenuRow = Tables<'contenus'>;
@@ -36,6 +38,7 @@ const Module = () => {
   const navigate = useNavigate();
   const isMobile = useIsMobile();
   const { hasModuleAccess, isLoading: accessLoading, isOrgAdminPreview } = useAccess();
+  const { org, isOrgAdmin, hasLicense } = useOrgRole();
 
   const [module, setModule] = useState<ModuleRow | null>(null);
   const [contenus, setContenus] = useState<ContenuRow[]>([]);
@@ -262,8 +265,20 @@ const Module = () => {
     />
   );
 
+  const adminInitials = ((user?.email?.[0] ?? '') + (user?.email?.[1] ?? '')).toUpperCase();
+  const showTeamSidebar = isOrgAdmin && !isMobile;
+
   return (
     <div className="flex h-screen overflow-hidden bg-background">
+      {showTeamSidebar && (
+        <TeamSidebar
+          orgName={org?.raison_sociale ?? ''}
+          orgLogoUrl={org?.logo_url ?? null}
+          adminInitials={adminInitials}
+          hasLicense={hasLicense}
+        />
+      )}
+      <div className={`flex flex-1 overflow-hidden ${showTeamSidebar ? 'ml-sidebar' : ''}`}>
       {!isMobile && (
         <aside className="hidden w-[280px] shrink-0 border-r border-border bg-background shadow-sm md:flex md:flex-col">
           {sidebarContent}
@@ -315,6 +330,7 @@ const Module = () => {
           onPrev={handlePrev}
           onNext={handleNext}
         />
+      </div>
       </div>
 
       <Dialog open={showCompletion} onOpenChange={setShowCompletion}>

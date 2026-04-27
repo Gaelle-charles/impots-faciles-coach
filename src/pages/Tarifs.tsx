@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Check, Info, Loader2, Lock, Users, ArrowRight } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useAuth } from '@/contexts/AuthContext';
+import { useOrgRole } from '@/hooks/useOrgRole';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 
@@ -72,6 +73,7 @@ const Tarifs = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const { user } = useAuth();
+  const { org, isOrgAdmin } = useOrgRole();
   const state = (location.state ?? {}) as RedirectState;
   const [loadingPlan, setLoadingPlan] = useState<string | null>(null);
   const [currentPlan, setCurrentPlan] = useState<string | null>(null);
@@ -99,6 +101,14 @@ const Tarifs = () => {
     if (!user) {
       navigate(`/connexion?redirect=${encodeURIComponent('/tarifs')}`);
       return;
+    }
+    if (isOrgAdmin) {
+      const ok = window.confirm(
+        `Vous êtes rattaché à l'organisation « ${org?.raison_sociale ?? ''} » (plan ${org?.plan ?? ''}). ` +
+        `Souscrire un abonnement B2C personnel doublonnera votre licence orga et vous serez facturé séparément. ` +
+        `Continuer quand même ?`
+      );
+      if (!ok) return;
     }
     try {
       setLoadingPlan(planSlug);
@@ -135,6 +145,21 @@ const Tarifs = () => {
           Pour les obligations fiscales de votre structure professionnelle (SAS, SARL, SCI, etc.),
           consultez un expert-comptable.
         </div>
+
+        {isOrgAdmin && org && (
+          <div className="mb-6 w-full max-w-3xl rounded-lg border-2 border-yellow-vivid/60 bg-yellow-vivid/10 p-4 text-sm text-foreground">
+            ⚠️ Vous êtes rattaché à l'organisation <strong>{org.raison_sociale}</strong> (plan{' '}
+            <strong className="capitalize">{org.plan}</strong>). Vous avez déjà un accès via votre licence
+            orga — souscrire un abonnement personnel ici doublonnera votre facturation.{' '}
+            <button
+              type="button"
+              onClick={() => navigate('/impots-team/dashboard')}
+              className="underline underline-offset-2 hover:no-underline"
+            >
+              Aller au dashboard équipe
+            </button>
+          </div>
+        )}
 
         {wasRedirected && (
           <div className="mb-8 flex w-full max-w-3xl items-start gap-3 rounded-lg border border-accent/40 bg-accent/10 p-4 text-sm text-foreground">

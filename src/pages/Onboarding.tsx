@@ -22,6 +22,8 @@ import { Badge } from '@/components/ui/badge';
 import { Sparkles, Target, ShieldCheck, Clock, Check, Loader2, X, Plus, FileText, Briefcase, Globe } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { recalculerMatching } from '@/lib/matching';
+import { useOrgRole } from '@/hooks/useOrgRole';
+import { Link } from 'react-router-dom';
 
 const TOTAL_STEPS = 7;
 
@@ -248,7 +250,7 @@ function getProfilLabel(p: FormData, metierNom?: string, paysNoms?: string[]): s
 const Onboarding = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
-
+  const { org, isOrgAdmin, hasLicense } = useOrgRole();
   const [loading, setLoading] = useState(true);
   const [prenom, setPrenom] = useState('');
   const [currentStep, setCurrentStep] = useState(0);
@@ -841,6 +843,11 @@ const Onboarding = () => {
                 onCheckout={handleCheckout}
                 checkoutLoading={checkoutLoading}
                 onSkip={() => navigate('/dashboard')}
+                prenom={prenom}
+                org={org}
+                isOrgAdmin={isOrgAdmin}
+                hasOrgLicense={hasLicense}
+                onNavigate={(to) => navigate(to)}
               />
             )}
           </CardContent>
@@ -1464,6 +1471,11 @@ function Step8({
   onCheckout,
   checkoutLoading,
   onSkip,
+  prenom,
+  org,
+  isOrgAdmin,
+  hasOrgLicense,
+  onNavigate,
 }: {
   profilLabel: string;
   plan: 'starter' | 'expert' | 'premium';
@@ -1473,6 +1485,11 @@ function Step8({
   onCheckout: (slug: string) => void;
   checkoutLoading: string | null;
   onSkip: () => void;
+  prenom: string;
+  org: { raison_sociale: string; plan: string; role: string } | null;
+  isOrgAdmin: boolean;
+  hasOrgLicense: boolean;
+  onNavigate: (to: string) => void;
 }) {
   const justification =
     plan === 'starter'
@@ -1553,76 +1570,137 @@ function Step8({
         </ul>
       </div>
 
-      <div className="rounded-xl border-2 border-accent bg-accent/10 p-5 text-center">
-        <p className="font-heading text-lg font-bold text-foreground">
-          💡 Plan recommandé pour vous :{' '}
-          <span className="text-primary">{PLANS.find((p) => p.slug === plan)?.name}</span>
-        </p>
-        <p className="mt-2 text-sm text-muted-foreground">{justification}</p>
-      </div>
+      {/* Bloc tarification — conditionnel selon le statut de l'utilisateur */}
+      {!isOrgAdmin && (
+        <>
+          <div className="rounded-xl border-2 border-accent bg-accent/10 p-5 text-center">
+            <p className="font-heading text-lg font-bold text-foreground">
+              💡 Plan recommandé pour vous :{' '}
+              <span className="text-primary">{PLANS.find((p) => p.slug === plan)?.name}</span>
+            </p>
+            <p className="mt-2 text-sm text-muted-foreground">{justification}</p>
+          </div>
 
-      <div className="grid gap-4 grid-cols-1 md:grid-cols-3">
-        {PLANS.map((p) => {
-          const isReco = p.slug === plan;
-          return (
-            <div
-              key={p.slug}
-              className={cn(
-                'relative flex flex-col rounded-xl border-2 p-5 transition-all',
-                isReco
-                  ? 'border-primary bg-background shadow-lg ring-2 ring-primary'
-                  : 'border-border bg-card'
-              )}
+          <div className="grid gap-4 grid-cols-1 md:grid-cols-3">
+            {PLANS.map((p) => {
+              const isReco = p.slug === plan;
+              return (
+                <div
+                  key={p.slug}
+                  className={cn(
+                    'relative flex flex-col rounded-xl border-2 p-5 transition-all',
+                    isReco
+                      ? 'border-primary bg-background shadow-lg ring-2 ring-primary'
+                      : 'border-border bg-card'
+                  )}
+                >
+                  {isReco && (
+                    <Badge className="absolute -top-3 left-1/2 -translate-x-1/2 whitespace-nowrap">
+                      ⭐ RECOMMANDÉ
+                    </Badge>
+                  )}
+                  <h3 className="font-heading text-lg font-bold text-foreground">{p.name}</h3>
+                  <p className="mt-2">
+                    <span className="font-heading text-3xl font-bold text-foreground">{p.price}€</span>
+                    <span className="ml-1 text-xs text-muted-foreground">/ an</span>
+                  </p>
+                  <ul className="mt-4 flex-1 space-y-2">
+                    {p.features.map((f) => (
+                      <li key={f} className="flex items-start gap-2 text-xs text-muted-foreground">
+                        <Check className="mt-0.5 h-3 w-3 shrink-0 text-accent" />
+                        {f}
+                      </li>
+                    ))}
+                  </ul>
+                  <Button
+                    onClick={() => onCheckout(p.slug)}
+                    disabled={checkoutLoading !== null}
+                    variant={isReco ? 'cta' : 'default'}
+                    className="mt-5 w-full"
+                  >
+                    {checkoutLoading === p.slug ? (
+                      <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Redirection…</>
+                    ) : (
+                      'Choisir ce plan'
+                    )}
+                  </Button>
+                </div>
+              );
+            })}
+          </div>
+
+          <p className="mx-auto max-w-2xl text-center text-xs text-muted-foreground leading-relaxed">
+            ⚠️ Note : le passage à un plan inférieur n'est pas possible en cours d'abonnement.
+            Choisissez avec soin.
+          </p>
+
+          <div className="text-center">
+            <button
+              type="button"
+              onClick={onSkip}
+              className="text-sm text-muted-foreground underline-offset-4 hover:text-foreground hover:underline"
             >
-              {isReco && (
-                <Badge className="absolute -top-3 left-1/2 -translate-x-1/2 whitespace-nowrap">
-                  ⭐ RECOMMANDÉ
-                </Badge>
-              )}
-              <h3 className="font-heading text-lg font-bold text-foreground">{p.name}</h3>
-              <p className="mt-2">
-                <span className="font-heading text-3xl font-bold text-foreground">{p.price}€</span>
-                <span className="ml-1 text-xs text-muted-foreground">/ an</span>
-              </p>
-              <ul className="mt-4 flex-1 space-y-2">
-                {p.features.map((f) => (
-                  <li key={f} className="flex items-start gap-2 text-xs text-muted-foreground">
-                    <Check className="mt-0.5 h-3 w-3 shrink-0 text-accent" />
-                    {f}
-                  </li>
-                ))}
-              </ul>
-              <Button
-                onClick={() => onCheckout(p.slug)}
-                disabled={checkoutLoading !== null}
-                variant={isReco ? 'cta' : 'default'}
-                className="mt-5 w-full"
-              >
-                {checkoutLoading === p.slug ? (
-                  <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Redirection…</>
-                ) : (
-                  'Choisir ce plan'
-                )}
-              </Button>
-            </div>
-          );
-        })}
-      </div>
+              ou Commencer gratuitement avec le module 0 →
+            </button>
+          </div>
+        </>
+      )}
 
-      <p className="mx-auto max-w-2xl text-center text-xs text-muted-foreground leading-relaxed">
-        ⚠️ Note : le passage à un plan inférieur n'est pas possible en cours d'abonnement.
-        Choisissez avec soin.
-      </p>
+      {/* CAS 2 — Admin orga sans licence personnelle */}
+      {isOrgAdmin && org?.role === 'admin' && !hasOrgLicense && (
+        <div className="space-y-4">
+          <div className="rounded-xl border-2 border-primary/40 bg-primary/5 p-5 text-center">
+            <p className="text-base text-foreground">
+              Vous gérez l'organisation <strong>{org.raison_sociale}</strong>. Vos collaborateurs
+              auront accès au plan <strong className="capitalize">{org.plan}</strong>. Vous pouvez
+              activer une licence personnelle depuis votre dashboard pour suivre la formation
+              vous-même.
+            </p>
+          </div>
+          <div className="flex justify-center">
+            <Button size="lg" variant="cta" onClick={() => onNavigate('/impots-team/dashboard')}>
+              Aller au dashboard de gestion →
+            </Button>
+          </div>
+        </div>
+      )}
 
-      <div className="text-center">
-        <button
-          type="button"
-          onClick={onSkip}
-          className="text-sm text-muted-foreground underline-offset-4 hover:text-foreground hover:underline"
-        >
-          ou Commencer gratuitement avec le module 0 →
-        </button>
-      </div>
+      {/* CAS 3 — Admin avec licence personnelle */}
+      {isOrgAdmin && org?.role === 'admin_with_license' && (
+        <div className="space-y-4">
+          <div className="rounded-xl border-2 border-primary/40 bg-primary/5 p-5 text-center">
+            <p className="text-base text-foreground">
+              Bonjour <strong>{prenom}</strong>, votre licence personnelle{' '}
+              <strong className="capitalize">{org.plan}</strong> est active dans l'organisation{' '}
+              <strong>{org.raison_sociale}</strong>. Voici votre parcours personnalisé.
+            </p>
+          </div>
+          <div className="flex justify-center">
+            <Button size="lg" variant="cta" onClick={() => onNavigate('/mes-modules')}>
+              Commencer ma formation →
+            </Button>
+          </div>
+        </div>
+      )}
+
+      {/* CAS 4 — Membre d'orga */}
+      {isOrgAdmin && org?.role === 'member' && (
+        <div className="space-y-4">
+          <div className="rounded-xl border-2 border-primary/40 bg-primary/5 p-5 text-center">
+            <p className="text-base text-foreground">
+              Bonjour <strong>{prenom}</strong>, vous avez rejoint l'organisation{' '}
+              <strong>{org.raison_sociale}</strong>. Votre accès{' '}
+              <strong className="capitalize">{org.plan}</strong> vous donne accès à votre parcours
+              personnalisé ci-dessus.
+            </p>
+          </div>
+          <div className="flex justify-center">
+            <Button size="lg" variant="cta" onClick={() => onNavigate('/mes-modules')}>
+              Commencer ma formation →
+            </Button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
