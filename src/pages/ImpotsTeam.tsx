@@ -142,6 +142,9 @@ export default function ImpotsTeam() {
                 />
               </div>
 
+              <div className="rounded-lg border border-yellow-vivid/50 bg-yellow-vivid/10 p-4 text-sm">
+                💡 L'admin qui gère les licences (vous-même ou un autre collaborateur) est <strong>gratuit</strong> et bénéficie d'un accès aperçu à la plateforme. Si vous souhaitez suivre le parcours complet certifiant, vous pourrez activer une licence personnelle après souscription (elle occupera alors 1 licence).
+              </div>
               <div className="rounded-lg bg-muted/50 p-5">
                 <div className="flex justify-between text-sm">
                   <span>Prix unitaire remisé</span>
