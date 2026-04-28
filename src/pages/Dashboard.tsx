@@ -15,10 +15,11 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { BookOpen, Target, Clock, Trophy, Lock } from 'lucide-react';
+import { BookOpen, Target, Clock, Trophy, Lock, Award, Download } from 'lucide-react';
 import type { Tables } from '@/integrations/supabase/types';
 import { useAccess } from '@/hooks/useAccess';
 import PersonalizedFiches from '@/components/dashboard/PersonalizedFiches';
+import { downloadCertificatPdf, type CertificatData } from '@/lib/certificat-pdf';
 
 type ModuleRow = Tables<'modules'> & { nb_steps_total: number };
 type ProgressionRow = Tables<'progressions'>;
@@ -42,22 +43,28 @@ const Dashboard = () => {
   const [modules, setModules] = useState<ModuleRow[]>([]);
   const [progressions, setProgressions] = useState<ProgressionRow[]>([]);
   const [results, setResults] = useState<ResultatRow[]>([]);
+  const [certificat, setCertificat] = useState<CertificatData | null>(null);
   const [loading, setLoading] = useState(true);
 
   const fetchData = async () => {
     if (!user) return;
     setLoading(true);
-    const [profRes, modRes, progRes, resRes] = await Promise.all([
+    const [profRes, modRes, progRes, resRes, certRes] = await Promise.all([
       supabase.from('profiles').select('prenom, nom, plan').eq('id', user.id).maybeSingle(),
       (supabase as any).from('modules_with_counts').select('*').order('order', { ascending: true }),
       supabase.from('progressions').select('*').eq('user_id', user.id),
       supabase.from('resultat_quiz').select('*').eq('user_id', user.id).order('date_quiz', { ascending: false }),
+      supabase.from('certificats_parcours')
+        .select('numero, prenom, nom, plan, nb_modules_valides, date_obtention')
+        .eq('user_id', user.id)
+        .maybeSingle(),
     ]);
 
     if (profRes.data) setProfile(profRes.data);
     setModules(modRes.data ?? []);
     setProgressions(progRes.data ?? []);
     setResults(resRes.data ?? []);
+    setCertificat((certRes.data as CertificatData | null) ?? null);
     setLoading(false);
   };
 
