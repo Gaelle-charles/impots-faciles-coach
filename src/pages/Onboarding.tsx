@@ -713,11 +713,21 @@ const Onboarding = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentStep]);
 
-  const handleCheckout = async (planSlug: string) => {
+  const handleCheckout = (planSlug: string) => {
+    // Ouvre le dialogue d'acceptation (CGV/CGU/renonciation) avant la redirection Stripe
+    setPendingPlan(planSlug);
+  };
+
+  const confirmCheckout = async (acceptances: {
+    cgv_accepted_at: string;
+    cgu_accepted_at: string;
+    waiver_accepted_at: string;
+  }) => {
+    if (!pendingPlan) return;
     try {
-      setCheckoutLoading(planSlug);
+      setCheckoutLoading(pendingPlan);
       const { data, error } = await supabase.functions.invoke('create-checkout-session', {
-        body: { plan: planSlug },
+        body: { plan: pendingPlan, ...acceptances },
       });
       if (error) throw error;
       if (!data?.url) throw new Error('URL Stripe manquante');
@@ -726,6 +736,7 @@ const Onboarding = () => {
       const m = err instanceof Error ? err.message : 'Erreur de paiement';
       toast.error('Erreur de paiement', { description: m });
       setCheckoutLoading(null);
+      setPendingPlan(null);
     }
   };
 
