@@ -99,6 +99,18 @@ const Quizz = () => {
 
   useEffect(() => { fetchData(); }, [fetchData]);
 
+  // Récupère le certificat dès qu'il existe (créé par trigger DB après réussite)
+  useEffect(() => {
+    if (!user || !moduleId) return;
+    supabase
+      .from('certificats')
+      .select('numero, prenom, nom, module_titre, pourcentage, score, score_max, date_obtention')
+      .eq('user_id', user.id)
+      .eq('module_id', moduleId)
+      .maybeSingle()
+      .then(({ data }) => setCertificat(data as CertificatData | null));
+  }, [user, moduleId, allAttempts.length]);
+
   const total = questions.length;
   const question = questions[currentIndex];
   const isLast = currentIndex === total - 1;
