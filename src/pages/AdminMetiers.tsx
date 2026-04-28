@@ -304,6 +304,8 @@ const AdminMetiers = () => {
       order_display: String(maxOrder + 1),
       is_active: true,
     });
+    setContenuSections(null);
+    setContenuValid(true);
     setOpen(true);
   };
 
@@ -321,6 +323,11 @@ const AdminMetiers = () => {
       order_display: m.order_display != null ? String(m.order_display) : '',
       is_active: m.is_active ?? true,
     });
+    // contenu_sections : on garde tel quel ; null/{} = pas de contenu enrichi
+    const cs = m.contenu_sections;
+    const hasContent = cs && typeof cs === 'object' && Object.keys(cs as object).length > 0;
+    setContenuSections(hasContent ? cs : null);
+    setContenuValid(true);
     setOpen(true);
   };
 
@@ -343,8 +350,18 @@ const AdminMetiers = () => {
       toast({ title: 'Champ requis', description: 'Le slug est obligatoire.', variant: 'destructive' });
       return;
     }
+    if (!contenuValid) {
+      toast({
+        title: 'Contenu structuré invalide',
+        description: 'Corrigez les erreurs JSON avant d\'enregistrer.',
+        variant: 'destructive',
+      });
+      return;
+    }
     setSaving(true);
     const orderNum = form.order_display.trim() === '' ? null : Number(form.order_display);
+    // Si l'éditeur a renvoyé null, on stocke {} pour respecter NOT NULL DEFAULT '{}'
+    const contenuPayload = contenuSections ?? {};
 
     if (isAdd) {
       const payload = {
@@ -357,6 +374,7 @@ const AdminMetiers = () => {
         icone: form.icone.trim() || null,
         order_display: Number.isFinite(orderNum as number) ? orderNum : null,
         is_active: form.is_active,
+        contenu_sections: contenuPayload,
       };
       const { error } = await supabase.from('metiers').insert(payload);
       setSaving(false);
@@ -379,6 +397,7 @@ const AdminMetiers = () => {
         icone: form.icone.trim() || null,
         order_display: Number.isFinite(orderNum as number) ? orderNum : null,
         is_active: form.is_active,
+        contenu_sections: contenuPayload,
       };
       const { error } = await supabase.from('metiers').update(payload).eq('id', editingId!);
       setSaving(false);
