@@ -7,7 +7,7 @@ import { Progress } from '@/components/ui/progress';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
-import { Lock } from 'lucide-react';
+import { Lock, LockKeyhole } from 'lucide-react';
 import type { Tables } from '@/integrations/supabase/types';
 import { useAccess } from '@/hooks/useAccess';
 
@@ -20,7 +20,8 @@ const capitalize = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
 const MesModules = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
-  const { hasModuleAccess, isLoading: accessLoading } = useAccess();
+  const { hasModuleAccess, isLoading: accessLoading, isOrgAdminPreview, role } = useAccess();
+  const isAdmin = role === 'admin';
 
   const [modules, setModules] = useState<ModuleRow[]>([]);
   const [progressions, setProgressions] = useState<ProgressionRow[]>([]);
@@ -105,6 +106,15 @@ const MesModules = () => {
               ? 100
               : Math.min(Math.round((step / totalStep) * 100), 100);
           const requiredPlan = mod.accessibilite?.[0] ?? 'starter';
+
+          // === Verrouillage séquentiel ===
+          // Module 1 (idx 0) toujours ouvert. Pour les suivants, le module N-1 doit être terminé.
+          const prevModule = idx > 0 ? modules[idx - 1] : null;
+          const prevCompleted = prevModule
+            ? !!progMap.get(prevModule.id)?.completion_date
+            : true;
+          const isSequentiallyLocked =
+            !isAdmin && !isOrgAdminPreview && hasAccess && !prevCompleted && idx > 0;
 
           let statusLabel: string;
           let statusColor: string;
