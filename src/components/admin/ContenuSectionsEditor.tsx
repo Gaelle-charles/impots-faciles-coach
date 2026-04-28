@@ -199,7 +199,7 @@ export function ContenuSectionsEditor({ value, onChange, onValidityChange, type 
     const tpl = {
       sections: keys.map((k) => ({
         key: k,
-        title: TITLES[k] ?? k,
+        title: TITLES[type]?.[k] ?? k,
         content_md: '',
       })),
     };
