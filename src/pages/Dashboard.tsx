@@ -356,6 +356,35 @@ const Dashboard = () => {
       {/* Personalized fiches by plan */}
       <PersonalizedFiches />
 
+      {/* Certificat de parcours (si tous les modules sont validés) */}
+      {certificat && (
+        <section id="certificat">
+          <Card className="border-2 border-green-500/50 bg-gradient-to-br from-green-50 to-yellow-50 dark:from-green-950/20 dark:to-yellow-950/10 shadow-md overflow-hidden">
+            <CardContent className="p-6 sm:p-8 flex flex-col sm:flex-row items-start sm:items-center gap-5">
+              <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-green-600 text-white">
+                <Award className="h-7 w-7" />
+              </div>
+              <div className="flex-1 space-y-1">
+                <Badge className="bg-green-600 text-white">🏆 Parcours validé</Badge>
+                <h3 className="font-heading text-xl font-bold text-foreground">
+                  Certificat Impôts Facile débloqué !
+                </h3>
+                <p className="text-sm text-muted-foreground">
+                  Bravo, tu as validé l'intégralité du parcours ({certificat.nb_modules_valides} modules).
+                  N° <span className="font-mono">{certificat.numero}</span>
+                </p>
+              </div>
+              <Button
+                onClick={() => downloadCertificatPdf(certificat)}
+                className="gap-2 bg-green-600 hover:bg-green-700 text-white shrink-0"
+              >
+                <Download className="h-4 w-4" /> Télécharger le PDF
+              </Button>
+            </CardContent>
+          </Card>
+        </section>
+      )}
+
       {/* Quiz results */}
       <section id="resultats">
         <h2 className="font-heading text-2xl font-bold text-foreground mb-5">Mes quiz</h2>
