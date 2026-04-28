@@ -361,7 +361,7 @@ const AdminMetiers = () => {
     setSaving(true);
     const orderNum = form.order_display.trim() === '' ? null : Number(form.order_display);
     // Si l'éditeur a renvoyé null, on stocke {} pour respecter NOT NULL DEFAULT '{}'
-    const contenuPayload = contenuSections ?? {};
+    const contenuPayload = (contenuSections ?? {}) as never;
 
     if (isAdd) {
       const payload = {
