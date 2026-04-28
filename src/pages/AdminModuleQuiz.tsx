@@ -8,13 +8,15 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Skeleton } from '@/components/ui/skeleton';
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import {
   Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter,
 } from '@/components/ui/dialog';
+import {
+  Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
+} from '@/components/ui/select';
 import { toast } from '@/hooks/use-toast';
 import {
-  ArrowLeft, Plus, Pencil, Trash2, AlertTriangle, FileQuestion, CheckCircle2,
+  ArrowLeft, Plus, Pencil, Trash2, AlertTriangle, FileQuestion, CheckCircle2, X,
 } from 'lucide-react';
 
 interface QuizRow {
@@ -30,7 +32,14 @@ interface ModuleInfo {
   titre: string;
 }
 
-const ANSWER_LABELS = ['A', 'B', 'C'];
+const LETTERS = ['A', 'B', 'C', 'D', 'E', 'F'];
+const MAX_OPTIONS = 6;
+const MIN_OPTIONS = 2;
+
+const getAnswerLetter = (q: QuizRow) => {
+  const idx = q.options.findIndex(o => o === q.bonne_reponse);
+  return idx >= 0 ? LETTERS[idx] : '?';
+};
 
 const AdminModuleQuiz = () => {
   const { id: moduleId } = useParams<{ id: string }>();
@@ -40,15 +49,13 @@ const AdminModuleQuiz = () => {
   const [moduleInfo, setModuleInfo] = useState<ModuleInfo | null>(null);
   const [questions, setQuestions] = useState<QuizRow[]>([]);
 
-  // Add/Edit modal
+  // Add/Edit modal — options dynamiques 2 à 6
   const [editQuestion, setEditQuestion] = useState<QuizRow | null>(null);
   const [isAdd, setIsAdd] = useState(false);
   const [form, setForm] = useState({
     question: '',
-    optionA: '',
-    optionB: '',
-    optionC: '',
-    bonneReponse: 'A',
+    options: ['', '', '', ''] as string[],
+    bonne_reponse: '',
     explication: '',
   });
   const [saving, setSaving] = useState(false);
@@ -63,7 +70,7 @@ const AdminModuleQuiz = () => {
     setLoading(true);
     const [modRes, quizRes] = await Promise.all([
       supabase.from('modules').select('id, titre').eq('id', moduleId).maybeSingle(),
-      supabase.from('quizz').select('id, question, options, bonne_reponse, explication').eq('module_id', moduleId).order('created_at', { ascending: true }),
+      supabase.from('quizz').select('id, question, options, bonne_reponse, explication').eq('module_id', moduleId).order('ordre', { ascending: true }),
     ]);
     setModuleInfo(modRes.data as ModuleInfo | null);
     setQuestions(quizRes.data ?? []);
@@ -76,27 +83,61 @@ const AdminModuleQuiz = () => {
   const openAdd = () => {
     setIsAdd(true);
     setEditQuestion(null);
-    setForm({ question: '', optionA: '', optionB: '', optionC: '', bonneReponse: 'A', explication: '' });
+    setForm({ question: '', options: ['', '', '', ''], bonne_reponse: '', explication: '' });
   };
 
   const openEdit = (q: QuizRow) => {
     setIsAdd(false);
     setEditQuestion(q);
+    const opts = [...q.options];
+    while (opts.length < MIN_OPTIONS) opts.push('');
     setForm({
       question: q.question,
-      optionA: q.options[0] ?? '',
-      optionB: q.options[1] ?? '',
-      optionC: q.options[2] ?? '',
-      bonneReponse: q.bonne_reponse,
+      options: opts,
+      bonne_reponse: q.bonne_reponse,
       explication: q.explication ?? '',
     });
   };
 
   const closeModal = () => { setIsAdd(false); setEditQuestion(null); };
 
+  const updateOption = (idx: number, val: string) => {
+    setForm(prev => {
+      const opts = [...prev.options];
+      const previous = opts[idx];
+      opts[idx] = val;
+      // si la bonne réponse correspondait à l'ancien texte, la suivre
+      const newBonne = prev.bonne_reponse === previous ? val : prev.bonne_reponse;
+      return { ...prev, options: opts, bonne_reponse: newBonne };
+    });
+  };
+
+  const addOption = () => {
+    setForm(prev => prev.options.length >= MAX_OPTIONS ? prev : { ...prev, options: [...prev.options, ''] });
+  };
+
+  const removeOption = (idx: number) => {
+    setForm(prev => {
+      if (prev.options.length <= MIN_OPTIONS) return prev;
+      const removed = prev.options[idx];
+      const opts = prev.options.filter((_, i) => i !== idx);
+      const newBonne = prev.bonne_reponse === removed ? '' : prev.bonne_reponse;
+      return { ...prev, options: opts, bonne_reponse: newBonne };
+    });
+  };
+
   const handleSave = async () => {
-    if (!form.question.trim() || !form.optionA.trim() || !form.optionB.trim() || !form.optionC.trim()) {
-      toast({ title: 'Tous les champs obligatoires doivent être remplis', variant: 'destructive' });
+    const cleanOpts = form.options.map(o => o.trim()).filter(Boolean);
+    if (!form.question.trim()) {
+      toast({ title: 'La question est obligatoire', variant: 'destructive' });
+      return;
+    }
+    if (cleanOpts.length < MIN_OPTIONS) {
+      toast({ title: `Au moins ${MIN_OPTIONS} options requises`, variant: 'destructive' });
+      return;
+    }
+    if (!form.bonne_reponse.trim() || !cleanOpts.includes(form.bonne_reponse.trim())) {
+      toast({ title: 'Sélectionnez la bonne réponse parmi les options', variant: 'destructive' });
       return;
     }
     if (!moduleId) return;
@@ -104,8 +145,8 @@ const AdminModuleQuiz = () => {
 
     const payload = {
       question: form.question.trim(),
-      options: [form.optionA.trim(), form.optionB.trim(), form.optionC.trim()],
-      bonne_reponse: form.bonneReponse,
+      options: cleanOpts,
+      bonne_reponse: form.bonne_reponse.trim(),
       explication: form.explication.trim() || null,
     };
 
@@ -172,6 +213,8 @@ const AdminModuleQuiz = () => {
     );
   }
 
+  const cleanOptsForSelect = form.options.map(o => o.trim()).filter(Boolean);
+
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -215,9 +258,12 @@ const AdminModuleQuiz = () => {
                 Q{idx + 1}
               </Badge>
               <div className="flex-1 min-w-0">
-                <p className="font-heading font-semibold text-foreground">{q.question}</p>
+                <p className="font-heading font-semibold text-foreground break-words">{q.question}</p>
               </div>
               <div className="flex items-center gap-2 shrink-0">
+                <Badge variant="outline" className="text-xs font-mono text-green-700 border-green-300">
+                  Rép. {getAnswerLetter(q)}
+                </Badge>
                 <Button variant="outline" size="icon" className="h-8 w-8" onClick={() => openEdit(q)}>
                   <Pencil className="h-3.5 w-3.5" />
                 </Button>
@@ -235,16 +281,16 @@ const AdminModuleQuiz = () => {
             {/* Options */}
             <div className="ml-11 space-y-1.5">
               {q.options.map((opt, optIdx) => {
-                const label = ANSWER_LABELS[optIdx];
-                const isCorrect = q.bonne_reponse === label;
+                const label = LETTERS[optIdx] ?? '?';
+                const isCorrect = q.bonne_reponse === opt;
                 return (
-                  <div key={optIdx} className="flex items-center gap-2 text-sm">
-                    <span className="font-mono text-muted-foreground w-5">{label}.</span>
-                    <span className={isCorrect ? 'font-medium text-foreground' : 'text-muted-foreground'}>
+                  <div key={optIdx} className="flex items-start gap-2 text-sm">
+                    <span className="font-mono text-muted-foreground w-5 shrink-0 pt-0.5">{label}.</span>
+                    <span className={`flex-1 break-words ${isCorrect ? 'font-medium text-foreground' : 'text-muted-foreground'}`}>
                       {opt}
                     </span>
                     {isCorrect && (
-                      <Badge variant="outline" className="text-green-700 border-green-300 bg-green-50 text-xs gap-1">
+                      <Badge variant="outline" className="shrink-0 text-green-700 border-green-300 bg-green-50 text-xs gap-1">
                         <CheckCircle2 className="h-3 w-3" /> Bonne réponse
                       </Badge>
                     )}
@@ -296,54 +342,63 @@ const AdminModuleQuiz = () => {
               />
             </div>
 
-            {/* Options */}
-            <div className="grid gap-4 sm:grid-cols-3">
-              <div className="space-y-1.5">
-                <Label htmlFor="quiz-optA">Option A *</Label>
-                <Input
-                  id="quiz-optA"
-                  value={form.optionA}
-                  onChange={e => setForm(p => ({ ...p, optionA: e.target.value }))}
-                  placeholder="10%"
-                />
+            {/* Options dynamiques (2 à 6) */}
+            <div className="space-y-2">
+              <div className="flex items-center justify-between">
+                <Label>Options de réponse * <span className="text-xs text-muted-foreground">(2 à 6)</span></Label>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={addOption}
+                  disabled={form.options.length >= MAX_OPTIONS}
+                  className="h-7 gap-1"
+                >
+                  <Plus className="h-3.5 w-3.5" /> Ajouter
+                </Button>
               </div>
-              <div className="space-y-1.5">
-                <Label htmlFor="quiz-optB">Option B *</Label>
-                <Input
-                  id="quiz-optB"
-                  value={form.optionB}
-                  onChange={e => setForm(p => ({ ...p, optionB: e.target.value }))}
-                  placeholder="20%"
-                />
-              </div>
-              <div className="space-y-1.5">
-                <Label htmlFor="quiz-optC">Option C *</Label>
-                <Input
-                  id="quiz-optC"
-                  value={form.optionC}
-                  onChange={e => setForm(p => ({ ...p, optionC: e.target.value }))}
-                  placeholder="25%"
-                />
-              </div>
+              {form.options.map((opt, i) => (
+                <div key={i} className="flex items-center gap-2">
+                  <span className="font-mono text-sm text-muted-foreground w-6 shrink-0">{LETTERS[i]}.</span>
+                  <Input
+                    value={opt}
+                    onChange={e => updateOption(i, e.target.value)}
+                    placeholder={`Option ${LETTERS[i]}`}
+                  />
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="icon"
+                    className="h-8 w-8 shrink-0 text-muted-foreground hover:text-destructive"
+                    onClick={() => removeOption(i)}
+                    disabled={form.options.length <= MIN_OPTIONS}
+                    title={form.options.length <= MIN_OPTIONS ? 'Minimum 2 options' : 'Supprimer'}
+                  >
+                    <X className="h-4 w-4" />
+                  </Button>
+                </div>
+              ))}
             </div>
 
             {/* Bonne réponse */}
-            <div className="space-y-2">
+            <div className="space-y-1.5">
               <Label>Bonne réponse *</Label>
-              <RadioGroup
-                value={form.bonneReponse}
-                onValueChange={v => setForm(p => ({ ...p, bonneReponse: v }))}
-                className="flex gap-6"
+              <Select
+                value={form.bonne_reponse}
+                onValueChange={v => setForm(p => ({ ...p, bonne_reponse: v }))}
               >
-                {ANSWER_LABELS.map(label => (
-                  <div key={label} className="flex items-center gap-2">
-                    <RadioGroupItem value={label} id={`answer-${label}`} />
-                    <Label htmlFor={`answer-${label}`} className="cursor-pointer font-mono">
-                      {label}
-                    </Label>
-                  </div>
-                ))}
-              </RadioGroup>
+                <SelectTrigger>
+                  <SelectValue placeholder="Sélectionnez la bonne réponse" />
+                </SelectTrigger>
+                <SelectContent>
+                  {cleanOptsForSelect.map((opt, i) => (
+                    <SelectItem key={i} value={opt}>
+                      <span className="font-mono text-xs text-muted-foreground mr-2">{LETTERS[form.options.map(o => o.trim()).indexOf(opt)]}.</span>
+                      {opt}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
 
             {/* Explication */}

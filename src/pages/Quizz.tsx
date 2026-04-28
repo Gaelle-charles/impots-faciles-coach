@@ -4,15 +4,18 @@ import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { useAccess } from '@/hooks/useAccess';
 import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { Skeleton } from '@/components/ui/skeleton';
-import { CheckCircle2, XCircle, Lock } from 'lucide-react';
+import { CheckCircle2, XCircle, Lock, AlertTriangle, Trophy } from 'lucide-react';
 import type { Tables } from '@/integrations/supabase/types';
 
 type QuizzRow = Tables<'quizz'>;
 type ResultatRow = Tables<'resultat_quiz'>;
 
-const LETTERS = ['A', 'B', 'C', 'D', 'E'];
+const LETTERS = ['A', 'B', 'C', 'D', 'E', 'F'];
+const PASS_THRESHOLD = 70;
+const MAX_ATTEMPTS = 3;
 
 function getResultMessage(
   pct: number,
@@ -35,7 +38,7 @@ const Quizz = () => {
     faible: string | null; moyen: string | null; expert: string | null;
   }>({ faible: null, moyen: null, expert: null });
   const [questions, setQuestions] = useState<QuizzRow[]>([]);
-  const [previousResult, setPreviousResult] = useState<ResultatRow | null>(null);
+  const [allAttempts, setAllAttempts] = useState<ResultatRow[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -44,11 +47,10 @@ const Quizz = () => {
   const [selectedOption, setSelectedOption] = useState<string | null>(null);
   const [validated, setValidated] = useState(false);
   const [score, setScore] = useState(0);
-  const [reponsesUtilisateur, setReponsesUtilisateur] = useState<
-    { question_id: string; reponse_donnee: string; correct: boolean }[]
-  >([]);
   const [finished, setFinished] = useState(false);
   const [finalScore, setFinalScore] = useState(0);
+  const [submitting, setSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
 
   const fetchData = useCallback(async () => {
     if (!slug || !user) return;
@@ -77,22 +79,19 @@ const Quizz = () => {
         .from('quizz')
         .select('*')
         .eq('module_id', mod.id)
-        .order('id', { ascending: true }),
+        .order('ordre', { ascending: true }),
       supabase
         .from('resultat_quiz')
         .select('*')
         .eq('module_id', mod.id)
         .eq('user_id', user.id)
-        .order('date_quiz', { ascending: false })
-        .limit(1)
-        .maybeSingle(),
+        .order('tentative_numero', { ascending: true }),
     ]);
 
     if (qRes.error) { setError('Erreur lors du chargement des questions.'); setLoading(false); return; }
 
     setQuestions(qRes.data ?? []);
-    setPreviousResult(rRes.data ?? null);
-    if (!rRes.data) setStarted(true);
+    setAllAttempts(rRes.data ?? []);
     setLoading(false);
   }, [slug, user]);
 
@@ -103,15 +102,20 @@ const Quizz = () => {
   const isLast = currentIndex === total - 1;
   const progressPercent = total > 0 ? ((currentIndex + (validated ? 1 : 0)) / total) * 100 : 0;
 
+  const attemptsUsed = allAttempts.length;
+  const attemptsRemaining = Math.max(0, MAX_ATTEMPTS - attemptsUsed);
+  const bestScore = allAttempts.length > 0
+    ? Math.max(...allAttempts.map(a => Math.round(Number(a.pourcentage))))
+    : 0;
+  const hasPassed = bestScore >= PASS_THRESHOLD;
+  const noMoreAttempts = attemptsUsed >= MAX_ATTEMPTS && !hasPassed;
+  const currentAttemptNumber = attemptsUsed + 1; // si on lance une nouvelle tentative
+
   const handleValidate = () => {
     if (!selectedOption || !question) return;
     const correct = selectedOption === question.bonne_reponse;
     setValidated(true);
     if (correct) setScore((s) => s + 1);
-    setReponsesUtilisateur((prev) => [
-      ...prev,
-      { question_id: question.id, reponse_donnee: selectedOption, correct },
-    ]);
   };
 
   const handleNext = () => {
@@ -125,32 +129,48 @@ const Quizz = () => {
   };
 
   const handleFinish = async () => {
-    // score already includes the last answer from handleValidate
     const computedScore = score;
     setFinalScore(computedScore);
     setFinished(true);
+    setSubmitError(null);
 
     if (!moduleId || !user) return;
+    setSubmitting(true);
     const pct = Math.round((computedScore / total) * 100);
-    await supabase.from('resultat_quiz').insert({
+    const { error: insertErr } = await supabase.from('resultat_quiz').insert({
       module_id: moduleId,
       user_id: user.id,
       score: computedScore,
       score_max: total,
       pourcentage: pct,
+      // tentative_numero auto-attribué par le trigger
     });
+    setSubmitting(false);
+
+    if (insertErr) {
+      setSubmitError(insertErr.message || 'Impossible d’enregistrer le résultat.');
+    } else {
+      // Refresh attempts pour avoir le bon numéro / état à jour
+      const { data } = await supabase
+        .from('resultat_quiz')
+        .select('*')
+        .eq('module_id', moduleId)
+        .eq('user_id', user.id)
+        .order('tentative_numero', { ascending: true });
+      setAllAttempts(data ?? []);
+    }
   };
 
   const handleRestart = () => {
-    setPreviousResult(null);
+    if (noMoreAttempts) return;
     setStarted(true);
     setCurrentIndex(0);
     setSelectedOption(null);
     setValidated(false);
     setScore(0);
     setFinalScore(0);
-    setReponsesUtilisateur([]);
     setFinished(false);
+    setSubmitError(null);
   };
 
   // --- Loading ---
@@ -180,7 +200,7 @@ const Quizz = () => {
     );
   }
 
-  // --- Mode aperçu admin orga : pas de quiz certifiant ---
+  // --- Mode aperçu admin orga ---
   if (isOrgAdminPreview) {
     return (
       <div className="min-h-screen bg-muted/30 flex items-center justify-center px-4">
@@ -219,49 +239,161 @@ const Quizz = () => {
     );
   }
 
-  // --- Previous result screen ---
-  if (previousResult && !started) {
-    const prevPct = Math.round(Number(previousResult.pourcentage));
+  // --- Écran d'accueil : tentatives déjà passées ---
+  if (!started && !finished && allAttempts.length > 0) {
     return (
-      <div className="min-h-screen bg-muted/30 flex items-center justify-center px-4">
+      <div className="min-h-screen bg-muted/30 flex items-center justify-center px-4 py-8">
         <div className="w-full max-w-[700px] text-center space-y-6">
           <h1 className="font-heading text-2xl font-bold text-foreground">
             Quiz — {moduleTitle}
           </h1>
-          <p className="text-lg text-muted-foreground">
-            Tu as déjà obtenu <span className="font-bold text-primary">{prevPct}%</span> à ce quiz.
-            Tu peux le repasser pour améliorer ton score.
-          </p>
-          <p className="text-sm text-muted-foreground italic">
-            {getResultMessage(prevPct, moduleTexts)}
-          </p>
-          <div className="flex flex-col gap-3 sm:flex-row sm:justify-center">
-            <Button onClick={handleRestart}>Repasser le quiz</Button>
-            <Button variant="outline" onClick={() => navigate('/dashboard')}>Voir mes résultats</Button>
+
+          {hasPassed && (
+            <div className="rounded-xl border-2 border-green-500/50 bg-green-50 dark:bg-green-950/20 p-6 space-y-3">
+              <div className="flex items-center justify-center gap-2">
+                <Trophy className="h-6 w-6 text-green-600" />
+                <Badge className="bg-green-600 text-white text-sm px-3 py-1">Module validé</Badge>
+              </div>
+              <p className="text-lg text-foreground">
+                Meilleur score : <span className="font-bold text-green-700 dark:text-green-400">{bestScore}%</span>
+              </p>
+              <p className="text-sm text-muted-foreground">
+                Tu as réussi ce quiz ! ({attemptsUsed}/{MAX_ATTEMPTS} tentative{attemptsUsed > 1 ? 's' : ''} utilisée{attemptsUsed > 1 ? 's' : ''})
+              </p>
+            </div>
+          )}
+
+          {!hasPassed && noMoreAttempts && (
+            <div className="rounded-xl border-2 border-destructive/50 bg-red-50 dark:bg-red-950/20 p-6 space-y-3">
+              <div className="flex items-center justify-center gap-2">
+                <AlertTriangle className="h-6 w-6 text-destructive" />
+                <Badge variant="destructive" className="text-sm px-3 py-1">Tentatives épuisées</Badge>
+              </div>
+              <p className="text-lg text-foreground">
+                Meilleur score : <span className="font-bold text-destructive">{bestScore}%</span>
+              </p>
+              <p className="text-sm text-muted-foreground">
+                Vous avez utilisé vos 3 tentatives. Le certificat ne peut être obtenu pour ce module.
+              </p>
+            </div>
+          )}
+
+          {!hasPassed && !noMoreAttempts && (
+            <div className="rounded-xl border border-border bg-card p-6 space-y-3">
+              <p className="text-lg text-foreground">
+                Meilleur score : <span className="font-bold text-primary">{bestScore}%</span>
+              </p>
+              <p className="text-sm text-muted-foreground">
+                Tentatives utilisées : <strong>{attemptsUsed}/{MAX_ATTEMPTS}</strong>
+                {' • '}Seuil de réussite : <strong>{PASS_THRESHOLD}%</strong>
+              </p>
+              <p className="text-sm italic text-muted-foreground">
+                {getResultMessage(bestScore, moduleTexts)}
+              </p>
+            </div>
+          )}
+
+          {/* Historique des tentatives */}
+          <div className="rounded-lg border border-border bg-card p-4 text-left space-y-2">
+            <p className="text-xs uppercase tracking-wide text-muted-foreground font-semibold">
+              Historique
+            </p>
+            {allAttempts.map(a => {
+              const pct = Math.round(Number(a.pourcentage));
+              const ok = pct >= PASS_THRESHOLD;
+              return (
+                <div key={a.id} className="flex items-center justify-between text-sm">
+                  <span className="text-muted-foreground">
+                    Tentative {a.tentative_numero} — {new Date(a.date_quiz).toLocaleDateString('fr-FR')}
+                  </span>
+                  <Badge
+                    className={ok
+                      ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200'
+                      : 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200'}
+                  >
+                    {pct}% {ok ? '✓' : '✗'}
+                  </Badge>
+                </div>
+              );
+            })}
           </div>
+
+          <div className="flex flex-col gap-3 sm:flex-row sm:justify-center">
+            {!noMoreAttempts && (
+              <Button onClick={handleRestart}>
+                {hasPassed
+                  ? `Repasser le quiz (tentative ${currentAttemptNumber}/${MAX_ATTEMPTS})`
+                  : `Nouvelle tentative (${currentAttemptNumber}/${MAX_ATTEMPTS})`}
+              </Button>
+            )}
+            <Button variant="outline" onClick={() => navigate('/dashboard')}>Retour au dashboard</Button>
+          </div>
+
+          <LegalDisclaimer />
         </div>
       </div>
     );
   }
 
+  // --- Première fois : pas encore commencé, lancer auto ---
+  if (!started && !finished && allAttempts.length === 0) {
+    setStarted(true);
+    return null;
+  }
+
   // --- Finished ---
   if (finished) {
-    const pct = Math.round((finalScore / total) * 100);
+    const pct = total > 0 ? Math.round((finalScore / total) * 100) : 0;
+    const passed = pct >= PASS_THRESHOLD;
+    const attemptNum = allAttempts.length > 0
+      ? allAttempts[allAttempts.length - 1].tentative_numero
+      : currentAttemptNumber;
+
     return (
-      <div className="min-h-screen bg-muted/30 flex items-center justify-center px-4">
+      <div className="min-h-screen bg-muted/30 flex items-center justify-center px-4 py-8">
         <div className="w-full max-w-[700px] text-center space-y-6">
           <h1 className="font-heading text-3xl font-bold text-foreground">Résultat du quiz 🎯</h1>
-          <p className="text-5xl font-heading font-bold text-primary">{pct}%</p>
-          <p className="text-lg text-muted-foreground">
-            Tu as obtenu {finalScore}/{total} bonnes réponses.
-          </p>
+
+          <div className="space-y-2">
+            <p className={`text-5xl font-heading font-bold ${passed ? 'text-green-600' : 'text-primary'}`}>{pct}%</p>
+            <p className="text-lg text-muted-foreground">
+              {finalScore}/{total} bonnes réponses
+            </p>
+            <p className="text-sm text-muted-foreground">
+              Tentative {attemptNum}/{MAX_ATTEMPTS}
+            </p>
+          </div>
+
+          {passed ? (
+            <div className="rounded-lg border-2 border-green-500/50 bg-green-50 dark:bg-green-950/20 p-4 flex items-center justify-center gap-2">
+              <Trophy className="h-5 w-5 text-green-600" />
+              <span className="font-heading font-bold text-green-700 dark:text-green-400">
+                Module validé !
+              </span>
+            </div>
+          ) : (
+            <div className="rounded-lg border border-border bg-card p-4 text-sm text-muted-foreground">
+              Seuil de réussite : <strong>{PASS_THRESHOLD}%</strong> — il te manque {Math.max(0, PASS_THRESHOLD - pct)} points pour valider.
+            </div>
+          )}
+
           <p className="text-base text-foreground">
             {getResultMessage(pct, moduleTexts)}
           </p>
+
+          {submitting && (
+            <p className="text-xs text-muted-foreground">Enregistrement en cours…</p>
+          )}
+          {submitError && (
+            <p className="text-xs text-destructive">⚠️ {submitError}</p>
+          )}
+
           <div className="flex flex-col gap-3 sm:flex-row sm:justify-center">
             <Button onClick={() => navigate(`/module/${slug}`)}>← Revenir au module</Button>
             <Button variant="outline" onClick={() => navigate('/dashboard')}>Retour au dashboard</Button>
           </div>
+
+          <LegalDisclaimer />
         </div>
       </div>
     );
@@ -278,13 +410,18 @@ const Quizz = () => {
           ← Revenir au module
         </button>
 
-        <div className="text-center space-y-1">
+        <div className="text-center space-y-2">
           <h1 className="font-heading text-2xl font-bold text-foreground">
             Quiz — {moduleTitle}
           </h1>
-          <p className="text-sm text-muted-foreground">
-            Question {currentIndex + 1} / {total}
-          </p>
+          <div className="flex items-center justify-center gap-2 flex-wrap">
+            <Badge variant="outline" className="text-xs">
+              Tentative {currentAttemptNumber}/{MAX_ATTEMPTS}
+            </Badge>
+            <span className="text-sm text-muted-foreground">
+              Question {currentIndex + 1} / {total}
+            </span>
+          </div>
         </div>
 
         <Progress value={progressPercent} className="h-2" />
@@ -296,7 +433,7 @@ const Quizz = () => {
 
           <div className="space-y-3">
             {(question.options ?? []).map((opt, i) => {
-              const letter = LETTERS[i];
+              const letter = LETTERS[i] ?? '?';
               const isCorrect = opt === question.bonne_reponse;
               const isSelected = selectedOption === opt;
 
@@ -354,9 +491,25 @@ const Quizz = () => {
             </Button>
           )}
         </div>
+
+        <LegalDisclaimer />
       </div>
     </div>
   );
 };
+
+// ─── Disclaimer pédagogique (E) ───
+function LegalDisclaimer() {
+  return (
+    <div className="rounded-lg border border-amber-300 dark:border-amber-900/50 bg-amber-50 dark:bg-amber-950/20 p-4 text-left">
+      <p className="text-xs text-amber-900 dark:text-amber-100 leading-relaxed">
+        <strong>⚠️ Mention légale.</strong> Ce quiz est pédagogique. Il atteste de votre apprentissage du parcours
+        Impôts Facile mais ne constitue pas une certification professionnelle au sens du RNCP.
+        Pour toute question fiscale engageant votre responsabilité, consultez un expert-comptable
+        inscrit à l'Ordre.
+      </p>
+    </div>
+  );
+}
 
 export default Quizz;
