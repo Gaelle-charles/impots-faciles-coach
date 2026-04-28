@@ -113,12 +113,12 @@ function SortableModuleRow({
   };
 
   return (
-    <div
-      ref={setNodeRef}
-      style={style}
-      className="flex flex-col lg:flex-row lg:items-center gap-3 rounded-lg border border-border bg-background p-4 shadow-sm"
-    >
-      <div className="flex items-center gap-3 min-w-0">
+      <div
+        ref={setNodeRef}
+        style={style}
+        className="flex flex-col gap-3 rounded-lg border border-border bg-background p-4 shadow-sm lg:flex-row lg:items-center"
+      >
+      <div className="flex min-w-0 flex-1 items-center gap-3">
         {reorderMode && (
           <button
             {...attributes}
@@ -151,18 +151,15 @@ function SortableModuleRow({
         </div>
 
         {/* Title */}
-        <span className="font-heading font-semibold text-foreground min-w-0 truncate">
+        <span className="min-w-0 flex-1 truncate font-heading font-semibold text-foreground">
           {mod.titre}
         </span>
 
         {/* Stats inline on larger screens */}
-        <span className="hidden lg:inline text-xs text-muted-foreground whitespace-nowrap">
+        <span className="hidden xl:inline text-xs text-muted-foreground whitespace-nowrap shrink-0">
           {mod.quizCount} questions
         </span>
-        <span className="hidden lg:inline text-xs text-muted-foreground whitespace-nowrap">
-          {mod.quizCount} questions
-        </span>
-        <span className="hidden xl:inline text-xs text-muted-foreground whitespace-nowrap">
+        <span className="hidden xl:inline text-xs text-muted-foreground whitespace-nowrap shrink-0">
           {mod.rate}%
         </span>
       </div>
