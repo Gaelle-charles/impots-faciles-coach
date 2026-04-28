@@ -76,13 +76,27 @@ const Fiche = () => {
     queryFn: async (): Promise<FicheRow | null> => {
       if (!validType || !slug) return null;
       const table = TABLE_BY_TYPE[validType];
+      // `pays` n'a pas de colonne `description`
+      const columns =
+        table === 'pays'
+          ? 'id, nom, icone, contenu_sections, is_active'
+          : 'id, nom, icone, description, contenu_sections, is_active';
       const { data, error } = await supabase
         .from(table)
-        .select('id, nom, icone, description, contenu_sections, is_active')
+        .select(columns)
         .eq('slug', slug)
         .maybeSingle();
       if (error) throw error;
-      return data as FicheRow | null;
+      if (!data) return null;
+      const row = data as Record<string, unknown>;
+      return {
+        id: row.id as string,
+        nom: row.nom as string,
+        icone: (row.icone as string | null) ?? null,
+        description: (row.description as string | null) ?? null,
+        contenu_sections: (row.contenu_sections as FicheSectionsContent | null) ?? null,
+        is_active: (row.is_active as boolean | null) ?? null,
+      };
     },
   });
 
