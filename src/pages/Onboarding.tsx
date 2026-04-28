@@ -895,6 +895,20 @@ const Onboarding = () => {
           </div>
         )}
       </main>
+
+      <CheckoutAcceptanceDialog
+        open={pendingPlan !== null}
+        onOpenChange={(open) => {
+          if (!open) {
+            setPendingPlan(null);
+            setCheckoutLoading(null);
+          }
+        }}
+        planLabel={PLANS.find((p) => p.slug === pendingPlan)?.name ?? ''}
+        planPrice={PLANS.find((p) => p.slug === pendingPlan)?.price ?? 0}
+        loading={checkoutLoading !== null}
+        onConfirm={confirmCheckout}
+      />
     </div>
   );
 };
