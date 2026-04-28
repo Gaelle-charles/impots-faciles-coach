@@ -274,6 +274,14 @@ const Quizz = () => {
               <p className="text-sm text-muted-foreground">
                 Tu as réussi ce quiz ! ({attemptsUsed}/{MAX_ATTEMPTS} tentative{attemptsUsed > 1 ? 's' : ''} utilisée{attemptsUsed > 1 ? 's' : ''})
               </p>
+              {certificat && (
+                <Button
+                  onClick={() => downloadCertificatPdf(certificat)}
+                  className="gap-2 bg-green-600 hover:bg-green-700 text-white"
+                >
+                  <Download className="h-4 w-4" /> Télécharger mon certificat (PDF)
+                </Button>
+              )}
             </div>
           )}
 
