@@ -88,7 +88,7 @@ const Fiche = () => {
         .maybeSingle();
       if (error) throw error;
       if (!data) return null;
-      const row = data as Record<string, unknown>;
+      const row = data as unknown as Record<string, unknown>;
       return {
         id: row.id as string,
         nom: row.nom as string,
