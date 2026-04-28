@@ -38,6 +38,7 @@ import {
 import { CSS } from '@dnd-kit/utilities';
 import { restrictToVerticalAxis } from '@dnd-kit/modifiers';
 import { RichTextEditor } from '@/components/admin/RichTextEditor';
+import { ContenuSectionsEditor } from '@/components/admin/ContenuSectionsEditor';
 
 interface MetierRow {
   id: string;
@@ -51,6 +52,7 @@ interface MetierRow {
   order_display: number | null;
   is_active: boolean | null;
   created_at: string;
+  contenu_sections: unknown;
 }
 
 const PAGE_SIZE = 30;
@@ -167,6 +169,9 @@ const AdminMetiers = () => {
     order_display: '' as string,
     is_active: true,
   });
+  // contenu_sections est géré séparément (édition JSONB validée)
+  const [contenuSections, setContenuSections] = useState<unknown>(null);
+  const [contenuValid, setContenuValid] = useState(true);
   const [saving, setSaving] = useState(false);
 
   // Delete dialog
@@ -299,6 +304,8 @@ const AdminMetiers = () => {
       order_display: String(maxOrder + 1),
       is_active: true,
     });
+    setContenuSections(null);
+    setContenuValid(true);
     setOpen(true);
   };
 
@@ -316,6 +323,11 @@ const AdminMetiers = () => {
       order_display: m.order_display != null ? String(m.order_display) : '',
       is_active: m.is_active ?? true,
     });
+    // contenu_sections : on garde tel quel ; null/{} = pas de contenu enrichi
+    const cs = m.contenu_sections;
+    const hasContent = cs && typeof cs === 'object' && Object.keys(cs as object).length > 0;
+    setContenuSections(hasContent ? cs : null);
+    setContenuValid(true);
     setOpen(true);
   };
 
@@ -338,8 +350,18 @@ const AdminMetiers = () => {
       toast({ title: 'Champ requis', description: 'Le slug est obligatoire.', variant: 'destructive' });
       return;
     }
+    if (!contenuValid) {
+      toast({
+        title: 'Contenu structuré invalide',
+        description: 'Corrigez les erreurs JSON avant d\'enregistrer.',
+        variant: 'destructive',
+      });
+      return;
+    }
     setSaving(true);
     const orderNum = form.order_display.trim() === '' ? null : Number(form.order_display);
+    // Si l'éditeur a renvoyé null, on stocke {} pour respecter NOT NULL DEFAULT '{}'
+    const contenuPayload = (contenuSections ?? {}) as never;
 
     if (isAdd) {
       const payload = {
@@ -352,6 +374,7 @@ const AdminMetiers = () => {
         icone: form.icone.trim() || null,
         order_display: Number.isFinite(orderNum as number) ? orderNum : null,
         is_active: form.is_active,
+        contenu_sections: contenuPayload,
       };
       const { error } = await supabase.from('metiers').insert(payload);
       setSaving(false);
@@ -374,6 +397,7 @@ const AdminMetiers = () => {
         icone: form.icone.trim() || null,
         order_display: Number.isFinite(orderNum as number) ? orderNum : null,
         is_active: form.is_active,
+        contenu_sections: contenuPayload,
       };
       const { error } = await supabase.from('metiers').update(payload).eq('id', editingId!);
       setSaving(false);
@@ -756,14 +780,21 @@ const AdminMetiers = () => {
             </div>
 
             <div className="space-y-1.5">
-              <Label>Description</Label>
+              <Label>Description (résumé court — fallback si aucun contenu structuré)</Label>
               <RichTextEditor
                 value={form.description}
                 onChange={(val) => setForm((f) => ({ ...f, description: val }))}
                 placeholder="Décrivez le métier, ses spécificités fiscales, les régimes applicables…"
-                minHeight={240}
+                minHeight={180}
               />
             </div>
+
+            <ContenuSectionsEditor
+              type="metier"
+              value={contenuSections}
+              onChange={setContenuSections}
+              onValidityChange={setContenuValid}
+            />
           </div>
 
           <DialogFooter>
