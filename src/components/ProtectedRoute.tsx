@@ -72,6 +72,7 @@ export function ProtectedRoute({ children, adminOnly = false }: { children: Reac
   const previewAllowed = location.pathname.startsWith('/module/')
     || location.pathname.startsWith('/simulateur')
     || location.pathname.startsWith('/fiche-metier/')
+    || location.pathname.startsWith('/fiches/')
     || location.pathname.startsWith('/quizz/');
   if (!adminOnly && isOrgAdmin && !isB2BRoute && !previewAllowed) {
     return <Navigate to="/impots-team/dashboard" replace />;

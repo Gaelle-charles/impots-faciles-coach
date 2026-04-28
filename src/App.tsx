@@ -27,6 +27,7 @@ import SimulateurIRBareme from "./pages/SimulateurIRBareme";
 import SimulateurQuotientFamilial from "./pages/SimulateurQuotientFamilial";
 import SimulateurCreditsReductions from "./pages/SimulateurCreditsReductions";
 import FicheMetier from "./pages/FicheMetier";
+import Fiche from "./pages/Fiche";
 import Profil from "./pages/Profil";
 import MesModules from "./pages/MesModules";
 import Admin from "./pages/Admin";
@@ -116,6 +117,7 @@ const App = () => (
               <Route path="/simulateur/pas" element={<SimulateurPAS />} />
               <Route path="/simulateur/credits-reductions" element={<SimulateurCreditsReductions />} />
               <Route path="/fiche-metier/:id" element={<FicheMetier />} />
+              <Route path="/fiches/:type/:slug" element={<Fiche />} />
               <Route path="/profil" element={<Profil />} />
               <Route path="/mes-modules" element={<MesModules />} />
             </Route>
