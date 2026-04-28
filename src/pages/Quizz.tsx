@@ -261,14 +261,9 @@ const Quizz = () => {
               <p className="text-sm text-muted-foreground">
                 Tu as réussi ce quiz ! ({attemptsUsed}/{MAX_ATTEMPTS} tentative{attemptsUsed > 1 ? 's' : ''} utilisée{attemptsUsed > 1 ? 's' : ''})
               </p>
-              {certificat && (
-                <Button
-                  onClick={() => downloadCertificatPdf(certificat)}
-                  className="gap-2 bg-green-600 hover:bg-green-700 text-white"
-                >
-                  <Download className="h-4 w-4" /> Télécharger mon certificat (PDF)
-                </Button>
-              )}
+              <p className="text-xs text-muted-foreground italic">
+                Le certificat de parcours est délivré une fois <strong>tous les modules</strong> validés.
+              </p>
             </div>
           )}
 
@@ -381,15 +376,9 @@ const Quizz = () => {
                   Module validé !
                 </span>
               </div>
-              {certificat && (
-                <Button
-                  onClick={() => downloadCertificatPdf(certificat)}
-                  size="sm"
-                  className="gap-2 bg-green-600 hover:bg-green-700 text-white"
-                >
-                  <Download className="h-4 w-4" /> Télécharger mon certificat (PDF)
-                </Button>
-              )}
+              <p className="text-xs text-muted-foreground italic">
+                Continue ton parcours : le certificat sera disponible une fois tous les modules validés.
+              </p>
             </div>
           ) : (
             <div className="rounded-lg border border-border bg-card p-4 text-sm text-muted-foreground">
