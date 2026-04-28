@@ -37,6 +37,8 @@ import AdminModules from "./pages/AdminModules";
 import AdminStats from "./pages/AdminStats";
 import AdminQuiz from "./pages/AdminQuiz";
 import AdminMetiers from "./pages/AdminMetiers";
+import AdminFichesProfils from "./pages/AdminFichesProfils";
+import AdminPays from "./pages/AdminPays";
 import AdminContenus from "./pages/AdminContenus";
 import AdminModuleContenus from "./pages/AdminModuleContenus";
 import AdminModuleQuiz from "./pages/AdminModuleQuiz";
@@ -138,6 +140,8 @@ const App = () => (
               <Route path="/admin/stats" element={<AdminStats />} />
               <Route path="/admin/quiz" element={<AdminQuiz />} />
               <Route path="/admin/metiers" element={<AdminMetiers />} />
+              <Route path="/admin/fiches-profils" element={<AdminFichesProfils />} />
+              <Route path="/admin/pays" element={<AdminPays />} />
               <Route path="/admin/contenus" element={<AdminContenus />} />
               <Route path="/admin/subscriptions" element={<AdminSubscriptions />} />
               <Route path="/admin/emails" element={<AdminEmails />} />
