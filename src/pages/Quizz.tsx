@@ -7,8 +7,9 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { Skeleton } from '@/components/ui/skeleton';
-import { CheckCircle2, XCircle, Lock, AlertTriangle, Trophy } from 'lucide-react';
+import { CheckCircle2, XCircle, Lock, AlertTriangle, Trophy, Download } from 'lucide-react';
 import type { Tables } from '@/integrations/supabase/types';
+import { downloadCertificatPdf, type CertificatData } from '@/lib/certificat-pdf';
 
 type QuizzRow = Tables<'quizz'>;
 type ResultatRow = Tables<'resultat_quiz'>;
@@ -39,6 +40,7 @@ const Quizz = () => {
   }>({ faible: null, moyen: null, expert: null });
   const [questions, setQuestions] = useState<QuizzRow[]>([]);
   const [allAttempts, setAllAttempts] = useState<ResultatRow[]>([]);
+  const [certificat, setCertificat] = useState<CertificatData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -96,6 +98,18 @@ const Quizz = () => {
   }, [slug, user]);
 
   useEffect(() => { fetchData(); }, [fetchData]);
+
+  // Récupère le certificat dès qu'il existe (créé par trigger DB après réussite)
+  useEffect(() => {
+    if (!user || !moduleId) return;
+    supabase
+      .from('certificats')
+      .select('numero, prenom, nom, module_titre, pourcentage, score, score_max, date_obtention')
+      .eq('user_id', user.id)
+      .eq('module_id', moduleId)
+      .maybeSingle()
+      .then(({ data }) => setCertificat(data as CertificatData | null));
+  }, [user, moduleId, allAttempts.length]);
 
   const total = questions.length;
   const question = questions[currentIndex];
@@ -260,6 +274,14 @@ const Quizz = () => {
               <p className="text-sm text-muted-foreground">
                 Tu as réussi ce quiz ! ({attemptsUsed}/{MAX_ATTEMPTS} tentative{attemptsUsed > 1 ? 's' : ''} utilisée{attemptsUsed > 1 ? 's' : ''})
               </p>
+              {certificat && (
+                <Button
+                  onClick={() => downloadCertificatPdf(certificat)}
+                  className="gap-2 bg-green-600 hover:bg-green-700 text-white"
+                >
+                  <Download className="h-4 w-4" /> Télécharger mon certificat (PDF)
+                </Button>
+              )}
             </div>
           )}
 
@@ -365,11 +387,22 @@ const Quizz = () => {
           </div>
 
           {passed ? (
-            <div className="rounded-lg border-2 border-green-500/50 bg-green-50 dark:bg-green-950/20 p-4 flex items-center justify-center gap-2">
-              <Trophy className="h-5 w-5 text-green-600" />
-              <span className="font-heading font-bold text-green-700 dark:text-green-400">
-                Module validé !
-              </span>
+            <div className="rounded-lg border-2 border-green-500/50 bg-green-50 dark:bg-green-950/20 p-4 space-y-3">
+              <div className="flex items-center justify-center gap-2">
+                <Trophy className="h-5 w-5 text-green-600" />
+                <span className="font-heading font-bold text-green-700 dark:text-green-400">
+                  Module validé !
+                </span>
+              </div>
+              {certificat && (
+                <Button
+                  onClick={() => downloadCertificatPdf(certificat)}
+                  size="sm"
+                  className="gap-2 bg-green-600 hover:bg-green-700 text-white"
+                >
+                  <Download className="h-4 w-4" /> Télécharger mon certificat (PDF)
+                </Button>
+              )}
             </div>
           ) : (
             <div className="rounded-lg border border-border bg-card p-4 text-sm text-muted-foreground">
