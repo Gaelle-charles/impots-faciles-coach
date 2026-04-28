@@ -134,16 +134,21 @@ function SortableModuleRow({
           {String(mod.order).padStart(2, '0')}
         </Badge>
 
-        {/* Status */}
-        <Badge
-          className={`shrink-0 text-xs ${
-            mod.is_published
-              ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200'
-              : 'bg-muted text-muted-foreground'
-          }`}
-        >
-          {mod.is_published ? 'Publié' : 'Brouillon'}
-        </Badge>
+        {/* Status + nb étapes empilés */}
+        <div className="flex flex-col items-start gap-1 shrink-0">
+          <Badge
+            className={`text-xs ${
+              mod.is_published
+                ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200'
+                : 'bg-muted text-muted-foreground'
+            }`}
+          >
+            {mod.is_published ? 'Publié' : 'Brouillon'}
+          </Badge>
+          <span className="text-xs text-muted-foreground whitespace-nowrap">
+            {mod.contenuCount} étapes
+          </span>
+        </div>
 
         {/* Title */}
         <span className="font-heading font-semibold text-foreground min-w-0 truncate">
@@ -152,7 +157,7 @@ function SortableModuleRow({
 
         {/* Stats inline on larger screens */}
         <span className="hidden lg:inline text-xs text-muted-foreground whitespace-nowrap">
-          {mod.contenuCount} étapes
+          {mod.quizCount} questions
         </span>
         <span className="hidden lg:inline text-xs text-muted-foreground whitespace-nowrap">
           {mod.quizCount} questions
