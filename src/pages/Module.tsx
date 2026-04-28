@@ -128,16 +128,31 @@ const Module = () => {
     } else {
       const { data: newProg, error: insertErr } = await supabase
         .from('progressions')
-        .insert({ module_id: mod.id, user_id: user.id, step: 0 })
+        .upsert(
+          { module_id: mod.id, user_id: user.id, step: 0 },
+          { onConflict: 'user_id,module_id', ignoreDuplicates: false },
+        )
         .select()
         .single();
 
-      if (insertErr) {
-        setError('Erreur lors de la création de la progression.');
-        setLoading(false);
-        return;
+      if (insertErr || !newProg) {
+        // Fallback : récupérer la ligne existante en cas de course
+        const { data: existing } = await supabase
+          .from('progressions')
+          .select('*')
+          .eq('module_id', mod.id)
+          .eq('user_id', user.id)
+          .maybeSingle();
+        if (existing) {
+          setProgression(existing);
+        } else {
+          setError('Erreur lors de la création de la progression.');
+          setLoading(false);
+          return;
+        }
+      } else {
+        setProgression(newProg);
       }
-      setProgression(newProg);
     }
 
     setLoading(false);
