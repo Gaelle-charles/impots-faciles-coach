@@ -17,6 +17,9 @@ import {
   Settings,
   LogOut,
   ArrowLeft,
+  Briefcase,
+  UserSquare2,
+  Globe2,
 } from 'lucide-react';
 
 const navGroups = [
@@ -33,6 +36,14 @@ const navGroups = [
       { to: '/admin/modules', label: 'Modules', icon: Library },
       { to: '/admin/quiz', label: 'Quiz', icon: FileQuestion },
       { to: '/admin/contenus', label: 'Contenus', icon: FolderOpen },
+    ],
+  },
+  {
+    label: 'Fiches éditoriales',
+    items: [
+      { to: '/admin/metiers', label: 'Fiches métiers', icon: Briefcase },
+      { to: '/admin/fiches-profils', label: 'Fiches profils', icon: UserSquare2 },
+      { to: '/admin/pays', label: 'Fiches pays', icon: Globe2 },
     ],
   },
   {

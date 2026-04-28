@@ -35,6 +35,7 @@ import AdminUsers from "./pages/AdminUsers";
 import AdminModules from "./pages/AdminModules";
 import AdminStats from "./pages/AdminStats";
 import AdminQuiz from "./pages/AdminQuiz";
+import AdminMetiers from "./pages/AdminMetiers";
 import AdminContenus from "./pages/AdminContenus";
 import AdminModuleContenus from "./pages/AdminModuleContenus";
 import AdminModuleQuiz from "./pages/AdminModuleQuiz";
@@ -134,6 +135,7 @@ const App = () => (
               <Route path="/admin/modules/:id/quiz" element={<AdminModuleQuiz />} />
               <Route path="/admin/stats" element={<AdminStats />} />
               <Route path="/admin/quiz" element={<AdminQuiz />} />
+              <Route path="/admin/metiers" element={<AdminMetiers />} />
               <Route path="/admin/contenus" element={<AdminContenus />} />
               <Route path="/admin/subscriptions" element={<AdminSubscriptions />} />
               <Route path="/admin/emails" element={<AdminEmails />} />
