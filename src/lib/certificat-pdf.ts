@@ -1,6 +1,7 @@
 /**
- * Génération du PDF de certificat de réussite quiz.
+ * Génération du PDF de certificat de parcours complet "Impôts Facile".
  * Utilise jsPDF côté navigateur. Format A4 paysage.
+ * Pas de score : mention "Parcours validé" uniquement.
  */
 import { jsPDF } from 'jspdf';
 
@@ -8,10 +9,8 @@ export interface CertificatData {
   numero: string;
   prenom: string | null;
   nom: string | null;
-  module_titre: string;
-  pourcentage: number;
-  score: number;
-  score_max: number;
+  plan: string;
+  nb_modules_valides: number;
   date_obtention: string; // ISO
 }
 
@@ -64,53 +63,51 @@ export function generateCertificatPdf(data: CertificatData): jsPDF {
   doc.setTextColor(PRIMARY);
   doc.setFont('helvetica', 'bold');
   doc.setFontSize(28);
-  doc.text('Certificat de réussite', W / 2, 58, { align: 'center' });
+  doc.text('Certificat de parcours', W / 2, 58, { align: 'center' });
 
   // Sous-titre
   doc.setFont('helvetica', 'normal');
   doc.setFontSize(11);
   doc.setTextColor(TEXT_MUTED);
-  doc.text('Délivré dans le cadre du parcours de formation pédagogique', W / 2, 66, { align: 'center' });
+  doc.text('Délivré au terme du parcours pédagogique complet Impôts Facile', W / 2, 66, { align: 'center' });
 
   // Décerné à
   doc.setFontSize(12);
   doc.setTextColor(TEXT_DARK);
-  doc.text('Ce certificat est décerné à', W / 2, 82, { align: 'center' });
+  doc.text('Ce certificat est décerné à', W / 2, 84, { align: 'center' });
 
   const fullName = [data.prenom, data.nom].filter(Boolean).join(' ').trim() || 'Apprenant·e';
   doc.setFont('helvetica', 'bold');
-  doc.setFontSize(24);
+  doc.setFontSize(26);
   doc.setTextColor(PRIMARY);
-  doc.text(fullName, W / 2, 95, { align: 'center' });
+  doc.text(fullName, W / 2, 100, { align: 'center' });
 
   // Souligné jaune sous le nom
   doc.setDrawColor(ACCENT);
   doc.setLineWidth(1.5);
   const nameWidth = doc.getTextWidth(fullName);
-  doc.line(W / 2 - nameWidth / 2 - 5, 99, W / 2 + nameWidth / 2 + 5, 99);
+  doc.line(W / 2 - nameWidth / 2 - 5, 104, W / 2 + nameWidth / 2 + 5, 104);
 
-  // Pour avoir terminé
+  // Mention principale
   doc.setFont('helvetica', 'normal');
-  doc.setFontSize(12);
+  doc.setFontSize(13);
   doc.setTextColor(TEXT_DARK);
-  doc.text("pour avoir suivi et validé avec succès le module", W / 2, 112, { align: 'center' });
+  doc.text("pour avoir suivi et validé l'intégralité du parcours pédagogique", W / 2, 120, { align: 'center' });
 
-  // Module
+  // Mention "Parcours validé"
   doc.setFont('helvetica', 'bold');
-  doc.setFontSize(15);
+  doc.setFontSize(18);
   doc.setTextColor(PRIMARY);
-  const moduleLines = doc.splitTextToSize(`« ${data.module_titre} »`, W - 60);
-  doc.text(moduleLines, W / 2, 122, { align: 'center' });
+  doc.text('« Parcours validé »', W / 2, 134, { align: 'center' });
 
-  // Score
-  const scoreY = 122 + (moduleLines.length * 6) + 8;
-  doc.setFont('helvetica', 'normal');
-  doc.setFontSize(12);
-  doc.setTextColor(TEXT_DARK);
+  // Précision modules
+  doc.setFont('helvetica', 'italic');
+  doc.setFontSize(11);
+  doc.setTextColor(TEXT_MUTED);
   doc.text(
-    `avec un score de ${Math.round(data.pourcentage)}% (${data.score}/${data.score_max} bonnes réponses)`,
+    `${data.nb_modules_valides} module${data.nb_modules_valides > 1 ? 's' : ''} validé${data.nb_modules_valides > 1 ? 's' : ''} avec succès`,
     W / 2,
-    scoreY,
+    143,
     { align: 'center' },
   );
 
@@ -132,7 +129,7 @@ export function generateCertificatPdf(data: CertificatData): jsPDF {
   // Date
   doc.setFont('helvetica', 'bold');
   doc.setTextColor(PRIMARY);
-  doc.text('Date d\'obtention', W / 2, footerY, { align: 'center' });
+  doc.text("Date d'obtention", W / 2, footerY, { align: 'center' });
   doc.setFont('helvetica', 'normal');
   doc.setTextColor(TEXT_DARK);
   doc.text(
@@ -168,5 +165,5 @@ export function generateCertificatPdf(data: CertificatData): jsPDF {
 export function downloadCertificatPdf(data: CertificatData) {
   const doc = generateCertificatPdf(data);
   const safeName = [data.prenom, data.nom].filter(Boolean).join('-').trim() || 'certificat';
-  doc.save(`Certificat-${safeName}-${data.numero}.pdf`);
+  doc.save(`Certificat-Parcours-${safeName}-${data.numero}.pdf`);
 }
