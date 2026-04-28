@@ -113,66 +113,50 @@ function SortableModuleRow({
   };
 
   return (
-      <div
-        ref={setNodeRef}
-        style={style}
-        className="flex flex-col gap-3 rounded-lg border border-border bg-background p-4 shadow-sm xl:flex-row xl:items-center"
-      >
-      <div className="flex min-w-0 flex-1 items-center gap-3">
+    <div
+      ref={setNodeRef}
+      style={style}
+      className="flex flex-col gap-3 rounded-lg border border-border bg-background p-4 shadow-sm"
+    >
+      {/* Ligne 1 : Titre en premier, pleine largeur */}
+      <div className="flex items-start gap-3">
         {reorderMode && (
           <button
             {...attributes}
             {...listeners}
-            className="cursor-grab active:cursor-grabbing text-muted-foreground hover:text-foreground touch-none"
+            className="cursor-grab active:cursor-grabbing text-muted-foreground hover:text-foreground touch-none mt-0.5"
           >
             <GripVertical className="h-5 w-5" />
           </button>
         )}
+        <h3 className="min-w-0 flex-1 font-heading text-base font-semibold text-foreground break-words leading-snug">
+          {mod.titre}
+        </h3>
+      </div>
 
-        {/* Order badge */}
-        <Badge variant="outline" className="shrink-0 font-mono text-xs w-8 justify-center">
+      {/* Ligne 2 : Métadonnées (ordre, statut, étapes, réussite) */}
+      <div className="flex flex-wrap items-center gap-2 text-xs">
+        <Badge variant="outline" className="font-mono w-8 justify-center">
           {String(mod.order).padStart(2, '0')}
         </Badge>
-
-        {/* Status + nb étapes empilés */}
-        <div className="flex flex-col items-start gap-1 shrink-0">
-          <Badge
-            className={`text-xs ${
-              mod.is_published
-                ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200'
-                : 'bg-muted text-muted-foreground'
-            }`}
-          >
-            {mod.is_published ? 'Publié' : 'Brouillon'}
-          </Badge>
-          <span className="text-xs text-muted-foreground whitespace-nowrap">
-            {mod.contenuCount} étapes
-          </span>
-        </div>
-
-        {/* Title — wrappe sur 2 lignes au besoin pour rester lisible */}
-        <span className="min-w-0 flex-1 font-heading font-semibold text-foreground break-words">
-          {mod.titre}
-        </span>
-
-        {/* Taux de réussite (questions déjà visibles dans le bouton Quiz) */}
-        <span className="hidden 2xl:inline text-xs text-muted-foreground whitespace-nowrap shrink-0">
-          {mod.rate}% réussite
-        </span>
+        <Badge
+          className={
+            mod.is_published
+              ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200'
+              : 'bg-muted text-muted-foreground'
+          }
+        >
+          {mod.is_published ? 'Publié' : 'Brouillon'}
+        </Badge>
+        <span className="text-muted-foreground">{mod.contenuCount} étapes</span>
+        <span className="text-muted-foreground">·</span>
+        <span className="text-muted-foreground">{mod.rate}% réussite</span>
       </div>
 
-      {/* Stats sous le titre quand les actions passent en dessous */}
-      <div className="flex items-center gap-3 text-xs text-muted-foreground xl:hidden pl-11">
-        <span>{mod.quizCount} questions</span>
-        <span>{mod.rate}% réussite</span>
-      </div>
-
+      {/* Ligne 3 : Actions */}
       {!reorderMode && (
-        <div className="flex items-center gap-2 shrink-0 flex-wrap xl:ml-auto pl-11 xl:pl-0">
-          <Switch
-            checked={mod.is_published}
-            onCheckedChange={onToggle}
-          />
+        <div className="flex flex-wrap items-center gap-2 pt-1 border-t border-border/50">
+          <Switch checked={mod.is_published} onCheckedChange={onToggle} />
           <Button
             variant="outline"
             size="sm"
@@ -180,15 +164,10 @@ function SortableModuleRow({
             onClick={onPreview}
             title="Aperçu admin (modal, sans toucher la progression)"
           >
-            <Eye className="h-3.5 w-3.5" /> <span className="hidden sm:inline">Aperçu</span>
+            <Eye className="h-3.5 w-3.5" /> Aperçu
           </Button>
-          <Button
-            variant="outline"
-            size="sm"
-            className="h-8 gap-1.5 text-xs"
-            onClick={onEdit}
-          >
-            <Settings className="h-3.5 w-3.5" /> <span className="hidden sm:inline">Métadonnées</span>
+          <Button variant="outline" size="sm" className="h-8 gap-1.5 text-xs" onClick={onEdit}>
+            <Settings className="h-3.5 w-3.5" /> Métadonnées
           </Button>
           <Button
             variant="outline"
@@ -209,7 +188,7 @@ function SortableModuleRow({
           <Button
             variant="outline"
             size="icon"
-            className="h-8 w-8 text-destructive hover:text-destructive"
+            className="h-8 w-8 text-destructive hover:text-destructive ml-auto"
             onClick={onDelete}
           >
             <Trash2 className="h-3.5 w-3.5" />
