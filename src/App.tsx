@@ -77,6 +77,7 @@ const App = () => (
             <Route path="/tarifs" element={<Tarifs />} />
             <Route path="/comment-ca-marche" element={<CommentCaMarche />} />
             <Route path="/paiement-succes" element={<PaiementSucces />} />
+            <Route path="/checkout" element={<PaiementSucces />} />
             <Route path="/auth/callback" element={<AuthCallback />} />
 
             {/* Impôts Team (B2B) */}
