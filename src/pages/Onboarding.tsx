@@ -272,6 +272,7 @@ const Onboarding = () => {
   const [finalLabel, setFinalLabel] = useState('');
   const [matchCounts, setMatchCounts] = useState<{ profils: number; metiers: number; pays: number }>({ profils: 0, metiers: 0, pays: 0 });
   const [checkoutLoading, setCheckoutLoading] = useState<string | null>(null);
+  const [pendingPlan, setPendingPlan] = useState<string | null>(null);
 
   const [formData, setFormData] = useState<FormData>({
     situation_principale: '',
