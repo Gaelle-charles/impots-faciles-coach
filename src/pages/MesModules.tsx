@@ -7,7 +7,7 @@ import { Progress } from '@/components/ui/progress';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
-import { Lock, LockKeyhole } from 'lucide-react';
+import { Lock, LockKeyhole, Info, ArrowRight } from 'lucide-react';
 import type { Tables } from '@/integrations/supabase/types';
 import { useAccess } from '@/hooks/useAccess';
 
@@ -80,6 +80,18 @@ const MesModules = () => {
     );
   }
 
+  // Calcul du prochain module à terminer (premier module accessible non terminé)
+  const nextToComplete = useMemo(() => {
+    for (const m of modules) {
+      if (!hasModuleAccess(m)) continue;
+      const p = progMap.get(m.id);
+      if (!p?.completion_date) return m;
+    }
+    return null;
+  }, [modules, progMap, hasModuleAccess]);
+
+  const bypassSequential = isAdmin || isOrgAdminPreview;
+
   return (
     <div className="space-y-6">
       <div>
@@ -88,6 +100,41 @@ const MesModules = () => {
           {modules.length} modules disponibles dans ta formation.
         </p>
       </div>
+
+      {/* Encart : règle de déblocage séquentiel */}
+      {!bypassSequential && (
+        <Card className="border-amber-300 dark:border-amber-900/60 bg-amber-50 dark:bg-amber-950/20">
+          <CardContent className="p-4 sm:p-5 flex items-start gap-3">
+            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-amber-500/20 text-amber-700 dark:text-amber-300">
+              <Info className="h-5 w-5" />
+            </div>
+            <div className="space-y-1.5 flex-1 min-w-0">
+              <h2 className="font-heading text-base font-bold text-amber-900 dark:text-amber-100">
+                Parcours pédagogique séquentiel
+              </h2>
+              <p className="text-sm text-amber-900/90 dark:text-amber-100/90 leading-relaxed">
+                Les modules se débloquent dans l'ordre : tu dois terminer toutes les étapes
+                du module en cours pour accéder au suivant. Le module 1 est ouvert d'office.
+              </p>
+              {nextToComplete && (
+                <p className="text-sm text-amber-900 dark:text-amber-100 flex items-center gap-1.5 pt-1">
+                  <ArrowRight className="h-4 w-4 shrink-0" />
+                  <span>
+                    Prochaine étape :{' '}
+                    <button
+                      type="button"
+                      onClick={() => navigate(`/module/${nextToComplete.module_slug}`)}
+                      className="font-semibold underline underline-offset-2 hover:text-amber-700 dark:hover:text-amber-300"
+                    >
+                      {nextToComplete.titre}
+                    </button>
+                  </span>
+                </p>
+              )}
+            </div>
+          </CardContent>
+        </Card>
+      )}
 
       <div className="grid gap-4 sm:grid-cols-2">
         {modules.map((mod, idx) => {
