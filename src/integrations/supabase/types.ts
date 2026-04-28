@@ -14,22 +14,17 @@ export type Database = {
   }
   public: {
     Tables: {
-      certificats: {
+      certificats_parcours: {
         Row: {
           created_at: string
           date_obtention: string
           email: string | null
           id: string
-          module_id: string
-          module_slug: string
-          module_titre: string
+          nb_modules_valides: number
           nom: string | null
           numero: string
-          pourcentage: number
+          plan: string
           prenom: string | null
-          score: number
-          score_max: number
-          tentative_numero: number
           user_id: string
         }
         Insert: {
@@ -37,16 +32,11 @@ export type Database = {
           date_obtention?: string
           email?: string | null
           id?: string
-          module_id: string
-          module_slug: string
-          module_titre: string
+          nb_modules_valides: number
           nom?: string | null
           numero: string
-          pourcentage: number
+          plan: string
           prenom?: string | null
-          score: number
-          score_max: number
-          tentative_numero: number
           user_id: string
         }
         Update: {
@@ -54,16 +44,11 @@ export type Database = {
           date_obtention?: string
           email?: string | null
           id?: string
-          module_id?: string
-          module_slug?: string
-          module_titre?: string
+          nb_modules_valides?: number
           nom?: string | null
           numero?: string
-          pourcentage?: number
+          plan?: string
           prenom?: string | null
-          score?: number
-          score_max?: number
-          tentative_numero?: number
           user_id?: string
         }
         Relationships: []

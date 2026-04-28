@@ -15,10 +15,11 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { BookOpen, Target, Clock, Trophy, Lock } from 'lucide-react';
+import { BookOpen, Target, Clock, Trophy, Lock, Award, Download } from 'lucide-react';
 import type { Tables } from '@/integrations/supabase/types';
 import { useAccess } from '@/hooks/useAccess';
 import PersonalizedFiches from '@/components/dashboard/PersonalizedFiches';
+import { downloadCertificatPdf, type CertificatData } from '@/lib/certificat-pdf';
 
 type ModuleRow = Tables<'modules'> & { nb_steps_total: number };
 type ProgressionRow = Tables<'progressions'>;
@@ -42,22 +43,28 @@ const Dashboard = () => {
   const [modules, setModules] = useState<ModuleRow[]>([]);
   const [progressions, setProgressions] = useState<ProgressionRow[]>([]);
   const [results, setResults] = useState<ResultatRow[]>([]);
+  const [certificat, setCertificat] = useState<CertificatData | null>(null);
   const [loading, setLoading] = useState(true);
 
   const fetchData = async () => {
     if (!user) return;
     setLoading(true);
-    const [profRes, modRes, progRes, resRes] = await Promise.all([
+    const [profRes, modRes, progRes, resRes, certRes] = await Promise.all([
       supabase.from('profiles').select('prenom, nom, plan').eq('id', user.id).maybeSingle(),
       (supabase as any).from('modules_with_counts').select('*').order('order', { ascending: true }),
       supabase.from('progressions').select('*').eq('user_id', user.id),
       supabase.from('resultat_quiz').select('*').eq('user_id', user.id).order('date_quiz', { ascending: false }),
+      supabase.from('certificats_parcours')
+        .select('numero, prenom, nom, plan, nb_modules_valides, date_obtention')
+        .eq('user_id', user.id)
+        .maybeSingle(),
     ]);
 
     if (profRes.data) setProfile(profRes.data);
     setModules(modRes.data ?? []);
     setProgressions(progRes.data ?? []);
     setResults(resRes.data ?? []);
+    setCertificat((certRes.data as CertificatData | null) ?? null);
     setLoading(false);
   };
 
@@ -348,6 +355,35 @@ const Dashboard = () => {
 
       {/* Personalized fiches by plan */}
       <PersonalizedFiches />
+
+      {/* Certificat de parcours (si tous les modules sont validés) */}
+      {certificat && (
+        <section id="certificat">
+          <Card className="border-2 border-green-500/50 bg-gradient-to-br from-green-50 to-yellow-50 dark:from-green-950/20 dark:to-yellow-950/10 shadow-md overflow-hidden">
+            <CardContent className="p-6 sm:p-8 flex flex-col sm:flex-row items-start sm:items-center gap-5">
+              <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-green-600 text-white">
+                <Award className="h-7 w-7" />
+              </div>
+              <div className="flex-1 space-y-1">
+                <Badge className="bg-green-600 text-white">🏆 Parcours validé</Badge>
+                <h3 className="font-heading text-xl font-bold text-foreground">
+                  Certificat Impôts Facile débloqué !
+                </h3>
+                <p className="text-sm text-muted-foreground">
+                  Bravo, tu as validé l'intégralité du parcours ({certificat.nb_modules_valides} modules).
+                  N° <span className="font-mono">{certificat.numero}</span>
+                </p>
+              </div>
+              <Button
+                onClick={() => downloadCertificatPdf(certificat)}
+                className="gap-2 bg-green-600 hover:bg-green-700 text-white shrink-0"
+              >
+                <Download className="h-4 w-4" /> Télécharger le PDF
+              </Button>
+            </CardContent>
+          </Card>
+        </section>
+      )}
 
       {/* Quiz results */}
       <section id="resultats">

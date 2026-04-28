@@ -4,7 +4,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Badge } from '@/components/ui/badge';
-import { CheckCircle2, XCircle, Download, ExternalLink, Shield } from 'lucide-react';
+import { CheckCircle2, XCircle, Download, ExternalLink, Shield, Trophy } from 'lucide-react';
 import { downloadCertificatPdf, type CertificatData } from '@/lib/certificat-pdf';
 
 const VerifierCertificat = () => {
@@ -16,8 +16,8 @@ const VerifierCertificat = () => {
     if (!numero) return;
     setLoading(true);
     supabase
-      .from('certificats')
-      .select('numero, prenom, nom, module_titre, pourcentage, score, score_max, date_obtention')
+      .from('certificats_parcours')
+      .select('numero, prenom, nom, plan, nb_modules_valides, date_obtention')
       .eq('numero', numero)
       .maybeSingle()
       .then(({ data }) => {
@@ -89,25 +89,21 @@ const VerifierCertificat = () => {
                 </div>
 
                 <div className="rounded-lg bg-muted/40 border border-border p-5 space-y-4">
-                  <div>
-                    <p className="text-xs uppercase tracking-wide text-muted-foreground font-semibold">
-                      Module validé
-                    </p>
-                    <p className="text-base font-medium text-foreground mt-1">
-                      {certificat.module_titre}
-                    </p>
+                  <div className="flex items-center justify-center gap-2 text-primary">
+                    <Trophy className="h-5 w-5" />
+                    <p className="font-heading text-lg font-bold">Parcours Impôts Facile validé</p>
                   </div>
 
                   <div className="grid grid-cols-2 gap-4 pt-2 border-t border-border">
                     <div>
                       <p className="text-xs uppercase tracking-wide text-muted-foreground font-semibold">
-                        Score obtenu
+                        Modules validés
                       </p>
                       <p className="font-heading text-xl font-bold text-green-600 mt-1">
-                        {Math.round(certificat.pourcentage)}%
+                        {certificat.nb_modules_valides}
                       </p>
-                      <p className="text-xs text-muted-foreground">
-                        {certificat.score}/{certificat.score_max} bonnes réponses
+                      <p className="text-xs text-muted-foreground capitalize">
+                        Plan {certificat.plan}
                       </p>
                     </div>
                     <div>
