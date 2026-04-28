@@ -169,7 +169,6 @@ function SortableModuleRow({
 
       {/* Stats on mobile */}
       <div className="flex items-center gap-3 text-xs text-muted-foreground lg:hidden pl-11">
-        <span>{mod.contenuCount} étapes</span>
         <span>{mod.quizCount} questions</span>
         <span>{mod.rate}%</span>
       </div>
