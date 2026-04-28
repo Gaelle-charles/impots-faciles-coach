@@ -58,6 +58,8 @@ interface ContenuSectionsEditorProps {
   value: unknown;
   /** Called with the parsed object when JSON is valid; called with `null` if cleared */
   onChange: (value: { sections: Array<{ key: string; title: string; content_md: string }> } | null) => void;
+  /** Notifies parent of validity changes (true = empty or valid, false = parse/structure error) */
+  onValidityChange?: (valid: boolean) => void;
   type: ContenuSectionsType;
 }
 
@@ -68,7 +70,7 @@ const MAX_LENGTH = 200_000; // 200 KB safety cap
  * Validates structure: { sections: [{ key, title, content_md }] }.
  * Surfaces parse/structure errors live; only fires onChange with valid payloads.
  */
-export function ContenuSectionsEditor({ value, onChange, type }: ContenuSectionsEditorProps) {
+export function ContenuSectionsEditor({ value, onChange, onValidityChange, type }: ContenuSectionsEditorProps) {
   const initialText = useMemo(() => {
     if (value && typeof value === 'object' && Object.keys(value as object).length > 0) {
       try {
