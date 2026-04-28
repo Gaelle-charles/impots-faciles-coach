@@ -192,21 +192,36 @@ const MesModules = () => {
                   </p>
                 )}
 
+                {isSequentiallyLocked && (
+                  <p className="text-xs text-amber-700 dark:text-amber-400 italic flex items-start gap-1.5">
+                    <LockKeyhole className="h-3.5 w-3.5 mt-0.5 shrink-0" />
+                    Termine d'abord le module {idx} pour débloquer celui-ci.
+                  </p>
+                )}
+
                 <Button
                   size="sm"
                   className="w-full"
                   variant={btnVariant}
-                  disabled={!hasAccess || isEmpty}
-                  title={hasAccess && isEmpty ? 'Contenu en préparation' : undefined}
+                  disabled={!hasAccess || isEmpty || isSequentiallyLocked}
+                  title={
+                    isSequentiallyLocked
+                      ? `Termine d'abord le module ${idx}`
+                      : hasAccess && isEmpty ? 'Contenu en préparation' : undefined
+                  }
                   onClick={() =>
-                    hasAccess && !isEmpty
+                    hasAccess && !isEmpty && !isSequentiallyLocked
                       ? navigate(`/module/${mod.module_slug}`)
                       : !hasAccess
                         ? navigate(`/tarifs?recommended=${requiredPlan}&redirected=1`)
                         : undefined
                   }
                 >
-                  {!hasAccess ? `Débloquer avec ${capitalize(requiredPlan)}` : btnLabel}
+                  {!hasAccess
+                    ? `Débloquer avec ${capitalize(requiredPlan)}`
+                    : isSequentiallyLocked
+                      ? `🔒 Verrouillé (module ${idx} requis)`
+                      : btnLabel}
                 </Button>
               </CardContent>
 
@@ -221,6 +236,17 @@ const MesModules = () => {
                     <Lock className="h-6 w-6 text-background" />
                   </span>
                 </button>
+              )}
+
+              {hasAccess && isSequentiallyLocked && (
+                <div
+                  className="absolute inset-0 flex items-center justify-center bg-background/30 backdrop-blur-[1px] pointer-events-none"
+                  aria-label={`Verrouillé : terminez d'abord le module ${idx}`}
+                >
+                  <span className="flex h-14 w-14 items-center justify-center rounded-full bg-amber-500/90 shadow-lg">
+                    <LockKeyhole className="h-6 w-6 text-white" />
+                  </span>
+                </div>
               )}
             </Card>
           );
