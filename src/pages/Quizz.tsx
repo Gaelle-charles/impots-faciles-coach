@@ -7,8 +7,9 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { Skeleton } from '@/components/ui/skeleton';
-import { CheckCircle2, XCircle, Lock, AlertTriangle, Trophy } from 'lucide-react';
+import { CheckCircle2, XCircle, Lock, AlertTriangle, Trophy, Download } from 'lucide-react';
 import type { Tables } from '@/integrations/supabase/types';
+import { downloadCertificatPdf, type CertificatData } from '@/lib/certificat-pdf';
 
 type QuizzRow = Tables<'quizz'>;
 type ResultatRow = Tables<'resultat_quiz'>;
