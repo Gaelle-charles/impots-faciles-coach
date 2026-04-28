@@ -116,7 +116,7 @@ function SortableModuleRow({
       <div
         ref={setNodeRef}
         style={style}
-        className="flex flex-col gap-3 rounded-lg border border-border bg-background p-4 shadow-sm lg:flex-row lg:items-center"
+        className="flex flex-col gap-3 rounded-lg border border-border bg-background p-4 shadow-sm xl:flex-row xl:items-center"
       >
       <div className="flex min-w-0 flex-1 items-center gap-3">
         {reorderMode && (
@@ -150,8 +150,8 @@ function SortableModuleRow({
           </span>
         </div>
 
-        {/* Title */}
-        <span className="min-w-0 flex-1 truncate font-heading font-semibold text-foreground">
+        {/* Title — wrappe sur 2 lignes au besoin pour rester lisible */}
+        <span className="min-w-0 flex-1 font-heading font-semibold text-foreground break-words">
           {mod.titre}
         </span>
 
@@ -161,14 +161,14 @@ function SortableModuleRow({
         </span>
       </div>
 
-      {/* Stats on mobile */}
-      <div className="flex items-center gap-3 text-xs text-muted-foreground lg:hidden pl-11">
+      {/* Stats sous le titre quand les actions passent en dessous */}
+      <div className="flex items-center gap-3 text-xs text-muted-foreground xl:hidden pl-11">
         <span>{mod.quizCount} questions</span>
         <span>{mod.rate}% réussite</span>
       </div>
 
       {!reorderMode && (
-        <div className="flex items-center gap-2 shrink-0 flex-wrap lg:ml-auto pl-11 lg:pl-0">
+        <div className="flex items-center gap-2 shrink-0 flex-wrap xl:ml-auto pl-11 xl:pl-0">
           <Switch
             checked={mod.is_published}
             onCheckedChange={onToggle}
