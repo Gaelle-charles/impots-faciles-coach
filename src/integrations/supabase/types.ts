@@ -106,6 +106,7 @@ export type Database = {
       }
       fiches_profils: {
         Row: {
+          contenu_sections: Json
           created_at: string | null
           description: string | null
           icone: string | null
@@ -117,6 +118,7 @@ export type Database = {
           slug: string
         }
         Insert: {
+          contenu_sections?: Json
           created_at?: string | null
           description?: string | null
           icone?: string | null
@@ -128,6 +130,7 @@ export type Database = {
           slug: string
         }
         Update: {
+          contenu_sections?: Json
           created_at?: string | null
           description?: string | null
           icone?: string | null
@@ -189,6 +192,7 @@ export type Database = {
         Row: {
           categorie: string | null
           code_ref: string | null
+          contenu_sections: Json
           created_at: string
           description: string | null
           icone: string | null
@@ -202,6 +206,7 @@ export type Database = {
         Insert: {
           categorie?: string | null
           code_ref?: string | null
+          contenu_sections?: Json
           created_at?: string
           description?: string | null
           icone?: string | null
@@ -215,6 +220,7 @@ export type Database = {
         Update: {
           categorie?: string | null
           code_ref?: string | null
+          contenu_sections?: Json
           created_at?: string
           description?: string | null
           icone?: string | null
@@ -439,6 +445,7 @@ export type Database = {
       pays: {
         Row: {
           code_iso: string | null
+          contenu_sections: Json
           created_at: string | null
           icone: string | null
           id: string
@@ -451,6 +458,7 @@ export type Database = {
         }
         Insert: {
           code_iso?: string | null
+          contenu_sections?: Json
           created_at?: string | null
           icone?: string | null
           id?: string
@@ -463,6 +471,7 @@ export type Database = {
         }
         Update: {
           code_iso?: string | null
+          contenu_sections?: Json
           created_at?: string | null
           icone?: string | null
           id?: string
