@@ -38,6 +38,7 @@ import {
 import { CSS } from '@dnd-kit/utilities';
 import { restrictToVerticalAxis } from '@dnd-kit/modifiers';
 import { RichTextEditor } from '@/components/admin/RichTextEditor';
+import { ContenuSectionsEditor } from '@/components/admin/ContenuSectionsEditor';
 
 interface MetierRow {
   id: string;
@@ -51,6 +52,7 @@ interface MetierRow {
   order_display: number | null;
   is_active: boolean | null;
   created_at: string;
+  contenu_sections: unknown;
 }
 
 const PAGE_SIZE = 30;
@@ -167,6 +169,9 @@ const AdminMetiers = () => {
     order_display: '' as string,
     is_active: true,
   });
+  // contenu_sections est géré séparément (édition JSONB validée)
+  const [contenuSections, setContenuSections] = useState<unknown>(null);
+  const [contenuValid, setContenuValid] = useState(true);
   const [saving, setSaving] = useState(false);
 
   // Delete dialog
