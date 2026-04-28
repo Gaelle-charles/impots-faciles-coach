@@ -288,7 +288,7 @@ const Dashboard = () => {
           <p className="text-muted-foreground">Aucun module disponible.</p>
         ) : (
           <div className="grid gap-4 sm:grid-cols-2">
-            {modules.map((mod) => {
+            {visibleModules.map((mod) => {
               const hasAccess = hasModuleAccess(mod);
               const prog = progMap.get(mod.id);
               const totalStep = mod.nb_steps_total ?? 0;
