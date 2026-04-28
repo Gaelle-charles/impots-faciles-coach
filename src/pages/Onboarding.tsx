@@ -24,6 +24,7 @@ import { cn } from '@/lib/utils';
 import { recalculerMatching } from '@/lib/matching';
 import { useOrgRole } from '@/hooks/useOrgRole';
 import { Link } from 'react-router-dom';
+import { CheckoutAcceptanceDialog } from '@/components/CheckoutAcceptanceDialog';
 
 const TOTAL_STEPS = 7;
 
