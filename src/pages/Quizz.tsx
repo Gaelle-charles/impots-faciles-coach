@@ -7,9 +7,8 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { Skeleton } from '@/components/ui/skeleton';
-import { CheckCircle2, XCircle, Lock, AlertTriangle, Trophy, Download } from 'lucide-react';
+import { CheckCircle2, XCircle, Lock, AlertTriangle, Trophy } from 'lucide-react';
 import type { Tables } from '@/integrations/supabase/types';
-import { downloadCertificatPdf, type CertificatData } from '@/lib/certificat-pdf';
 
 type QuizzRow = Tables<'quizz'>;
 type ResultatRow = Tables<'resultat_quiz'>;
@@ -40,7 +39,6 @@ const Quizz = () => {
   }>({ faible: null, moyen: null, expert: null });
   const [questions, setQuestions] = useState<QuizzRow[]>([]);
   const [allAttempts, setAllAttempts] = useState<ResultatRow[]>([]);
-  const [certificat, setCertificat] = useState<CertificatData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -99,17 +97,6 @@ const Quizz = () => {
 
   useEffect(() => { fetchData(); }, [fetchData]);
 
-  // Récupère le certificat dès qu'il existe (créé par trigger DB après réussite)
-  useEffect(() => {
-    if (!user || !moduleId) return;
-    supabase
-      .from('certificats')
-      .select('numero, prenom, nom, module_titre, pourcentage, score, score_max, date_obtention')
-      .eq('user_id', user.id)
-      .eq('module_id', moduleId)
-      .maybeSingle()
-      .then(({ data }) => setCertificat(data as CertificatData | null));
-  }, [user, moduleId, allAttempts.length]);
 
   const total = questions.length;
   const question = questions[currentIndex];
