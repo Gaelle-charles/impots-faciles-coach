@@ -387,11 +387,22 @@ const Quizz = () => {
           </div>
 
           {passed ? (
-            <div className="rounded-lg border-2 border-green-500/50 bg-green-50 dark:bg-green-950/20 p-4 flex items-center justify-center gap-2">
-              <Trophy className="h-5 w-5 text-green-600" />
-              <span className="font-heading font-bold text-green-700 dark:text-green-400">
-                Module validé !
-              </span>
+            <div className="rounded-lg border-2 border-green-500/50 bg-green-50 dark:bg-green-950/20 p-4 space-y-3">
+              <div className="flex items-center justify-center gap-2">
+                <Trophy className="h-5 w-5 text-green-600" />
+                <span className="font-heading font-bold text-green-700 dark:text-green-400">
+                  Module validé !
+                </span>
+              </div>
+              {certificat && (
+                <Button
+                  onClick={() => downloadCertificatPdf(certificat)}
+                  size="sm"
+                  className="gap-2 bg-green-600 hover:bg-green-700 text-white"
+                >
+                  <Download className="h-4 w-4" /> Télécharger mon certificat (PDF)
+                </Button>
+              )}
             </div>
           ) : (
             <div className="rounded-lg border border-border bg-card p-4 text-sm text-muted-foreground">
