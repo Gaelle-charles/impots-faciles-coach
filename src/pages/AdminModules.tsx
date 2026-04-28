@@ -155,19 +155,16 @@ function SortableModuleRow({
           {mod.titre}
         </span>
 
-        {/* Stats inline on larger screens */}
-        <span className="hidden xl:inline text-xs text-muted-foreground whitespace-nowrap shrink-0">
-          {mod.quizCount} questions
-        </span>
-        <span className="hidden xl:inline text-xs text-muted-foreground whitespace-nowrap shrink-0">
-          {mod.rate}%
+        {/* Taux de réussite (questions déjà visibles dans le bouton Quiz) */}
+        <span className="hidden 2xl:inline text-xs text-muted-foreground whitespace-nowrap shrink-0">
+          {mod.rate}% réussite
         </span>
       </div>
 
       {/* Stats on mobile */}
       <div className="flex items-center gap-3 text-xs text-muted-foreground lg:hidden pl-11">
         <span>{mod.quizCount} questions</span>
-        <span>{mod.rate}%</span>
+        <span>{mod.rate}% réussite</span>
       </div>
 
       {!reorderMode && (
