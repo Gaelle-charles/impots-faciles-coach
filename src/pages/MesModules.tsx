@@ -67,6 +67,18 @@ const MesModules = () => {
     return m;
   }, [results]);
 
+  // Calcul du prochain module à terminer (premier module accessible non terminé)
+  const nextToComplete = useMemo(() => {
+    for (const m of modules) {
+      if (!hasModuleAccess(m)) continue;
+      const p = progMap.get(m.id);
+      if (!p?.completion_date) return m;
+    }
+    return null;
+  }, [modules, progMap, hasModuleAccess]);
+
+  const bypassSequential = isAdmin || isOrgAdminPreview;
+
   if (loading || accessLoading) {
     return (
       <div className="space-y-6">
@@ -79,18 +91,6 @@ const MesModules = () => {
       </div>
     );
   }
-
-  // Calcul du prochain module à terminer (premier module accessible non terminé)
-  const nextToComplete = useMemo(() => {
-    for (const m of modules) {
-      if (!hasModuleAccess(m)) continue;
-      const p = progMap.get(m.id);
-      if (!p?.completion_date) return m;
-    }
-    return null;
-  }, [modules, progMap, hasModuleAccess]);
-
-  const bypassSequential = isAdmin || isOrgAdminPreview;
 
   return (
     <div className="space-y-6">
