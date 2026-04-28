@@ -35,7 +35,9 @@ const Dashboard = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
-  const { hasModuleAccess, isLoading: accessLoading } = useAccess();
+  const { hasModuleAccess, isLoading: accessLoading, isOrgAdminPreview, role } = useAccess();
+  const isAdmin = role === 'admin';
+  const bypassSequential = isAdmin || isOrgAdminPreview;
 
   const capitalize = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
 
@@ -114,6 +116,25 @@ const Dashboard = () => {
     modules.forEach((mod) => m.set(mod.id, mod.titre));
     return m;
   }, [modules]);
+
+  // Modules visibles : on n'affiche que les modules terminés + le prochain à débloquer.
+  // Les admins et le mode aperçu admin orga voient tous les modules.
+  const visibleModules = useMemo(() => {
+    if (bypassSequential) return modules;
+    const result: ModuleRow[] = [];
+    let nextShown = false;
+    for (const mod of modules) {
+      if (!hasModuleAccess(mod)) continue;
+      const isCompleted = !!progMap.get(mod.id)?.completion_date;
+      if (isCompleted) {
+        result.push(mod);
+      } else if (!nextShown) {
+        result.push(mod);
+        nextShown = true;
+      }
+    }
+    return result;
+  }, [modules, progMap, hasModuleAccess, bypassSequential]);
 
   // Stats
   const completedCount = progressions.filter((p) => !!p.completion_date).length;
@@ -267,7 +288,7 @@ const Dashboard = () => {
           <p className="text-muted-foreground">Aucun module disponible.</p>
         ) : (
           <div className="grid gap-4 sm:grid-cols-2">
-            {modules.map((mod) => {
+            {visibleModules.map((mod) => {
               const hasAccess = hasModuleAccess(mod);
               const prog = progMap.get(mod.id);
               const totalStep = mod.nb_steps_total ?? 0;
