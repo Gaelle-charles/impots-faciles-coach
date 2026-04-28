@@ -14,6 +14,60 @@ export type Database = {
   }
   public: {
     Tables: {
+      certificats: {
+        Row: {
+          created_at: string
+          date_obtention: string
+          email: string | null
+          id: string
+          module_id: string
+          module_slug: string
+          module_titre: string
+          nom: string | null
+          numero: string
+          pourcentage: number
+          prenom: string | null
+          score: number
+          score_max: number
+          tentative_numero: number
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          date_obtention?: string
+          email?: string | null
+          id?: string
+          module_id: string
+          module_slug: string
+          module_titre: string
+          nom?: string | null
+          numero: string
+          pourcentage: number
+          prenom?: string | null
+          score: number
+          score_max: number
+          tentative_numero: number
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          date_obtention?: string
+          email?: string | null
+          id?: string
+          module_id?: string
+          module_slug?: string
+          module_titre?: string
+          nom?: string | null
+          numero?: string
+          pourcentage?: number
+          prenom?: string | null
+          score?: number
+          score_max?: number
+          tentative_numero?: number
+          user_id?: string
+        }
+        Relationships: []
+      }
       contenus: {
         Row: {
           contenu: string | null
