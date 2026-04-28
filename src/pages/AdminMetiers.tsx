@@ -780,14 +780,25 @@ const AdminMetiers = () => {
             </div>
 
             <div className="space-y-1.5">
-              <Label>Description</Label>
+              <Label>Description (résumé court — fallback si aucun contenu structuré)</Label>
               <RichTextEditor
                 value={form.description}
                 onChange={(val) => setForm((f) => ({ ...f, description: val }))}
                 placeholder="Décrivez le métier, ses spécificités fiscales, les régimes applicables…"
-                minHeight={240}
+                minHeight={180}
               />
             </div>
+
+            <ContenuSectionsEditor
+              type="metier"
+              value={contenuSections}
+              onChange={(v) => {
+                setContenuSections(v);
+                setContenuValid(true);
+              }}
+            />
+            {/* Note : l'éditeur appelle onChange uniquement si JSON valide.
+                Si invalide, contenuValid doit être false pour bloquer la sauvegarde. */}
           </div>
 
           <DialogFooter>
