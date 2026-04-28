@@ -684,6 +684,7 @@ export type Database = {
           pourcentage: number
           score: number
           score_max: number
+          tentative_numero: number
           user_id: string
         }
         Insert: {
@@ -693,6 +694,7 @@ export type Database = {
           pourcentage?: number
           score?: number
           score_max?: number
+          tentative_numero?: number
           user_id: string
         }
         Update: {
@@ -702,6 +704,7 @@ export type Database = {
           pourcentage?: number
           score?: number
           score_max?: number
+          tentative_numero?: number
           user_id?: string
         }
         Relationships: [

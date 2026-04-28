@@ -90,6 +90,17 @@ const Dashboard = () => {
     return m;
   }, [results]);
 
+  // Best score par module (pour badge "Module validé" ≥ 70%)
+  const bestScoreMap = useMemo(() => {
+    const m = new Map<string, number>();
+    results.forEach((r) => {
+      const pct = Math.round(Number(r.pourcentage));
+      const prev = m.get(r.module_id) ?? 0;
+      if (pct > prev) m.set(r.module_id, pct);
+    });
+    return m;
+  }, [results]);
+
   // Module title map for quiz table
   const moduleTitleMap = useMemo(() => {
     const m = new Map<string, string>();
@@ -264,14 +275,21 @@ const Dashboard = () => {
                   <CardContent className={`p-5 space-y-3 ${!hasAccess ? 'opacity-60' : ''}`}>
                     <div className="flex items-start justify-between gap-2">
                       <h3 className="font-heading text-base font-semibold text-foreground">{mod.titre}</h3>
-                      {isCompleted && hasAccess && (
-                        <Badge className="bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200">
-                          Terminé
-                        </Badge>
-                      )}
-                      {isEmpty && hasAccess && (
-                        <Badge className="bg-muted text-muted-foreground">En préparation</Badge>
-                      )}
+                      <div className="flex shrink-0 flex-col items-end gap-1">
+                        {hasAccess && (bestScoreMap.get(mod.id) ?? 0) >= 70 && (
+                          <Badge className="bg-green-600 text-white hover:bg-green-700 gap-1 text-xs">
+                            ✓ Module validé
+                          </Badge>
+                        )}
+                        {isCompleted && hasAccess && (bestScoreMap.get(mod.id) ?? 0) < 70 && (
+                          <Badge className="bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200">
+                            Terminé
+                          </Badge>
+                        )}
+                        {isEmpty && hasAccess && (
+                          <Badge className="bg-muted text-muted-foreground">En préparation</Badge>
+                        )}
+                      </div>
                     </div>
                     {hasAccess && !isEmpty && (
                       <>

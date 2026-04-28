@@ -56,6 +56,16 @@ const MesModules = () => {
     return m;
   }, [results]);
 
+  const bestScoreMap = useMemo(() => {
+    const m = new Map<string, number>();
+    results.forEach((r) => {
+      const pct = Math.round(Number(r.pourcentage));
+      const prev = m.get(r.module_id) ?? 0;
+      if (pct > prev) m.set(r.module_id, pct);
+    });
+    return m;
+  }, [results]);
+
   if (loading || accessLoading) {
     return (
       <div className="space-y-6">
@@ -83,6 +93,8 @@ const MesModules = () => {
           const hasAccess = hasModuleAccess(mod);
           const prog = progMap.get(mod.id);
           const lastQuiz = lastResultMap.get(mod.id);
+          const bestScore = bestScoreMap.get(mod.id) ?? 0;
+          const isModuleValidated = bestScore >= 70;
           const isCompleted = !!prog?.completion_date;
           const step = prog?.step ?? 0;
           const totalStep = mod.nb_steps_total ?? 0;
@@ -133,9 +145,16 @@ const MesModules = () => {
                     {mod.titre}
                   </h3>
                   {hasAccess && (
-                    <Badge className={`shrink-0 text-xs ${statusColor}`}>
-                      {statusLabel}
-                    </Badge>
+                    <div className="flex shrink-0 flex-col items-end gap-1">
+                      {isModuleValidated && (
+                        <Badge className="bg-green-600 text-white hover:bg-green-700 text-xs">
+                          ✓ Module validé
+                        </Badge>
+                      )}
+                      <Badge className={`text-xs ${statusColor}`}>
+                        {statusLabel}
+                      </Badge>
+                    </div>
                   )}
                 </div>
 
