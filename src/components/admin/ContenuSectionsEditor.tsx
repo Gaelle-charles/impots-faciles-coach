@@ -93,6 +93,11 @@ export function ContenuSectionsEditor({ value, onChange, onValidityChange, type 
     setSectionCount(null);
   }, [initialText]);
 
+  // Propage la validité au parent (true = pas d'erreur)
+  useEffect(() => {
+    onValidityChange?.(error === null);
+  }, [error, onValidityChange]);
+
   const validate = (raw: string): boolean => {
     if (raw.trim() === '') {
       setError(null);

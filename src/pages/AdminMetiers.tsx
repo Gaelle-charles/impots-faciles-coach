@@ -792,13 +792,9 @@ const AdminMetiers = () => {
             <ContenuSectionsEditor
               type="metier"
               value={contenuSections}
-              onChange={(v) => {
-                setContenuSections(v);
-                setContenuValid(true);
-              }}
+              onChange={setContenuSections}
+              onValidityChange={setContenuValid}
             />
-            {/* Note : l'éditeur appelle onChange uniquement si JSON valide.
-                Si invalide, contenuValid doit être false pour bloquer la sauvegarde. */}
           </div>
 
           <DialogFooter>
