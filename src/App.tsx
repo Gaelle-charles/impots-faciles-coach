@@ -57,6 +57,7 @@ import ImpotsTeamSouscription from "./pages/ImpotsTeamSouscription";
 import ImpotsTeamBienvenue from "./pages/ImpotsTeamBienvenue";
 import ImpotsTeamDashboard from "./pages/ImpotsTeamDashboard";
 import InvitationAccept from "./pages/InvitationAccept";
+import VerifierCertificat from "./pages/VerifierCertificat";
 
 const queryClient = new QueryClient();
 
@@ -100,6 +101,7 @@ const App = () => (
             <Route path="/renonciation-retractation" element={<RenonciationRetractation />} />
             <Route path="/remboursement" element={<Remboursement />} />
             <Route path="/politique-remboursement" element={<Remboursement />} />
+            <Route path="/verifier-certificat/:numero" element={<VerifierCertificat />} />
             <Route path="/onboarding" element={<ProtectedRoute><Onboarding /></ProtectedRoute>} />
 
             {/* Protected routes with sidebar layout */}
