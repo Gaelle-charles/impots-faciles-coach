@@ -89,26 +89,22 @@ export default function InvitationAccept() {
       return;
     }
     setSubmitting(true);
-    const { error: signUpErr } = await supabase.auth.signUp({
-      email: inv.email,
-      password,
-      options: {
-        emailRedirectTo: `${window.location.origin}/impots-team/invitation/${token}`,
-        data: { prenom, nom },
-      },
+    // Création du compte côté serveur (pas de rate limit Supabase Auth, pas d'email de confirmation)
+    const { data: createData, error: createErr } = await supabase.functions.invoke('team-accept-invitation', {
+      body: { token, password, prenom, nom },
     });
-    if (signUpErr) {
+    if (createErr || (createData as any)?.error) {
       setSubmitting(false);
-      toast({ title: 'Erreur', description: signUpErr.message, variant: 'destructive' });
+      const msg = (createData as any)?.error || createErr?.message || 'Erreur lors de la création du compte';
+      toast({ title: 'Erreur', description: msg, variant: 'destructive' });
       return;
     }
+    // Connexion immédiate
     const { error: signInErr } = await supabase.auth.signInWithPassword({ email: inv.email, password });
     setSubmitting(false);
     if (signInErr) {
-      toast({
-        title: 'Compte créé',
-        description: 'Vérifiez votre email puis revenez sur ce lien pour finaliser.',
-      });
+      toast({ title: 'Compte créé', description: 'Connectez-vous pour finaliser.', variant: 'destructive' });
+      return;
     }
     // L'effet `useEffect` déclenchera acceptNow() automatiquement
   };
