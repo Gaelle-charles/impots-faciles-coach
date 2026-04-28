@@ -35,7 +35,9 @@ const Dashboard = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
-  const { hasModuleAccess, isLoading: accessLoading } = useAccess();
+  const { hasModuleAccess, isLoading: accessLoading, isOrgAdminPreview, role } = useAccess();
+  const isAdmin = role === 'admin';
+  const bypassSequential = isAdmin || isOrgAdminPreview;
 
   const capitalize = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
 
