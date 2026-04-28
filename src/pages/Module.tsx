@@ -37,8 +37,9 @@ const Module = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
   const isMobile = useIsMobile();
-  const { hasModuleAccess, isLoading: accessLoading, isOrgAdminPreview } = useAccess();
+  const { hasModuleAccess, isLoading: accessLoading, isOrgAdminPreview, role } = useAccess();
   const { org, isOrgAdmin, hasLicense } = useOrgRole();
+  const isAdmin = role === 'admin';
 
   const [module, setModule] = useState<ModuleRow | null>(null);
   const [contenus, setContenus] = useState<ContenuRow[]>([]);
@@ -158,8 +159,36 @@ const Module = () => {
         variant: 'destructive',
       });
       navigate(`/tarifs?recommended=${requiredPlan}&redirected=1`, { replace: true });
+      return;
     }
-  }, [loading, accessLoading, module, hasModuleAccess, navigate]);
+
+    // === Verrouillage séquentiel : module N>1 nécessite la complétion du module N-1 ===
+    if (!isAdmin && !isOrgAdminPreview && (module.order ?? 0) > 1) {
+      (async () => {
+        const { data: prevMod } = await supabase
+          .from('modules')
+          .select('id, titre, order')
+          .eq('order', (module.order ?? 0) - 1)
+          .eq('is_published', true)
+          .maybeSingle();
+        if (!prevMod) return;
+        const { data: prevProg } = await supabase
+          .from('progressions')
+          .select('completion_date')
+          .eq('user_id', user!.id)
+          .eq('module_id', prevMod.id)
+          .maybeSingle();
+        if (!prevProg?.completion_date) {
+          toast({
+            title: 'Module verrouillé',
+            description: `Termine d'abord le module ${prevMod.order} pour accéder à celui-ci.`,
+            variant: 'destructive',
+          });
+          navigate('/mes-modules', { replace: true });
+        }
+      })();
+    }
+  }, [loading, accessLoading, module, hasModuleAccess, navigate, isAdmin, isOrgAdminPreview, user]);
 
   const updateStep = useCallback(
     async (newStep: number) => {
