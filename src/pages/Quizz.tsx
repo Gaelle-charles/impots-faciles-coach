@@ -40,6 +40,7 @@ const Quizz = () => {
   }>({ faible: null, moyen: null, expert: null });
   const [questions, setQuestions] = useState<QuizzRow[]>([]);
   const [allAttempts, setAllAttempts] = useState<ResultatRow[]>([]);
+  const [certificat, setCertificat] = useState<CertificatData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
