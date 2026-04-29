@@ -1,7 +1,8 @@
-import { createContext, useContext, useEffect, useState, type ReactNode } from 'react';
+import { createContext, useContext, useEffect, useRef, useState, type ReactNode } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
-import type { User, Session } from '@supabase/supabase-js';
+import { toast } from 'sonner';
+import type { User, Session, RealtimeChannel } from '@supabase/supabase-js';
 
 interface AuthContextType {
   user: User | null;
@@ -24,6 +25,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
+  const deletionChannelRef = useRef<RealtimeChannel | null>(null);
+
+  const handleAccountDeleted = async () => {
+    try {
+      await supabase.auth.signOut();
+    } catch (e) {
+      // ignore
+    }
+    toast.error('Votre compte a été supprimé.', {
+      description: 'Vous avez été déconnecté. Vous pouvez créer un nouveau compte.',
+    });
+    navigate('/', { replace: true });
+  };
 
   useEffect(() => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
@@ -57,6 +71,41 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     return () => subscription.unsubscribe();
   }, [navigate]);
+
+  // Realtime: detect if the current user's profile is deleted (account deletion by admin)
+  useEffect(() => {
+    if (!user) {
+      if (deletionChannelRef.current) {
+        supabase.removeChannel(deletionChannelRef.current);
+        deletionChannelRef.current = null;
+      }
+      return;
+    }
+
+    const channel = supabase
+      .channel(`profile-deletion-${user.id}`)
+      .on(
+        'postgres_changes',
+        {
+          event: 'DELETE',
+          schema: 'public',
+          table: 'profiles',
+          filter: `id=eq.${user.id}`,
+        },
+        () => {
+          handleAccountDeleted();
+        }
+      )
+      .subscribe();
+
+    deletionChannelRef.current = channel;
+
+    return () => {
+      supabase.removeChannel(channel);
+      deletionChannelRef.current = null;
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user?.id]);
 
   const signOut = async () => {
     await supabase.auth.signOut();
