@@ -252,9 +252,21 @@ const AdminUsers = () => {
     return m;
   }, [modules]);
 
+  // Counts per status (independent of other filters)
+  const statusCounts = useMemo(() => ({
+    tous: users.filter((u) => !u.deleted_at).length,
+    pending: users.filter((u) => !u.deleted_at && !u.email_confirmed_at).length,
+    deleted: users.filter((u) => !!u.deleted_at).length,
+  }), [users]);
+
   // Filter
   const filtered = useMemo(() => {
     let list = users;
+    // Status filter
+    if (statusFilter === 'tous') list = list.filter((u) => !u.deleted_at);
+    else if (statusFilter === 'pending') list = list.filter((u) => !u.deleted_at && !u.email_confirmed_at);
+    else if (statusFilter === 'deleted') list = list.filter((u) => !!u.deleted_at);
+
     if (planFilter !== 'Tous') list = list.filter((u) => u.plan === planFilter);
     if (search.trim()) {
       const q = search.trim().toLowerCase();
@@ -264,12 +276,12 @@ const AdminUsers = () => {
       );
     }
     return list;
-  }, [users, planFilter, search]);
+  }, [users, planFilter, search, statusFilter]);
 
   const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
   const paginated = filtered.slice(page * PAGE_SIZE, (page + 1) * PAGE_SIZE);
 
-  useEffect(() => { setPage(0); }, [search, planFilter]);
+  useEffect(() => { setPage(0); }, [search, planFilter, statusFilter]);
 
   // ─── CSV Export ───
   const handleExport = useCallback(() => {
