@@ -642,9 +642,25 @@ const AdminUsers = () => {
                             <DropdownMenuSeparator />
                             <DropdownMenuItem
                               className="text-destructive"
-                              onClick={() => { setDeleteUser(u); setDeleteConfirm(''); }}
+                              onClick={async () => {
+                                setCheckingDeleteSub(true);
+                                try {
+                                  const { data } = await supabase.functions.invoke('admin-users', {
+                                    body: { action: 'check_subscription_status', userId: u.id },
+                                  });
+                                  if (data?.active) {
+                                    setDeleteSubInfo(data);
+                                    setAdminSubWarnUser(u);
+                                  } else {
+                                    setDeleteUser(u); setDeleteConfirm('');
+                                  }
+                                } catch {
+                                  setDeleteUser(u); setDeleteConfirm('');
+                                }
+                                setCheckingDeleteSub(false);
+                              }}
                             >
-                              <Trash2 className="h-3.5 w-3.5 mr-2" /> Supprimer le compte
+                              <Trash2 className="h-3.5 w-3.5 mr-2" /> {checkingDeleteSub ? 'Vérification...' : 'Supprimer le compte'}
                             </DropdownMenuItem>
                           </>
                         )}
