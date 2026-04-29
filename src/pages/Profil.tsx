@@ -127,6 +127,12 @@ const Profil = () => {
         setAvgScore(Math.round(resRes.data.reduce((a, r) => a + Number(r.pourcentage), 0) / resRes.data.length));
       }
       setLoading(false);
+
+      // Fetch active subscription details (best-effort)
+      if (profRes.data?.stripe_subscription_id) {
+        const { data: subData } = await supabase.functions.invoke('get-subscription-status');
+        if (subData) setSubInfo(subData as SubInfo);
+      }
     };
 
     fetchAll();
