@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import logo from '@/assets/logo.png';
 import {
+  Home,
   Building2,
   CreditCard,
   Users,
