@@ -15,7 +15,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { BookOpen, Target, Clock, Trophy, Lock, Award, Download } from 'lucide-react';
+import { BookOpen, Target, Clock, Trophy, Lock, Award, Download, Sparkles } from 'lucide-react';
 import type { Tables } from '@/integrations/supabase/types';
 import { useAccess } from '@/hooks/useAccess';
 import PersonalizedFiches from '@/components/dashboard/PersonalizedFiches';
