@@ -62,19 +62,12 @@ export function FichePreviewDialog({
   ficheType,
   ficheData,
 }: FichePreviewDialogProps) {
-  const navigate = useNavigate();
-
   if (!ficheData) return null;
 
   const isDraft = ficheData.is_active === false;
   const hasContent =
     hasSectionContent(ficheData.contenu_sections) ||
     Boolean(ficheData.description && ficheData.description.trim().length > 0);
-
-  const handleEdit = () => {
-    onOpenChange(false);
-    navigate(TYPE_ADMIN_ROUTE[ficheType]);
-  };
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
