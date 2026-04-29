@@ -18,8 +18,10 @@ import {
   AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
 import { toast } from '@/hooks/use-toast';
-import { UserSquare2, Plus, Pencil, Trash2, Search } from 'lucide-react';
+import { UserSquare2, Plus, Pencil, Trash2, Search, Eye } from 'lucide-react';
 import { ContenuSectionsEditor } from '@/components/admin/ContenuSectionsEditor';
+import { FichePreviewDialog } from '@/components/admin/FichePreviewDialog';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 
 interface ProfilRow {
   id: string;
