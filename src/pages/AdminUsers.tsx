@@ -144,6 +144,7 @@ const AdminUsers = () => {
 
   const [search, setSearch] = useState('');
   const [planFilter, setPlanFilter] = useState('Tous');
+  const [statusFilter, setStatusFilter] = useState<StatusFilter>('tous');
   const [page, setPage] = useState(0);
 
   // Create user modal
