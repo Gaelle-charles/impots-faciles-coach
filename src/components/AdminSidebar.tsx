@@ -22,7 +22,9 @@ import {
   UserSquare2,
   Globe2,
   Heart,
+  MessageSquareWarning,
 } from 'lucide-react';
+import { useUnreadSuggestions } from '@/hooks/useUnreadSuggestions';
 
 const navGroups = [
   {
@@ -64,6 +66,12 @@ const navGroups = [
     ],
   },
   {
+    label: 'Retours utilisateurs',
+    items: [
+      { to: '/admin/suggestions', label: 'Suggestions', icon: MessageSquareWarning, badgeKey: 'suggestions' as const },
+    ],
+  },
+  {
     label: 'Configuration',
     items: [
       { to: '/admin/settings', label: 'Paramètres', icon: Settings },
@@ -76,6 +84,7 @@ export function AdminSidebar() {
   const location = useLocation();
   const navigate = useNavigate();
   const [profile, setProfile] = useState<{ prenom: string | null; nom: string | null } | null>(null);
+  const unreadSuggestions = useUnreadSuggestions();
 
   useEffect(() => {
     if (!user) return;
