@@ -21,6 +21,7 @@ import {
   Briefcase,
   UserSquare2,
   Globe2,
+  Heart,
 } from 'lucide-react';
 
 const navGroups = [
@@ -51,6 +52,7 @@ const navGroups = [
       { to: '/admin/metiers', label: 'Fiches métiers', icon: Briefcase },
       { to: '/admin/fiches-profils', label: 'Fiches profils', icon: UserSquare2 },
       { to: '/admin/pays', label: 'Fiches pays', icon: Globe2 },
+      { to: '/admin/recommandations', label: 'Recommandations', icon: Heart },
     ],
   },
   {
