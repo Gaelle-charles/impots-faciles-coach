@@ -1,7 +1,7 @@
 import { corsHeaders } from "npm:@supabase/supabase-js@2.95.0/cors";
 import { createClient } from "npm:@supabase/supabase-js@2.95.0";
 
-const FROM = "Impôts Facile <info@impotsfacile.com>";
+const FROM_EMAIL = Deno.env.get("RESEND_FROM_EMAIL") ?? "Impôts Facile <info@impotsfacile.com>";
 
 async function sendInvitationEmail(opts: {
   to: string; orgName: string; inviterName: string; acceptUrl: string; plan: string;
@@ -25,7 +25,7 @@ async function sendInvitationEmail(opts: {
   const res = await fetch("https://api.resend.com/emails", {
     method: "POST",
     headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
-    body: JSON.stringify({ from: FROM, to: [opts.to], subject: `Rappel : invitation ${opts.orgName} sur Impôts Facile`, html }),
+    body: JSON.stringify({ from: FROM_EMAIL, to: [opts.to], subject: `Rappel : invitation ${opts.orgName} sur Impôts Facile`, html }),
   });
   if (!res.ok) throw new Error(`Email send failed: ${res.status} ${await res.text()}`);
 }
