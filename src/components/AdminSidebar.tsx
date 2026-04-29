@@ -129,6 +129,8 @@ export function AdminSidebar() {
             <div className="space-y-0.5">
               {group.items.map((item) => {
                 const active = isActive(item.to);
+                const showBadge =
+                  (item as { badgeKey?: string }).badgeKey === 'suggestions' && unreadSuggestions > 0;
                 return (
                   <NavLink key={item.to} to={item.to}>
                     <div
@@ -141,7 +143,12 @@ export function AdminSidebar() {
                       }}
                     >
                       <item.icon className="h-4 w-4 shrink-0" />
-                      <span>{item.label}</span>
+                      <span className="flex-1">{item.label}</span>
+                      {showBadge && (
+                        <span className="ml-auto inline-flex h-5 min-w-[20px] items-center justify-center rounded-full bg-red-500 px-1.5 text-[10px] font-bold text-white">
+                          {unreadSuggestions > 99 ? '99+' : unreadSuggestions}
+                        </span>
+                      )}
                     </div>
                   </NavLink>
                 );
