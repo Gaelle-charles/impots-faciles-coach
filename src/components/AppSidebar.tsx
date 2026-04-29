@@ -11,6 +11,7 @@ import {
   BookOpen,
   BarChart3,
   Calculator,
+  Heart,
   User,
   LogOut,
 } from 'lucide-react';
@@ -21,6 +22,7 @@ const navItems = [
   { to: '/mes-modules', label: 'Mes modules', icon: BookOpen },
   { to: '/dashboard#resultats', label: 'Mes résultats', icon: BarChart3 },
   { to: '/mes-simulateurs', label: 'Mes simulateurs', icon: Calculator },
+  { to: '/recommandations', label: 'Recommandations', icon: Heart },
   { to: '/profil', label: 'Mon profil', icon: User },
 ];
 

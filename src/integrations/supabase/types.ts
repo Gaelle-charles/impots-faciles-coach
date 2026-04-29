@@ -724,6 +724,48 @@ export type Database = {
           },
         ]
       }
+      recommandations: {
+        Row: {
+          benefice_user: string
+          created_at: string
+          description: string
+          id: string
+          is_active: boolean
+          logo_url: string | null
+          nom: string
+          ordre: number
+          type: string
+          updated_at: string
+          url: string
+        }
+        Insert: {
+          benefice_user: string
+          created_at?: string
+          description: string
+          id?: string
+          is_active?: boolean
+          logo_url?: string | null
+          nom: string
+          ordre?: number
+          type: string
+          updated_at?: string
+          url: string
+        }
+        Update: {
+          benefice_user?: string
+          created_at?: string
+          description?: string
+          id?: string
+          is_active?: boolean
+          logo_url?: string | null
+          nom?: string
+          ordre?: number
+          type?: string
+          updated_at?: string
+          url?: string
+        }
+        Relationships: []
+      }
       resultat_quiz: {
         Row: {
           date_quiz: string
