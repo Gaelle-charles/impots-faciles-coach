@@ -603,12 +603,6 @@ const Profil = () => {
               </p>
             </DialogContent>
           </Dialog>
-          {/* keep original empty Button placeholder removed */}
-          <span className="hidden">
-          <Button variant="outline" className="border-destructive text-destructive hover:bg-destructive/10 gap-2" onClick={() => setDeleteOpen(true)}>
-            <Trash2 className="h-4 w-4" />
-            Supprimer mon compte
-          </Button>
         </CardContent>
       </Card>
 
