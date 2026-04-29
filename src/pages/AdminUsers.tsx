@@ -26,7 +26,7 @@ import {
 import { toast } from '@/hooks/use-toast';
 import {
   Search, MoreHorizontal, Download, Users, Plus, Pencil, Trash2,
-  KeyRound, Eye, EyeOff, RefreshCw, AlertTriangle,
+  KeyRound, Eye, EyeOff, RefreshCw, AlertTriangle, RotateCcw, MailWarning,
 } from 'lucide-react';
 
 // ─── Types ───
@@ -41,6 +41,9 @@ interface UserRow {
   is_active: boolean;
   date_paiement: string | null;
   metier_id: string | null;
+  deleted_at: string | null;
+  email_confirmed_at?: string | null;
+  last_sign_in_at?: string | null;
 }
 
 interface ProgressionRow {
