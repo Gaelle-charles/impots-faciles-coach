@@ -97,14 +97,36 @@ Deno.serve(async (req) => {
       case "delete_user": {
         const { userId } = body;
 
-        await Promise.all([
+        if (!userId) {
+          return new Response(JSON.stringify({ error: "userId manquant" }), {
+            status: 400,
+            headers: { ...corsHeaders, "Content-Type": "application/json" },
+          });
+        }
+
+        // Prevent admins from deleting themselves
+        if (userId === caller.id) {
+          return new Response(JSON.stringify({ error: "Vous ne pouvez pas supprimer votre propre compte ici" }), {
+            status: 400,
+            headers: { ...corsHeaders, "Content-Type": "application/json" },
+          });
+        }
+
+        // Best-effort cleanup of tables that may not cascade properly
+        const cleanup = await Promise.allSettled([
           adminClient.from("resultat_quiz").delete().eq("user_id", userId),
           adminClient.from("progressions").delete().eq("user_id", userId),
+          adminClient.from("simulations").delete().eq("user_id", userId),
         ]);
-        await adminClient.from("profiles").delete().eq("id", userId);
+        cleanup.forEach((r, i) => {
+          if (r.status === "rejected") console.error(`[delete_user] cleanup[${i}] rejected:`, r.reason);
+          else if (r.value.error) console.error(`[delete_user] cleanup[${i}] error:`, r.value.error);
+        });
 
+        // Delete auth user — CASCADE on profiles_id_fkey removes the profile and dependent rows
         const { error: deleteError } = await adminClient.auth.admin.deleteUser(userId);
         if (deleteError) {
+          console.error("[delete_user] auth.admin.deleteUser failed:", deleteError);
           return new Response(JSON.stringify({ error: deleteError.message }), {
             status: 400,
             headers: { ...corsHeaders, "Content-Type": "application/json" },
@@ -139,7 +161,8 @@ Deno.serve(async (req) => {
         });
     }
   } catch (err) {
-    return new Response(JSON.stringify({ error: err.message }), {
+    console.error("[admin-users] uncaught error:", err);
+    return new Response(JSON.stringify({ error: err?.message ?? String(err) }), {
       status: 500,
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
