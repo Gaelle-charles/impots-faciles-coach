@@ -1,6 +1,7 @@
-import { ReactNode } from "react";
-import { Link } from "react-router-dom";
+import { ReactNode, useEffect } from "react";
+import { Link, useLocation } from "react-router-dom";
 import { ArrowLeft } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
 
 interface Props {
   emoji: string;
@@ -10,6 +11,17 @@ interface Props {
 }
 
 export default function SimulateurLayout({ emoji, title, subtitle, children }: Props) {
+  const location = useLocation();
+
+  // Incrément atomique du compteur d'utilisations dès qu'une page simulateur est ouverte.
+  // Le slug est dérivé de l'URL : /simulateur/<slug>. Best-effort, erreurs ignorées.
+  useEffect(() => {
+    const match = location.pathname.match(/^\/simulateur\/([a-z0-9-]+)/i);
+    const slug = match?.[1];
+    if (!slug) return;
+    supabase.rpc("increment_simulateur_usage", { p_slug: slug });
+  }, [location.pathname]);
+
   return (
     <div className="space-y-6">
       <Link
