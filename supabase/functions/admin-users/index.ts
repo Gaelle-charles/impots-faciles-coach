@@ -1,4 +1,5 @@
 import { createClient } from "supabase";
+import { sendDeletionConfirmationEmail } from "../_shared/deletion-email.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
