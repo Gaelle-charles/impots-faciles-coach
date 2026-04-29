@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import logo from '@/assets/logo.png';
 import {
+  Home,
   Building2,
   CreditCard,
   Users,
@@ -79,6 +80,19 @@ export function TeamSidebar({
       </div>
 
       <nav className="flex-1 space-y-5 px-3 overflow-y-auto pb-4">
+        {/* Accueil */}
+        <div>
+          <NavLink to="/">
+            <Button
+              variant="sidebar-item"
+              className="gap-3 px-3 py-2.5 text-sm w-full justify-start opacity-80 hover:opacity-100"
+            >
+              <Home className="h-5 w-5" />
+              <span>Accueil</span>
+            </Button>
+          </NavLink>
+        </div>
+
         {/* Section : Gestion équipe */}
         <div>
           <p className="px-3 mb-1 text-[11px] font-semibold uppercase tracking-wide opacity-50">

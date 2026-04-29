@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import logo from '@/assets/logo.png';
 import {
+  Home,
   LayoutDashboard,
   BookOpen,
   BarChart3,
@@ -15,6 +16,7 @@ import {
 } from 'lucide-react';
 
 const navItems = [
+  { to: '/', label: 'Accueil', icon: Home },
   { to: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
   { to: '/mes-modules', label: 'Mes modules', icon: BookOpen },
   { to: '/dashboard#resultats', label: 'Mes résultats', icon: BarChart3 },

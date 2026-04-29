@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import {
+  Home,
   BarChart3,
   TrendingUp,
   Library,
@@ -23,6 +24,12 @@ import {
 } from 'lucide-react';
 
 const navGroups = [
+  {
+    label: 'Navigation',
+    items: [
+      { to: '/', label: 'Accueil', icon: Home },
+    ],
+  },
   {
     label: 'Tableau de bord',
     items: [
