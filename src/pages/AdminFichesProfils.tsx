@@ -65,6 +65,8 @@ const AdminFichesProfils = () => {
   const [toDelete, setToDelete] = useState<ProfilRow | null>(null);
   const [deleting, setDeleting] = useState(false);
 
+  const [previewRow, setPreviewRow] = useState<ProfilRow | null>(null);
+
   const fetchData = useCallback(async () => {
     if (!user) return;
     setLoading(true);
