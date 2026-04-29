@@ -65,9 +65,11 @@ Deno.serve(async (req) => {
     const body = await req.json();
     const { action } = body;
 
-    // Determine the app URL for redirects — must be passed by the client
-    const origin = req.headers.get("origin") || req.headers.get("referer") || "";
-    const siteUrl = body.siteUrl || (origin ? new URL(origin).origin : "https://impots-faciles-coach.lovable.app");
+    // Always use the production custom domain for email links.
+    // Lovable preview hosts (*.lovable.app) trigger an auth-bridge that
+    // requires logging in to lovable.dev — which breaks emails for end users.
+    // We therefore ignore any siteUrl provided by the caller.
+    const siteUrl = "https://impotsfacile.com";
 
     switch (action) {
       case "create_user": {
@@ -280,9 +282,11 @@ Deno.serve(async (req) => {
       }
 
       case "reset_password": {
-        const { email, redirectTo } = body;
+        const { email } = body;
+        // Always go through /auth/callback on the production domain so the
+        // recovery session is set up correctly before showing the reset form.
         const { error } = await adminClient.auth.resetPasswordForEmail(email, {
-          redirectTo: redirectTo || `${siteUrl}/reset-password`,
+          redirectTo: `${siteUrl}/auth/callback`,
         });
         if (error) {
           return new Response(JSON.stringify({ error: error.message }), {

@@ -181,8 +181,9 @@ const Profil = () => {
     const email = profile?.email ?? user?.email;
     if (!email) return;
     setSendingReset(true);
+    const { getEmailRedirectOrigin } = await import('@/lib/auth-redirect');
     const { error } = await supabase.auth.resetPasswordForEmail(email, {
-      redirectTo: `${window.location.origin}/reset-password`,
+      redirectTo: `${getEmailRedirectOrigin()}/auth/callback`,
     });
     setSendingReset(false);
     if (error) {
