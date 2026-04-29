@@ -1,7 +1,7 @@
 import { corsHeaders } from "npm:@supabase/supabase-js@2.95.0/cors";
 import { createClient } from "npm:@supabase/supabase-js@2.95.0";
 
-const FROM = "Impôts Facile <info@impotsfacile.com>";
+const FROM_EMAIL = Deno.env.get("RESEND_FROM_EMAIL") ?? "Impôts Facile <info@impotsfacile.com>";
 
 function generateToken(len = 48) {
   const bytes = new Uint8Array(len);
@@ -49,7 +49,7 @@ async function sendInvitationEmail(opts: {
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      from: FROM,
+      from: FROM_EMAIL,
       to: [opts.to],
       subject: `Invitation à rejoindre ${opts.orgName} sur Impôts Facile`,
       html,
