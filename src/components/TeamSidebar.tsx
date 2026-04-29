@@ -1,4 +1,5 @@
 import { Link, NavLink, useLocation } from 'react-router-dom';
+import { useState } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -15,8 +16,10 @@ import {
   Heart,
   Eye,
   ArrowLeft,
+  Lightbulb,
   LogOut,
 } from 'lucide-react';
+import { SuggestionDialog } from '@/components/SuggestionDialog';
 
 interface TeamSidebarProps {
   orgName: string;
