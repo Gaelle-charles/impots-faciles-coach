@@ -955,11 +955,20 @@ const AdminUsers = () => {
             <DialogTitle className="font-heading flex items-center gap-2 text-destructive">
               <AlertTriangle className="h-5 w-5" /> Supprimer ce compte
             </DialogTitle>
+            <DialogDescription>
+              Cette action est réversible. Le compte sera marqué comme supprimé et l'utilisateur ne pourra plus se connecter, mais ses données restent conservées.
+            </DialogDescription>
           </DialogHeader>
           <div className="space-y-3 py-2">
-            <p className="text-sm text-muted-foreground">
-              ⚠️ Supprimer <strong>{deleteUser?.prenom ?? ''} {deleteUser?.nom ?? ''}</strong> supprimera définitivement son compte, ses progressions et ses résultats de quiz.
-            </p>
+            <div className="rounded-md border border-amber-300/50 bg-amber-50 dark:bg-amber-950/30 p-3 text-xs text-amber-900 dark:text-amber-200 space-y-1">
+              <p className="font-semibold">Conséquences :</p>
+              <ul className="list-disc pl-4 space-y-0.5">
+                <li>L'abonnement Stripe (si actif) sera annulé en fin de période</li>
+                <li>L'utilisateur ne pourra plus se connecter (accès bloqué)</li>
+                <li>Sa licence d'organisation (le cas échéant) sera libérée</li>
+                <li>Ses données sont conservées et le compte peut être restauré</li>
+              </ul>
+            </div>
             <p className="text-sm">
               Tapez <strong className="text-foreground">« {deleteUser?.email} »</strong> pour confirmer :
             </p>
@@ -976,7 +985,7 @@ const AdminUsers = () => {
               disabled={deleteConfirm !== deleteUser?.email || deleting}
               onClick={handleDelete}
             >
-              {deleting ? 'Suppression…' : 'Supprimer définitivement'}
+              {deleting ? 'Suppression…' : 'Supprimer le compte'}
             </Button>
           </DialogFooter>
         </DialogContent>
