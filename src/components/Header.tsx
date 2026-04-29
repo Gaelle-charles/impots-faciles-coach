@@ -51,7 +51,7 @@ export function Header({ variant = 'light' }: HeaderProps) {
     >
       <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-3">
         {/* Logo */}
-        <Link to="/" className="flex items-center gap-2">
+        <Link to="/" className="flex items-center gap-2 cursor-pointer transition-opacity hover:opacity-80">
           <img src={logo} alt="Impôts Facile" className="h-9 w-9" />
           <span className="font-heading text-lg font-bold">Impôts Facile</span>
         </Link>
