@@ -50,6 +50,17 @@ const planConfig: Record<string, { label: string; color: string }> = {
   premium: { label: 'Premium', color: 'bg-accent/10 text-accent' },
 };
 
+interface SubInfo {
+  active: boolean;
+  status?: string;
+  plan?: string | null;
+  current_period_end?: string | null;
+  cancel_at_period_end?: boolean;
+  price_amount?: number | null;
+  price_currency?: string | null;
+  interval?: string | null;
+}
+
 const Profil = () => {
   const { user, signOut } = useAuth();
   const navigate = useNavigate();
@@ -71,6 +82,11 @@ const Profil = () => {
   const [deleteOpen, setDeleteOpen] = useState(false);
   const [deleteConfirm, setDeleteConfirm] = useState('');
   const [deleting, setDeleting] = useState(false);
+
+  // Active-sub warning step before final delete
+  const [subWarnOpen, setSubWarnOpen] = useState(false);
+  const [subInfo, setSubInfo] = useState<SubInfo | null>(null);
+  const [checkingSub, setCheckingSub] = useState(false);
 
   // Billing portal
   const [openingPortal, setOpeningPortal] = useState(false);
