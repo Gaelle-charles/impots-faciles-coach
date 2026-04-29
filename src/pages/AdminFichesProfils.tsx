@@ -18,8 +18,10 @@ import {
   AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
 import { toast } from '@/hooks/use-toast';
-import { UserSquare2, Plus, Pencil, Trash2, Search } from 'lucide-react';
+import { UserSquare2, Plus, Pencil, Trash2, Search, Eye } from 'lucide-react';
 import { ContenuSectionsEditor } from '@/components/admin/ContenuSectionsEditor';
+import { FichePreviewDialog } from '@/components/admin/FichePreviewDialog';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 
 interface ProfilRow {
   id: string;
@@ -62,6 +64,8 @@ const AdminFichesProfils = () => {
 
   const [toDelete, setToDelete] = useState<ProfilRow | null>(null);
   const [deleting, setDeleting] = useState(false);
+
+  const [previewRow, setPreviewRow] = useState<ProfilRow | null>(null);
 
   const fetchData = useCallback(async () => {
     if (!user) return;
@@ -237,7 +241,7 @@ const AdminFichesProfils = () => {
               <TableHead>Slug</TableHead>
               <TableHead className="w-24">Actif</TableHead>
               <TableHead className="w-20 text-center">Ordre</TableHead>
-              <TableHead className="w-32">Actions</TableHead>
+              <TableHead className="w-40">Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -270,13 +274,22 @@ const AdminFichesProfils = () => {
                   <TableCell className="text-center text-sm text-muted-foreground">{r.order_display ?? '—'}</TableCell>
                   <TableCell>
                     <div className="flex gap-1">
-                      <Button variant="outline" size="icon" className="h-7 w-7" onClick={() => openEdit(r)}>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Button variant="outline" size="icon" className="h-7 w-7" onClick={() => setPreviewRow(r)}>
+                            <Eye className="h-3.5 w-3.5" />
+                          </Button>
+                        </TooltipTrigger>
+                        <TooltipContent>Aperçu de la fiche</TooltipContent>
+                      </Tooltip>
+                      <Button variant="outline" size="icon" className="h-7 w-7" onClick={() => openEdit(r)} title="Modifier">
                         <Pencil className="h-3.5 w-3.5" />
                       </Button>
                       <Button
                         variant="outline" size="icon"
                         className="h-7 w-7 text-destructive hover:text-destructive"
                         onClick={() => setToDelete(r)}
+                        title="Supprimer"
                       >
                         <Trash2 className="h-3.5 w-3.5" />
                       </Button>
@@ -394,6 +407,13 @@ const AdminFichesProfils = () => {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      <FichePreviewDialog
+        open={!!previewRow}
+        onOpenChange={(v) => !v && setPreviewRow(null)}
+        ficheType="profil"
+        ficheData={previewRow}
+      />
     </div>
   );
 };

@@ -25,7 +25,7 @@ import {
 } from '@/components/ui/tooltip';
 import { toast } from '@/hooks/use-toast';
 import {
-  Briefcase, Plus, Pencil, Trash2, Copy, Search, GripVertical, Lock,
+  Briefcase, Plus, Pencil, Trash2, Copy, Search, GripVertical, Lock, Eye,
   Download, ChevronUp, ChevronDown, ArrowUpDown,
 } from 'lucide-react';
 import {
@@ -39,6 +39,7 @@ import { CSS } from '@dnd-kit/utilities';
 import { restrictToVerticalAxis } from '@dnd-kit/modifiers';
 import { RichTextEditor } from '@/components/admin/RichTextEditor';
 import { ContenuSectionsEditor } from '@/components/admin/ContenuSectionsEditor';
+import { FichePreviewDialog } from '@/components/admin/FichePreviewDialog';
 
 interface MetierRow {
   id: string;
@@ -69,13 +70,14 @@ const slugify = (s: string): string =>
 type SortKey = 'nom' | 'categorie' | 'slug' | 'is_active' | 'order_display' | 'created_at';
 
 const SortableMetierRow = ({
-  m, onEdit, onDuplicate, onDelete, onToggleActive,
+  m, onEdit, onDuplicate, onDelete, onToggleActive, onPreview,
 }: {
   m: MetierRow;
   onEdit: (m: MetierRow) => void;
   onDuplicate: (m: MetierRow) => void;
   onDelete: (m: MetierRow) => void;
   onToggleActive: (m: MetierRow, value: boolean) => void;
+  onPreview: (m: MetierRow) => void;
 }) => {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } =
     useSortable({ id: m.id });
@@ -123,6 +125,14 @@ const SortableMetierRow = ({
       </TableCell>
       <TableCell className="px-1">
         <div className="flex gap-1">
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button variant="outline" size="icon" className="h-7 w-7" onClick={() => onPreview(m)}>
+                <Eye className="h-3.5 w-3.5" />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>Aperçu de la fiche</TooltipContent>
+          </Tooltip>
           <Button variant="outline" size="icon" className="h-7 w-7" onClick={() => onEdit(m)} title="Modifier">
             <Pencil className="h-3.5 w-3.5" />
           </Button>
@@ -178,6 +188,7 @@ const AdminMetiers = () => {
   const [toDelete, setToDelete] = useState<MetierRow | null>(null);
   const [deleting, setDeleting] = useState(false);
   const [deleteBlocker, setDeleteBlocker] = useState<{ count: number } | null>(null);
+  const [previewRow, setPreviewRow] = useState<MetierRow | null>(null);
 
   const fetchData = useCallback(async () => {
     if (!user) return;
@@ -616,6 +627,7 @@ const AdminMetiers = () => {
                       onDuplicate={handleDuplicate}
                       onDelete={askDelete}
                       onToggleActive={handleToggleActive}
+                      onPreview={setPreviewRow}
                     />
                   ))}
                 </SortableContext>
@@ -840,6 +852,13 @@ const AdminMetiers = () => {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      <FichePreviewDialog
+        open={!!previewRow}
+        onOpenChange={(v) => !v && setPreviewRow(null)}
+        ficheType="metier"
+        ficheData={previewRow}
+      />
     </div>
   );
 };
