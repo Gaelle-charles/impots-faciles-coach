@@ -378,24 +378,19 @@ const Profil = () => {
             Mon abonnement
           </CardTitle>
         </CardHeader>
-        <CardContent className="space-y-3">
+        <CardContent className="space-y-4">
           <div className="flex items-center justify-between flex-wrap gap-3">
             <div className="flex items-center gap-3">
               <span className="text-sm text-muted-foreground">Plan actuel :</span>
               <Badge className={plan.color}>{plan.label}</Badge>
+              {subInfo?.price_amount != null && (
+                <span className="text-sm text-muted-foreground">
+                  · {(subInfo.price_amount / 100).toFixed(2)} {(subInfo.price_currency ?? 'eur').toUpperCase()}
+                  {subInfo.interval ? ` / ${subInfo.interval === 'month' ? 'mois' : subInfo.interval === 'year' ? 'an' : subInfo.interval}` : ''}
+                </span>
+              )}
             </div>
-            {profile?.stripe_customer_id && profile.plan !== 'nouveau' ? (
-              <Button
-                variant="outline"
-                size="sm"
-                className="gap-1"
-                disabled={openingPortal}
-                onClick={handleManageBilling}
-              >
-                {openingPortal ? 'Ouverture...' : 'Gérer mon abonnement'}{' '}
-                <ArrowRight className="h-4 w-4" />
-              </Button>
-            ) : (
+            {profile?.stripe_customer_id && profile.plan !== 'nouveau' ? null : (
               <Button
                 variant="outline"
                 size="sm"
@@ -406,11 +401,50 @@ const Profil = () => {
               </Button>
             )}
           </div>
+
           {profile?.stripe_customer_id && profile.plan !== 'nouveau' && (
-            <p className="text-xs text-muted-foreground">
-              Vous pourrez y modifier votre plan, mettre à jour votre moyen de
-              paiement, consulter vos factures ou annuler votre abonnement.
-            </p>
+            <>
+              {subInfo && (
+                <div className="grid gap-2 sm:grid-cols-2 text-sm">
+                  <div>
+                    <span className="text-muted-foreground">Statut : </span>
+                    <span className="font-medium">
+                      {subInfo.cancel_at_period_end
+                        ? 'Annulé (actif jusqu\'à l\'échéance)'
+                        : subInfo.active
+                        ? 'Actif'
+                        : (subInfo.status ?? 'Inconnu')}
+                    </span>
+                  </div>
+                  <div>
+                    <span className="text-muted-foreground">
+                      {subInfo.cancel_at_period_end ? 'Fin d\'accès : ' : 'Prochaine échéance : '}
+                    </span>
+                    <span className="font-medium">
+                      {subInfo.current_period_end
+                        ? new Date(subInfo.current_period_end).toLocaleDateString('fr-FR', { day: '2-digit', month: 'long', year: 'numeric' })
+                        : '—'}
+                    </span>
+                  </div>
+                </div>
+              )}
+
+              <div className="flex flex-wrap gap-2">
+                <Button variant="outline" size="sm" disabled={openingPortal} onClick={handleManageBilling} className="gap-1">
+                  Voir mes factures <ArrowRight className="h-4 w-4" />
+                </Button>
+                <Button variant="outline" size="sm" disabled={openingPortal} onClick={handleManageBilling} className="gap-1">
+                  Modifier mon abonnement
+                </Button>
+                <Button variant="outline" size="sm" disabled={openingPortal} onClick={handleManageBilling} className="gap-1 text-destructive hover:text-destructive">
+                  Annuler mon abonnement
+                </Button>
+              </div>
+
+              <p className="text-xs text-muted-foreground">
+                Vos factures sont également envoyées automatiquement par email à chaque paiement.
+              </p>
+            </>
           )}
         </CardContent>
       </Card>
