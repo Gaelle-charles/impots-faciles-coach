@@ -109,6 +109,28 @@ function generatePassword(length = 12) {
     .join('');
 }
 
+function formatRelativeDate(iso: string | null | undefined): string {
+  if (!iso) return 'Jamais';
+  const d = new Date(iso).getTime();
+  const diff = Date.now() - d;
+  if (diff < 0) return new Date(iso).toLocaleDateString('fr-FR');
+  const mins = Math.floor(diff / 60000);
+  if (mins < 1) return "À l'instant";
+  if (mins < 60) return `Il y a ${mins} min`;
+  const hrs = Math.floor(mins / 60);
+  if (hrs < 24) return `Il y a ${hrs} h`;
+  const days = Math.floor(hrs / 24);
+  if (days < 7) return `Il y a ${days} j`;
+  const weeks = Math.floor(days / 7);
+  if (weeks < 5) return `Il y a ${weeks} sem`;
+  const months = Math.floor(days / 30);
+  if (months < 12) return `Il y a ${months} mois`;
+  const years = Math.floor(days / 365);
+  return `Il y a ${years} an${years > 1 ? 's' : ''}`;
+}
+
+type StatusFilter = 'tous' | 'pending' | 'deleted';
+
 // ─── Main Component ───
 const AdminUsers = () => {
   const { user } = useAuth();
