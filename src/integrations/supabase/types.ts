@@ -861,6 +861,50 @@ export type Database = {
           },
         ]
       }
+      suggestions: {
+        Row: {
+          categorie: string
+          created_at: string
+          id: string
+          is_archived: boolean
+          is_read: boolean
+          message: string
+          page_url: string | null
+          user_email: string
+          user_id: string | null
+        }
+        Insert: {
+          categorie: string
+          created_at?: string
+          id?: string
+          is_archived?: boolean
+          is_read?: boolean
+          message: string
+          page_url?: string | null
+          user_email: string
+          user_id?: string | null
+        }
+        Update: {
+          categorie?: string
+          created_at?: string
+          id?: string
+          is_archived?: boolean
+          is_read?: boolean
+          message?: string
+          page_url?: string | null
+          user_email?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "suggestions_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       modules_with_counts: {

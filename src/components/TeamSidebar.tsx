@@ -1,4 +1,5 @@
 import { Link, NavLink, useLocation } from 'react-router-dom';
+import { useState } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -15,8 +16,10 @@ import {
   Heart,
   Eye,
   ArrowLeft,
+  Lightbulb,
   LogOut,
 } from 'lucide-react';
+import { SuggestionDialog } from '@/components/SuggestionDialog';
 
 interface TeamSidebarProps {
   orgName: string;
@@ -39,6 +42,7 @@ export function TeamSidebar({
   const { signOut } = useAuth();
   const location = useLocation();
   const isOnDashboard = location.pathname === '/impots-team/dashboard';
+  const [suggestionOpen, setSuggestionOpen] = useState(false);
 
   const teamTabs: Array<{ key: 'abonnement' | 'membres' | 'branding'; label: string; icon: typeof CreditCard }> = [
     { key: 'abonnement', label: 'Mon abonnement', icon: CreditCard },
@@ -191,6 +195,14 @@ export function TeamSidebar({
         </Link>
         <Button
           variant="sidebar-item"
+          onClick={() => setSuggestionOpen(true)}
+          className="gap-3 px-3 py-2.5 text-sm w-full justify-start opacity-80 hover:opacity-100"
+        >
+          <Lightbulb className="h-5 w-5" />
+          <span>Suggestion</span>
+        </Button>
+        <Button
+          variant="sidebar-item"
           onClick={signOut}
           className="gap-3 px-3 py-2.5 text-sm w-full justify-start text-rose-dynamic hover:text-rose-dynamic"
         >
@@ -199,6 +211,7 @@ export function TeamSidebar({
         </Button>
         <p className="px-3 text-xs opacity-40">v1.0</p>
       </div>
+      <SuggestionDialog open={suggestionOpen} onOpenChange={setSuggestionOpen} />
     </aside>
   );
 }

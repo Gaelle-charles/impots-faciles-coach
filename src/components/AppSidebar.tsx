@@ -13,8 +13,10 @@ import {
   Calculator,
   Heart,
   User,
+  Lightbulb,
   LogOut,
 } from 'lucide-react';
+import { SuggestionDialog } from '@/components/SuggestionDialog';
 
 const navItems = [
   { to: '/', label: 'Accueil', icon: Home },
@@ -30,6 +32,7 @@ export function AppSidebar({ collapsed = false }: { collapsed?: boolean }) {
   const { user, signOut } = useAuth();
   const location = useLocation();
   const [profile, setProfile] = useState<{ prenom: string | null; nom: string | null; plan: string } | null>(null);
+  const [suggestionOpen, setSuggestionOpen] = useState(false);
 
   useEffect(() => {
     if (!user) return;
@@ -108,6 +111,14 @@ export function AppSidebar({ collapsed = false }: { collapsed?: boolean }) {
       <div className="border-t border-sidebar-border p-3 space-y-2">
         <Button
           variant="sidebar-item"
+          onClick={() => setSuggestionOpen(true)}
+          className="gap-3 px-3 py-2.5 text-sm opacity-80 hover:opacity-100"
+        >
+          <Lightbulb className="h-5 w-5" />
+          <span>Suggestion</span>
+        </Button>
+        <Button
+          variant="sidebar-item"
           onClick={signOut}
           className="gap-3 px-3 py-2.5 text-sm text-rose-dynamic hover:text-rose-dynamic"
         >
@@ -116,6 +127,7 @@ export function AppSidebar({ collapsed = false }: { collapsed?: boolean }) {
         </Button>
         <p className="px-3 text-xs opacity-40">v1.0</p>
       </div>
+      <SuggestionDialog open={suggestionOpen} onOpenChange={setSuggestionOpen} />
     </aside>
   );
 }
