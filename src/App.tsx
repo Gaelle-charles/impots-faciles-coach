@@ -32,6 +32,7 @@ import Profil from "./pages/Profil";
 import MesModules from "./pages/MesModules";
 import Recommandations from "./pages/Recommandations";
 import AdminRecommandations from "./pages/AdminRecommandations";
+import AdminSuggestions from "./pages/AdminSuggestions";
 import Admin from "./pages/Admin";
 import AdminLogin from "./pages/AdminLogin";
 import AdminUsers from "./pages/AdminUsers";
@@ -150,6 +151,7 @@ const App = () => (
               <Route path="/admin/emails" element={<AdminEmails />} />
               <Route path="/admin/settings" element={<AdminSettings />} />
               <Route path="/admin/recommandations" element={<AdminRecommandations />} />
+              <Route path="/admin/suggestions" element={<AdminSuggestions />} />
             </Route>
 
             {/* Quizz has its own layout */}
