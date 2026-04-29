@@ -188,6 +188,7 @@ const AdminMetiers = () => {
   const [toDelete, setToDelete] = useState<MetierRow | null>(null);
   const [deleting, setDeleting] = useState(false);
   const [deleteBlocker, setDeleteBlocker] = useState<{ count: number } | null>(null);
+  const [previewRow, setPreviewRow] = useState<MetierRow | null>(null);
 
   const fetchData = useCallback(async () => {
     if (!user) return;
@@ -626,6 +627,7 @@ const AdminMetiers = () => {
                       onDuplicate={handleDuplicate}
                       onDelete={askDelete}
                       onToggleActive={handleToggleActive}
+                      onPreview={setPreviewRow}
                     />
                   ))}
                 </SortableContext>
@@ -850,6 +852,13 @@ const AdminMetiers = () => {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      <FichePreviewDialog
+        open={!!previewRow}
+        onOpenChange={(v) => !v && setPreviewRow(null)}
+        ficheType="metier"
+        ficheData={previewRow}
+      />
     </div>
   );
 };
