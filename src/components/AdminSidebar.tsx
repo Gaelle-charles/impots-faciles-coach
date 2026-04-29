@@ -23,6 +23,7 @@ import {
   Globe2,
   Heart,
   MessageSquareWarning,
+  Calculator,
 } from 'lucide-react';
 import { useUnreadSuggestions } from '@/hooks/useUnreadSuggestions';
 
@@ -55,6 +56,12 @@ const navGroups = [
       { to: '/admin/fiches-profils', label: 'Fiches profils', icon: UserSquare2 },
       { to: '/admin/pays', label: 'Fiches pays', icon: Globe2 },
       { to: '/admin/recommandations', label: 'Recommandations', icon: Heart },
+    ],
+  },
+  {
+    label: 'Outils',
+    items: [
+      { to: '/admin/simulateurs', label: 'Simulateurs', icon: Calculator },
     ],
   },
   {

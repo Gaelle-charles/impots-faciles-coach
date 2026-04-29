@@ -814,6 +814,66 @@ export type Database = {
           },
         ]
       }
+      simulateurs: {
+        Row: {
+          created_at: string
+          description: string
+          highlight_si_couple: boolean
+          highlight_si_dirigeant: boolean
+          highlight_si_independant: boolean
+          highlight_si_placements: boolean
+          highlight_si_revenus_eleves: boolean
+          highlight_si_revenus_fonciers: boolean
+          highlight_si_salarie: boolean
+          id: string
+          is_active: boolean
+          nb_utilisations: number
+          nom: string
+          ordre: number
+          plan_minimum: string
+          slug: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          description: string
+          highlight_si_couple?: boolean
+          highlight_si_dirigeant?: boolean
+          highlight_si_independant?: boolean
+          highlight_si_placements?: boolean
+          highlight_si_revenus_eleves?: boolean
+          highlight_si_revenus_fonciers?: boolean
+          highlight_si_salarie?: boolean
+          id?: string
+          is_active?: boolean
+          nb_utilisations?: number
+          nom: string
+          ordre?: number
+          plan_minimum: string
+          slug: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string
+          highlight_si_couple?: boolean
+          highlight_si_dirigeant?: boolean
+          highlight_si_independant?: boolean
+          highlight_si_placements?: boolean
+          highlight_si_revenus_eleves?: boolean
+          highlight_si_revenus_fonciers?: boolean
+          highlight_si_salarie?: boolean
+          id?: string
+          is_active?: boolean
+          nb_utilisations?: number
+          nom?: string
+          ordre?: number
+          plan_minimum?: string
+          slug?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       simulations: {
         Row: {
           created_at: string | null
@@ -994,6 +1054,10 @@ export type Database = {
           raison_sociale: string
           role: string
         }[]
+      }
+      increment_simulateur_usage: {
+        Args: { p_slug: string }
+        Returns: undefined
       }
       is_admin: { Args: never; Returns: boolean }
       is_admin_of_org: { Args: { p_org_id: string }; Returns: boolean }
