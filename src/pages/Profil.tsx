@@ -239,6 +239,48 @@ const Profil = () => {
     }
   };
 
+  // Step 1 of deletion flow: if user has an active subscription, warn them first
+  const handleStartDelete = async () => {
+    if (!profile?.stripe_subscription_id) {
+      setDeleteOpen(true);
+      return;
+    }
+    setCheckingSub(true);
+    try {
+      const { data } = await supabase.functions.invoke('get-subscription-status');
+      const info = data as SubInfo | null;
+      if (info?.active) {
+        setSubInfo(info);
+        setSubWarnOpen(true);
+      } else {
+        setDeleteOpen(true);
+      }
+    } catch {
+      // best-effort: open standard delete
+      setDeleteOpen(true);
+    }
+    setCheckingSub(false);
+  };
+
+  // From the warning modal, open Customer Portal so user can cancel first
+  const handleOpenPortalForCancel = async () => {
+    setOpeningPortal(true);
+    try {
+      const { data, error } = await supabase.functions.invoke('create-customer-portal-session');
+      const url = (data as { url?: string; error?: string })?.url;
+      const errMsg = (data as { error?: string })?.error ?? error?.message;
+      if (errMsg || !url) {
+        toast({ title: 'Erreur', description: 'Impossible d\'ouvrir le portail client.', variant: 'destructive' });
+        setOpeningPortal(false);
+        return;
+      }
+      window.location.href = url;
+    } catch {
+      toast({ title: 'Erreur', description: 'Impossible d\'ouvrir le portail client.', variant: 'destructive' });
+      setOpeningPortal(false);
+    }
+  };
+
   const handleCompleteProfile = async () => {
     if (!user) return;
     const tp = completePrenom.trim();
