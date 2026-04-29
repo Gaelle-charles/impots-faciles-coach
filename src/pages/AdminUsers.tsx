@@ -168,6 +168,9 @@ const AdminUsers = () => {
   const [deleteUser, setDeleteUser] = useState<UserRow | null>(null);
   const [deleteConfirm, setDeleteConfirm] = useState('');
   const [deleting, setDeleting] = useState(false);
+  const [deleteSubInfo, setDeleteSubInfo] = useState<{ active: boolean; current_period_end?: string | null; plan?: string | null } | null>(null);
+  const [checkingDeleteSub, setCheckingDeleteSub] = useState(false);
+  const [adminSubWarnUser, setAdminSubWarnUser] = useState<UserRow | null>(null);
 
   // Restore
   const [restoringId, setRestoringId] = useState<string | null>(null);
@@ -639,9 +642,25 @@ const AdminUsers = () => {
                             <DropdownMenuSeparator />
                             <DropdownMenuItem
                               className="text-destructive"
-                              onClick={() => { setDeleteUser(u); setDeleteConfirm(''); }}
+                              onClick={async () => {
+                                setCheckingDeleteSub(true);
+                                try {
+                                  const { data } = await supabase.functions.invoke('admin-users', {
+                                    body: { action: 'check_subscription_status', userId: u.id },
+                                  });
+                                  if (data?.active) {
+                                    setDeleteSubInfo(data);
+                                    setAdminSubWarnUser(u);
+                                  } else {
+                                    setDeleteUser(u); setDeleteConfirm('');
+                                  }
+                                } catch {
+                                  setDeleteUser(u); setDeleteConfirm('');
+                                }
+                                setCheckingDeleteSub(false);
+                              }}
                             >
-                              <Trash2 className="h-3.5 w-3.5 mr-2" /> Supprimer le compte
+                              <Trash2 className="h-3.5 w-3.5 mr-2" /> {checkingDeleteSub ? 'Vérification...' : 'Supprimer le compte'}
                             </DropdownMenuItem>
                           </>
                         )}
@@ -986,6 +1005,46 @@ const AdminUsers = () => {
               onClick={handleDelete}
             >
               {deleting ? 'Suppression…' : 'Supprimer le compte'}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* ─── Admin: Active subscription warning ─── */}
+      <Dialog open={!!adminSubWarnUser} onOpenChange={(o) => { if (!o) setAdminSubWarnUser(null); }}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle className="font-heading">⚠️ Cet utilisateur a un abonnement actif</DialogTitle>
+          </DialogHeader>
+          <DialogDescription className="space-y-3 text-sm">
+            <p>
+              <strong>{adminSubWarnUser?.email}</strong> a un abonnement{' '}
+              <strong>{deleteSubInfo?.plan ?? adminSubWarnUser?.plan}</strong> actif jusqu'au{' '}
+              <strong>
+                {deleteSubInfo?.current_period_end
+                  ? new Date(deleteSubInfo.current_period_end).toLocaleDateString('fr-FR', { day: '2-digit', month: 'long', year: 'numeric' })
+                  : '—'}
+              </strong>.
+            </p>
+            <p>Si vous supprimez son compte maintenant :</p>
+            <ul className="list-disc pl-5 space-y-1">
+              <li>Il perdra l'accès immédiatement</li>
+              <li>Son abonnement sera annulé chez Stripe</li>
+              <li>Aucun remboursement automatique ne sera effectué</li>
+            </ul>
+            <p>Considérez contacter l'utilisateur avant cette action si elle n'est pas demandée par lui-même.</p>
+          </DialogDescription>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setAdminSubWarnUser(null)}>Annuler</Button>
+            <Button
+              variant="destructive"
+              onClick={() => {
+                const u = adminSubWarnUser;
+                setAdminSubWarnUser(null);
+                if (u) { setDeleteUser(u); setDeleteConfirm(''); }
+              }}
+            >
+              Confirmer la suppression
             </Button>
           </DialogFooter>
         </DialogContent>

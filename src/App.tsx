@@ -127,6 +127,7 @@ const App = () => (
               <Route path="/fiche-metier/:id" element={<FicheMetier />} />
               <Route path="/fiches/:type/:slug" element={<Fiche />} />
               <Route path="/profil" element={<Profil />} />
+              <Route path="/mon-compte" element={<Profil />} />
               <Route path="/mes-modules" element={<MesModules />} />
               <Route path="/recommandations" element={<Recommandations />} />
             </Route>

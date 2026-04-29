@@ -50,6 +50,17 @@ const planConfig: Record<string, { label: string; color: string }> = {
   premium: { label: 'Premium', color: 'bg-accent/10 text-accent' },
 };
 
+interface SubInfo {
+  active: boolean;
+  status?: string;
+  plan?: string | null;
+  current_period_end?: string | null;
+  cancel_at_period_end?: boolean;
+  price_amount?: number | null;
+  price_currency?: string | null;
+  interval?: string | null;
+}
+
 const Profil = () => {
   const { user, signOut } = useAuth();
   const navigate = useNavigate();
@@ -71,6 +82,11 @@ const Profil = () => {
   const [deleteOpen, setDeleteOpen] = useState(false);
   const [deleteConfirm, setDeleteConfirm] = useState('');
   const [deleting, setDeleting] = useState(false);
+
+  // Active-sub warning step before final delete
+  const [subWarnOpen, setSubWarnOpen] = useState(false);
+  const [subInfo, setSubInfo] = useState<SubInfo | null>(null);
+  const [checkingSub, setCheckingSub] = useState(false);
 
   // Billing portal
   const [openingPortal, setOpeningPortal] = useState(false);
@@ -111,6 +127,12 @@ const Profil = () => {
         setAvgScore(Math.round(resRes.data.reduce((a, r) => a + Number(r.pourcentage), 0) / resRes.data.length));
       }
       setLoading(false);
+
+      // Fetch active subscription details (best-effort)
+      if (profRes.data?.stripe_subscription_id) {
+        const { data: subData } = await supabase.functions.invoke('get-subscription-status');
+        if (subData) setSubInfo(subData as SubInfo);
+      }
     };
 
     fetchAll();
@@ -217,6 +239,48 @@ const Profil = () => {
     }
   };
 
+  // Step 1 of deletion flow: if user has an active subscription, warn them first
+  const handleStartDelete = async () => {
+    if (!profile?.stripe_subscription_id) {
+      setDeleteOpen(true);
+      return;
+    }
+    setCheckingSub(true);
+    try {
+      const { data } = await supabase.functions.invoke('get-subscription-status');
+      const info = data as SubInfo | null;
+      if (info?.active) {
+        setSubInfo(info);
+        setSubWarnOpen(true);
+      } else {
+        setDeleteOpen(true);
+      }
+    } catch {
+      // best-effort: open standard delete
+      setDeleteOpen(true);
+    }
+    setCheckingSub(false);
+  };
+
+  // From the warning modal, open Customer Portal so user can cancel first
+  const handleOpenPortalForCancel = async () => {
+    setOpeningPortal(true);
+    try {
+      const { data, error } = await supabase.functions.invoke('create-customer-portal-session');
+      const url = (data as { url?: string; error?: string })?.url;
+      const errMsg = (data as { error?: string })?.error ?? error?.message;
+      if (errMsg || !url) {
+        toast({ title: 'Erreur', description: 'Impossible d\'ouvrir le portail client.', variant: 'destructive' });
+        setOpeningPortal(false);
+        return;
+      }
+      window.location.href = url;
+    } catch {
+      toast({ title: 'Erreur', description: 'Impossible d\'ouvrir le portail client.', variant: 'destructive' });
+      setOpeningPortal(false);
+    }
+  };
+
   const handleCompleteProfile = async () => {
     if (!user) return;
     const tp = completePrenom.trim();
@@ -314,24 +378,19 @@ const Profil = () => {
             Mon abonnement
           </CardTitle>
         </CardHeader>
-        <CardContent className="space-y-3">
+        <CardContent className="space-y-4">
           <div className="flex items-center justify-between flex-wrap gap-3">
             <div className="flex items-center gap-3">
               <span className="text-sm text-muted-foreground">Plan actuel :</span>
               <Badge className={plan.color}>{plan.label}</Badge>
+              {subInfo?.price_amount != null && (
+                <span className="text-sm text-muted-foreground">
+                  · {(subInfo.price_amount / 100).toFixed(2)} {(subInfo.price_currency ?? 'eur').toUpperCase()}
+                  {subInfo.interval ? ` / ${subInfo.interval === 'month' ? 'mois' : subInfo.interval === 'year' ? 'an' : subInfo.interval}` : ''}
+                </span>
+              )}
             </div>
-            {profile?.stripe_customer_id && profile.plan !== 'nouveau' ? (
-              <Button
-                variant="outline"
-                size="sm"
-                className="gap-1"
-                disabled={openingPortal}
-                onClick={handleManageBilling}
-              >
-                {openingPortal ? 'Ouverture...' : 'Gérer mon abonnement'}{' '}
-                <ArrowRight className="h-4 w-4" />
-              </Button>
-            ) : (
+            {profile?.stripe_customer_id && profile.plan !== 'nouveau' ? null : (
               <Button
                 variant="outline"
                 size="sm"
@@ -342,11 +401,50 @@ const Profil = () => {
               </Button>
             )}
           </div>
+
           {profile?.stripe_customer_id && profile.plan !== 'nouveau' && (
-            <p className="text-xs text-muted-foreground">
-              Vous pourrez y modifier votre plan, mettre à jour votre moyen de
-              paiement, consulter vos factures ou annuler votre abonnement.
-            </p>
+            <>
+              {subInfo && (
+                <div className="grid gap-2 sm:grid-cols-2 text-sm">
+                  <div>
+                    <span className="text-muted-foreground">Statut : </span>
+                    <span className="font-medium">
+                      {subInfo.cancel_at_period_end
+                        ? 'Annulé (actif jusqu\'à l\'échéance)'
+                        : subInfo.active
+                        ? 'Actif'
+                        : (subInfo.status ?? 'Inconnu')}
+                    </span>
+                  </div>
+                  <div>
+                    <span className="text-muted-foreground">
+                      {subInfo.cancel_at_period_end ? 'Fin d\'accès : ' : 'Prochaine échéance : '}
+                    </span>
+                    <span className="font-medium">
+                      {subInfo.current_period_end
+                        ? new Date(subInfo.current_period_end).toLocaleDateString('fr-FR', { day: '2-digit', month: 'long', year: 'numeric' })
+                        : '—'}
+                    </span>
+                  </div>
+                </div>
+              )}
+
+              <div className="flex flex-wrap gap-2">
+                <Button variant="outline" size="sm" disabled={openingPortal} onClick={handleManageBilling} className="gap-1">
+                  Voir mes factures <ArrowRight className="h-4 w-4" />
+                </Button>
+                <Button variant="outline" size="sm" disabled={openingPortal} onClick={handleManageBilling} className="gap-1">
+                  Modifier mon abonnement
+                </Button>
+                <Button variant="outline" size="sm" disabled={openingPortal} onClick={handleManageBilling} className="gap-1 text-destructive hover:text-destructive">
+                  Annuler mon abonnement
+                </Button>
+              </div>
+
+              <p className="text-xs text-muted-foreground">
+                Vos factures sont également envoyées automatiquement par email à chaque paiement.
+              </p>
+            </>
           )}
         </CardContent>
       </Card>
@@ -463,10 +561,48 @@ const Profil = () => {
           <p className="text-sm text-muted-foreground mb-4">
             La suppression de ton compte est définitive. Toutes tes données seront perdues.
           </p>
-          <Button variant="outline" className="border-destructive text-destructive hover:bg-destructive/10 gap-2" onClick={() => setDeleteOpen(true)}>
+          <Button variant="outline" className="border-destructive text-destructive hover:bg-destructive/10 gap-2" disabled={checkingSub} onClick={handleStartDelete}>
             <Trash2 className="h-4 w-4" />
-            Supprimer mon compte
+            {checkingSub ? 'Vérification...' : 'Supprimer mon compte'}
           </Button>
+          <Dialog open={subWarnOpen} onOpenChange={(o) => { if (!openingPortal) setSubWarnOpen(o); }}>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle className="font-heading">⚠️ Vous avez un abonnement actif</DialogTitle>
+              </DialogHeader>
+              <DialogDescription className="space-y-3 text-sm">
+                <p>
+                  Votre abonnement <strong>{plan.label}</strong> est actif jusqu'au{' '}
+                  <strong>
+                    {subInfo?.current_period_end
+                      ? new Date(subInfo.current_period_end).toLocaleDateString('fr-FR', { day: '2-digit', month: 'long', year: 'numeric' })
+                      : '—'}
+                  </strong>.
+                </p>
+                <p>Si vous supprimez votre compte maintenant :</p>
+                <ul className="list-disc pl-5 space-y-1">
+                  <li>Vous perdrez l'accès immédiatement</li>
+                  <li>Votre abonnement sera annulé (pas de remboursement automatique)</li>
+                  <li>Vous ne serez plus prélevé(e) au prochain renouvellement</li>
+                </ul>
+                <p>Que souhaitez-vous faire ?</p>
+              </DialogDescription>
+              <DialogFooter className="flex-col gap-2 sm:flex-col sm:space-x-0">
+                <Button variant="outline" onClick={() => setSubWarnOpen(false)} disabled={openingPortal}>
+                  Annuler la suppression
+                </Button>
+                <Button variant="outline" onClick={handleOpenPortalForCancel} disabled={openingPortal}>
+                  {openingPortal ? 'Ouverture...' : `Résilier d'abord mon abonnement (garder l'accès jusqu'au ${subInfo?.current_period_end ? new Date(subInfo.current_period_end).toLocaleDateString('fr-FR') : '...'})`}
+                </Button>
+                <Button variant="destructive" onClick={() => { setSubWarnOpen(false); setDeleteOpen(true); }} disabled={openingPortal}>
+                  Supprimer immédiatement (perte d'accès maintenant)
+                </Button>
+              </DialogFooter>
+              <p className="text-xs text-muted-foreground mt-2">
+                Pour un remboursement exceptionnel au prorata, contactez-nous à contact@impotsfacile.com
+              </p>
+            </DialogContent>
+          </Dialog>
         </CardContent>
       </Card>
 

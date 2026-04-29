@@ -1,4 +1,5 @@
 import { createClient } from "supabase";
+import { sendDeletionConfirmationEmail } from "../_shared/deletion-email.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -161,7 +162,7 @@ Deno.serve(async (req) => {
         // 1. Récupérer profil pour info Stripe + organization
         const { data: profile } = await adminClient
           .from("profiles")
-          .select("id, email, prenom, stripe_subscription_id, organization_id")
+          .select("id, email, prenom, plan, stripe_subscription_id, organization_id")
           .eq("id", userId)
           .maybeSingle();
 
@@ -172,8 +173,41 @@ Deno.serve(async (req) => {
           });
         }
 
-        // 2. Annulation Stripe (cancel_at_period_end) si abonnement actif
+        // 2. Récupérer les infos de l'abonnement Stripe AVANT toute opération destructive
         const stripeKey = Deno.env.get("STRIPE_SECRET_KEY");
+        let nextRenewalIso: string | null = null;
+        let hasActiveSub = false;
+        if (profile.stripe_subscription_id && stripeKey) {
+          try {
+            const r = await fetch(
+              `https://api.stripe.com/v1/subscriptions/${profile.stripe_subscription_id}`,
+              { headers: { Authorization: `Bearer ${stripeKey}` } }
+            );
+            if (r.ok) {
+              const sub = await r.json();
+              hasActiveSub = sub.status === "active" || sub.status === "trialing";
+              if (sub.current_period_end) {
+                nextRenewalIso = new Date(sub.current_period_end * 1000).toISOString();
+              }
+            }
+          } catch (e) {
+            console.error("[soft_delete] stripe fetch failed:", e);
+          }
+        }
+
+        // 3. Envoi email de confirmation RGPD AVANT le ban (best-effort)
+        if (profile.email) {
+          const emailResult = await sendDeletionConfirmationEmail({
+            email: profile.email,
+            prenom: profile.prenom,
+            plan: profile.plan,
+            hasActiveSubscription: hasActiveSub,
+            nextRenewalDate: nextRenewalIso,
+          });
+          console.log("[soft_delete] deletion email result:", emailResult);
+        }
+
+        // 4. Annulation Stripe (cancel_at_period_end) si abonnement actif
         let stripeResult: { ok: boolean; error?: string; subId?: string } = { ok: true };
         if (profile.stripe_subscription_id && stripeKey) {
           try {
@@ -203,7 +237,7 @@ Deno.serve(async (req) => {
           }
         }
 
-        // 3. Désactivation des sessions Auth (ban "permanent" 100 ans)
+        // 5. Désactivation des sessions Auth (ban "permanent" 100 ans)
         const { error: banError } = await adminClient.auth.admin.updateUserById(userId, {
           ban_duration: "876000h",
         });
@@ -215,7 +249,7 @@ Deno.serve(async (req) => {
           });
         }
 
-        // 4. Marquer deleted_at sur profile + désactiver
+        // 6. Marquer deleted_at sur profile + désactiver
         const { error: profileError } = await adminClient
           .from("profiles")
           .update({ deleted_at: new Date().toISOString(), is_active: false } as any)
@@ -228,7 +262,7 @@ Deno.serve(async (req) => {
           });
         }
 
-        // 5. Si membre d'organisation : libérer la licence
+        // 7. Si membre d'organisation : libérer la licence
         await adminClient
           .from("organization_members")
           .update({ removed_at: new Date().toISOString() } as any)
@@ -297,6 +331,53 @@ Deno.serve(async (req) => {
         return new Response(JSON.stringify({ success: true }), {
           headers: { ...corsHeaders, "Content-Type": "application/json" },
         });
+      }
+
+      case "check_subscription_status": {
+        // Returns active subscription info for a user (used by admin UI before delete)
+        const { userId } = body;
+        if (!userId) {
+          return new Response(JSON.stringify({ error: "userId manquant" }), {
+            status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" },
+          });
+        }
+        const { data: prof } = await adminClient
+          .from("profiles")
+          .select("stripe_subscription_id, plan")
+          .eq("id", userId)
+          .maybeSingle();
+
+        const stripeKey = Deno.env.get("STRIPE_SECRET_KEY");
+        if (!prof?.stripe_subscription_id || !stripeKey) {
+          return new Response(JSON.stringify({ active: false }), {
+            headers: { ...corsHeaders, "Content-Type": "application/json" },
+          });
+        }
+        try {
+          const r = await fetch(
+            `https://api.stripe.com/v1/subscriptions/${prof.stripe_subscription_id}`,
+            { headers: { Authorization: `Bearer ${stripeKey}` } }
+          );
+          if (!r.ok) {
+            return new Response(JSON.stringify({ active: false }), {
+              headers: { ...corsHeaders, "Content-Type": "application/json" },
+            });
+          }
+          const sub = await r.json();
+          const active = sub.status === "active" || sub.status === "trialing";
+          return new Response(JSON.stringify({
+            active,
+            status: sub.status,
+            plan: prof.plan,
+            current_period_end: sub.current_period_end ? new Date(sub.current_period_end * 1000).toISOString() : null,
+            cancel_at_period_end: !!sub.cancel_at_period_end,
+          }), { headers: { ...corsHeaders, "Content-Type": "application/json" } });
+        } catch (e) {
+          console.error("[check_subscription_status] error:", e);
+          return new Response(JSON.stringify({ active: false, error: String(e) }), {
+            headers: { ...corsHeaders, "Content-Type": "application/json" },
+          });
+        }
       }
 
       default:
