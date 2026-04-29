@@ -169,17 +169,37 @@ const AdminUsers = () => {
   const [deleteConfirm, setDeleteConfirm] = useState('');
   const [deleting, setDeleting] = useState(false);
 
+  // Restore
+  const [restoringId, setRestoringId] = useState<string | null>(null);
+
   // ─── Fetch ───
   const fetchData = useCallback(async () => {
     if (!user) return;
     setLoading(true);
-    const [uRes, pRes, rRes, mRes] = await Promise.all([
-      supabase.from('profiles').select('id, prenom, nom, email, plan, role, created_at, is_active, date_paiement, metier_id').order('created_at', { ascending: false }),
+    const [uRes, pRes, rRes, mRes, metaRes] = await Promise.all([
+      supabase.from('profiles').select('id, prenom, nom, email, plan, role, created_at, is_active, date_paiement, metier_id, deleted_at').order('created_at', { ascending: false }),
       supabase.from('progressions').select('id, user_id, module_id, step, completion_date'),
       supabase.from('resultat_quiz').select('id, user_id, module_id, pourcentage, score, score_max, date_quiz'),
       supabase.from('modules').select('id, titre, total_step').order('order', { ascending: true }),
+      supabase.functions.invoke('admin-users', { body: { action: 'list_users_meta' } }),
     ]);
-    setUsers(uRes.data as UserRow[] ?? []);
+
+    const metaMap = new Map<string, { email_confirmed_at: string | null; last_sign_in_at: string | null }>();
+    const metaUsers = (metaRes.data as any)?.users as Array<any> | undefined;
+    if (metaUsers) {
+      metaUsers.forEach((u) => metaMap.set(u.id, {
+        email_confirmed_at: u.email_confirmed_at,
+        last_sign_in_at: u.last_sign_in_at,
+      }));
+    }
+
+    const enriched = (uRes.data as UserRow[] ?? []).map((u) => ({
+      ...u,
+      email_confirmed_at: metaMap.get(u.id)?.email_confirmed_at ?? null,
+      last_sign_in_at: metaMap.get(u.id)?.last_sign_in_at ?? null,
+    }));
+
+    setUsers(enriched);
     setProgressions(pRes.data ?? []);
     setResults(rRes.data ?? []);
     setModules(mRes.data ?? []);
