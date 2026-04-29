@@ -168,6 +168,9 @@ const AdminUsers = () => {
   const [deleteUser, setDeleteUser] = useState<UserRow | null>(null);
   const [deleteConfirm, setDeleteConfirm] = useState('');
   const [deleting, setDeleting] = useState(false);
+  const [deleteSubInfo, setDeleteSubInfo] = useState<{ active: boolean; current_period_end?: string | null; plan?: string | null } | null>(null);
+  const [checkingDeleteSub, setCheckingDeleteSub] = useState(false);
+  const [adminSubWarnUser, setAdminSubWarnUser] = useState<UserRow | null>(null);
 
   // Restore
   const [restoringId, setRestoringId] = useState<string | null>(null);
