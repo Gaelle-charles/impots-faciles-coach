@@ -1,4 +1,4 @@
-import { useNavigate } from 'react-router-dom';
+// no router import needed
 import {
   Dialog,
   DialogContent,
@@ -7,7 +7,7 @@ import {
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Eye, FileWarning, Pencil, X } from 'lucide-react';
+import { Eye, FileWarning, X } from 'lucide-react';
 import { FicheSections, type FicheSectionsContent } from '@/components/fiches/FicheSections';
 
 export type FicheType = 'profil' | 'metier' | 'pays';
@@ -62,19 +62,12 @@ export function FichePreviewDialog({
   ficheType,
   ficheData,
 }: FichePreviewDialogProps) {
-  const navigate = useNavigate();
-
   if (!ficheData) return null;
 
   const isDraft = ficheData.is_active === false;
   const hasContent =
     hasSectionContent(ficheData.contenu_sections) ||
     Boolean(ficheData.description && ficheData.description.trim().length > 0);
-
-  const handleEdit = () => {
-    onOpenChange(false);
-    navigate(TYPE_ADMIN_ROUTE[ficheType]);
-  };
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -134,11 +127,7 @@ export function FichePreviewDialog({
           )}
         </div>
 
-        <div className="px-6 py-4 border-t border-border flex flex-col-reverse sm:flex-row sm:justify-end gap-2 bg-background">
-          <Button variant="outline" onClick={handleEdit} className="gap-1.5">
-            <Pencil className="h-4 w-4" />
-            Modifier la fiche
-          </Button>
+        <div className="px-6 py-4 border-t border-border flex justify-end gap-2 bg-background">
           <Button onClick={() => onOpenChange(false)} className="gap-1.5">
             <X className="h-4 w-4" />
             Fermer
