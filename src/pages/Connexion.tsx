@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import logo from '@/assets/logo.png';
 import { lovable } from '@/integrations/lovable/index';
-import { getPostLoginRedirect } from '@/lib/auth-redirect';
+import { getPostLoginRedirect, getEmailRedirectOrigin } from '@/lib/auth-redirect';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useNavigate, Link } from 'react-router-dom';
@@ -28,7 +28,7 @@ const Connexion = () => {
       const { data, error } = await supabase.auth.signUp({
         email,
         password,
-        options: { emailRedirectTo: `${window.location.origin}/auth/callback` },
+        options: { emailRedirectTo: `${getEmailRedirectOrigin()}/auth/callback` },
       });
       if (error) {
         setError(error.message);
@@ -58,7 +58,7 @@ const Connexion = () => {
     }
     setLoading(true);
     const { error } = await supabase.auth.resetPasswordForEmail(email, {
-      redirectTo: `${window.location.origin}/reset-password`,
+      redirectTo: `${getEmailRedirectOrigin()}/auth/callback`,
     });
     if (error) setError(error.message);
     else setMessage('Un email de réinitialisation a été envoyé.');

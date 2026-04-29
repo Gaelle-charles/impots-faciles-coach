@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import logo from '@/assets/logo.png';
 import { lovable } from '@/integrations/lovable/index';
+import { getEmailRedirectOrigin } from '@/lib/auth-redirect';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useNavigate, Link } from 'react-router-dom';
@@ -50,7 +51,7 @@ const Inscription = () => {
       password,
       options: {
         data: { prenom: prenom.trim(), nom: nom.trim() },
-        emailRedirectTo: `${window.location.origin}/auth/callback`,
+        emailRedirectTo: `${getEmailRedirectOrigin()}/auth/callback`,
       },
     });
 
