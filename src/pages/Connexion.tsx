@@ -15,14 +15,14 @@ const Connexion = () => {
   const [isSignUp, setIsSignUp] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-  const [message, setMessage] = useState('');
+  
   const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setError('');
-    setMessage('');
+    
 
     if (isSignUp) {
       const { data, error } = await supabase.auth.signUp({
@@ -112,7 +112,7 @@ const Connexion = () => {
           </div>
 
           {error && <p className="text-sm text-destructive">{error}</p>}
-          {message && <p className="text-sm text-accent">{message}</p>}
+          
 
           <Button type="submit" variant="cta" className="w-full" disabled={loading}>
             {loading ? 'Chargement...' : isSignUp ? 'Créer mon compte' : 'Se connecter'}
