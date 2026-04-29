@@ -15,14 +15,14 @@ const Connexion = () => {
   const [isSignUp, setIsSignUp] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-  const [message, setMessage] = useState('');
+  
   const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setError('');
-    setMessage('');
+    
 
     if (isSignUp) {
       const { data, error } = await supabase.auth.signUp({
@@ -51,19 +51,6 @@ const Connexion = () => {
     setLoading(false);
   };
 
-  const handleForgotPassword = async () => {
-    if (!email) {
-      setError('Entrez votre email d\'abord.');
-      return;
-    }
-    setLoading(true);
-    const { error } = await supabase.auth.resetPasswordForEmail(email, {
-      redirectTo: `${getEmailRedirectOrigin()}/auth/callback`,
-    });
-    if (error) setError(error.message);
-    else setMessage('Un email de réinitialisation a été envoyé.');
-    setLoading(false);
-  };
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-secondary px-4">
@@ -125,7 +112,7 @@ const Connexion = () => {
           </div>
 
           {error && <p className="text-sm text-destructive">{error}</p>}
-          {message && <p className="text-sm text-accent">{message}</p>}
+          
 
           <Button type="submit" variant="cta" className="w-full" disabled={loading}>
             {loading ? 'Chargement...' : isSignUp ? 'Créer mon compte' : 'Se connecter'}
@@ -167,12 +154,12 @@ const Connexion = () => {
 
         <div className="mt-4 flex flex-col gap-2 text-center text-sm">
           {!isSignUp && (
-            <button
-              onClick={handleForgotPassword}
+            <Link
+              to="/mot-de-passe-oublie"
               className="text-accent hover:underline"
             >
-              Mot de passe oublié ?
-            </button>
+              Mot de passe oublié&nbsp;?
+            </Link>
           )}
           <Link
             to="/inscription"

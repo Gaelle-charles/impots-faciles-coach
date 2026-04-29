@@ -15,6 +15,7 @@ import Inscription from "./pages/Inscription";
 import Onboarding from "./pages/Onboarding";
 import VerifierEmail from "./pages/VerifierEmail";
 import ResetPassword from "./pages/ResetPassword";
+import MotDePasseOublie from "./pages/MotDePasseOublie";
 import Tarifs from "./pages/Tarifs";
 import Dashboard from "./pages/Dashboard";
 import Module from "./pages/Module";
@@ -83,6 +84,7 @@ const App = () => (
             <Route path="/inscription" element={<RedirectIfAuth><Inscription /></RedirectIfAuth>} />
             <Route path="/verifier-email" element={<VerifierEmail />} />
             <Route path="/reset-password" element={<ResetPassword />} />
+            <Route path="/mot-de-passe-oublie" element={<MotDePasseOublie />} />
             <Route path="/tarifs" element={<Tarifs />} />
             <Route path="/comment-ca-marche" element={<CommentCaMarche />} />
             <Route path="/paiement-succes" element={<PaiementSucces />} />
