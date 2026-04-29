@@ -12,6 +12,7 @@ import {
   BookOpen,
   Calculator,
   BarChart3,
+  Heart,
   Eye,
   ArrowLeft,
   LogOut,
@@ -49,6 +50,7 @@ export function TeamSidebar({
     { to: '/mes-modules', label: 'Mes modules', icon: BookOpen },
     { to: '/mes-simulateurs', label: 'Mes simulateurs', icon: Calculator },
     { to: '/dashboard', label: 'Mes progressions', icon: BarChart3 },
+    { to: '/recommandations', label: 'Recommandations', icon: Heart },
   ];
 
   return (
