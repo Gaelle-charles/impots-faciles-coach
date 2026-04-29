@@ -1,4 +1,4 @@
-import { useNavigate } from 'react-router-dom';
+// no router import needed
 import {
   Dialog,
   DialogContent,
