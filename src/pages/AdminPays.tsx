@@ -447,6 +447,13 @@ const AdminPays = () => {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      <FichePreviewDialog
+        open={!!previewRow}
+        onOpenChange={(v) => !v && setPreviewRow(null)}
+        ficheType="pays"
+        ficheData={previewRow}
+      />
     </div>
   );
 };
