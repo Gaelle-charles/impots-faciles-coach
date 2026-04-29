@@ -1009,6 +1009,46 @@ const AdminUsers = () => {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      {/* ─── Admin: Active subscription warning ─── */}
+      <Dialog open={!!adminSubWarnUser} onOpenChange={(o) => { if (!o) setAdminSubWarnUser(null); }}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle className="font-heading">⚠️ Cet utilisateur a un abonnement actif</DialogTitle>
+          </DialogHeader>
+          <DialogDescription className="space-y-3 text-sm">
+            <p>
+              <strong>{adminSubWarnUser?.email}</strong> a un abonnement{' '}
+              <strong>{deleteSubInfo?.plan ?? adminSubWarnUser?.plan}</strong> actif jusqu'au{' '}
+              <strong>
+                {deleteSubInfo?.current_period_end
+                  ? new Date(deleteSubInfo.current_period_end).toLocaleDateString('fr-FR', { day: '2-digit', month: 'long', year: 'numeric' })
+                  : '—'}
+              </strong>.
+            </p>
+            <p>Si vous supprimez son compte maintenant :</p>
+            <ul className="list-disc pl-5 space-y-1">
+              <li>Il perdra l'accès immédiatement</li>
+              <li>Son abonnement sera annulé chez Stripe</li>
+              <li>Aucun remboursement automatique ne sera effectué</li>
+            </ul>
+            <p>Considérez contacter l'utilisateur avant cette action si elle n'est pas demandée par lui-même.</p>
+          </DialogDescription>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setAdminSubWarnUser(null)}>Annuler</Button>
+            <Button
+              variant="destructive"
+              onClick={() => {
+                const u = adminSubWarnUser;
+                setAdminSubWarnUser(null);
+                if (u) { setDeleteUser(u); setDeleteConfirm(''); }
+              }}
+            >
+              Confirmer la suppression
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
