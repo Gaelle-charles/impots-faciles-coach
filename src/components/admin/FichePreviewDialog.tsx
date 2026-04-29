@@ -7,7 +7,7 @@ import {
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Eye, FileWarning, Pencil, X } from 'lucide-react';
+import { Eye, FileWarning, X } from 'lucide-react';
 import { FicheSections, type FicheSectionsContent } from '@/components/fiches/FicheSections';
 
 export type FicheType = 'profil' | 'metier' | 'pays';
