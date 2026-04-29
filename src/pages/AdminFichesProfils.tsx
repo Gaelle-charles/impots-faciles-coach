@@ -407,6 +407,13 @@ const AdminFichesProfils = () => {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      <FichePreviewDialog
+        open={!!previewRow}
+        onOpenChange={(v) => !v && setPreviewRow(null)}
+        ficheType="profil"
+        ficheData={previewRow}
+      />
     </div>
   );
 };
