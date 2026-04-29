@@ -381,7 +381,7 @@ const AdminUsers = () => {
     setSaving(false);
   };
 
-  // ─── Delete User ───
+  // ─── Soft-Delete User ───
   const handleDelete = async () => {
     if (!deleteUser) return;
     setDeleting(true);
@@ -391,12 +391,30 @@ const AdminUsers = () => {
     if (error || data?.error) {
       toast({ title: 'Erreur', description: data?.error || error?.message, variant: 'destructive' });
     } else {
-      toast({ title: 'Utilisateur supprimé' });
+      const stripeNote = data?.stripe?.subId
+        ? ` Abonnement Stripe annulé en fin de période.`
+        : (data?.stripe?.error ? ' ⚠ Annulation Stripe a échoué (voir logs).' : '');
+      toast({ title: 'Compte supprimé', description: `Le compte a été marqué comme supprimé et l'accès bloqué.${stripeNote}` });
       setDeleteUser(null);
       setDeleteConfirm('');
       fetchData();
     }
     setDeleting(false);
+  };
+
+  // ─── Restore User ───
+  const handleRestore = async (u: UserRow) => {
+    setRestoringId(u.id);
+    const { data, error } = await supabase.functions.invoke('admin-users', {
+      body: { action: 'restore_user', userId: u.id },
+    });
+    if (error || data?.error) {
+      toast({ title: 'Erreur', description: data?.error || error?.message, variant: 'destructive' });
+    } else {
+      toast({ title: 'Compte restauré ✓', description: 'L\'utilisateur peut à nouveau se connecter (plan « nouveau »).' });
+      fetchData();
+    }
+    setRestoringId(null);
   };
 
   // ─── Reset Password ───
