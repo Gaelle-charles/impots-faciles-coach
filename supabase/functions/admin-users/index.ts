@@ -333,7 +333,54 @@ Deno.serve(async (req) => {
         });
       }
 
-      default:
+      case "check_subscription_status": {
+        // Returns active subscription info for a user (used by admin UI before delete)
+        const { userId } = body;
+        if (!userId) {
+          return new Response(JSON.stringify({ error: "userId manquant" }), {
+            status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" },
+          });
+        }
+        const { data: prof } = await adminClient
+          .from("profiles")
+          .select("stripe_subscription_id, plan")
+          .eq("id", userId)
+          .maybeSingle();
+
+        const stripeKey = Deno.env.get("STRIPE_SECRET_KEY");
+        if (!prof?.stripe_subscription_id || !stripeKey) {
+          return new Response(JSON.stringify({ active: false }), {
+            headers: { ...corsHeaders, "Content-Type": "application/json" },
+          });
+        }
+        try {
+          const r = await fetch(
+            `https://api.stripe.com/v1/subscriptions/${prof.stripe_subscription_id}`,
+            { headers: { Authorization: `Bearer ${stripeKey}` } }
+          );
+          if (!r.ok) {
+            return new Response(JSON.stringify({ active: false }), {
+              headers: { ...corsHeaders, "Content-Type": "application/json" },
+            });
+          }
+          const sub = await r.json();
+          const active = sub.status === "active" || sub.status === "trialing";
+          return new Response(JSON.stringify({
+            active,
+            status: sub.status,
+            plan: prof.plan,
+            current_period_end: sub.current_period_end ? new Date(sub.current_period_end * 1000).toISOString() : null,
+            cancel_at_period_end: !!sub.cancel_at_period_end,
+          }), { headers: { ...corsHeaders, "Content-Type": "application/json" } });
+        } catch (e) {
+          console.error("[check_subscription_status] error:", e);
+          return new Response(JSON.stringify({ active: false, error: String(e) }), {
+            headers: { ...corsHeaders, "Content-Type": "application/json" },
+          });
+        }
+      }
+
+
         return new Response(JSON.stringify({ error: "Action inconnue" }), {
           status: 400,
           headers: { ...corsHeaders, "Content-Type": "application/json" },
