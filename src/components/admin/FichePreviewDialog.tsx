@@ -134,11 +134,7 @@ export function FichePreviewDialog({
           )}
         </div>
 
-        <div className="px-6 py-4 border-t border-border flex flex-col-reverse sm:flex-row sm:justify-end gap-2 bg-background">
-          <Button variant="outline" onClick={handleEdit} className="gap-1.5">
-            <Pencil className="h-4 w-4" />
-            Modifier la fiche
-          </Button>
+        <div className="px-6 py-4 border-t border-border flex justify-end gap-2 bg-background">
           <Button onClick={() => onOpenChange(false)} className="gap-1.5">
             <X className="h-4 w-4" />
             Fermer
