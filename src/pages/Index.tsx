@@ -34,6 +34,10 @@ const faqItems = [
     question: 'La plateforme est-elle gratuite ?',
     answer: "Impôts Facile propose une formule Découverte gratuite avec accès à un module, un quizz et un simulateur basique. Des formules payantes donnent accès à l'ensemble des contenus.",
   },
+  {
+    question: 'Comment télécharger mes factures ?',
+    answer: "Vos factures sont envoyées automatiquement par email à chaque paiement (depuis info@stripe.com ou contact@impotsfacile.com). Vous pouvez également les consulter à tout moment depuis votre espace personnel : 1) Connectez-vous à impotsfacile.com, 2) Cliquez sur « Mon abonnement » dans le menu, 3) Cliquez sur « Voir mes factures », 4) Téléchargez le PDF de la facture souhaitée. Si vous ne trouvez pas une facture, contactez-nous à contact@impotsfacile.com en précisant la date de paiement concernée.",
+  },
 ];
 
 const features = [
