@@ -394,6 +394,9 @@ const Dashboard = () => {
                   Bravo, tu as validé l'intégralité du parcours ({certificat.nb_modules_valides} modules).
                   N° <span className="font-mono">{certificat.numero}</span>
                 </p>
+                <p className="text-xs text-muted-foreground italic mt-1">
+                  💎 Module 8 disponible en bonus pour découvrir nos fiches Premium.
+                </p>
               </div>
               <Button
                 onClick={() => downloadCertificatPdf(certificat)}
