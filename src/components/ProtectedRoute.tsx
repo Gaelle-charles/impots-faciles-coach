@@ -14,6 +14,7 @@ export function ProtectedRoute({ children, adminOnly = false }: { children: Reac
   const [onboardingLoading, setOnboardingLoading] = useState(true);
   const [isOrgAdmin, setIsOrgAdmin] = useState<boolean | null>(null);
   const [orgLoading, setOrgLoading] = useState(true);
+  const [profileMissing, setProfileMissing] = useState(false);
 
   useEffect(() => {
     if (!user) {
@@ -28,9 +29,18 @@ export function ProtectedRoute({ children, adminOnly = false }: { children: Reac
           .from('profiles')
           .select('role, onboarding_done')
           .eq('id', user.id)
-          .single(),
+          .maybeSingle(),
         supabase.rpc('get_user_organization', { p_user_id: user.id }),
       ]);
+
+      // Profile missing => account was deleted server-side. Sign out + go home.
+      if (!profile) {
+        setProfileMissing(true);
+        setOnboardingLoading(false);
+        setOrgLoading(false);
+        try { await supabase.auth.signOut(); } catch { /* noop */ }
+        return;
+      }
 
       if (adminOnly) {
         setRole(profile?.role ?? 'client');
@@ -46,6 +56,10 @@ export function ProtectedRoute({ children, adminOnly = false }: { children: Reac
 
     fetchAll();
   }, [user, adminOnly]);
+
+  if (profileMissing) {
+    return <Navigate to="/" replace />;
+  }
 
   if (loading || (adminOnly && roleLoading) || onboardingLoading || orgLoading) {
     return (
