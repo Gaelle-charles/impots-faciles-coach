@@ -30,6 +30,8 @@ import FicheMetier from "./pages/FicheMetier";
 import Fiche from "./pages/Fiche";
 import Profil from "./pages/Profil";
 import MesModules from "./pages/MesModules";
+import Recommandations from "./pages/Recommandations";
+import AdminRecommandations from "./pages/AdminRecommandations";
 import Admin from "./pages/Admin";
 import AdminLogin from "./pages/AdminLogin";
 import AdminUsers from "./pages/AdminUsers";
@@ -122,6 +124,7 @@ const App = () => (
               <Route path="/fiches/:type/:slug" element={<Fiche />} />
               <Route path="/profil" element={<Profil />} />
               <Route path="/mes-modules" element={<MesModules />} />
+              <Route path="/recommandations" element={<Recommandations />} />
             </Route>
 
             {/* Module has its own layout */}
@@ -146,6 +149,7 @@ const App = () => (
               <Route path="/admin/subscriptions" element={<AdminSubscriptions />} />
               <Route path="/admin/emails" element={<AdminEmails />} />
               <Route path="/admin/settings" element={<AdminSettings />} />
+              <Route path="/admin/recommandations" element={<AdminRecommandations />} />
             </Route>
 
             {/* Quizz has its own layout */}
