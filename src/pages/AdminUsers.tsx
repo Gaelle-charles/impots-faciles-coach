@@ -503,6 +503,36 @@ const AdminUsers = () => {
         </div>
       </div>
 
+      {/* Status Pills */}
+      <div className="flex flex-wrap gap-2">
+        {([
+          { key: 'tous', label: 'Tous', count: statusCounts.tous, icon: Users },
+          { key: 'pending', label: 'En attente de confirmation', count: statusCounts.pending, icon: MailWarning },
+          { key: 'deleted', label: 'Supprimés', count: statusCounts.deleted, icon: Trash2 },
+        ] as const).map((p) => {
+          const Icon = p.icon;
+          const active = statusFilter === p.key;
+          return (
+            <button
+              key={p.key}
+              type="button"
+              onClick={() => setStatusFilter(p.key as StatusFilter)}
+              className={`inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-xs font-medium border transition-colors ${
+                active
+                  ? 'bg-primary text-primary-foreground border-primary'
+                  : 'bg-background text-foreground border-border hover:bg-muted'
+              }`}
+            >
+              <Icon className="h-3.5 w-3.5" />
+              {p.label}
+              <span className={`ml-1 rounded-full px-1.5 text-[10px] ${active ? 'bg-primary-foreground/20' : 'bg-muted'}`}>
+                {p.count}
+              </span>
+            </button>
+          );
+        })}
+      </div>
+
       {/* Filters */}
       <div className="flex flex-col sm:flex-row gap-3">
         <div className="relative flex-1">
@@ -531,6 +561,7 @@ const AdminUsers = () => {
               <TableHead className="hidden md:table-cell">Email</TableHead>
               <TableHead>Plan</TableHead>
               <TableHead className="hidden lg:table-cell">Inscrit le</TableHead>
+              <TableHead className="hidden lg:table-cell">Dernière connexion</TableHead>
               <TableHead className="text-center">Modules</TableHead>
               <TableHead className="text-center hidden sm:table-cell">Score</TableHead>
               <TableHead className="w-10" />
@@ -540,17 +571,31 @@ const AdminUsers = () => {
             {paginated.map((u) => {
               const completed = userCompletedMap.get(u.id) ?? 0;
               const avg = userAvgScoreMap.get(u.id);
+              const isDeleted = !!u.deleted_at;
+              const isPending = !u.email_confirmed_at && !isDeleted;
               return (
-                <TableRow key={u.id} className={!u.is_active ? 'opacity-50' : ''}>
+                <TableRow key={u.id} className={isDeleted ? 'opacity-60 bg-muted/30' : (!u.is_active ? 'opacity-50' : '')}>
                   <TableCell>
                     <div className={`flex h-8 w-8 items-center justify-center rounded-full text-xs font-bold ${initialsColor(u.id)}`}>
                       {getInitials(u.prenom, u.nom)}
                     </div>
                   </TableCell>
                   <TableCell className="font-medium text-sm">
-                    {u.prenom ?? ''} {u.nom ?? ''}
-                    {!u.is_active && <Badge className="ml-2 bg-destructive/10 text-destructive text-[10px]">Suspendu</Badge>}
-                    {u.role === 'admin' && <Badge className="ml-2 text-[10px]" style={{ backgroundColor: 'hsl(0 67% 35%)', color: 'white' }}>Admin</Badge>}
+                    <div className="flex flex-wrap items-center gap-1">
+                      <span>{u.prenom ?? ''} {u.nom ?? ''}</span>
+                      {isDeleted && (
+                        <Badge className="bg-destructive/15 text-destructive text-[10px]">
+                          Supprimé le {new Date(u.deleted_at!).toLocaleDateString('fr-FR')}
+                        </Badge>
+                      )}
+                      {isPending && (
+                        <Badge className="bg-amber-100 text-amber-800 dark:bg-amber-900/40 dark:text-amber-200 text-[10px]">
+                          Email non confirmé
+                        </Badge>
+                      )}
+                      {!u.is_active && !isDeleted && <Badge className="bg-destructive/10 text-destructive text-[10px]">Suspendu</Badge>}
+                      {u.role === 'admin' && <Badge className="text-[10px]" style={{ backgroundColor: 'hsl(0 67% 35%)', color: 'white' }}>Admin</Badge>}
+                    </div>
                   </TableCell>
                   <TableCell className="hidden md:table-cell text-sm text-muted-foreground truncate max-w-[200px]">{u.email ?? '—'}</TableCell>
                   <TableCell>
@@ -558,6 +603,12 @@ const AdminUsers = () => {
                   </TableCell>
                   <TableCell className="hidden lg:table-cell text-sm text-muted-foreground">
                     {new Date(u.created_at).toLocaleDateString('fr-FR')}
+                  </TableCell>
+                  <TableCell
+                    className="hidden lg:table-cell text-sm text-muted-foreground"
+                    title={u.last_sign_in_at ? new Date(u.last_sign_in_at).toLocaleString('fr-FR') : 'Jamais connecté'}
+                  >
+                    {formatRelativeDate(u.last_sign_in_at)}
                   </TableCell>
                   <TableCell className="text-center text-sm font-medium">{completed}/{modules.length}</TableCell>
                   <TableCell className="text-center text-sm font-medium hidden sm:table-cell">{avg != null ? `${avg}%` : '—'}</TableCell>
@@ -569,19 +620,31 @@ const AdminUsers = () => {
                         </Button>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end">
-                        <DropdownMenuItem onClick={() => openEdit(u)}>
-                          <Pencil className="h-3.5 w-3.5 mr-2" /> Modifier le profil
-                        </DropdownMenuItem>
-                        <DropdownMenuItem onClick={() => handleResetPassword(u)}>
-                          <KeyRound className="h-3.5 w-3.5 mr-2" /> Envoyer un lien de réinitialisation
-                        </DropdownMenuItem>
-                        <DropdownMenuSeparator />
-                        <DropdownMenuItem
-                          className="text-destructive"
-                          onClick={() => { setDeleteUser(u); setDeleteConfirm(''); }}
-                        >
-                          <Trash2 className="h-3.5 w-3.5 mr-2" /> Supprimer le compte
-                        </DropdownMenuItem>
+                        {isDeleted ? (
+                          <DropdownMenuItem
+                            onClick={() => handleRestore(u)}
+                            disabled={restoringId === u.id}
+                          >
+                            <RotateCcw className="h-3.5 w-3.5 mr-2" />
+                            {restoringId === u.id ? 'Restauration…' : 'Restaurer le compte'}
+                          </DropdownMenuItem>
+                        ) : (
+                          <>
+                            <DropdownMenuItem onClick={() => openEdit(u)}>
+                              <Pencil className="h-3.5 w-3.5 mr-2" /> Modifier le profil
+                            </DropdownMenuItem>
+                            <DropdownMenuItem onClick={() => handleResetPassword(u)}>
+                              <KeyRound className="h-3.5 w-3.5 mr-2" /> Envoyer un lien de réinitialisation
+                            </DropdownMenuItem>
+                            <DropdownMenuSeparator />
+                            <DropdownMenuItem
+                              className="text-destructive"
+                              onClick={() => { setDeleteUser(u); setDeleteConfirm(''); }}
+                            >
+                              <Trash2 className="h-3.5 w-3.5 mr-2" /> Supprimer le compte
+                            </DropdownMenuItem>
+                          </>
+                        )}
                       </DropdownMenuContent>
                     </DropdownMenu>
                   </TableCell>
@@ -590,7 +653,7 @@ const AdminUsers = () => {
             })}
             {paginated.length === 0 && (
               <TableRow>
-                <TableCell colSpan={8} className="text-center text-muted-foreground py-10">Aucun utilisateur trouvé.</TableCell>
+                <TableCell colSpan={9} className="text-center text-muted-foreground py-10">Aucun utilisateur trouvé.</TableCell>
               </TableRow>
             )}
           </TableBody>
