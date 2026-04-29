@@ -380,7 +380,7 @@ Deno.serve(async (req) => {
         }
       }
 
-
+      default:
         return new Response(JSON.stringify({ error: "Action inconnue" }), {
           status: 400,
           headers: { ...corsHeaders, "Content-Type": "application/json" },
