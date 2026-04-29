@@ -496,6 +496,7 @@ export type Database = {
           aidant_familial: boolean | null
           created_at: string
           date_paiement: string | null
+          deleted_at: string | null
           email: string | null
           forme_juridique: string | null
           id: string
@@ -539,6 +540,7 @@ export type Database = {
           aidant_familial?: boolean | null
           created_at?: string
           date_paiement?: string | null
+          deleted_at?: string | null
           email?: string | null
           forme_juridique?: string | null
           id: string
@@ -582,6 +584,7 @@ export type Database = {
           aidant_familial?: boolean | null
           created_at?: string
           date_paiement?: string | null
+          deleted_at?: string | null
           email?: string | null
           forme_juridique?: string | null
           id?: string
