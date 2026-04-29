@@ -409,6 +409,34 @@ const Dashboard = () => {
         </section>
       )}
 
+      {/* Bonus Module 8 — affiché uniquement si certificat obtenu */}
+      {certificat && (
+        <section id="bonus-module-8">
+          <Card className="border-2 border-primary/30 bg-gradient-to-br from-purple-50 to-pink-50 dark:from-purple-950/20 dark:to-pink-950/10 shadow-sm overflow-hidden">
+            <CardContent className="p-6 sm:p-8 flex flex-col sm:flex-row items-start sm:items-center gap-5">
+              <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary">
+                <Sparkles className="h-7 w-7" />
+              </div>
+              <div className="flex-1 space-y-1">
+                <Badge className="bg-primary text-primary-foreground">✨ Bonus disponible</Badge>
+                <h3 className="font-heading text-xl font-bold text-foreground">
+                  Bonus disponible
+                </h3>
+                <p className="text-sm text-muted-foreground">
+                  Vous avez obtenu votre certificat ! Le Module 8 « Profils de contribuables et stratégies personnalisées » reste accessible pour découvrir nos fiches profils et stratégies personnalisées.
+                </p>
+              </div>
+              <Button
+                onClick={() => navigate('/module/module-8-profils-de-contribuables-et-strategies-personnalisees')}
+                className="gap-2 shrink-0"
+              >
+                <Sparkles className="h-4 w-4" /> Découvrir le Module 8
+              </Button>
+            </CardContent>
+          </Card>
+        </section>
+      )}
+
       {/* Quiz results */}
       <section id="resultats">
         <h2 className="font-heading text-2xl font-bold text-foreground mb-5">Mes quiz</h2>
