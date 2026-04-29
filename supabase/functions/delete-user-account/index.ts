@@ -1,6 +1,7 @@
 import { createClient } from "npm:@supabase/supabase-js@2.95.0";
 import { corsHeaders } from "npm:@supabase/supabase-js@2.95.0/cors";
 import Stripe from "npm:stripe@17.5.0";
+import { sendDeletionConfirmationEmail } from "../_shared/deletion-email.ts";
 
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") {
@@ -38,23 +39,50 @@ Deno.serve(async (req) => {
       auth: { persistSession: false, autoRefreshToken: false },
     });
 
-    // Fetch stripe ids
+    // Fetch profile (including email/name for the confirmation email)
     const { data: profile } = await admin
       .from("profiles")
-      .select("stripe_subscription_id, stripe_customer_id")
+      .select("email, prenom, plan, stripe_subscription_id, stripe_customer_id")
       .eq("id", userId)
       .maybeSingle();
 
-    // Cancel Stripe subscription at period end (loi Chatel)
-    if (profile?.stripe_subscription_id) {
+    // Fetch active subscription details (for email body) BEFORE cancellation
+    let nextRenewalIso: string | null = null;
+    let hasActiveSub = false;
+    const stripeKey = Deno.env.get("STRIPE_SECRET_KEY");
+    if (profile?.stripe_subscription_id && stripeKey) {
       try {
-        const stripeKey = Deno.env.get("STRIPE_SECRET_KEY");
-        if (stripeKey) {
-          const stripe = new Stripe(stripeKey, { apiVersion: "2024-11-20.acacia" });
-          await stripe.subscriptions.update(profile.stripe_subscription_id, {
-            cancel_at_period_end: true,
-          });
+        const stripe = new Stripe(stripeKey, { apiVersion: "2024-11-20.acacia" });
+        const sub = await stripe.subscriptions.retrieve(profile.stripe_subscription_id);
+        hasActiveSub = sub.status === "active" || sub.status === "trialing";
+        if (sub.current_period_end) {
+          nextRenewalIso = new Date(sub.current_period_end * 1000).toISOString();
         }
+      } catch (e) {
+        console.error("Stripe retrieve error (non-blocking):", e);
+      }
+    }
+
+    // Send deletion confirmation email BEFORE destructive ops (best-effort)
+    const userEmail = profile?.email ?? userData.user.email ?? null;
+    if (userEmail) {
+      const emailResult = await sendDeletionConfirmationEmail({
+        email: userEmail,
+        prenom: profile?.prenom,
+        plan: profile?.plan,
+        hasActiveSubscription: hasActiveSub,
+        nextRenewalDate: nextRenewalIso,
+      });
+      console.log("[delete-user-account] deletion email:", emailResult);
+    }
+
+    // Cancel Stripe subscription at period end (loi Chatel)
+    if (profile?.stripe_subscription_id && stripeKey) {
+      try {
+        const stripe = new Stripe(stripeKey, { apiVersion: "2024-11-20.acacia" });
+        await stripe.subscriptions.update(profile.stripe_subscription_id, {
+          cancel_at_period_end: true,
+        });
       } catch (e) {
         console.error("Stripe cancel error (non-blocking):", e);
       }
