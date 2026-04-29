@@ -561,6 +561,50 @@ const Profil = () => {
           <p className="text-sm text-muted-foreground mb-4">
             La suppression de ton compte est définitive. Toutes tes données seront perdues.
           </p>
+          <Button variant="outline" className="border-destructive text-destructive hover:bg-destructive/10 gap-2" disabled={checkingSub} onClick={handleStartDelete}>
+            <Trash2 className="h-4 w-4" />
+            {checkingSub ? 'Vérification...' : 'Supprimer mon compte'}
+          </Button>
+          <Dialog open={subWarnOpen} onOpenChange={(o) => { if (!openingPortal) setSubWarnOpen(o); }}>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle className="font-heading">⚠️ Vous avez un abonnement actif</DialogTitle>
+              </DialogHeader>
+              <DialogDescription className="space-y-3 text-sm">
+                <p>
+                  Votre abonnement <strong>{plan.label}</strong> est actif jusqu'au{' '}
+                  <strong>
+                    {subInfo?.current_period_end
+                      ? new Date(subInfo.current_period_end).toLocaleDateString('fr-FR', { day: '2-digit', month: 'long', year: 'numeric' })
+                      : '—'}
+                  </strong>.
+                </p>
+                <p>Si vous supprimez votre compte maintenant :</p>
+                <ul className="list-disc pl-5 space-y-1">
+                  <li>Vous perdrez l'accès immédiatement</li>
+                  <li>Votre abonnement sera annulé (pas de remboursement automatique)</li>
+                  <li>Vous ne serez plus prélevé(e) au prochain renouvellement</li>
+                </ul>
+                <p>Que souhaitez-vous faire ?</p>
+              </DialogDescription>
+              <DialogFooter className="flex-col gap-2 sm:flex-col sm:space-x-0">
+                <Button variant="outline" onClick={() => setSubWarnOpen(false)} disabled={openingPortal}>
+                  Annuler la suppression
+                </Button>
+                <Button variant="outline" onClick={handleOpenPortalForCancel} disabled={openingPortal}>
+                  {openingPortal ? 'Ouverture...' : `Résilier d'abord mon abonnement (garder l'accès jusqu'au ${subInfo?.current_period_end ? new Date(subInfo.current_period_end).toLocaleDateString('fr-FR') : '...'})`}
+                </Button>
+                <Button variant="destructive" onClick={() => { setSubWarnOpen(false); setDeleteOpen(true); }} disabled={openingPortal}>
+                  Supprimer immédiatement (perte d'accès maintenant)
+                </Button>
+              </DialogFooter>
+              <p className="text-xs text-muted-foreground mt-2">
+                Pour un remboursement exceptionnel au prorata, contactez-nous à contact@impotsfacile.com
+              </p>
+            </DialogContent>
+          </Dialog>
+          {/* keep original empty Button placeholder removed */}
+          <span className="hidden">
           <Button variant="outline" className="border-destructive text-destructive hover:bg-destructive/10 gap-2" onClick={() => setDeleteOpen(true)}>
             <Trash2 className="h-4 w-4" />
             Supprimer mon compte
