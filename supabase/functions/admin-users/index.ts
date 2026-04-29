@@ -173,8 +173,41 @@ Deno.serve(async (req) => {
           });
         }
 
-        // 2. Annulation Stripe (cancel_at_period_end) si abonnement actif
+        // 2. Récupérer les infos de l'abonnement Stripe AVANT toute opération destructive
         const stripeKey = Deno.env.get("STRIPE_SECRET_KEY");
+        let nextRenewalIso: string | null = null;
+        let hasActiveSub = false;
+        if (profile.stripe_subscription_id && stripeKey) {
+          try {
+            const r = await fetch(
+              `https://api.stripe.com/v1/subscriptions/${profile.stripe_subscription_id}`,
+              { headers: { Authorization: `Bearer ${stripeKey}` } }
+            );
+            if (r.ok) {
+              const sub = await r.json();
+              hasActiveSub = sub.status === "active" || sub.status === "trialing";
+              if (sub.current_period_end) {
+                nextRenewalIso = new Date(sub.current_period_end * 1000).toISOString();
+              }
+            }
+          } catch (e) {
+            console.error("[soft_delete] stripe fetch failed:", e);
+          }
+        }
+
+        // 3. Envoi email de confirmation RGPD AVANT le ban (best-effort)
+        if (profile.email) {
+          const emailResult = await sendDeletionConfirmationEmail({
+            email: profile.email,
+            prenom: profile.prenom,
+            plan: profile.plan,
+            hasActiveSubscription: hasActiveSub,
+            nextRenewalDate: nextRenewalIso,
+          });
+          console.log("[soft_delete] deletion email result:", emailResult);
+        }
+
+        // 4. Annulation Stripe (cancel_at_period_end) si abonnement actif
         let stripeResult: { ok: boolean; error?: string; subId?: string } = { ok: true };
         if (profile.stripe_subscription_id && stripeKey) {
           try {
@@ -204,7 +237,7 @@ Deno.serve(async (req) => {
           }
         }
 
-        // 3. Désactivation des sessions Auth (ban "permanent" 100 ans)
+        // 5. Désactivation des sessions Auth (ban "permanent" 100 ans)
         const { error: banError } = await adminClient.auth.admin.updateUserById(userId, {
           ban_duration: "876000h",
         });
@@ -216,7 +249,7 @@ Deno.serve(async (req) => {
           });
         }
 
-        // 4. Marquer deleted_at sur profile + désactiver
+        // 6. Marquer deleted_at sur profile + désactiver
         const { error: profileError } = await adminClient
           .from("profiles")
           .update({ deleted_at: new Date().toISOString(), is_active: false } as any)
@@ -229,7 +262,7 @@ Deno.serve(async (req) => {
           });
         }
 
-        // 5. Si membre d'organisation : libérer la licence
+        // 7. Si membre d'organisation : libérer la licence
         await adminClient
           .from("organization_members")
           .update({ removed_at: new Date().toISOString() } as any)
