@@ -439,13 +439,21 @@ En cas de litige, le Client est invité à contacter en premier lieu le service 
 
 ### 13.2 Médiation de la consommation
 
-Conformément à l'article L.612-1 du Code de la consommation, ANNUL IMPOTS s'engage à recourir à un médiateur de la consommation agréé par la CECMC en cas de litige avec un consommateur. La désignation du médiateur sera communiquée dans les meilleurs délais et au plus tard sous 30 jours à compter de la mise en service du site.
+Conformément aux articles L.616-1 et R.616-1 du Code de la consommation, en cas d'échec de la réclamation préalable auprès du service client, le Client consommateur peut recourir gratuitement au médiateur de la consommation désigné par ANNUL IMPOTS :
+
+**SAS MÉDIATION SOLUTION**
+222 chemin de la Bergerie — 01800 Saint Jean de Niost
+Site : <https://sasmediationsolution-conso.fr>
+Email : `contact@sasmediationsolution-conso.fr`
+Téléphone : 04 82 53 93 06
+
+SAS Médiation Solution est agréée par la Commission d'Évaluation et de Contrôle de la Médiation de la Consommation (CECMC) depuis le 14 décembre 2018 et figure sur la liste officielle des médiateurs notifiés à la Commission européenne.
 
 Préalablement à toute saisine du médiateur, le consommateur doit adresser une réclamation écrite à :
-ANNUL IMPOTS — 340 Route de la Bouaye, 97190 Le Gosier, Guadeloupe
-Email : contact@impotsfacile.com
+ANNUL IMPOTS — Route de la Bouaye, 97190 Le Gosier, Guadeloupe
+Email : `info@impotsfacile.com`
 
-À défaut de réponse satisfaisante sous 60 jours à compter de la réclamation, le consommateur pourra saisir le médiateur de la consommation désigné, dont les coordonnées seront mises à jour sur le présent site et dans les CGV.
+Le médiateur peut être saisi si aucune réponse satisfaisante n'a été obtenue dans un délai de 60 jours à compter de la réclamation, et au plus tard dans un délai d'un an à compter de cette réclamation. La saisine se fait directement en ligne sur le site du médiateur.
 
 Le consommateur conserve à tout moment la possibilité de saisir les juridictions compétentes.
 
