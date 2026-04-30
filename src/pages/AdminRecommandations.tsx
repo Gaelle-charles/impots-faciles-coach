@@ -78,6 +78,48 @@ export default function AdminRecommandations() {
   const [form, setForm] = useState<Omit<Reco, 'id'>>(emptyForm);
   const [saving, setSaving] = useState(false);
   const [deleteId, setDeleteId] = useState<string | null>(null);
+  const [uploadingLogo, setUploadingLogo] = useState(false);
+
+  const handleLogoUpload = async (file: File) => {
+    if (!ACCEPTED_LOGO_TYPES.includes(file.type)) {
+      toast.error('Format non supporté. Utilisez PNG, JPG ou WebP.');
+      return;
+    }
+    if (file.size > MAX_LOGO_SIZE) {
+      toast.error('Image trop lourde (max 2 Mo).');
+      return;
+    }
+    setUploadingLogo(true);
+    try {
+      const ext = file.name.split('.').pop()?.toLowerCase() || 'png';
+      const baseId = editingId ?? 'new';
+      const path = `${baseId}-${Date.now()}.${ext}`;
+      const { error: upErr } = await supabase.storage
+        .from('recommandations-logos')
+        .upload(path, file, { cacheControl: '3600', upsert: false, contentType: file.type });
+      if (upErr) {
+        toast.error(`Upload échoué : ${upErr.message}`);
+        return;
+      }
+      const { data } = supabase.storage.from('recommandations-logos').getPublicUrl(path);
+      setForm((f) => ({ ...f, logo_url: data.publicUrl }));
+      toast.success('Logo uploadé');
+    } finally {
+      setUploadingLogo(false);
+    }
+  };
+
+  const handleLogoRemove = async () => {
+    const url = form.logo_url;
+    setForm((f) => ({ ...f, logo_url: '' }));
+    // Best-effort : supprimer l'objet du bucket si l'URL pointe vers notre bucket.
+    if (url && url.includes('/recommandations-logos/')) {
+      const path = url.split('/recommandations-logos/')[1]?.split('?')[0];
+      if (path) {
+        await supabase.storage.from('recommandations-logos').remove([path]);
+      }
+    }
+  };
 
   const load = async () => {
     setLoading(true);
