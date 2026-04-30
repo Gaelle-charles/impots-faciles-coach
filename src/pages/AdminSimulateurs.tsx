@@ -98,10 +98,12 @@ function SortableRow({
   sim,
   onEdit,
   onToggle,
+  onPreview,
 }: {
   sim: Simulateur;
   onEdit: (s: Simulateur) => void;
   onToggle: (s: Simulateur) => void;
+  onPreview: (s: Simulateur) => void;
 }) {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
     id: sim.id,
@@ -137,9 +139,19 @@ function SortableRow({
       </TableCell>
       <TableCell className="text-right tabular-nums">{sim.nb_utilisations}</TableCell>
       <TableCell className="text-right">
-        <Button size="icon" variant="ghost" onClick={() => onEdit(sim)}>
-          <Pencil className="h-4 w-4" />
-        </Button>
+        <div className="flex justify-end gap-1">
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button size="icon" variant="ghost" onClick={() => onPreview(sim)} aria-label="Aperçu">
+                <Eye className="h-4 w-4" />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>Aperçu du simulateur</TooltipContent>
+          </Tooltip>
+          <Button size="icon" variant="ghost" onClick={() => onEdit(sim)} aria-label="Modifier">
+            <Pencil className="h-4 w-4" />
+          </Button>
+        </div>
       </TableCell>
     </TableRow>
   );
