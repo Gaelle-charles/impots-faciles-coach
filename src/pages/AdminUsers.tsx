@@ -24,9 +24,10 @@ import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from '@/components/ui/select';
 import { toast } from '@/hooks/use-toast';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import {
   Search, MoreHorizontal, Download, Users, Plus, Pencil, Trash2,
-  KeyRound, Eye, EyeOff, RefreshCw, AlertTriangle, RotateCcw, MailWarning,
+  KeyRound, Eye, EyeOff, RefreshCw, AlertTriangle, RotateCcw, MailWarning, MailX,
 } from 'lucide-react';
 
 // ─── Types ───
