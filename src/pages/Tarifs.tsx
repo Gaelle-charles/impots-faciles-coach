@@ -53,8 +53,8 @@ const plans = [
     popular: false,
     features: [
       'Tout Expert inclus',
-      'Coaching pédagogique avancé',
-      '5 webinaires exclusifs',
+      'Parcours pédagogique avancé',
+      '5 vidéos explicatives exclusives',
     ],
     footerNote: 'Accompagnement renforcé toute l\'année',
   },
