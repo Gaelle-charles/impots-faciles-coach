@@ -248,9 +248,9 @@ const Tarifs = () => {
                 </>
               );
             } else if (isUpgrade) {
-              ctaLabel = `Upgrader vers ${plan.name} →`;
+              ctaLabel = (<>Upgrader vers {plan.name} <ArrowRight className="ml-1 h-4 w-4" /></>);
             } else {
-              ctaLabel = `Choisir ${plan.name} →`;
+              ctaLabel = (<>Choisir {plan.name} <ArrowRight className="ml-1 h-4 w-4" /></>);
             }
 
             return (
