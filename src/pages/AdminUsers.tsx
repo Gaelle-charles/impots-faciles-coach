@@ -592,9 +592,9 @@ const AdminUsers = () => {
                       {isDeleted && (
                         <Tooltip>
                           <TooltipTrigger asChild>
-                            <Badge variant="outline" className="bg-red-50 text-red-700 border-red-200 dark:bg-red-950/30 dark:text-red-300 dark:border-red-900 text-[10px] h-5 px-1.5 gap-1 font-normal">
-                              <Trash2 className="h-3 w-3" />
-                              Supprimé
+                            <Badge variant="outline" className="bg-red-50 text-red-700 border-red-200 dark:bg-red-950/30 dark:text-red-300 dark:border-red-900 text-[10px] h-5 px-1.5 gap-1 font-normal whitespace-nowrap inline-flex items-center">
+                              <Trash2 className="h-3 w-3 shrink-0" />
+                              <span className="hidden lg:inline">Supprimé</span>
                             </Badge>
                           </TooltipTrigger>
                           <TooltipContent>Supprimé le {new Date(u.deleted_at!).toLocaleDateString('fr-FR')}</TooltipContent>
@@ -603,19 +603,19 @@ const AdminUsers = () => {
                       {isPending && (
                         <Tooltip>
                           <TooltipTrigger asChild>
-                            <Badge variant="outline" className="bg-amber-50 text-amber-700 border-amber-200 dark:bg-amber-950/30 dark:text-amber-300 dark:border-amber-900 text-[10px] h-5 px-1.5 gap-1 font-normal">
-                              <MailX className="h-3 w-3" />
-                              Non confirmé
+                            <Badge variant="outline" className="bg-amber-50 text-amber-700 border-amber-200 dark:bg-amber-950/30 dark:text-amber-300 dark:border-amber-900 text-[10px] h-5 px-1.5 gap-1 font-normal whitespace-nowrap inline-flex items-center">
+                              <MailX className="h-3 w-3 shrink-0" />
+                              <span className="hidden lg:inline">Non confirmé</span>
                             </Badge>
                           </TooltipTrigger>
                           <TooltipContent>Email non confirmé</TooltipContent>
                         </Tooltip>
                       )}
                       {!u.is_active && !isDeleted && (
-                        <Badge variant="outline" className="bg-red-50 text-red-700 border-red-200 text-[10px] h-5 px-1.5 font-normal">Suspendu</Badge>
+                        <Badge variant="outline" className="bg-red-50 text-red-700 border-red-200 text-[10px] h-5 px-1.5 font-normal whitespace-nowrap">Suspendu</Badge>
                       )}
                       {u.role === 'admin' && (
-                        <Badge className="text-[10px] h-5 px-1.5 font-normal" style={{ backgroundColor: 'hsl(0 67% 35%)', color: 'white' }}>Admin</Badge>
+                        <Badge className="text-[10px] h-5 px-1.5 font-normal whitespace-nowrap" style={{ backgroundColor: 'hsl(0 67% 35%)', color: 'white' }}>Admin</Badge>
                       )}
                     </div>
                   </TableCell>
