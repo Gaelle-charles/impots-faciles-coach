@@ -165,9 +165,6 @@ export default function AdminRecommandations() {
     if (!form.url.trim() || !/^https:\/\//i.test(form.url.trim())) {
       return 'L\'URL doit commencer par https://';
     }
-    if (form.logo_url && form.logo_url.trim() && !/^https:\/\//i.test(form.logo_url.trim())) {
-      return 'L\'URL du logo doit commencer par https://';
-    }
     return null;
   };
 
