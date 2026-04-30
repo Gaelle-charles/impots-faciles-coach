@@ -24,7 +24,7 @@ type TeamPlan = keyof typeof TEAM_PLANS;
 
 export default function ImpotsTeam() {
   const navigate = useNavigate();
-  const [plan, setPlan] = useState<TeamPlan>('expert');
+  const [plan] = useState<TeamPlan>('premium');
   const [nbLicences, setNbLicences] = useState(10);
 
   const calc = useMemo(() => {
@@ -114,16 +114,10 @@ export default function ImpotsTeam() {
             <CardContent className="p-6 space-y-6">
               <div>
                 <Label>Plan</Label>
-                <Select value={plan} onValueChange={(v) => setPlan(v as TeamPlan)}>
-                  <SelectTrigger className="mt-2"><SelectValue /></SelectTrigger>
-                  <SelectContent>
-                    {Object.entries(TEAM_PLANS).map(([key, p]) => (
-                      <SelectItem key={key} value={key}>
-                        {p.label} — {p.desc}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                <div className="mt-2 rounded-md border bg-muted/30 px-4 py-3 text-sm">
+                  <div className="font-semibold">{TEAM_PLANS.premium.label}</div>
+                  <div className="text-muted-foreground">{TEAM_PLANS.premium.desc}</div>
+                </div>
               </div>
 
               <div>
