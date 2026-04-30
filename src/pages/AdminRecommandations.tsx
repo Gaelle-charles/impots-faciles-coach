@@ -39,8 +39,11 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { Plus, Pencil, Trash2, ExternalLink } from 'lucide-react';
+import { Plus, Pencil, Trash2, ExternalLink, Upload, X as XIcon, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
+
+const MAX_LOGO_SIZE = 2 * 1024 * 1024; // 2 Mo
+const ACCEPTED_LOGO_TYPES = ['image/png', 'image/jpeg', 'image/jpg', 'image/webp'];
 
 type RecoType = 'association' | 'partenaire';
 
@@ -75,6 +78,48 @@ export default function AdminRecommandations() {
   const [form, setForm] = useState<Omit<Reco, 'id'>>(emptyForm);
   const [saving, setSaving] = useState(false);
   const [deleteId, setDeleteId] = useState<string | null>(null);
+  const [uploadingLogo, setUploadingLogo] = useState(false);
+
+  const handleLogoUpload = async (file: File) => {
+    if (!ACCEPTED_LOGO_TYPES.includes(file.type)) {
+      toast.error('Format non supporté. Utilisez PNG, JPG ou WebP.');
+      return;
+    }
+    if (file.size > MAX_LOGO_SIZE) {
+      toast.error('Image trop lourde (max 2 Mo).');
+      return;
+    }
+    setUploadingLogo(true);
+    try {
+      const ext = file.name.split('.').pop()?.toLowerCase() || 'png';
+      const baseId = editingId ?? 'new';
+      const path = `${baseId}-${Date.now()}.${ext}`;
+      const { error: upErr } = await supabase.storage
+        .from('recommandations-logos')
+        .upload(path, file, { cacheControl: '3600', upsert: false, contentType: file.type });
+      if (upErr) {
+        toast.error(`Upload échoué : ${upErr.message}`);
+        return;
+      }
+      const { data } = supabase.storage.from('recommandations-logos').getPublicUrl(path);
+      setForm((f) => ({ ...f, logo_url: data.publicUrl }));
+      toast.success('Logo uploadé');
+    } finally {
+      setUploadingLogo(false);
+    }
+  };
+
+  const handleLogoRemove = async () => {
+    const url = form.logo_url;
+    setForm((f) => ({ ...f, logo_url: '' }));
+    // Best-effort : supprimer l'objet du bucket si l'URL pointe vers notre bucket.
+    if (url && url.includes('/recommandations-logos/')) {
+      const path = url.split('/recommandations-logos/')[1]?.split('?')[0];
+      if (path) {
+        await supabase.storage.from('recommandations-logos').remove([path]);
+      }
+    }
+  };
 
   const load = async () => {
     setLoading(true);
@@ -119,9 +164,6 @@ export default function AdminRecommandations() {
     if (!form.benefice_user.trim()) return 'Le bénéfice utilisateur est obligatoire.';
     if (!form.url.trim() || !/^https:\/\//i.test(form.url.trim())) {
       return 'L\'URL doit commencer par https://';
-    }
-    if (form.logo_url && form.logo_url.trim() && !/^https:\/\//i.test(form.logo_url.trim())) {
-      return 'L\'URL du logo doit commencer par https://';
     }
     return null;
   };
@@ -315,12 +357,64 @@ export default function AdminRecommandations() {
               />
             </div>
             <div className="space-y-2">
-              <Label>URL du logo (optionnel, https://…)</Label>
-              <Input
-                value={form.logo_url ?? ''}
-                onChange={(e) => setForm({ ...form, logo_url: e.target.value })}
-                placeholder="https://exemple.org/logo.png"
-              />
+              <Label>Logo (optionnel, PNG/JPG/WebP, max 2 Mo)</Label>
+              {form.logo_url ? (
+                <div className="flex items-center gap-3 rounded-md border p-3">
+                  <img
+                    src={form.logo_url}
+                    alt="Aperçu logo"
+                    className="h-16 w-16 rounded object-contain bg-muted"
+                  />
+                  <div className="flex-1 min-w-0">
+                    <p className="text-xs text-muted-foreground truncate">{form.logo_url}</p>
+                  </div>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={handleLogoRemove}
+                    className="gap-1 text-destructive hover:text-destructive"
+                  >
+                    <XIcon className="h-3.5 w-3.5" /> Supprimer
+                  </Button>
+                </div>
+              ) : (
+                <label
+                  className="flex flex-col items-center justify-center gap-2 rounded-md border-2 border-dashed border-muted-foreground/30 p-6 cursor-pointer hover:border-primary hover:bg-muted/30 transition-colors"
+                  onDragOver={(e) => { e.preventDefault(); }}
+                  onDrop={(e) => {
+                    e.preventDefault();
+                    const file = e.dataTransfer.files?.[0];
+                    if (file) handleLogoUpload(file);
+                  }}
+                >
+                  {uploadingLogo ? (
+                    <>
+                      <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
+                      <span className="text-sm text-muted-foreground">Upload en cours…</span>
+                    </>
+                  ) : (
+                    <>
+                      <Upload className="h-6 w-6 text-muted-foreground" />
+                      <span className="text-sm text-muted-foreground text-center">
+                        Glissez une image ici ou <span className="text-primary font-medium">cliquez pour choisir</span>
+                      </span>
+                      <span className="text-xs text-muted-foreground/70">PNG, JPG ou WebP — max 2 Mo</span>
+                    </>
+                  )}
+                  <input
+                    type="file"
+                    accept="image/png,image/jpeg,image/jpg,image/webp"
+                    className="hidden"
+                    disabled={uploadingLogo}
+                    onChange={(e) => {
+                      const file = e.target.files?.[0];
+                      if (file) handleLogoUpload(file);
+                      e.target.value = '';
+                    }}
+                  />
+                </label>
+              )}
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">

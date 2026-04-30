@@ -15,12 +15,15 @@ export default function SimulateurLayout({ emoji, title, subtitle, children }: P
 
   // Incrément atomique du compteur d'utilisations dès qu'une page simulateur est ouverte.
   // Le slug est dérivé de l'URL : /simulateur/<slug>. Best-effort, erreurs ignorées.
+  // Si ?preview=1 (mode aperçu admin), on n'incrémente PAS le compteur.
   useEffect(() => {
+    const isPreview = new URLSearchParams(location.search).get("preview") === "1";
+    if (isPreview) return;
     const match = location.pathname.match(/^\/simulateur\/([a-z0-9-]+)/i);
     const slug = match?.[1];
     if (!slug) return;
     supabase.rpc("increment_simulateur_usage", { p_slug: slug });
-  }, [location.pathname]);
+  }, [location.pathname, location.search]);
 
   return (
     <div className="space-y-6">

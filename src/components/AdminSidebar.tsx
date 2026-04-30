@@ -1,4 +1,4 @@
-import { NavLink, useLocation, useNavigate } from 'react-router-dom';
+import { Link, NavLink, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { useEffect, useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
@@ -114,7 +114,13 @@ export function AdminSidebar() {
       style={{ backgroundColor: 'hsl(222 47% 11%)' }}>
       {/* Header */}
       <div className="px-5 pt-5 pb-3">
-        <h1 className="font-heading text-lg font-bold text-white">Impôts Facile</h1>
+        <Link
+          to="/"
+          className="block cursor-pointer transition-opacity hover:opacity-80"
+          aria-label="Retour à l'accueil"
+        >
+          <h1 className="font-heading text-lg font-bold text-white">Impôts Facile</h1>
+        </Link>
         <div className="mt-3 rounded-md py-1.5 px-3 text-center"
           style={{ backgroundColor: 'hsl(0 67% 35%)' }}>
           <span className="text-[11px] font-bold tracking-widest text-white uppercase">
