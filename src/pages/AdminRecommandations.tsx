@@ -357,12 +357,64 @@ export default function AdminRecommandations() {
               />
             </div>
             <div className="space-y-2">
-              <Label>URL du logo (optionnel, https://…)</Label>
-              <Input
-                value={form.logo_url ?? ''}
-                onChange={(e) => setForm({ ...form, logo_url: e.target.value })}
-                placeholder="https://exemple.org/logo.png"
-              />
+              <Label>Logo (optionnel, PNG/JPG/WebP, max 2 Mo)</Label>
+              {form.logo_url ? (
+                <div className="flex items-center gap-3 rounded-md border p-3">
+                  <img
+                    src={form.logo_url}
+                    alt="Aperçu logo"
+                    className="h-16 w-16 rounded object-contain bg-muted"
+                  />
+                  <div className="flex-1 min-w-0">
+                    <p className="text-xs text-muted-foreground truncate">{form.logo_url}</p>
+                  </div>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={handleLogoRemove}
+                    className="gap-1 text-destructive hover:text-destructive"
+                  >
+                    <XIcon className="h-3.5 w-3.5" /> Supprimer
+                  </Button>
+                </div>
+              ) : (
+                <label
+                  className="flex flex-col items-center justify-center gap-2 rounded-md border-2 border-dashed border-muted-foreground/30 p-6 cursor-pointer hover:border-primary hover:bg-muted/30 transition-colors"
+                  onDragOver={(e) => { e.preventDefault(); }}
+                  onDrop={(e) => {
+                    e.preventDefault();
+                    const file = e.dataTransfer.files?.[0];
+                    if (file) handleLogoUpload(file);
+                  }}
+                >
+                  {uploadingLogo ? (
+                    <>
+                      <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
+                      <span className="text-sm text-muted-foreground">Upload en cours…</span>
+                    </>
+                  ) : (
+                    <>
+                      <Upload className="h-6 w-6 text-muted-foreground" />
+                      <span className="text-sm text-muted-foreground text-center">
+                        Glissez une image ici ou <span className="text-primary font-medium">cliquez pour choisir</span>
+                      </span>
+                      <span className="text-xs text-muted-foreground/70">PNG, JPG ou WebP — max 2 Mo</span>
+                    </>
+                  )}
+                  <input
+                    type="file"
+                    accept="image/png,image/jpeg,image/jpg,image/webp"
+                    className="hidden"
+                    disabled={uploadingLogo}
+                    onChange={(e) => {
+                      const file = e.target.files?.[0];
+                      if (file) handleLogoUpload(file);
+                      e.target.value = '';
+                    }}
+                  />
+                </label>
+              )}
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
