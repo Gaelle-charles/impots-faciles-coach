@@ -10,6 +10,10 @@ import {
   BookOpen,
   Check,
   ChevronDown,
+  GraduationCap,
+  Map,
+  Users,
+  Rocket,
 } from 'lucide-react';
 import { Header } from '@/components/Header';
 import { useEffect, useRef } from 'react';
@@ -144,7 +148,7 @@ const Index = () => {
         <div className="relative mx-auto grid max-w-6xl items-center gap-12 px-6 py-16 md:py-24 lg:grid-cols-[1.2fr_1fr] lg:gap-16">
           {/* Texte */}
           <div className="relative z-10">
-            <Eyebrow>📚 Plateforme pédagogique de formation</Eyebrow>
+            <Eyebrow><GraduationCap className="mr-1.5 inline h-3.5 w-3.5" />Plateforme pédagogique de formation</Eyebrow>
             <h1 className="font-display mt-6 text-[clamp(2.75rem,6vw,5rem)] leading-[1.05] text-foreground">
               Comprenez vos impôts.
               <br />
@@ -268,7 +272,7 @@ const Index = () => {
       <section className="px-6 py-20 md:py-28">
         <div className="mx-auto max-w-6xl">
           <div className="text-center">
-            <Eyebrow>🗺️ Votre parcours</Eyebrow>
+            <Eyebrow><Map className="mr-1.5 inline h-3.5 w-3.5" />Votre parcours</Eyebrow>
             <h2 className="font-display mt-5 text-4xl md:text-5xl text-foreground">
               Apprendre, à votre <AccentText>rythme.</AccentText>
             </h2>
@@ -312,7 +316,7 @@ const Index = () => {
       <section className="px-6 py-20 md:py-28" style={{ background: 'hsl(285 30% 97%)' }}>
         <div className="mx-auto max-w-6xl">
           <div className="text-center mb-12">
-            <Eyebrow variant="violet">✨ Pourquoi nous choisir</Eyebrow>
+            <Eyebrow variant="violet"><Sparkles className="mr-1.5 inline h-3.5 w-3.5" />Pourquoi nous choisir</Eyebrow>
             <h2 className="font-display mt-5 text-4xl md:text-5xl text-foreground">
               Une plateforme conçue <AccentText>pour vous.</AccentText>
             </h2>
@@ -401,7 +405,7 @@ const Index = () => {
           >
             <div className="grid gap-10 lg:grid-cols-[1.6fr_1fr] lg:items-center">
               <div>
-                <Eyebrow>👥 Pour les entreprises</Eyebrow>
+                <Eyebrow><Users className="mr-1.5 inline h-3.5 w-3.5" />Pour les entreprises</Eyebrow>
                 <h2 className="font-display mt-5 text-3xl md:text-4xl text-foreground leading-tight">
                   Impôts Team —{' '}
                   <AccentText>offre multi-licences.</AccentText>
@@ -477,7 +481,7 @@ const Index = () => {
         />
         <div className="absolute inset-0 bg-gradient-to-br from-[hsl(285,52%,15%/0.92)] to-[hsl(263,70%,30%/0.85)]" />
         <div className="relative z-10 mx-auto max-w-3xl text-center">
-          <Eyebrow variant="white">🚀 Prêt(e) à commencer ?</Eyebrow>
+          <Eyebrow variant="white"><Rocket className="mr-1.5 inline h-3.5 w-3.5" />Prêt(e) à commencer ?</Eyebrow>
           <h2 className="font-display mt-6 text-4xl md:text-6xl text-white leading-tight">
             Démarrez aujourd'hui,{' '}
             <span className="accent-yellow">gratuitement.</span>
