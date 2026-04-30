@@ -92,6 +92,18 @@ export function Footer() {
             Estimation pédagogique — Non opposable à la DGFIP. Pour votre situation personnelle,
             consultez un expert-comptable ou un avocat fiscaliste.
           </p>
+          <p className="mx-auto max-w-3xl leading-relaxed text-primary-foreground/60">
+            Médiateur de la consommation :{' '}
+            <a
+              href="https://sasmediationsolution-conso.fr"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="underline underline-offset-2 hover:text-primary-foreground"
+            >
+              SAS Médiation Solution
+            </a>{' '}
+            — agréée CECMC.
+          </p>
           <p>© {new Date().getFullYear()} Impôts Facile — Édité par ANNUL IMPOTS — Tous droits réservés</p>
         </div>
       </div>

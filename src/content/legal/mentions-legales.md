@@ -77,11 +77,16 @@ Pour toute information relative au traitement de vos données personnelles et à
 
 ## 7. Médiation de la consommation
 
-ANNUL IMPOTS s'engage à recourir à un médiateur de la consommation agréé par la CECMC conformément à l'article L.612-1 du Code de la consommation. La désignation du médiateur sera communiquée dans les meilleurs délais et au plus tard sous 30 jours à compter de la mise en service du site.
+Conformément à l'article L.616-1 du Code de la consommation, ANNUL IMPOTS adhère au dispositif de médiation de la consommation suivant :
 
-Pour toute réclamation préalable :
-Email : info@impotsfacile.com
-Adresse postale : ANNUL IMPOTS — 340 Route de la Bouaye, 97190 Le Gosier, Guadeloupe
+**SAS MÉDIATION SOLUTION**
+222 chemin de la Bergerie — 01800 Saint Jean de Niost
+Site : <https://sasmediationsolution-conso.fr>
+Email : `contact@sasmediationsolution-conso.fr`
+
+Médiateur agréé par la CECMC depuis le 14 décembre 2018.
+
+Pour toute réclamation préalable : `info@impotsfacile.com`
 
 ---
 
