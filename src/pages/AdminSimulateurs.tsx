@@ -465,6 +465,38 @@ export default function AdminSimulateurs() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      {/* Aperçu simulateur */}
+      <Dialog open={!!previewSim} onOpenChange={(o) => !o && setPreviewSim(null)}>
+        <DialogContent className="max-w-5xl w-[95vw] h-[90vh] p-0 overflow-hidden flex flex-col">
+          <DialogHeader className="px-6 pt-6 pb-3 border-b">
+            <DialogTitle className="flex items-center gap-2">
+              <Eye className="h-5 w-5" /> Aperçu — {previewSim?.nom}
+            </DialogTitle>
+            <DialogDescription>
+              Mode admin : le compteur d'utilisations n'est pas incrémenté.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="flex-1 overflow-hidden bg-muted/30">
+            {previewSim?.is_active ? (
+              <iframe
+                title={`Aperçu ${previewSim.nom}`}
+                src={`/simulateur/${previewSim.slug}?preview=1`}
+                className="w-full h-full border-0 bg-background"
+              />
+            ) : (
+              <div className="h-full flex flex-col items-center justify-center text-center p-8 gap-3">
+                <Calculator className="h-12 w-12 text-muted-foreground" />
+                <h3 className="font-heading text-xl font-bold">Simulateur en cours de développement</h3>
+                <p className="text-sm text-muted-foreground max-w-md">
+                  Ce simulateur ({previewSim?.nom}) n'est pas encore actif. Activez-le depuis la liste pour le rendre disponible aux utilisateurs.
+                </p>
+              </div>
+            )}
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
+    </TooltipProvider>
   );
 }
