@@ -187,14 +187,14 @@ const CommentCaMarche = () => {
           <motion.p variants={fadeUp} className="mx-auto max-w-xl text-base text-white/85 md:text-lg">
             Impôts Facile transforme un sujet complexe en un parcours clair, interactif et personnalisé — en moins d'une heure.
           </motion.p>
-          <motion.div variants={fadeUp} className="flex flex-col items-center justify-center gap-3 sm:flex-row">
-            <Link to="/inscription">
-              <Button className="bg-white text-primary hover:bg-white/90 font-heading font-bold px-6">
+          <motion.div variants={fadeUp} className="flex flex-col items-stretch justify-center gap-3 sm:flex-row sm:items-center">
+            <Link to="/inscription" className="w-full sm:w-auto">
+              <Button className="w-full sm:w-auto bg-white text-primary hover:bg-white/90 font-heading font-bold px-6">
                 Commencer gratuitement <ArrowRight className="ml-1 h-4 w-4" />
               </Button>
             </Link>
-            <a href="#modules">
-              <Button variant="outline" className="border-white/50 text-white hover:bg-white/10 font-heading font-bold px-6">
+            <a href="#modules" className="w-full sm:w-auto">
+              <Button variant="outline" className="w-full sm:w-auto border-2 border-white bg-white/10 text-white hover:bg-white hover:text-primary font-heading font-bold px-6 backdrop-blur-sm">
                 Voir les modules
               </Button>
             </a>
