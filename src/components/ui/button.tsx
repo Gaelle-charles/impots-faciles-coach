@@ -16,6 +16,8 @@ const buttonVariants = cva(
         ghost: "hover:bg-accent hover:text-accent-foreground",
         link: "text-primary underline-offset-4 hover:underline",
         cta: "bg-yellow-vivid text-violet-deep hover:bg-yellow-vivid/90 font-heading font-bold",
+        "cta-pill": "bg-yellow-vivid text-violet-deep hover:bg-yellow-vivid/90 font-bold rounded-2xl btn-cta-shadow",
+        "outline-violet": "border-2 border-primary bg-transparent text-primary hover:bg-primary hover:text-primary-foreground font-bold rounded-2xl",
         "sidebar-item": "bg-transparent text-sidebar-foreground hover:bg-sidebar-muted w-full justify-start",
       },
       size: {
