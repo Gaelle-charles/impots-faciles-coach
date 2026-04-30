@@ -15,7 +15,8 @@ export default {
     extend: {
       fontFamily: {
         heading: ["'Source Sans 3'", "sans-serif"],
-        body: ["'Inter'", "sans-serif"],
+        body: ["'Plus Jakarta Sans'", "'Inter'", "sans-serif"],
+        display: ["'Instrument Serif'", "Georgia", "serif"],
       },
       colors: {
         border: "hsl(var(--border))",
