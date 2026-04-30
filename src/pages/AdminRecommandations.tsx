@@ -39,8 +39,11 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { Plus, Pencil, Trash2, ExternalLink } from 'lucide-react';
+import { Plus, Pencil, Trash2, ExternalLink, Upload, X as XIcon, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
+
+const MAX_LOGO_SIZE = 2 * 1024 * 1024; // 2 Mo
+const ACCEPTED_LOGO_TYPES = ['image/png', 'image/jpeg', 'image/jpg', 'image/webp'];
 
 type RecoType = 'association' | 'partenaire';
 
