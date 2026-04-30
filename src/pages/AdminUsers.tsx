@@ -24,9 +24,10 @@ import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from '@/components/ui/select';
 import { toast } from '@/hooks/use-toast';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import {
   Search, MoreHorizontal, Download, Users, Plus, Pencil, Trash2,
-  KeyRound, Eye, EyeOff, RefreshCw, AlertTriangle, RotateCcw, MailWarning,
+  KeyRound, Eye, EyeOff, RefreshCw, AlertTriangle, RotateCcw, MailWarning, MailX,
 } from 'lucide-react';
 
 // ─── Types ───
@@ -555,7 +556,8 @@ const AdminUsers = () => {
       </div>
 
       {/* Table */}
-      <Card className="border-border bg-background shadow-sm overflow-x-auto">
+      <TooltipProvider delayDuration={150}>
+      <Card className="border-border bg-background shadow-sm overflow-x-auto relative">
         <Table>
           <TableHeader>
             <TableRow>
@@ -567,7 +569,7 @@ const AdminUsers = () => {
               <TableHead className="hidden lg:table-cell">Dernière connexion</TableHead>
               <TableHead className="text-center">Modules</TableHead>
               <TableHead className="text-center hidden sm:table-cell">Score</TableHead>
-              <TableHead className="w-10" />
+              <TableHead className="w-16 text-right sticky right-0 bg-background border-l border-border z-10">Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -576,6 +578,7 @@ const AdminUsers = () => {
               const avg = userAvgScoreMap.get(u.id);
               const isDeleted = !!u.deleted_at;
               const isPending = !u.email_confirmed_at && !isDeleted;
+              const rowBg = isDeleted ? 'bg-muted/30' : 'bg-background';
               return (
                 <TableRow key={u.id} className={isDeleted ? 'opacity-60 bg-muted/30' : (!u.is_active ? 'opacity-50' : '')}>
                   <TableCell>
@@ -584,20 +587,36 @@ const AdminUsers = () => {
                     </div>
                   </TableCell>
                   <TableCell className="font-medium text-sm">
-                    <div className="flex flex-wrap items-center gap-1">
-                      <span>{u.prenom ?? ''} {u.nom ?? ''}</span>
+                    <div className="flex items-center gap-1.5 flex-nowrap">
+                      <span className="whitespace-nowrap">{u.prenom ?? ''} {u.nom ?? ''}</span>
                       {isDeleted && (
-                        <Badge className="bg-destructive/15 text-destructive text-[10px]">
-                          Supprimé le {new Date(u.deleted_at!).toLocaleDateString('fr-FR')}
-                        </Badge>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <Badge variant="outline" className="bg-red-50 text-red-700 border-red-200 dark:bg-red-950/30 dark:text-red-300 dark:border-red-900 text-[10px] h-5 px-1.5 gap-1 font-normal">
+                              <Trash2 className="h-3 w-3" />
+                              Supprimé
+                            </Badge>
+                          </TooltipTrigger>
+                          <TooltipContent>Supprimé le {new Date(u.deleted_at!).toLocaleDateString('fr-FR')}</TooltipContent>
+                        </Tooltip>
                       )}
                       {isPending && (
-                        <Badge className="bg-amber-100 text-amber-800 dark:bg-amber-900/40 dark:text-amber-200 text-[10px]">
-                          Email non confirmé
-                        </Badge>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <Badge variant="outline" className="bg-amber-50 text-amber-700 border-amber-200 dark:bg-amber-950/30 dark:text-amber-300 dark:border-amber-900 text-[10px] h-5 px-1.5 gap-1 font-normal">
+                              <MailX className="h-3 w-3" />
+                              Non confirmé
+                            </Badge>
+                          </TooltipTrigger>
+                          <TooltipContent>Email non confirmé</TooltipContent>
+                        </Tooltip>
                       )}
-                      {!u.is_active && !isDeleted && <Badge className="bg-destructive/10 text-destructive text-[10px]">Suspendu</Badge>}
-                      {u.role === 'admin' && <Badge className="text-[10px]" style={{ backgroundColor: 'hsl(0 67% 35%)', color: 'white' }}>Admin</Badge>}
+                      {!u.is_active && !isDeleted && (
+                        <Badge variant="outline" className="bg-red-50 text-red-700 border-red-200 text-[10px] h-5 px-1.5 font-normal">Suspendu</Badge>
+                      )}
+                      {u.role === 'admin' && (
+                        <Badge className="text-[10px] h-5 px-1.5 font-normal" style={{ backgroundColor: 'hsl(0 67% 35%)', color: 'white' }}>Admin</Badge>
+                      )}
                     </div>
                   </TableCell>
                   <TableCell className="hidden md:table-cell text-sm text-muted-foreground truncate max-w-[200px]">{u.email ?? '—'}</TableCell>
@@ -615,7 +634,7 @@ const AdminUsers = () => {
                   </TableCell>
                   <TableCell className="text-center text-sm font-medium">{completed}/{modules.length}</TableCell>
                   <TableCell className="text-center text-sm font-medium hidden sm:table-cell">{avg != null ? `${avg}%` : '—'}</TableCell>
-                  <TableCell>
+                  <TableCell className={`text-right sticky right-0 ${rowBg} border-l border-border`}>
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
                         <Button variant="ghost" size="icon" className="h-8 w-8">
@@ -678,6 +697,7 @@ const AdminUsers = () => {
           </TableBody>
         </Table>
       </Card>
+      </TooltipProvider>
 
       {/* Pagination */}
       {totalPages > 1 && (
