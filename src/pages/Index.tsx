@@ -1,11 +1,23 @@
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { ArrowRight, BookOpen, Brain, Calculator, Shield, Clock, Users, Star, CheckCircle2 } from 'lucide-react';
+import {
+  ArrowRight,
+  Sparkles,
+  Zap,
+  Layers,
+  Wrench,
+  Euro,
+  BookOpen,
+  Check,
+  ChevronDown,
+} from 'lucide-react';
 import { Header } from '@/components/Header';
 import { useEffect, useRef } from 'react';
 import heroBg from '@/assets/hero-bg.jpg';
 import ctaBg from '@/assets/cta-bg.jpg';
 import { Footer } from '@/components/Footer';
+import { Eyebrow } from '@/components/ui/eyebrow';
+import { AccentText } from '@/components/ui/accent-text';
 import {
   Accordion,
   AccordionContent,
@@ -16,81 +28,61 @@ import {
 const faqItems = [
   {
     question: "Qu'est-ce que les frais professionnels réels ?",
-    answer: "Les frais professionnels réels sont les dépenses que vous engagez dans le cadre de votre activité salariée (transport, repas, formation, matériel…). Au lieu de la déduction forfaitaire de 10 %, vous pouvez choisir de déclarer le montant exact de ces frais pour réduire votre revenu imposable.",
+    answer:
+      "Les frais professionnels réels sont les dépenses que vous engagez dans le cadre de votre activité salariée (transport, repas, formation, matériel…). Au lieu de la déduction forfaitaire de 10 %, vous pouvez choisir de déclarer le montant exact de ces frais pour réduire votre revenu imposable.",
   },
   {
     question: 'Comment fonctionne la déduction de frais ?',
-    answer: "Par défaut, l'administration fiscale applique un abattement forfaitaire de 10 % sur vos revenus. Si vos dépenses professionnelles dépassent ce montant, vous avez intérêt à opter pour la déduction des frais réels.",
+    answer:
+      "Par défaut, l'administration fiscale applique un abattement forfaitaire de 10 % sur vos revenus. Si vos dépenses professionnelles dépassent ce montant, vous avez intérêt à opter pour la déduction des frais réels.",
   },
   {
     question: 'Qui peut bénéficier de la déduction des frais réels ?',
-    answer: "Tous les salariés peuvent opter pour les frais réels, quelle que soit leur profession. C'est particulièrement avantageux pour ceux qui ont de longs trajets domicile-travail ou qui engagent des frais de formation.",
+    answer:
+      "Tous les salariés peuvent opter pour les frais réels, quelle que soit leur profession. C'est particulièrement avantageux pour ceux qui ont de longs trajets domicile-travail ou qui engagent des frais de formation.",
   },
   {
     question: 'Quels justificatifs dois-je conserver ?',
-    answer: "Vous devez conserver tous les justificatifs de vos dépenses : factures, tickets de péage, attestations kilométriques, notes de frais de repas, etc. L'administration peut vous les demander pendant 3 ans.",
+    answer:
+      "Vous devez conserver tous les justificatifs de vos dépenses : factures, tickets de péage, attestations kilométriques, notes de frais de repas, etc. L'administration peut vous les demander pendant 3 ans.",
   },
   {
     question: 'La plateforme est-elle gratuite ?',
-    answer: "Impôts Facile propose une formule Découverte gratuite avec accès à un module, un quizz et un simulateur basique. Des formules payantes donnent accès à l'ensemble des contenus.",
+    answer:
+      "Impôts Facile propose une formule Découverte gratuite avec accès à un module, un quizz et un simulateur basique. Des formules payantes donnent accès à l'ensemble des contenus.",
   },
   {
     question: 'Comment télécharger mes factures ?',
-    answer: "Vos factures sont envoyées automatiquement par email à chaque paiement (depuis info@stripe.com ou contact@impotsfacile.com). Vous pouvez également les consulter à tout moment depuis votre espace personnel : 1) Connectez-vous à impotsfacile.com, 2) Cliquez sur « Mon abonnement » dans le menu, 3) Cliquez sur « Voir mes factures », 4) Téléchargez le PDF de la facture souhaitée. Si vous ne trouvez pas une facture, contactez-nous à contact@impotsfacile.com en précisant la date de paiement concernée.",
+    answer:
+      "Vos factures sont envoyées automatiquement par email à chaque paiement (depuis info@stripe.com ou contact@impotsfacile.com). Vous pouvez également les consulter à tout moment depuis votre espace personnel : 1) Connectez-vous à impotsfacile.com, 2) Cliquez sur « Mon abonnement » dans le menu, 3) Cliquez sur « Voir mes factures », 4) Téléchargez le PDF de la facture souhaitée. Si vous ne trouvez pas une facture, contactez-nous à contact@impotsfacile.com en précisant la date de paiement concernée.",
   },
 ];
 
-const features = [
-  {
-    icon: BookOpen,
-    title: 'Modules de formation',
-    desc: 'Des cours structurés et progressifs, du débutant au formateur en impôts.',
-    color: 'bg-primary/10 text-primary',
-  },
-  {
-    icon: Brain,
-    title: 'Quizz interactifs',
-    desc: 'Testez et validez vos connaissances à chaque étape du parcours.',
-    color: 'bg-accent/10 text-accent',
-  },
-  {
-    icon: Calculator,
-    title: 'Simulateurs avancés',
-    desc: 'Estimez votre imposition et vos frais déductibles en temps réel.',
-    color: 'bg-[hsl(56,100%,49%)]/10 text-[hsl(56,80%,35%)]',
-  },
+const stats = [
+  { value: '8', label: 'Modules pédagogiques' },
+  { value: '50+', label: 'Quiz pour valider vos acquis' },
+  { value: '12', label: 'Simulateurs disponibles' },
+  { value: '100%', label: 'Pédagogique & accessible' },
 ];
 
-const advantages = [
+const steps = [
   {
-    icon: Shield,
-    title: 'Fiable et à jour',
-    desc: 'Contenus basés sur le barème officiel 2025 et mis à jour chaque année.',
+    num: '01',
+    title: 'Personnaliser',
+    desc: "Répondez à 7 questions courtes pour qu'on vous propose les modules et fiches les plus pertinents pour votre situation.",
+    tag: '3 minutes',
   },
   {
-    icon: Clock,
-    title: 'Gain de temps',
-    desc: 'Comprenez en 30 minutes ce que des heures de recherche ne vous apprendront pas.',
+    num: '02',
+    title: 'Apprendre',
+    desc: 'Suivez les modules à votre rythme. Vidéos, fiches, quiz : tout est conçu pour être clair, même si vous partez de zéro.',
+    tag: 'À votre rythme',
   },
   {
-    icon: Users,
-    title: 'Pour tous les profils',
-    desc: 'Salariés, indépendants, propriétaires — chaque parcours est adapté à votre situation.',
-  },
-  {
-    icon: Star,
-    title: 'Pédagogie avant tout',
-    desc: 'Pas de jargon, des explications claires avec des exemples concrets.',
-  },
-  {
-    icon: CheckCircle2,
-    title: 'Résultats concrets',
-    desc: 'Identifiez vos déductions, optimisez votre déclaration et réduisez votre impôt.',
-  },
-  {
-    icon: ArrowRight,
-    title: 'Progression guidée',
-    desc: 'Un parcours étape par étape avec suivi de votre avancement.',
+    num: '03',
+    title: 'Maîtriser',
+    desc: 'Validez vos acquis avec les quiz de fin de module. Obtenez votre certificat de parcours et abordez votre déclaration sereinement.',
+    tag: 'Certificat inclus',
   },
 ];
 
@@ -102,7 +94,7 @@ const Index = () => {
   useEffect(() => {
     const handleScroll = () => {
       if (imgRef.current) {
-        imgRef.current.style.transform = `translateY(${window.scrollY * 0.4}px)`;
+        imgRef.current.style.transform = `translateY(${window.scrollY * 0.3}px)`;
       }
       if (ctaImgRef.current && ctaSectionRef.current) {
         const rect = ctaSectionRef.current.getBoundingClientRect();
@@ -122,182 +114,383 @@ const Index = () => {
     <div className="min-h-screen bg-background">
       <Header />
 
-      {/* Hero */}
-      <section className="relative flex flex-col items-center justify-center px-4 py-32 md:py-40 text-center overflow-hidden">
+      {/* ============ HERO ============ */}
+      <section className="relative overflow-hidden bg-background">
+        {/* Décor */}
         <div
-          ref={imgRef}
-          className="absolute inset-0 -top-20 -bottom-20 bg-cover bg-center will-change-transform"
-          style={{ backgroundImage: `url(${heroBg})` }}
+          className="blob-decor"
+          style={{
+            background: 'hsl(var(--rose-light))',
+            width: 480,
+            height: 480,
+            top: -120,
+            right: -80,
+            opacity: 0.7,
+          }}
+          aria-hidden
         />
-        <div className="absolute inset-0 bg-[hsl(var(--violet-deep))]/40" />
+        <div
+          className="blob-decor"
+          style={{
+            background: 'hsl(var(--yellow-vivid) / 0.18)',
+            width: 360,
+            height: 360,
+            bottom: -120,
+            left: -100,
+          }}
+          aria-hidden
+        />
 
-        <div className="relative z-10 max-w-3xl mx-auto">
-          <span className="inline-block mb-4 px-4 py-1.5 rounded-full bg-primary-foreground/10 border border-primary-foreground/20 text-primary-foreground text-sm font-medium backdrop-blur-sm">
-            🎓 La plateforme n°1 de formation sur les impôts
-          </span>
-          <h1 className="font-heading text-4xl sm:text-5xl md:text-6xl font-bold leading-tight text-primary-foreground">
-            Les impôts, enfin{' '}
-            <span className="text-[hsl(var(--yellow-vivid))]">accessibles.</span>
-          </h1>
-          <p className="mt-6 max-w-xl text-lg text-primary-foreground/85 mx-auto leading-relaxed">
-            Maîtrisez l'impôt sur le revenu, la TVA, les régimes fiscaux et bien plus
-            grâce à des modules clairs et des simulateurs pratiques.
-          </p>
-          <p className="mt-3 max-w-xl mx-auto text-sm text-primary-foreground/70">
-            Plateforme dédiée à la déclaration des revenus des particuliers (IR 2042) —
-            pas de conseil pour les structures professionnelles.
-          </p>
-          <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
-            <Link to="/inscription">
-              <Button variant="cta" size="lg" className="gap-2 text-base px-8 py-6 shadow-lg">
-                Commencer gratuitement
-                <ArrowRight className="h-5 w-5" />
-              </Button>
-            </Link>
-            <Link to="/comment-ca-marche">
-              <Button variant="outline" size="lg" className="gap-2 text-base px-8 py-6 bg-primary-foreground/10 border-primary-foreground/30 text-primary-foreground hover:bg-primary-foreground/20">
-                Découvrir le parcours
-              </Button>
-            </Link>
+        <div className="relative mx-auto grid max-w-6xl items-center gap-12 px-6 py-16 md:py-24 lg:grid-cols-[1.2fr_1fr] lg:gap-16">
+          {/* Texte */}
+          <div className="relative z-10">
+            <Eyebrow>📚 Plateforme pédagogique de formation</Eyebrow>
+            <h1 className="font-display mt-6 text-[clamp(2.75rem,6vw,5rem)] leading-[1.05] text-foreground">
+              Comprenez vos impôts.
+              <br />
+              <AccentText>Sans jargon.</AccentText>
+            </h1>
+            <p className="mt-6 max-w-xl text-lg text-muted-foreground leading-relaxed">
+              Une formation en ligne claire et progressive pour vous aider à
+              mieux comprendre votre déclaration de revenus, étape par étape.
+            </p>
+            <p className="mt-3 max-w-xl text-sm italic text-muted-foreground/80">
+              Plateforme pédagogique destinée aux particuliers — ne se substitue
+              pas à un conseil professionnel.
+            </p>
+
+            <div className="mt-8 flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+              <Link to="/inscription">
+                <Button variant="cta-pill" size="lg" className="w-full sm:w-auto px-7 py-6 text-base">
+                  Commencer gratuitement
+                  <ArrowRight className="h-5 w-5" />
+                </Button>
+              </Link>
+              <Link to="/comment-ca-marche">
+                <Button variant="outline-violet" size="lg" className="w-full sm:w-auto px-7 py-6 text-base">
+                  Voir le programme
+                </Button>
+              </Link>
+            </div>
+
+            <ul className="mt-6 flex flex-wrap gap-x-5 gap-y-2 text-sm text-muted-foreground">
+              <li className="inline-flex items-center gap-1.5">
+                <Check className="h-4 w-4 text-rose-dynamic" /> Aucune carte requise
+              </li>
+              <li className="inline-flex items-center gap-1.5">
+                <Check className="h-4 w-4 text-rose-dynamic" /> Module 1 offert
+              </li>
+              <li className="inline-flex items-center gap-1.5">
+                <Check className="h-4 w-4 text-rose-dynamic" /> 14 jours pour changer d'avis
+              </li>
+            </ul>
           </div>
-          <p className="mt-4 text-primary-foreground/60 text-sm">
-            Aucune carte bancaire requise · Accès immédiat
-          </p>
+
+          {/* Photo */}
+          <div className="relative z-10">
+            <div className="relative overflow-hidden rounded-[32px] aspect-[4/5] shadow-2xl shadow-primary/20">
+              <div
+                ref={imgRef}
+                className="absolute inset-0 -top-12 -bottom-12 bg-cover bg-center will-change-transform"
+                style={{ backgroundImage: `url(${heroBg})` }}
+                aria-hidden
+              />
+              <div className="absolute inset-0 bg-gradient-to-tr from-primary/30 via-transparent to-transparent" />
+            </div>
+
+            {/* Floating cards */}
+            <div className="absolute -top-4 -left-4 sm:-top-6 sm:-left-6 z-20 hidden md:flex items-center gap-3 rounded-2xl bg-background px-4 py-3 shadow-xl border border-border">
+              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-rose-light text-rose-dynamic">
+                <BookOpen className="h-5 w-5" />
+              </div>
+              <div>
+                <p className="text-xs font-semibold text-foreground">Module 1</p>
+                <p className="text-xs text-muted-foreground">15 minutes</p>
+              </div>
+            </div>
+            <div className="absolute -bottom-4 -right-4 sm:-bottom-6 sm:-right-6 z-20 hidden md:flex items-center gap-3 rounded-2xl bg-background px-4 py-3 shadow-xl border border-border">
+              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-yellow-vivid/20 text-violet-deep">
+                <Euro className="h-5 w-5" />
+              </div>
+              <div>
+                <p className="text-xs font-semibold text-foreground">Vous comprenez</p>
+                <p className="text-xs text-muted-foreground">tout sur l'IR</p>
+              </div>
+            </div>
+          </div>
         </div>
       </section>
 
-      {/* Stats bar */}
-      <section className="bg-primary text-primary-foreground py-8">
-        <div className="mx-auto max-w-5xl px-4 grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
-          {[
-            { value: '8', label: 'Modules de formation' },
-            { value: '50+', label: 'Questions de quizz' },
-            { value: '2', label: 'Simulateurs avancés' },
-            { value: '100%', label: 'Pédagogique' },
-          ].map((s) => (
+      {/* ============ STATS BAR ============ */}
+      <section className="relative overflow-hidden bg-primary text-primary-foreground py-12 md:py-14">
+        <div
+          className="blob-decor"
+          style={{
+            background: 'hsl(var(--rose-dynamic) / 0.25)',
+            width: 380,
+            height: 380,
+            top: '50%',
+            left: '20%',
+            transform: 'translateY(-50%)',
+          }}
+          aria-hidden
+        />
+        <div
+          className="blob-decor"
+          style={{
+            background: 'hsl(var(--yellow-vivid) / 0.18)',
+            width: 380,
+            height: 380,
+            top: '50%',
+            left: '80%',
+            transform: 'translate(-50%, -50%)',
+          }}
+          aria-hidden
+        />
+        <div className="relative mx-auto grid max-w-5xl grid-cols-2 gap-8 px-6 text-center md:grid-cols-4">
+          {stats.map((s) => (
             <div key={s.label}>
-              <p className="font-heading text-3xl md:text-4xl font-bold text-[hsl(var(--yellow-vivid))]">{s.value}</p>
-              <p className="mt-1 text-sm text-primary-foreground/80">{s.label}</p>
+              <p className="font-display text-5xl md:text-6xl text-yellow-vivid">
+                {s.value}
+              </p>
+              <p
+                className="mt-2 text-xs uppercase text-rose-light/90"
+                style={{ letterSpacing: '0.08em' }}
+              >
+                {s.label}
+              </p>
             </div>
           ))}
         </div>
       </section>
 
-      {/* Features */}
-      <section className="px-4 py-20 md:py-28">
-        <div className="mx-auto max-w-5xl">
-          <div className="text-center mb-14">
-            <span className="inline-block px-3 py-1 rounded-full bg-secondary text-accent text-xs font-semibold uppercase tracking-wider mb-3">
-              Fonctionnalités
-            </span>
-            <h2 className="font-heading text-3xl md:text-4xl font-bold text-foreground">
-              Tout ce qu'il faut pour comprendre vos impôts
+      {/* ============ COMMENT ÇA MARCHE ============ */}
+      <section className="px-6 py-20 md:py-28">
+        <div className="mx-auto max-w-6xl">
+          <div className="text-center">
+            <Eyebrow>🗺️ Votre parcours</Eyebrow>
+            <h2 className="font-display mt-5 text-4xl md:text-5xl text-foreground">
+              Apprendre, à votre <AccentText>rythme.</AccentText>
             </h2>
-            <p className="mt-3 text-muted-foreground max-w-xl mx-auto">
-              Une plateforme complète pensée pour vous rendre autonome sur votre déclaration fiscale.
+            <p className="mt-4 max-w-xl mx-auto text-muted-foreground">
+              Trois étapes simples pour passer de la confusion à la maîtrise.
             </p>
           </div>
 
-          <div className="grid gap-8 sm:grid-cols-3">
-            {features.map((f) => {
-              const Icon = f.icon;
-              return (
-                <div
-                  key={f.title}
-                  className="group rounded-2xl border border-border bg-background p-8 transition-all hover:shadow-xl hover:shadow-primary/5 hover:-translate-y-1"
+          <div className="mt-14 grid gap-6 md:grid-cols-3">
+            {steps.map((s) => (
+              <div
+                key={s.num}
+                className="rounded-3xl p-8 transition-all duration-200 hover:-translate-y-1 hover:shadow-xl"
+                style={{ background: 'hsl(285 30% 97%)' }}
+              >
+                <p
+                  className="font-display text-7xl"
+                  style={{ color: 'hsl(var(--rose-light))', marginBottom: '-0.4em' }}
                 >
-                  <div className={`inline-flex items-center justify-center h-14 w-14 rounded-xl ${f.color} mb-5`}>
-                    <Icon className="h-7 w-7" />
-                  </div>
-                  <h3 className="font-heading text-xl font-bold text-foreground">{f.title}</h3>
-                  <p className="mt-3 text-sm text-muted-foreground leading-relaxed">{f.desc}</p>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-      </section>
-
-      {/* Advantages */}
-      <section className="bg-secondary px-4 py-20 md:py-28">
-        <div className="mx-auto max-w-5xl">
-          <div className="text-center mb-14">
-            <span className="inline-block px-3 py-1 rounded-full bg-primary/10 text-primary text-xs font-semibold uppercase tracking-wider mb-3">
-              Pourquoi nous choisir
-            </span>
-            <h2 className="font-heading text-3xl md:text-4xl font-bold text-foreground">
-              Nos avantages
-            </h2>
-            <p className="mt-3 text-muted-foreground max-w-xl mx-auto">
-              Impôts Facile simplifie les impôts pour que chacun puisse déclarer en toute confiance.
-            </p>
-          </div>
-
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {advantages.map((a) => {
-              const Icon = a.icon;
-              return (
-                <div
-                  key={a.title}
-                  className="flex gap-4 rounded-xl bg-background border border-border p-6 transition-all hover:shadow-lg hover:shadow-accent/5"
+                  {s.num}
+                </p>
+                <h3 className="font-display text-2xl text-primary mt-2">
+                  {s.title}
+                </h3>
+                <p className="mt-3 text-sm text-muted-foreground leading-relaxed">
+                  {s.desc}
+                </p>
+                <span
+                  className="mt-5 inline-block rounded-full bg-yellow-vivid px-3 py-1 text-xs font-bold text-violet-deep"
+                  style={{ letterSpacing: '0.04em' }}
                 >
-                  <div className="shrink-0 flex items-center justify-center h-12 w-12 rounded-lg bg-accent/10 text-accent">
-                    <Icon className="h-6 w-6" />
-                  </div>
-                  <div>
-                    <h3 className="font-heading text-base font-bold text-foreground">{a.title}</h3>
-                    <p className="mt-1.5 text-sm text-muted-foreground leading-relaxed">{a.desc}</p>
-                  </div>
-                </div>
-              );
-            })}
+                  {s.tag}
+                </span>
+              </div>
+            ))}
           </div>
         </div>
       </section>
 
-      {/* CTA Banner */}
-      <section ref={ctaSectionRef} className="relative overflow-hidden px-4 py-20 md:py-28">
-        <img ref={ctaImgRef} src={ctaBg} alt="" className="absolute -top-[15%] left-0 h-[130%] w-full object-cover will-change-transform" />
-        <div className="absolute inset-0 bg-gradient-to-br from-[hsl(285,52%,15%/0.85)] to-[hsl(263,70%,50%/0.75)]" />
-        <div className="relative z-10 mx-auto max-w-3xl text-center">
-          <h2 className="font-heading text-3xl md:text-4xl font-bold text-white">
-            Prêt à maîtriser vos impôts ?
-          </h2>
-          <p className="mt-4 text-white/80 max-w-md mx-auto">
-            Rejoignez Impôts Facile et commencez votre formation sur les impôts dès aujourd'hui.
-          </p>
-          <Link to="/inscription">
-            <Button variant="cta" size="lg" className="mt-8 gap-2 text-base px-8 py-6 shadow-lg">
-              Créer mon compte gratuit
-              <ArrowRight className="h-5 w-5" />
-            </Button>
-          </Link>
-        </div>
-      </section>
-
-      {/* FAQ */}
-      <section className="bg-secondary px-4 py-20 md:py-28">
-        <div className="mx-auto max-w-2xl">
-          <div className="text-center mb-10">
-            <span className="inline-block px-3 py-1 rounded-full bg-primary/10 text-primary text-xs font-semibold uppercase tracking-wider mb-3">
-              FAQ
-            </span>
-            <h2 className="font-heading text-3xl md:text-4xl font-bold text-foreground">
-              Questions fréquentes
+      {/* ============ BENTO AVANTAGES ============ */}
+      <section className="px-6 py-20 md:py-28" style={{ background: 'hsl(285 30% 97%)' }}>
+        <div className="mx-auto max-w-6xl">
+          <div className="text-center mb-12">
+            <Eyebrow variant="violet">✨ Pourquoi nous choisir</Eyebrow>
+            <h2 className="font-display mt-5 text-4xl md:text-5xl text-foreground">
+              Une plateforme conçue <AccentText>pour vous.</AccentText>
             </h2>
           </div>
-          <Accordion type="single" collapsible className="space-y-2">
+
+          <div className="grid gap-6 md:grid-cols-3 md:grid-rows-2 md:auto-rows-fr">
+            {/* Grande card violette */}
+            <div className="relative overflow-hidden rounded-3xl bg-primary text-primary-foreground p-8 md:p-10 md:col-span-2 md:row-span-2">
+              <div
+                className="blob-decor"
+                style={{
+                  background: 'hsl(var(--rose-dynamic) / 0.4)',
+                  width: 380,
+                  height: 380,
+                  bottom: -120,
+                  right: -120,
+                }}
+                aria-hidden
+              />
+              <div className="relative">
+                <div className="inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-yellow-vivid text-violet-deep mb-5">
+                  <Sparkles className="h-6 w-6" />
+                </div>
+                <h3 className="font-display text-3xl md:text-4xl leading-tight">
+                  Une méthode pédagogique pensée pour les{' '}
+                  <span className="accent-yellow">particuliers</span>, pas pour les comptables.
+                </h3>
+                <p className="mt-5 max-w-lg text-primary-foreground/80 leading-relaxed">
+                  Pas de jargon technique. Des modules courts, des exemples
+                  concrets, des quiz pour valider votre progression. Vous
+                  avancez à votre rythme, sans pression.
+                </p>
+              </div>
+            </div>
+
+            {/* Card jaune */}
+            <div className="rounded-3xl bg-yellow-vivid text-violet-deep p-8">
+              <Zap className="h-7 w-7" />
+              <h3 className="font-display text-2xl mt-4">Mis à jour chaque année</h3>
+              <p className="mt-2 text-sm opacity-80 leading-relaxed">
+                Contenus actualisés selon les barèmes officiels et les
+                nouveautés fiscales annuelles.
+              </p>
+            </div>
+
+            {/* Card blanche */}
+            <div className="rounded-3xl bg-background border border-border p-8">
+              <Layers className="h-7 w-7 text-rose-dynamic" />
+              <h3 className="font-display text-2xl mt-4 text-foreground">
+                Adapté à votre profil
+              </h3>
+              <p className="mt-2 text-sm text-muted-foreground leading-relaxed">
+                Salarié, indépendant, retraité, expatrié — chaque parcours
+                s'adapte à votre situation.
+              </p>
+            </div>
+
+            {/* Card rose pâle */}
+            <div className="rounded-3xl p-8 md:col-span-3" style={{ background: 'hsl(var(--rose-light))' }}>
+              <div className="flex flex-col md:flex-row items-start md:items-center gap-4 md:gap-6">
+                <div className="inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-background text-rose-dynamic shrink-0">
+                  <Wrench className="h-6 w-6" />
+                </div>
+                <div className="flex-1">
+                  <h3 className="font-display text-2xl text-foreground">Simulateurs inclus</h3>
+                  <p className="mt-1 text-sm text-muted-foreground leading-relaxed">
+                    12 outils pour estimer votre impôt et explorer différents
+                    scénarios fiscaux.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ============ B2B IMPÔTS TEAM ============ */}
+      <section className="px-6 py-20 md:py-24">
+        <div className="mx-auto max-w-6xl">
+          <div
+            className="rounded-[28px] p-8 md:p-12"
+            style={{
+              background:
+                'linear-gradient(135deg, hsl(var(--rose-light)) 0%, hsl(0 0% 100%) 100%)',
+            }}
+          >
+            <div className="grid gap-10 lg:grid-cols-[1.6fr_1fr] lg:items-center">
+              <div>
+                <Eyebrow>👥 Pour les entreprises</Eyebrow>
+                <h2 className="font-display mt-5 text-3xl md:text-4xl text-foreground leading-tight">
+                  Impôts Team —{' '}
+                  <AccentText>offre multi-licences.</AccentText>
+                </h2>
+                <p className="mt-4 text-muted-foreground max-w-xl">
+                  Offrez à vos collaborateurs la formation la plus claire pour
+                  comprendre leurs impôts personnels. Dès 2 licences, profitez
+                  d'une remise de <strong className="text-foreground">10%</strong>{' '}
+                  (code <strong>TEAM10</strong>).
+                </p>
+                <ul className="mt-6 grid gap-2 sm:grid-cols-2">
+                  {[
+                    'Tarifs dégressifs',
+                    'Dashboard admin dédié',
+                    'Paiement carte ou SEPA',
+                    'Facturation TTC',
+                  ].map((p) => (
+                    <li key={p} className="flex items-center gap-2 text-sm text-foreground">
+                      <Check className="h-4 w-4 text-rose-dynamic shrink-0" />
+                      {p}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+              <div className="flex justify-start lg:justify-end">
+                <Link to="/impots-team">
+                  <Button variant="cta-pill" size="lg" className="px-7 py-6 text-base">
+                    Découvrir Impôts Team
+                    <ArrowRight className="h-5 w-5" />
+                  </Button>
+                </Link>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ============ FAQ ============ */}
+      <section className="px-6 py-20 md:py-28" style={{ background: 'hsl(var(--rose-light))' }}>
+        <div className="mx-auto max-w-3xl">
+          <div className="text-center mb-12">
+            <Eyebrow variant="violet">FAQ</Eyebrow>
+            <h2 className="font-display mt-5 text-4xl md:text-5xl text-foreground">
+              Questions <AccentText>fréquentes.</AccentText>
+            </h2>
+          </div>
+          <Accordion type="single" collapsible className="space-y-3">
             {faqItems.map((item, i) => (
-              <AccordionItem key={i} value={`faq-${i}`} className="rounded-xl border border-border bg-background px-5">
-                <AccordionTrigger className="text-left font-heading font-semibold text-foreground py-4">
+              <AccordionItem
+                key={i}
+                value={`faq-${i}`}
+                className="rounded-2xl border-0 bg-background px-5 shadow-sm"
+              >
+                <AccordionTrigger className="text-left font-semibold text-foreground py-5 hover:no-underline [&[data-state=open]>svg]:text-rose-dynamic">
                   {item.question}
                 </AccordionTrigger>
-                <AccordionContent className="text-muted-foreground pb-4">
+                <AccordionContent className="text-muted-foreground pb-5 leading-relaxed">
                   {item.answer}
                 </AccordionContent>
               </AccordionItem>
             ))}
           </Accordion>
+        </div>
+      </section>
+
+      {/* ============ FINAL CTA ============ */}
+      <section ref={ctaSectionRef} className="relative overflow-hidden px-4 py-24 md:py-32">
+        <img
+          ref={ctaImgRef}
+          src={ctaBg}
+          alt=""
+          className="absolute -top-[15%] left-0 h-[130%] w-full object-cover will-change-transform"
+        />
+        <div className="absolute inset-0 bg-gradient-to-br from-[hsl(285,52%,15%/0.92)] to-[hsl(263,70%,30%/0.85)]" />
+        <div className="relative z-10 mx-auto max-w-3xl text-center">
+          <Eyebrow variant="white">🚀 Prêt(e) à commencer ?</Eyebrow>
+          <h2 className="font-display mt-6 text-4xl md:text-6xl text-white leading-tight">
+            Démarrez aujourd'hui,{' '}
+            <span className="accent-yellow">gratuitement.</span>
+          </h2>
+          <p className="mt-5 text-rose-light/90 max-w-md mx-auto">
+            Aucune carte requise. Module 1 offert, à votre rythme.
+          </p>
+          <Link to="/inscription">
+            <Button variant="cta-pill" size="lg" className="mt-8 px-8 py-6 text-base">
+              Créer mon compte
+              <ArrowRight className="h-5 w-5" />
+            </Button>
+          </Link>
         </div>
       </section>
 
