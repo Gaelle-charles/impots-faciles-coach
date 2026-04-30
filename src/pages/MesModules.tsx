@@ -95,7 +95,7 @@ const MesModules = () => {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="font-heading text-3xl font-bold text-foreground">📚 Mes modules</h1>
+        <h1 className="font-display text-4xl md:text-5xl text-foreground">📚 Mes <em className="accent-serif">modules</em></h1>
         <p className="mt-1 text-muted-foreground">
           {modules.length} modules disponibles dans ta formation.
         </p>
