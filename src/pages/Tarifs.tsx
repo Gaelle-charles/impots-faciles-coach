@@ -53,6 +53,7 @@ const plans = [
     popular: false,
     features: [
       'Tout Expert inclus',
+      'Fiches pays',
       'Parcours pédagogique avancé',
       '5 vidéos explicatives exclusives',
     ],
