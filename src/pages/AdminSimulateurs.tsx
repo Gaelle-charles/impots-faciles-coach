@@ -304,6 +304,7 @@ export default function AdminSimulateurs() {
   };
 
   return (
+    <TooltipProvider>
     <div className="space-y-6 p-6 sm:p-8">
       <header className="flex items-center justify-between gap-4 flex-wrap">
         <div>
