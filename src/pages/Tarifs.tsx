@@ -3,7 +3,7 @@ import { useSearchParams, useLocation, useNavigate } from 'react-router-dom';
 import { Header } from '@/components/Header';
 import { Footer } from '@/components/Footer';
 import { Button } from '@/components/ui/button';
-import { Check, Info, Loader2, Lock, ArrowRight } from 'lucide-react';
+import { Check, Info, Loader2, Lock, ArrowRight, Sparkles, AlertTriangle, Users, Star } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useAuth } from '@/contexts/AuthContext';
 import { useOrgRole } from '@/hooks/useOrgRole';
@@ -22,10 +22,10 @@ const plans = [
     perMonth: 'Soit moins de 4,10€ par mois',
     popular: false,
     features: [
-      '🎓 Accès aux 7 modules pédagogiques',
-      '🎯 Parcours adapté à votre profil',
-      '🛠️ Simulateur de frais professionnels',
-      "✅ Quiz d'évaluation",
+      'Accès aux 7 modules pédagogiques',
+      'Parcours adapté à votre profil',
+      'Simulateur de frais professionnels',
+      "Quiz d'évaluation",
     ],
     footerNote: 'Aucune carte requise — accès immédiat',
   },
@@ -37,10 +37,10 @@ const plans = [
     perMonth: 'Soit moins de 6,60€ par mois',
     popular: true,
     features: [
-      '✅ Tout Starter +',
-      '📂 Fiches par profil contribuable',
-      '👔 Fiches par métier',
-      '🤖 Coaching pédagogique personnalisé',
+      'Tout Starter inclus',
+      'Fiches par profil contribuable',
+      'Fiches par métier',
+      'Coaching pédagogique personnalisé',
     ],
     footerNote: '14 jours pour changer d\'avis · Loi Hamon',
   },
@@ -52,9 +52,9 @@ const plans = [
     perMonth: 'Soit moins de 9,95€ par mois',
     popular: false,
     features: [
-      '✅ Tout Expert +',
-      '🎓 Coaching pédagogique avancé',
-      '🎓 5 webinaires exclusifs',
+      'Tout Expert inclus',
+      'Coaching pédagogique avancé',
+      '5 webinaires exclusifs',
     ],
     footerNote: 'Accompagnement renforcé toute l\'année',
   },
@@ -164,7 +164,7 @@ const Tarifs = () => {
       <main className="mx-auto w-full max-w-6xl flex-1 px-6 py-16 sm:py-20">
         {/* Hero tarifs */}
         <div className="text-center">
-          <Eyebrow>💸 Sans engagement · Résiliable à tout moment</Eyebrow>
+          <Eyebrow><Sparkles className="mr-1.5 inline h-3.5 w-3.5" />Sans engagement · Résiliable à tout moment</Eyebrow>
           <h1 className="font-display mt-6 text-5xl md:text-6xl text-foreground leading-tight">
             Le bon plan pour vos <AccentText>impôts.</AccentText>
           </h1>
@@ -173,29 +173,33 @@ const Tarifs = () => {
             plans incluent le module 1 gratuit pour bien commencer.
           </p>
           <div
-            className="mt-6 inline-block rounded-full px-5 py-2 text-xs font-semibold"
+            className="mt-6 inline-flex items-center gap-1.5 rounded-full px-5 py-2 text-xs font-semibold"
             style={{
               background: 'hsl(var(--rose-light))',
               color: 'hsl(var(--rose-dynamic))',
             }}
           >
-            📌 Destinées à la déclaration de revenus des particuliers — pas pour SAS / SARL / SCI
+            <Info className="h-3.5 w-3.5" />
+            Destinées à la déclaration de revenus des particuliers — pas pour SAS / SARL / SCI
           </div>
         </div>
 
         {/* Bannières contextuelles */}
         {isOrgAdmin && org && (
-          <div className="mt-8 rounded-2xl border-2 border-yellow-vivid/60 bg-yellow-vivid/10 p-4 text-sm text-foreground">
-            ⚠️ Vous êtes rattaché à l'organisation <strong>{org.raison_sociale}</strong> (plan{' '}
-            <strong className="capitalize">{org.plan}</strong>). Vous avez déjà un accès via votre licence
-            orga — souscrire un abonnement personnel ici doublonnera votre facturation.{' '}
-            <button
-              type="button"
-              onClick={() => navigate('/impots-team/dashboard')}
-              className="underline underline-offset-2 hover:no-underline"
-            >
-              Aller au dashboard équipe
-            </button>
+          <div className="mt-8 flex items-start gap-3 rounded-2xl border-2 border-yellow-vivid/60 bg-yellow-vivid/10 p-4 text-sm text-foreground">
+            <AlertTriangle className="mt-0.5 h-5 w-5 shrink-0 text-yellow-vivid" />
+            <div>
+              Vous êtes rattaché à l'organisation <strong>{org.raison_sociale}</strong> (plan{' '}
+              <strong className="capitalize">{org.plan}</strong>). Vous avez déjà un accès via votre licence
+              orga — souscrire un abonnement personnel ici doublonnera votre facturation.{' '}
+              <button
+                type="button"
+                onClick={() => navigate('/impots-team/dashboard')}
+                className="underline underline-offset-2 hover:no-underline"
+              >
+                Aller au dashboard équipe
+              </button>
+            </div>
           </div>
         )}
 
@@ -283,19 +287,19 @@ const Tarifs = () => {
 
                 {/* Badge */}
                 {isCurrent ? (
-                  <span className="absolute -top-3 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-full bg-foreground px-4 py-1 text-xs font-bold text-background shadow-md">
-                    ✓ Votre plan actuel
+                  <span className="absolute -top-3 left-1/2 -translate-x-1/2 inline-flex items-center gap-1 whitespace-nowrap rounded-full bg-foreground px-4 py-1 text-xs font-bold text-background shadow-md">
+                    <Check className="h-3 w-3" /> Votre plan actuel
                   </span>
                 ) : isRecommended ? (
-                  <span className="absolute -top-3 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-full bg-yellow-vivid px-4 py-1 text-xs font-bold text-violet-deep shadow-md">
-                    ⭐ Recommandé pour votre accès
+                  <span className="absolute -top-3 left-1/2 -translate-x-1/2 inline-flex items-center gap-1 whitespace-nowrap rounded-full bg-yellow-vivid px-4 py-1 text-xs font-bold text-violet-deep shadow-md">
+                    <Star className="h-3 w-3 fill-current" /> Recommandé pour votre accès
                   </span>
                 ) : isExpert ? (
                   <span
-                    className="absolute -top-3 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-full bg-yellow-vivid px-4 py-1 text-xs font-bold text-violet-deep"
+                    className="absolute -top-3 left-1/2 -translate-x-1/2 inline-flex items-center gap-1 whitespace-nowrap rounded-full bg-yellow-vivid px-4 py-1 text-xs font-bold text-violet-deep"
                     style={{ animation: 'pulse 2.5s ease-in-out infinite' }}
                   >
-                    ✨ Recommandé pour vous
+                    <Sparkles className="h-3 w-3" /> Recommandé pour vous
                   </span>
                 ) : null}
 
@@ -401,7 +405,7 @@ const Tarifs = () => {
           >
             <div className="grid gap-10 lg:grid-cols-[1.6fr_1fr] lg:items-center">
               <div>
-                <Eyebrow>👥 Pour les entreprises</Eyebrow>
+                <Eyebrow><Users className="mr-1.5 inline h-3.5 w-3.5" />Pour les entreprises</Eyebrow>
                 <h2 className="font-display mt-5 text-3xl md:text-4xl text-foreground leading-tight">
                   Impôts Team — <AccentText>offre multi-licences.</AccentText>
                 </h2>
@@ -440,8 +444,9 @@ const Tarifs = () => {
           </div>
         </div>
 
-        <p className="mt-10 max-w-2xl mx-auto text-center text-xs text-muted-foreground leading-relaxed">
-          ⚠️ Note : le passage à un plan inférieur n'est pas possible en cours d'abonnement. Choisissez avec soin.
+        <p className="mt-10 max-w-2xl mx-auto text-center text-xs text-muted-foreground leading-relaxed inline-flex items-start gap-1.5 justify-center">
+          <AlertTriangle className="h-3.5 w-3.5 shrink-0 mt-0.5" />
+          <span>Note : le passage à un plan inférieur n'est pas possible en cours d'abonnement. Choisissez avec soin.</span>
         </p>
         <p className="mt-3 max-w-3xl mx-auto text-center text-xs text-muted-foreground leading-relaxed">
           Les formations Impôts Facile apportent une information pédagogique générale et ne remplacent pas un
