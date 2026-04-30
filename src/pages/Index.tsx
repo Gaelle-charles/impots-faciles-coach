@@ -190,7 +190,7 @@ const Index = () => {
           </div>
 
           {/* Photo */}
-          <div className="relative z-10">
+          <div className="relative z-10 hidden lg:block">
             <div className="relative overflow-hidden rounded-[32px] aspect-[4/5] shadow-2xl shadow-primary/20">
               <div
                 ref={imgRef}
