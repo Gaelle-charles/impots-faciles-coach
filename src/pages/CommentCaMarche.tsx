@@ -167,9 +167,9 @@ const CommentCaMarche = () => {
           ref={imgRef}
           src={heroBg}
           alt=""
-          className="absolute inset-0 h-[130%] w-full object-cover will-change-transform"
+          className="absolute inset-0 h-[130%] w-full object-cover object-center will-change-transform"
         />
-        <div className="absolute inset-0 bg-gradient-to-br from-[hsl(285,52%,15%/0.85)] to-[hsl(263,70%,50%/0.75)]" />
+        <div className="absolute inset-0 bg-gradient-to-br from-[hsl(285,52%,15%/0.92)] via-[hsl(275,55%,25%/0.85)] to-[hsl(263,70%,45%/0.85)]" />
         <motion.div
           className="relative z-10 mx-auto max-w-3xl space-y-6"
           initial="hidden"
