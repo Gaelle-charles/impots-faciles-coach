@@ -60,13 +60,17 @@ export function TeamSidebar({
   return (
     <aside className="fixed left-0 top-0 z-40 flex h-screen w-sidebar flex-col bg-primary text-primary-foreground">
       {/* Logo + nom orga */}
-      <div className="flex items-center gap-2 px-6 pt-5 pb-3">
+      <Link
+        to="/"
+        className="flex items-center gap-2 px-6 pt-5 pb-3 cursor-pointer transition-opacity hover:opacity-80"
+        aria-label="Retour à l'accueil"
+      >
         <img src={logo} alt="Impôts Facile" className="h-7 w-7 shrink-0" />
         <div className="min-w-0">
           <p className="text-[11px] uppercase tracking-wide opacity-60">Impôts Team</p>
           <h1 className="font-heading text-sm font-bold truncate">{orgName}</h1>
         </div>
-      </div>
+      </Link>
 
       {/* Avatar admin */}
       <div className="mx-4 mb-4 rounded-lg bg-sidebar-muted p-3 flex items-center gap-3">
