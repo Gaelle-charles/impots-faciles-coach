@@ -1,0 +1,1 @@
+DELETE FROM public.certificats_parcours WHERE email LIKE 'test-cert-%@impotsfacile.test';
