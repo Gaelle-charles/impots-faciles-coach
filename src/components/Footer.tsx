@@ -27,10 +27,12 @@ export function Footer() {
           <div>
             <Link to="/" className="flex items-center gap-2">
               <img src={logo} alt="Impôts Facile" className="h-9 w-9" />
-              <span className="font-heading text-lg font-bold">Impôts Facile</span>
+              <span className="font-display text-2xl">Impôts Facile</span>
             </Link>
-            <p className="mt-3 text-sm text-primary-foreground/70">
-              L'outil parfait pour réduire ses impôts
+            <p className="mt-3 text-sm text-primary-foreground/70 leading-relaxed">
+              Plateforme pédagogique pour comprendre votre fiscalité personnelle.
+              <br />
+              Édité par ANNUL IMPOTS.
             </p>
           </div>
 
