@@ -219,7 +219,7 @@ const Tarifs = () => {
 
         {/* Pricing cards */}
         <div className="mt-14 grid w-full gap-6 lg:gap-5 grid-cols-1 lg:grid-cols-3 lg:items-center">
-          {(typeof window !== 'undefined' && window.innerWidth < 1024 ? orderedMobile : plans).map((plan) => {
+          {plans.map((plan) => {
             const isRecommended = plan.slug === recommended;
             const planTier = tierOf(plan.slug);
             const isCurrent = !!currentPlan && currentTier === planTier;
