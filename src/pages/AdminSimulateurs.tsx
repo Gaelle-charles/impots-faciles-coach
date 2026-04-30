@@ -30,7 +30,8 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { Plus, Pencil, GripVertical, Calculator } from 'lucide-react';
+import { Plus, Pencil, GripVertical, Calculator, Eye } from 'lucide-react';
+import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from '@/components/ui/tooltip';
 import { toast } from 'sonner';
 import {
   DndContext,
