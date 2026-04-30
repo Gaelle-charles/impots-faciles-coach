@@ -26,7 +26,7 @@ export default function ImpotsTeamSouscription() {
   const { user, signOut } = useAuth();
   const { toast } = useToast();
 
-  const initialPlan = (params.get('plan') as Plan) || 'expert';
+  const initialPlan: Plan = 'premium';
   const initialNb = Math.max(2, parseInt(params.get('nb') || '10', 10) || 10);
 
   const [step, setStep] = useState<'entreprise' | 'compte' | 'acceptation'>('entreprise');
@@ -39,7 +39,7 @@ export default function ImpotsTeamSouscription() {
   const [siret, setSiret] = useState('');
   const [adresse, setAdresse] = useState('');
   const [tva, setTva] = useState('');
-  const [plan, setPlan] = useState<Plan>(initialPlan);
+  const [plan] = useState<Plan>(initialPlan);
   const [nbLicences, setNbLicences] = useState(initialNb);
 
   // Étape B (création de compte si pas connecté)
@@ -200,15 +200,9 @@ export default function ImpotsTeamSouscription() {
                   <div className="grid grid-cols-2 gap-3">
                     <div>
                       <Label>Plan</Label>
-                      <select
-                        value={plan}
-                        onChange={(e) => setPlan(e.target.value as Plan)}
-                        className="mt-2 h-10 w-full rounded-md border border-input bg-background px-3"
-                      >
-                        <option value="starter">Starter (44€/lic)</option>
-                        <option value="expert">Expert (71€/lic)</option>
-                        <option value="premium">Premium (107€/lic)</option>
-                      </select>
+                      <div className="mt-2 flex h-10 items-center rounded-md border border-input bg-muted/30 px-3 text-sm font-medium">
+                        Premium (107€/lic)
+                      </div>
                     </div>
                     <div>
                       <Label htmlFor="nb">Nb licences</Label>
