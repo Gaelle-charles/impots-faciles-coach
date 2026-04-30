@@ -7,7 +7,8 @@
 @layer base {
   :root {
     --font-heading: 'Source Sans 3', sans-serif;
-    --font-body: 'Inter', sans-serif;
+    --font-body: 'Plus Jakarta Sans', 'Inter', sans-serif;
+    --font-display: 'Instrument Serif', Georgia, serif;
 
     /* Violet profond #2C1338 → HSL 285 52% 15% */
     --violet-deep: 285 52% 15%;
