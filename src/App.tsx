@@ -8,6 +8,7 @@ import { ProtectedRoute } from "@/components/ProtectedRoute";
 import { RedirectIfAuth } from "@/components/RedirectIfAuth";
 import { AppLayout } from "@/components/AppLayout";
 import { AdminLayout } from "@/components/AdminLayout";
+import { ScrollToTop } from "@/components/ScrollToTop";
 
 import Index from "./pages/Index";
 import Connexion from "./pages/Connexion";
@@ -77,6 +78,7 @@ const App = () => (
       <Sonner />
       <BrowserRouter>
         <AuthProvider>
+          <ScrollToTop />
           <Routes>
             {/* Public routes */}
             <Route path="/" element={<Index />} />
