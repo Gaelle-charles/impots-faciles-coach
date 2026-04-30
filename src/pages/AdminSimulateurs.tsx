@@ -364,7 +364,7 @@ export default function AdminSimulateurs() {
                 <SortableContext items={items.map((i) => i.id)} strategy={verticalListSortingStrategy}>
                   <TableBody>
                     {items.map((sim) => (
-                      <SortableRow key={sim.id} sim={sim} onEdit={openEdit} onToggle={toggleActive} />
+                      <SortableRow key={sim.id} sim={sim} onEdit={openEdit} onToggle={toggleActive} onPreview={setPreviewSim} />
                     ))}
                   </TableBody>
                 </SortableContext>
