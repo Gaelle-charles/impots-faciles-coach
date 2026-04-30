@@ -12,7 +12,7 @@ import {
 import {
   Accordion, AccordionContent, AccordionItem, AccordionTrigger,
 } from '@/components/ui/accordion';
-import { Users, GraduationCap, Sparkles } from 'lucide-react';
+import { Users, GraduationCap, Sparkles, Lightbulb, AlertTriangle } from 'lucide-react';
 
 const TEAM_PLANS = {
   starter: { label: 'Starter', individuel: 49, team: 44, desc: 'Bases : déclaration, crédits/réductions' },
@@ -142,8 +142,9 @@ export default function ImpotsTeam() {
                 />
               </div>
 
-              <div className="rounded-lg border border-yellow-vivid/50 bg-yellow-vivid/10 p-4 text-sm">
-                💡 L'admin qui gère les licences (vous-même ou un autre collaborateur) est <strong>gratuit</strong> et bénéficie d'un accès aperçu à la plateforme. Si vous souhaitez suivre le parcours complet certifiant, vous pourrez activer une licence personnelle après souscription (elle occupera alors 1 licence).
+              <div className="rounded-lg border border-yellow-vivid/50 bg-yellow-vivid/10 p-4 text-sm flex items-start gap-2">
+                <Lightbulb className="h-4 w-4 shrink-0 mt-0.5 text-yellow-vivid" />
+                <span>L'admin qui gère les licences (vous-même ou un autre collaborateur) est <strong>gratuit</strong> et bénéficie d'un accès aperçu à la plateforme. Si vous souhaitez suivre le parcours complet certifiant, vous pourrez activer une licence personnelle après souscription (elle occupera alors 1 licence).</span>
               </div>
               <div className="rounded-lg bg-muted/50 p-5">
                 <div className="flex justify-between text-sm">
@@ -169,8 +170,8 @@ export default function ImpotsTeam() {
               <Button size="lg" className="w-full" onClick={goSouscription}>
                 Souscrire maintenant
               </Button>
-              <p className="text-center text-xs text-muted-foreground">
-                ⚠️ Le passage à un plan inférieur n'est pas possible en cours d'abonnement.
+              <p className="text-center text-xs text-muted-foreground inline-flex items-center gap-1 justify-center">
+                <AlertTriangle className="h-3 w-3" /> Le passage à un plan inférieur n'est pas possible en cours d'abonnement.
               </p>
             </CardContent>
           </Card>
