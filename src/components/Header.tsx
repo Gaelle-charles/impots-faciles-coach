@@ -88,11 +88,11 @@ export function Header({ variant = 'light' }: HeaderProps) {
         </nav>
 
         {/* Desktop auth buttons */}
-        <div className="hidden items-center gap-3 md:flex">
+        <div className="hidden items-center gap-2 md:flex">
           {user ? (
             <>
               <Link to={accountHref}>
-                <Button variant={isDark ? 'cta' : 'default'} size="sm">
+                <Button variant={isDark ? 'cta-pill' : 'cta-pill'} size="sm" className="rounded-full px-5">
                   Mon compte
                 </Button>
               </Link>
@@ -100,7 +100,7 @@ export function Header({ variant = 'light' }: HeaderProps) {
                 variant="ghost"
                 size="sm"
                 onClick={signOut}
-                className={isDark ? 'text-primary-foreground/80 hover:text-primary-foreground hover:bg-sidebar-muted' : ''}
+                className={cn('rounded-full', isDark ? 'text-primary-foreground/80 hover:text-primary-foreground hover:bg-sidebar-muted' : '')}
               >
                 Se déconnecter
               </Button>
@@ -111,14 +111,14 @@ export function Header({ variant = 'light' }: HeaderProps) {
                 <Button
                   variant="ghost"
                   size="sm"
-                  className={isDark ? 'text-primary-foreground/80 hover:text-primary-foreground hover:bg-sidebar-muted' : ''}
+                  className={cn('rounded-full', isDark ? 'text-primary-foreground/80 hover:text-primary-foreground hover:bg-sidebar-muted' : 'text-primary')}
                 >
                   Connexion
                 </Button>
               </Link>
               <Link to="/inscription">
-                <Button variant={isDark ? 'cta' : 'default'} size="sm">
-                  S'inscrire
+                <Button variant="cta-pill" size="sm" className="rounded-full px-5">
+                  Commencer
                 </Button>
               </Link>
             </>

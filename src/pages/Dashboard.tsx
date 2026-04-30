@@ -179,8 +179,8 @@ const Dashboard = () => {
     <div className="space-y-10">
       {/* Welcome */}
       <div>
-        <h1 className="font-heading text-3xl font-bold text-foreground">
-          {profile?.prenom ? `Bonjour ${profile.prenom} 👋` : 'Tableau de bord'}
+        <h1 className="font-display text-4xl md:text-5xl text-foreground">
+          {profile?.prenom ? <>Bonjour <em className="accent-serif">{profile.prenom}</em> 👋</> : 'Tableau de bord'}
         </h1>
         <p className="mt-1 text-muted-foreground">
           Voici où tu en es dans ta formation sur les impôts.

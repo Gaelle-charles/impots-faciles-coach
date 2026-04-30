@@ -100,7 +100,7 @@ export default function Recommandations() {
           >
             <Heart className="h-5 w-5" style={{ color: '#E15A97' }} />
           </div>
-          <h1 className="font-heading text-3xl font-bold text-foreground">Nos recommandations</h1>
+          <h1 className="font-display text-4xl md:text-5xl text-foreground">Nos <em className="accent-serif">recommandations</em></h1>
         </div>
         <p className="text-muted-foreground">
           Associations et partenaires sélectionnés pour vous accompagner.
