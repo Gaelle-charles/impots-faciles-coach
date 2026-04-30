@@ -157,12 +157,6 @@ const Tarifs = () => {
 
   const recommendedPlan = plans.find((p) => p.slug === recommended);
 
-  // Mobile : place Expert (popular) en premier
-  const orderedMobile = [...plans].sort((a, b) => {
-    if (a.popular === b.popular) return 0;
-    return a.popular ? -1 : 1;
-  });
-
   return (
     <div className="flex min-h-screen flex-col bg-background">
       <Header />
