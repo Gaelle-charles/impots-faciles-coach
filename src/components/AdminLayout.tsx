@@ -31,7 +31,7 @@ export function AdminLayout() {
             )}
           </Link>
         </header>
-        <div className={`mx-auto max-w-content py-10 ${isMobile ? 'px-4 pb-20' : 'px-8'}`}>
+        <div className={`mx-auto w-full max-w-screen-2xl py-10 ${isMobile ? 'px-4 pb-20' : 'px-8'}`}>
           <Outlet />
         </div>
       </main>
