@@ -167,9 +167,9 @@ const CommentCaMarche = () => {
           ref={imgRef}
           src={heroBg}
           alt=""
-          className="absolute inset-0 h-[130%] w-full object-cover will-change-transform"
+          className="absolute inset-0 h-[130%] w-full object-cover object-center will-change-transform"
         />
-        <div className="absolute inset-0 bg-gradient-to-br from-[hsl(285,52%,15%/0.85)] to-[hsl(263,70%,50%/0.75)]" />
+        <div className="absolute inset-0 bg-gradient-to-br from-[hsl(285,52%,15%/0.92)] via-[hsl(275,55%,25%/0.85)] to-[hsl(263,70%,45%/0.85)]" />
         <motion.div
           className="relative z-10 mx-auto max-w-3xl space-y-6"
           initial="hidden"
@@ -187,14 +187,14 @@ const CommentCaMarche = () => {
           <motion.p variants={fadeUp} className="mx-auto max-w-xl text-base text-white/85 md:text-lg">
             Impôts Facile transforme un sujet complexe en un parcours clair, interactif et personnalisé — en moins d'une heure.
           </motion.p>
-          <motion.div variants={fadeUp} className="flex flex-col items-center justify-center gap-3 sm:flex-row">
-            <Link to="/inscription">
-              <Button className="bg-white text-primary hover:bg-white/90 font-heading font-bold px-6">
+          <motion.div variants={fadeUp} className="flex flex-col items-stretch justify-center gap-3 sm:flex-row sm:items-center">
+            <Link to="/inscription" className="w-full sm:w-auto">
+              <Button className="w-full sm:w-auto bg-white text-primary hover:bg-white/90 font-heading font-bold px-6">
                 Commencer gratuitement <ArrowRight className="ml-1 h-4 w-4" />
               </Button>
             </Link>
-            <a href="#modules">
-              <Button variant="outline" className="border-white/50 text-white hover:bg-white/10 font-heading font-bold px-6">
+            <a href="#modules" className="w-full sm:w-auto">
+              <Button variant="outline" className="w-full sm:w-auto border-2 border-white bg-white/10 text-white hover:bg-white hover:text-primary font-heading font-bold px-6 backdrop-blur-sm">
                 Voir les modules
               </Button>
             </a>
