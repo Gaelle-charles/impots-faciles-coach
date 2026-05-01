@@ -27,7 +27,7 @@ const plans = [
       'Simulateur de frais professionnels',
       "Quiz d'évaluation",
     ],
-    footerNote: 'Aucune carte requise — accès immédiat',
+    footerNote: '\n',
   },
   {
     name: 'Expert',
@@ -51,7 +51,7 @@ const plans = [
     perMonth: 'Soit moins de 9,95€ par mois',
     popular: false,
     features: [
-      'Tout Expert inclus',
+      'Formule Expert inclus',
       'Fiches pays',
       'Coaching pédagogique personnalisé',
       'Vidéos explicatives exclusives',
@@ -299,7 +299,7 @@ const Tarifs = () => {
                     className="absolute -top-3 left-1/2 -translate-x-1/2 inline-flex items-center gap-1 whitespace-nowrap rounded-full bg-yellow-vivid px-4 py-1 text-xs font-bold text-violet-deep"
                     style={{ animation: 'pulse 2.5s ease-in-out infinite' }}
                   >
-                    <Sparkles className="h-3 w-3" /> Recommandé pour vous
+                    <Sparkles className="h-3 w-3" /> Recommandé
                   </span>
                 ) : null}
 
