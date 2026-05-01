@@ -1,7 +1,6 @@
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
-import { Crown, FileText, Sparkles } from "lucide-react";
+import { Crown } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 import type { Passeport } from "@/hooks/usePasseportFiscal";
 
@@ -46,49 +45,28 @@ export function PasseportFiscalCard({ passeport }: Props) {
       </CardHeader>
 
       <CardContent>
-        <Tabs defaultValue="moderne" className="w-full">
-          <TabsList className="mb-4">
-            <TabsTrigger value="moderne" className="gap-2">
-              <Sparkles className="h-4 w-4" />
-              Vue moderne
-            </TabsTrigger>
-            <TabsTrigger value="carte" className="gap-2">
-              <FileText className="h-4 w-4" />
-              Carte officielle
-            </TabsTrigger>
-          </TabsList>
-
-          <TabsContent value="moderne" className="space-y-5">
-            {sections
-              .filter((s) => s.key !== "entete")
-              .map((section) => (
-                <div
-                  key={section.key}
-                  className="rounded-lg border border-border bg-background/70 p-4 space-y-2"
-                >
-                  <h3 className="font-heading text-base font-semibold text-foreground">
-                    {section.title}
-                  </h3>
-                  <div className="prose prose-sm dark:prose-invert max-w-none text-sm">
-                    <ReactMarkdown>{section.content_md}</ReactMarkdown>
-                  </div>
+        <div className="space-y-5">
+          {sections
+            .filter((s) => s.key !== "entete")
+            .map((section) => (
+              <div
+                key={section.key}
+                className="rounded-lg border border-border bg-background/70 p-4 space-y-2"
+              >
+                <h3 className="font-heading text-base font-semibold text-foreground">
+                  {section.title}
+                </h3>
+                <div className="prose prose-sm dark:prose-invert max-w-none text-sm">
+                  <ReactMarkdown>{section.content_md}</ReactMarkdown>
                 </div>
-              ))}
-            {sections.length === 0 && (
-              <p className="text-sm text-muted-foreground italic">
-                Contenu en préparation.
-              </p>
-            )}
-          </TabsContent>
-
-          <TabsContent value="carte">
-            <div className="rounded-lg border border-border bg-background/80 p-4 overflow-x-auto">
-              <pre className="text-[11px] sm:text-xs leading-snug font-mono whitespace-pre text-foreground">
-                {passeport.passeport_card_md}
-              </pre>
-            </div>
-          </TabsContent>
-        </Tabs>
+              </div>
+            ))}
+          {sections.length === 0 && (
+            <p className="text-sm text-muted-foreground italic">
+              Contenu en préparation.
+            </p>
+          )}
+        </div>
       </CardContent>
     </Card>
   );
