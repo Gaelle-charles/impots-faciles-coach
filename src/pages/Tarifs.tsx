@@ -40,9 +40,8 @@ const plans = [
       'Tout Starter inclus',
       'Fiches par profil contribuable',
       'Fiches par métier',
-      'Coaching pédagogique personnalisé',
     ],
-    footerNote: '14 jours pour changer d\'avis · Loi Hamon',
+    footerNote: 'Le plus choisi par nos utilisateurs',
   },
   {
     name: 'Premium',
@@ -54,8 +53,8 @@ const plans = [
     features: [
       'Tout Expert inclus',
       'Fiches pays',
-      'Parcours pédagogique avancé',
-      '5 vidéos explicatives exclusives',
+      'Coaching pédagogique personnalisé',
+      'Vidéos explicatives exclusives',
     ],
     footerNote: 'Accompagnement renforcé toute l\'année',
   },
