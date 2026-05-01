@@ -20,9 +20,8 @@ import type { Tables } from '@/integrations/supabase/types';
 import { useAccess } from '@/hooks/useAccess';
 import PersonalizedFiches from '@/components/dashboard/PersonalizedFiches';
 import { downloadCertificatPdf, type CertificatData } from '@/lib/certificat-pdf';
-import { usePasseportFiscal } from '@/hooks/usePasseportFiscal';
-import { PasseportFiscalCard } from '@/components/dashboard/PasseportFiscalCard';
-import { Crown } from 'lucide-react';
+
+
 
 type ModuleRow = Tables<'modules'> & { nb_steps_total: number };
 type ProgressionRow = Tables<'progressions'>;
