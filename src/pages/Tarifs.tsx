@@ -180,7 +180,7 @@ const Tarifs = () => {
             }}
           >
             <Info className="h-3.5 w-3.5" />
-            Destinées à la déclaration de revenus des particuliers — pas pour SAS / SARL / SCI
+            Destinées à la déclaration de revenus des particuliers&nbsp;
           </div>
         </div>
 
