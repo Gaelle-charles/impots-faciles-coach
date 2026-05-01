@@ -218,6 +218,7 @@ const AdminUsers = () => {
       ...u,
       email_confirmed_at: metaMap.get(u.id)?.email_confirmed_at ?? null,
       last_sign_in_at: metaMap.get(u.id)?.last_sign_in_at ?? null,
+      team: teamMap.get(u.id) ?? null,
     }));
 
     setUsers(enriched);
