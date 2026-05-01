@@ -335,23 +335,41 @@ export const PersonalizedFiches = () => {
           <h3 className="font-heading text-lg font-bold text-foreground mb-4">
             Votre passeport personnalisé
           </h3>
-          <Card className="border-border bg-gradient-to-br from-primary/5 to-primary/10 shadow-sm">
-            <CardContent className="p-6 space-y-3">
-              <div className="flex items-center gap-3">
-                <span className="text-3xl">🛂</span>
-                <div>
-                  <h4 className="font-heading text-base font-semibold text-foreground">
-                    Régime détecté : {profile.situation_principale === 'independant' ? 'Indépendant' : 'Dirigeant'}
-                  </h4>
-                  <p className="text-sm text-muted-foreground">
-                    Votre passeport personnalisé sera bientôt disponible.
-                  </p>
+          <a
+            href="#passeport-fiscal"
+            onClick={(e) => {
+              e.preventDefault();
+              const el = document.getElementById('passeport-fiscal');
+              if (el) {
+                el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                // focus pour l'accessibilité
+                (el as HTMLElement).setAttribute('tabindex', '-1');
+                (el as HTMLElement).focus({ preventScroll: true });
+              }
+            }}
+            className="block group rounded-lg focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
+            aria-label="Consulter votre passeport fiscal personnalisé"
+          >
+            <Card className="border-border bg-gradient-to-br from-primary/5 to-primary/10 shadow-sm transition-all group-hover:shadow-md group-hover:border-primary/40 cursor-pointer">
+              <CardContent className="p-6 space-y-3">
+                <div className="flex items-center gap-3">
+                  <span className="text-3xl">🛂</span>
+                  <div className="flex-1">
+                    <h4 className="font-heading text-base font-semibold text-foreground">
+                      Régime détecté : {profile.situation_principale === 'independant' ? 'Indépendant' : 'Dirigeant'}
+                    </h4>
+                    <p className="text-sm text-muted-foreground">
+                      Cliquez ici pour consulter votre passeport fiscal personnalisé.
+                    </p>
+                  </div>
+                  <span className="text-primary transition-transform group-hover:translate-x-1" aria-hidden="true">→</span>
                 </div>
-              </div>
-            </CardContent>
-          </Card>
+              </CardContent>
+            </Card>
+          </a>
         </div>
       )}
+
 
       {/* === EXPERT : teaser passeport personnalisé === */}
       {plan === 'expert' && showPasseport && (
