@@ -85,7 +85,7 @@ const modules = [
   { num: 3, Icon: Wallet, title: 'Les revenus à déclarer', desc: 'Salaires, indépendants, locations, placements, revenus en ligne.', available: true },
   { num: 4, Icon: PiggyBank, title: 'Les frais déductibles', desc: 'Abattement de 10%, frais réels, dépenses des salariés et indépendants.', available: true },
   { num: 5, Icon: Receipt, title: "Réductions et crédits d'impôt", desc: "Garde d'enfant, emploi à domicile, dons, scolarité — ce que vous pouvez récupérer.", available: true },
-  { num: 6, Icon: Globe, title: 'Fiscalité internationale', desc: 'Revenus étrangers, conventions fiscales, expatriation et double résidence.', available: true },
+  { num: 6, Icon: Globe, title: 'Spécificités fiscales des DROM', desc: 'Abattements, plafonds et règles propres aux départements et régions d\'outre-mer.', available: true },
   { num: 7, Icon: CheckCircle2, title: 'Valider son impôt final', desc: 'Lire votre résultat, corriger les erreurs, comprendre le prélèvement à la source.', available: true },
   { num: 8, Icon: Layers, title: 'Profils & stratégies personnalisées', desc: 'Salarié, indépendant, parent isolé, expatrié, LMNP — votre fiche sur mesure.', available: true },
 ];
