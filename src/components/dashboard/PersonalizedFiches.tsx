@@ -335,19 +335,10 @@ export const PersonalizedFiches = () => {
           <h3 className="font-heading text-lg font-bold text-foreground mb-4">
             Votre passeport personnalisé
           </h3>
-          <a
-            href="#passeport-fiscal"
-            onClick={(e) => {
-              e.preventDefault();
-              const el = document.getElementById('passeport-fiscal');
-              if (el) {
-                el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                // focus pour l'accessibilité
-                (el as HTMLElement).setAttribute('tabindex', '-1');
-                (el as HTMLElement).focus({ preventScroll: true });
-              }
-            }}
-            className="block group rounded-lg focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
+          <button
+            type="button"
+            onClick={() => navigate('/passeport-fiscal')}
+            className="block w-full text-left group rounded-lg focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
             aria-label="Consulter votre passeport fiscal personnalisé"
           >
             <Card className="border-border bg-gradient-to-br from-primary/5 to-primary/10 shadow-sm transition-all group-hover:shadow-md group-hover:border-primary/40 cursor-pointer">
@@ -362,11 +353,11 @@ export const PersonalizedFiches = () => {
                       Cliquez ici pour consulter votre passeport fiscal personnalisé.
                     </p>
                   </div>
-                  <span className="text-primary transition-transform group-hover:translate-x-1" aria-hidden="true">→</span>
+                  <ArrowRight className="h-5 w-5 text-primary transition-transform group-hover:translate-x-1" aria-hidden="true" />
                 </div>
               </CardContent>
             </Card>
-          </a>
+          </button>
         </div>
       )}
 
