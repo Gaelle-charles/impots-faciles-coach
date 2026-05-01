@@ -398,39 +398,14 @@ const CommentCaMarche = () => {
         >
           <motion.div variants={fadeUp}>
             <h2 className="font-heading text-2xl font-bold text-foreground md:text-3xl">Un accès simple et transparent</h2>
-            <p className="mt-2 text-muted-foreground">Choisissez la formule qui correspond à votre situation.</p>
+            <p className="mt-2 text-muted-foreground">Découvrez nos formules adaptées à votre situation.</p>
           </motion.div>
-          <motion.div className="grid gap-6 sm:grid-cols-3" variants={staggerContainer}>
-            {pricingCards.map((card) => (
-              <motion.div key={card.name} variants={scaleUp}>
-                <Card
-                  className={`border-border bg-background h-full transition-all duration-300 hover:shadow-lg ${card.highlight ? 'ring-2 ring-primary shadow-xl scale-[1.03]' : ''}`}
-                >
-                  <CardContent className="flex flex-col items-center space-y-4 p-6">
-                    <span className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-bold ${card.badgeClass}`}>
-                      {card.highlight && <Star className="h-3 w-3 fill-current" />}
-                      {card.badge}
-                    </span>
-                    <p className="font-heading text-3xl font-bold text-foreground">
-                      {card.price}<span className="text-base font-normal text-muted-foreground">{card.period}</span>
-                    </p>
-                    <ul className="w-full space-y-2 text-left text-sm text-muted-foreground">
-                      {card.features.map((f) => (
-                        <li key={f} className="flex items-start gap-2">
-                          <Check className="mt-0.5 h-4 w-4 text-primary shrink-0" />
-                          <span>{f}</span>
-                        </li>
-                      ))}
-                    </ul>
-                    <Link to="/tarifs" className="w-full">
-                      <Button variant={card.btnVariant} className="w-full font-heading font-bold">
-                        {card.btnLabel} <ArrowRight className="ml-1 h-4 w-4" />
-                      </Button>
-                    </Link>
-                  </CardContent>
-                </Card>
-              </motion.div>
-            ))}
+          <motion.div variants={scaleUp}>
+            <Link to="/tarifs">
+              <Button className="font-heading font-bold px-8 py-3 text-base">
+                Voir les tarifs <ArrowRight className="ml-1 h-4 w-4" />
+              </Button>
+            </Link>
           </motion.div>
           <motion.p variants={fadeIn} className="text-xs text-muted-foreground">
             Les prix sont indiqués en TTC. Paiement sécurisé via Stripe.
