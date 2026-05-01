@@ -133,6 +133,7 @@ const App = () => (
               <Route path="/mon-compte" element={<Profil />} />
               <Route path="/mes-modules" element={<MesModules />} />
               <Route path="/recommandations" element={<Recommandations />} />
+              <Route path="/passeport-fiscal" element={<PasseportFiscal />} />
             </Route>
 
             {/* Module has its own layout */}
