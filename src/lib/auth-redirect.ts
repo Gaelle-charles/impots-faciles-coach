@@ -11,8 +11,15 @@ import { supabase } from '@/integrations/supabase/client';
 export function getEmailRedirectOrigin(): string {
   if (typeof window === 'undefined') return 'https://impotsfacile.com';
   const host = window.location.hostname;
-  // Force production domain for any preview / lovable.app host
-  if (host.endsWith('.lovable.app') || host === 'lovable.dev') {
+  // Force production domain for any Lovable preview host.
+  // Preview hosts include *.lovable.app, *.lovableproject.com and lovable.dev.
+  // Sending email links to a preview host routes them through Lovable's
+  // auth-bridge which requires a lovable.dev login — broken for end users.
+  if (
+    host.endsWith('.lovable.app') ||
+    host.endsWith('.lovableproject.com') ||
+    host === 'lovable.dev'
+  ) {
     return 'https://impotsfacile.com';
   }
   return window.location.origin;
