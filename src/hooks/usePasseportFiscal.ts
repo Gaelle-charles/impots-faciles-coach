@@ -53,6 +53,7 @@ export function buildMatchingProfile(profile: Record<string, any> | null | undef
     "20_40k": 30000,
     "40_60k": 50000,
     "60_100k": 80000,
+    "80k_150k": 115000,
     "100_150k": 125000,
     "plus_150k": 200000,
   };
@@ -64,9 +65,23 @@ export function buildMatchingProfile(profile: Record<string, any> | null | undef
   if (profile.a_activite_secondaire) revenusComp.push("activite_secondaire");
   if (profile.a_investissements_defisc) revenusComp.push("defiscalisants");
 
+  // Normalisation forme_juridique : l'onboarding stocke en minuscules ('sasu', 'eurl',
+  // 'sarl_sas', 'portage_salarial'…) alors que les conditions_matching attendent
+  // 'SASU', 'EURL', 'SARL', 'SAS', 'portage_salarial'…
+  const formeRaw = (profile.forme_juridique as string | null | undefined) ?? '';
+  const formeMap: Record<string, string> = {
+    sasu: 'SASU',
+    eurl: 'EURL',
+    sarl: 'SARL',
+    sas: 'SAS',
+    sarl_sas: 'SARL', // un seul match prioritaire ; "in [SARL, SAS]" matchera
+  };
+  const formeNormalized = formeMap[formeRaw.toLowerCase()] ?? formeRaw;
+
   return {
     // Champs natifs (passthrough)
     ...profile,
+    forme_juridique: formeNormalized,
     // Alias legacy attendus par les conditions_matching de la spec
     statut: profile.situation_principale,
     metier: profile.metier_precis,
