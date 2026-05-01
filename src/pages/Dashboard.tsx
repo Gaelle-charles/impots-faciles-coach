@@ -88,7 +88,7 @@ const Dashboard = () => {
     return () => document.removeEventListener('visibilitychange', handleVisibility);
   }, [user]);
 
-  const { passeport, loading: passeportLoading } = usePasseportFiscal(profile?.plan, profile);
+  
 
   // Maps for quick lookup
   const progMap = useMemo(() => {
