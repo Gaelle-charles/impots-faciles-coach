@@ -20,6 +20,9 @@ import type { Tables } from '@/integrations/supabase/types';
 import { useAccess } from '@/hooks/useAccess';
 import PersonalizedFiches from '@/components/dashboard/PersonalizedFiches';
 import { downloadCertificatPdf, type CertificatData } from '@/lib/certificat-pdf';
+import { usePasseportFiscal } from '@/hooks/usePasseportFiscal';
+import { PasseportFiscalCard } from '@/components/dashboard/PasseportFiscalCard';
+import { Crown } from 'lucide-react';
 
 type ModuleRow = Tables<'modules'> & { nb_steps_total: number };
 type ProgressionRow = Tables<'progressions'>;
@@ -41,7 +44,7 @@ const Dashboard = () => {
 
   const capitalize = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
 
-  const [profile, setProfile] = useState<{ prenom: string | null; nom: string | null; plan: string } | null>(null);
+  const [profile, setProfile] = useState<any>(null);
   const [modules, setModules] = useState<ModuleRow[]>([]);
   const [progressions, setProgressions] = useState<ProgressionRow[]>([]);
   const [results, setResults] = useState<ResultatRow[]>([]);
@@ -52,7 +55,7 @@ const Dashboard = () => {
     if (!user) return;
     setLoading(true);
     const [profRes, modRes, progRes, resRes, certRes] = await Promise.all([
-      supabase.from('profiles').select('prenom, nom, plan').eq('id', user.id).maybeSingle(),
+      supabase.from('profiles').select('*').eq('id', user.id).maybeSingle(),
       (supabase as any).from('modules_with_counts').select('*').order('order', { ascending: true }),
       supabase.from('progressions').select('*').eq('user_id', user.id),
       supabase.from('resultat_quiz').select('*').eq('user_id', user.id).order('date_quiz', { ascending: false }),
