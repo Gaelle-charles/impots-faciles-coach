@@ -93,7 +93,10 @@ export function AppSidebar({ collapsed = false }: { collapsed?: boolean }) {
 
       {/* Navigation */}
       <nav className="flex-1 space-y-1 px-3 overflow-y-auto">
-        {navItems.map((item) => {
+        {(profile?.plan === 'premium'
+          ? [...baseNavItems.slice(0, 4), passeportItem, ...baseNavItems.slice(4)]
+          : baseNavItems
+        ).map((item) => {
           const active = isActive(item.to);
           return (
             <NavLink key={item.to} to={item.to}>
