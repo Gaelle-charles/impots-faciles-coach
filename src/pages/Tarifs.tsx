@@ -24,7 +24,7 @@ const plans = [
     features: [
       'Accès aux 7 modules pédagogiques',
       'Parcours adapté à votre profil',
-      'Simulateur de frais professionnels',
+      'Simulateur de frais réels',
       "Quiz d'évaluation",
     ],
     footerNote: '\n',
