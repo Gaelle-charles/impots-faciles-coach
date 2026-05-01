@@ -635,6 +635,19 @@ const AdminUsers = () => {
                       {u.role === 'admin' && (
                         <Badge className="text-[10px] h-5 px-1.5 font-normal whitespace-nowrap" style={{ backgroundColor: 'hsl(0 67% 35%)', color: 'white' }}>Admin</Badge>
                       )}
+                      {u.team && (
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <Badge className="text-[10px] h-5 px-1.5 font-normal whitespace-nowrap bg-violet-100 text-violet-800 border border-violet-200 dark:bg-violet-900/40 dark:text-violet-200 dark:border-violet-800">
+                              Team{u.team.role === 'admin' ? ' · Admin' : ''}
+                            </Badge>
+                          </TooltipTrigger>
+                          <TooltipContent>
+                            Formule Team — {u.team.raison_sociale}
+                            {u.team.role === 'admin' ? ' (administrateur de l\'organisation)' : ' (collaborateur)'}
+                          </TooltipContent>
+                        </Tooltip>
+                      )}
                     </div>
                   </TableCell>
                   <TableCell className="hidden md:table-cell text-sm text-muted-foreground truncate max-w-[200px]">{u.email ?? '—'}</TableCell>
