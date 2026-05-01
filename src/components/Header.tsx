@@ -57,7 +57,7 @@ export function Header({ variant = 'light' }: HeaderProps) {
         </Link>
 
         {/* Desktop nav */}
-        <nav className="hidden items-center gap-6 md:flex">
+        <nav className="hidden items-center gap-6 lg:flex">
           {navLinks.map((l) => (
             <Link
               key={l.to}
@@ -88,7 +88,7 @@ export function Header({ variant = 'light' }: HeaderProps) {
         </nav>
 
         {/* Desktop auth buttons */}
-        <div className="hidden items-center gap-2 md:flex">
+        <div className="hidden items-center gap-2 lg:flex">
           {user ? (
             <>
               <Link to={accountHref}>
@@ -127,7 +127,7 @@ export function Header({ variant = 'light' }: HeaderProps) {
 
         {/* Mobile hamburger */}
         <button
-          className="md:hidden"
+          className="lg:hidden"
           onClick={() => setMobileOpen(!mobileOpen)}
           aria-label="Menu"
         >
@@ -139,7 +139,7 @@ export function Header({ variant = 'light' }: HeaderProps) {
       {mobileOpen && (
         <div
           className={cn(
-            'border-t px-6 py-4 md:hidden',
+            'border-t px-6 py-4 lg:hidden',
             isDark ? 'border-sidebar-border bg-primary' : 'border-border bg-background'
           )}
         >
