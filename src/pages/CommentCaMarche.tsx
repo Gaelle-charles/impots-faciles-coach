@@ -113,7 +113,7 @@ const pricingCards = [
     badgeClass: 'bg-muted text-muted-foreground',
     price: '49 €',
     period: '/an',
-    features: ['Accès aux 7 modules pédagogiques', 'Parcours adapté à votre profil', 'Simulateur de frais professionnels', "Quiz d'évaluation"],
+    features: ['Accès aux 7 modules pédagogiques', 'Parcours adapté à votre profil', 'Simulateur de frais réels', "Quiz d'évaluation"],
     btnVariant: 'outline' as const,
     btnLabel: 'Choisir Starter',
     highlight: false,
