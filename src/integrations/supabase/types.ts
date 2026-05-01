@@ -529,6 +529,60 @@ export type Database = {
           },
         ]
       }
+      passeports_fiscaux: {
+        Row: {
+          conditions_matching: Json
+          contenu_sections: Json
+          created_at: string
+          description: string | null
+          id: string
+          is_active: boolean
+          nom: string
+          numero: number
+          ordre: number
+          passeport_card_md: string
+          plan_minimum: string
+          regime_fiscal: string
+          regime_social: string
+          slug: string
+          updated_at: string
+        }
+        Insert: {
+          conditions_matching?: Json
+          contenu_sections?: Json
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_active?: boolean
+          nom: string
+          numero: number
+          ordre?: number
+          passeport_card_md?: string
+          plan_minimum?: string
+          regime_fiscal: string
+          regime_social: string
+          slug: string
+          updated_at?: string
+        }
+        Update: {
+          conditions_matching?: Json
+          contenu_sections?: Json
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_active?: boolean
+          nom?: string
+          numero?: number
+          ordre?: number
+          passeport_card_md?: string
+          plan_minimum?: string
+          regime_fiscal?: string
+          regime_social?: string
+          slug?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       pays: {
         Row: {
           code_iso: string | null
@@ -906,6 +960,7 @@ export type Database = {
       }
       simulateurs: {
         Row: {
+          contenu_sections: Json | null
           created_at: string
           description: string
           highlight_si_couple: boolean
@@ -925,6 +980,7 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          contenu_sections?: Json | null
           created_at?: string
           description: string
           highlight_si_couple?: boolean
@@ -944,6 +1000,7 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          contenu_sections?: Json | null
           created_at?: string
           description?: string
           highlight_si_couple?: boolean
