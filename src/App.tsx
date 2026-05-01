@@ -33,6 +33,7 @@ import Fiche from "./pages/Fiche";
 import Profil from "./pages/Profil";
 import MesModules from "./pages/MesModules";
 import Recommandations from "./pages/Recommandations";
+import PasseportFiscal from "./pages/PasseportFiscal";
 import AdminRecommandations from "./pages/AdminRecommandations";
 import AdminSimulateurs from "./pages/AdminSimulateurs";
 import AdminSuggestions from "./pages/AdminSuggestions";
@@ -132,6 +133,7 @@ const App = () => (
               <Route path="/mon-compte" element={<Profil />} />
               <Route path="/mes-modules" element={<MesModules />} />
               <Route path="/recommandations" element={<Recommandations />} />
+              <Route path="/passeport-fiscal" element={<PasseportFiscal />} />
             </Route>
 
             {/* Module has its own layout */}

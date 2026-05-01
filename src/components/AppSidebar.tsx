@@ -15,10 +15,11 @@ import {
   User,
   Lightbulb,
   LogOut,
+  BookMarked,
 } from 'lucide-react';
 import { SuggestionDialog } from '@/components/SuggestionDialog';
 
-const navItems = [
+const baseNavItems = [
   { to: '/', label: 'Accueil', icon: Home },
   { to: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
   { to: '/mes-modules', label: 'Mes modules', icon: BookOpen },
@@ -27,6 +28,8 @@ const navItems = [
   { to: '/recommandations', label: 'Recommandations', icon: Heart },
   { to: '/profil', label: 'Mon profil', icon: User },
 ];
+
+const passeportItem = { to: '/passeport-fiscal', label: 'Passeport fiscal', icon: BookMarked };
 
 export function AppSidebar({ collapsed = false }: { collapsed?: boolean }) {
   const { user, signOut } = useAuth();
@@ -90,7 +93,10 @@ export function AppSidebar({ collapsed = false }: { collapsed?: boolean }) {
 
       {/* Navigation */}
       <nav className="flex-1 space-y-1 px-3 overflow-y-auto">
-        {navItems.map((item) => {
+        {(profile?.plan === 'premium'
+          ? [...baseNavItems.slice(0, 4), passeportItem, ...baseNavItems.slice(4)]
+          : baseNavItems
+        ).map((item) => {
           const active = isActive(item.to);
           return (
             <NavLink key={item.to} to={item.to}>
