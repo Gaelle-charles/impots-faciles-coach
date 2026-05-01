@@ -37,7 +37,7 @@ const plans = [
     perMonth: 'Soit moins de 6,60€ par mois',
     popular: true,
     features: [
-      'Tout Starter inclus',
+      'Formule Expert inclus',
       'Fiches par profil contribuable',
       'Fiches par métier',
     ],
