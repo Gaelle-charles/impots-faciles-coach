@@ -45,6 +45,7 @@ interface UserRow {
   deleted_at: string | null;
   email_confirmed_at?: string | null;
   last_sign_in_at?: string | null;
+  team?: { raison_sociale: string; role: 'admin' | 'member' } | null;
 }
 
 interface ProgressionRow {
