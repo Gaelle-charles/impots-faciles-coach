@@ -180,13 +180,29 @@ const AdminUsers = () => {
   const fetchData = useCallback(async () => {
     if (!user) return;
     setLoading(true);
-    const [uRes, pRes, rRes, mRes, metaRes] = await Promise.all([
+    const [uRes, pRes, rRes, mRes, metaRes, orgMembersRes, orgsRes] = await Promise.all([
       supabase.from('profiles').select('id, prenom, nom, email, plan, role, created_at, is_active, date_paiement, metier_id, deleted_at').order('created_at', { ascending: false }),
       supabase.from('progressions').select('id, user_id, module_id, step, completion_date'),
       supabase.from('resultat_quiz').select('id, user_id, module_id, pourcentage, score, score_max, date_quiz'),
       supabase.from('modules').select('id, titre, total_step').order('order', { ascending: true }),
       supabase.functions.invoke('admin-users', { body: { action: 'list_users_meta' } }),
+      supabase.from('organization_members').select('user_id, organization_id, role, removed_at, accepted_at'),
+      supabase.from('organizations').select('id, raison_sociale, admin_user_id'),
     ]);
+
+    // Map user_id -> org info (Team = appartient à une organisation, soit admin soit membre actif)
+    const orgsById = new Map<string, { raison_sociale: string }>();
+    (orgsRes.data ?? []).forEach((o: any) => orgsById.set(o.id, { raison_sociale: o.raison_sociale }));
+    const teamMap = new Map<string, { raison_sociale: string; role: 'admin' | 'member' }>();
+    (orgsRes.data ?? []).forEach((o: any) => {
+      if (o.admin_user_id) teamMap.set(o.admin_user_id, { raison_sociale: o.raison_sociale, role: 'admin' });
+    });
+    (orgMembersRes.data ?? []).forEach((m: any) => {
+      if (!m.user_id || m.removed_at) return;
+      if (teamMap.has(m.user_id)) return; // déjà admin
+      const org = orgsById.get(m.organization_id);
+      if (org) teamMap.set(m.user_id, { raison_sociale: org.raison_sociale, role: 'member' });
+    });
 
     const metaMap = new Map<string, { email_confirmed_at: string | null; last_sign_in_at: string | null }>();
     const metaUsers = (metaRes.data as any)?.users as Array<any> | undefined;
