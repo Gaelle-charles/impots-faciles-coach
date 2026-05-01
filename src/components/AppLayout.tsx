@@ -55,6 +55,7 @@ export function AppLayout() {
   return (
     <div className="min-h-screen bg-dashboard-bg">
       {!isMobile && <AppSidebar />}
+      {isMobile && <Header />}
       <main className={`min-h-screen ${isMobile ? '' : 'ml-sidebar'}`}>
         <div className={`mx-auto w-full max-w-7xl py-10 ${isMobile ? 'px-4 pb-20' : 'px-4 sm:px-6 lg:px-8'}`}>
           <Outlet />
