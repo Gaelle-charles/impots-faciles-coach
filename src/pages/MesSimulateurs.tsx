@@ -1,11 +1,9 @@
 import { Link } from "react-router-dom";
 import { Card } from "@/components/ui/card";
-import { Calculator, Users, Briefcase, Gift, ArrowRight, Clock, Sparkles } from "lucide-react";
+import { ArrowRight, Clock, Lock } from "lucide-react";
 import { useSimulateurs } from "@/hooks/useSimulateurs";
+import { useAccess, type Plan } from "@/hooks/useAccess";
 
-// Habillage visuel (emoji / couleur / badge) par slug — la BDD ne porte que les
-// métadonnées textuelles. Tout simulateur dont le slug n'est pas mappé reçoit
-// un visuel par défaut.
 const VISUALS: Record<string, { emoji: string; color: string; badge: string }> = {
   "ir-bareme":           { emoji: "🧮", color: "from-violet-500 to-purple-600",  badge: "Le plus complet" },
   "quotient-familial":   { emoji: "👪", color: "from-pink-500 to-rose-600",      badge: "Familles" },
@@ -23,11 +21,18 @@ const VISUALS: Record<string, { emoji: string; color: string; badge: string }> =
 
 const DEFAULT_VISUAL = { emoji: "🧮", color: "from-slate-500 to-slate-700", badge: "Outil" };
 
+const PLAN_RANK: Record<Plan, number> = { nouveau: 0, starter: 1, expert: 2, premium: 3 };
+const PLAN_LABEL: Record<string, string> = { starter: "Starter", expert: "Expert", premium: "Premium" };
+
 const MesSimulateurs = () => {
   const { data, loading } = useSimulateurs({ includeInactive: true });
+  const { plan, hasAdminAccess } = useAccess();
+  const isAdmin = hasAdminAccess();
 
   const actifs = data.filter((s) => s.is_active);
   const aVenir = data.filter((s) => !s.is_active);
+
+  const userRank = PLAN_RANK[plan] ?? 0;
 
   return (
     <div className="space-y-6">
@@ -50,29 +55,52 @@ const MesSimulateurs = () => {
           <div className="grid gap-4 md:grid-cols-2">
             {actifs.map((s) => {
               const v = VISUALS[s.slug] ?? DEFAULT_VISUAL;
-              return (
-                <Link key={s.id} to={`/simulateur/${s.slug}`} className="group">
-                  <Card className="h-full p-5 hover:shadow-lg transition-all hover:-translate-y-0.5 hover:border-primary/50">
-                    <div className="flex gap-4">
-                      <div className={`shrink-0 h-12 w-12 rounded-xl bg-gradient-to-br ${v.color} flex items-center justify-center text-2xl shadow-md`}>
-                        {v.emoji}
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-2 flex-wrap">
-                          <h3 className="font-heading text-lg font-bold text-foreground group-hover:text-primary transition-colors">
-                            {s.nom}
-                          </h3>
+              const requiredRank = PLAN_RANK[s.plan_minimum as Plan] ?? 1;
+              const isLocked = !isAdmin && userRank < requiredRank;
+              const planLabel = PLAN_LABEL[s.plan_minimum] ?? s.plan_minimum;
+
+              const cardInner = (
+                <Card className={`h-full p-5 transition-all ${isLocked ? "opacity-70 hover:opacity-100" : "hover:shadow-lg hover:-translate-y-0.5 hover:border-primary/50"}`}>
+                  <div className="flex gap-4">
+                    <div className={`shrink-0 h-12 w-12 rounded-xl bg-gradient-to-br ${v.color} flex items-center justify-center text-2xl shadow-md relative`}>
+                      {v.emoji}
+                      {isLocked && (
+                        <div className="absolute inset-0 rounded-xl bg-black/40 flex items-center justify-center">
+                          <Lock className="h-5 w-5 text-white" />
+                        </div>
+                      )}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <h3 className={`font-heading text-lg font-bold ${isLocked ? "text-muted-foreground" : "text-foreground group-hover:text-primary"} transition-colors`}>
+                          {s.nom}
+                        </h3>
+                        {isLocked ? (
+                          <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-yellow-vivid/30 text-foreground uppercase tracking-wide">
+                            {planLabel} requis
+                          </span>
+                        ) : (
                           <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-primary/10 text-primary uppercase tracking-wide">
                             {v.badge}
                           </span>
-                        </div>
-                        <p className="text-sm text-muted-foreground mt-1">{s.description}</p>
-                        <div className="flex items-center gap-1 mt-3 text-sm font-medium text-primary opacity-0 group-hover:opacity-100 transition-opacity">
-                          Lancer <ArrowRight className="h-4 w-4" />
-                        </div>
+                        )}
+                      </div>
+                      <p className="text-sm text-muted-foreground mt-1">{s.description}</p>
+                      <div className={`flex items-center gap-1 mt-3 text-sm font-medium ${isLocked ? "text-yellow-vivid" : "text-primary opacity-0 group-hover:opacity-100"} transition-opacity`}>
+                        {isLocked ? <>Passer en {planLabel} <ArrowRight className="h-4 w-4" /></> : <>Lancer <ArrowRight className="h-4 w-4" /></>}
                       </div>
                     </div>
-                  </Card>
+                  </div>
+                </Card>
+              );
+
+              return isLocked ? (
+                <Link key={s.id} to={`/tarifs?recommended=${s.plan_minimum}`} className="group">
+                  {cardInner}
+                </Link>
+              ) : (
+                <Link key={s.id} to={`/simulateur/${s.slug}`} className="group">
+                  {cardInner}
                 </Link>
               );
             })}
