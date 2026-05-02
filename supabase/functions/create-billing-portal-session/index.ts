@@ -55,6 +55,7 @@ Deno.serve(async (req) => {
 
     const session = await stripe.billingPortal.sessions.create({
       customer: profile.stripe_customer_id,
+      locale: "fr",
       return_url: `${origin || "https://impots-faciles-coach.lovable.app"}/mon-profil`,
     });
 

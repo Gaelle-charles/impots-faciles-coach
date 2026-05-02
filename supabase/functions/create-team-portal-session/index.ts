@@ -70,6 +70,7 @@ Deno.serve(async (req) => {
 
     const session = await stripe.billingPortal.sessions.create({
       customer: org.stripe_customer_id,
+      locale: "fr",
       return_url: `${origin}/impots-team/dashboard`,
     });
 
