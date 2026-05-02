@@ -81,6 +81,16 @@ Deno.serve(async (req) => {
           console.error("[webhook][B2B] Failed to activate org", error);
           return new Response(JSON.stringify({ error: error.message }), { status: 500 });
         }
+
+        // Force la locale FR sur le customer Stripe (factures + emails en français)
+        if (typeof session.customer === "string") {
+          try {
+            await stripe.customers.update(session.customer, { preferred_locales: ["fr"] });
+          } catch (e) {
+            console.error("[webhook][B2B] failed to set preferred_locales:", e);
+          }
+        }
+
         console.log(`[webhook][B2B] checkout.session.completed → org ${orgId} active`);
         return new Response(JSON.stringify({ received: true }), { status: 200 });
       }
@@ -108,6 +118,15 @@ Deno.serve(async (req) => {
       if (error) {
         console.error("Failed to update profile", error);
         return new Response(JSON.stringify({ error: error.message }), { status: 500 });
+      }
+
+      // Force la locale FR sur le customer Stripe (factures + emails en français)
+      if (typeof session.customer === "string") {
+        try {
+          await stripe.customers.update(session.customer, { preferred_locales: ["fr"] });
+        } catch (e) {
+          console.error("[webhook] failed to set preferred_locales:", e);
+        }
       }
 
       console.log(`[webhook] checkout.session.completed → user ${userId} → plan ${plan}`);
