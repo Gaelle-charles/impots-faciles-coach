@@ -49,41 +49,51 @@ describe("validateCouponInput", () => {
 describe("evaluateCoupon", () => {
   const ctx = { plan: "starter" as const, basePrice: 5900 };
 
-  it("renvoie not_found si coupon manquant", () => {
-    const r = evaluateCoupon(null, ctx);
+  function expectError(r: ReturnType<typeof evaluateCoupon>, code: string) {
     expect(r.valid).toBe(false);
-    if (!r.valid) expect(r.error_code).toBe("not_found");
+    expect((r as { valid: false; error_code: string }).error_code).toBe(code);
+  }
+
+  it("renvoie not_found si coupon manquant", () => {
+    expectError(evaluateCoupon(null, ctx), "not_found");
   });
 
   it("renvoie inactive", () => {
-    const r = evaluateCoupon({ ...baseCoupon, active: false }, ctx);
-    if (!r.valid) expect(r.error_code).toBe("inactive");
+    expectError(evaluateCoupon({ ...baseCoupon, active: false }, ctx), "inactive");
   });
 
   it("renvoie expired", () => {
-    const r = evaluateCoupon(
-      { ...baseCoupon, valid_until: new Date(Date.now() - 1000).toISOString() },
-      ctx,
+    expectError(
+      evaluateCoupon(
+        { ...baseCoupon, valid_until: new Date(Date.now() - 1000).toISOString() },
+        ctx,
+      ),
+      "expired",
     );
-    if (!r.valid) expect(r.error_code).toBe("expired");
   });
 
   it("renvoie not_started", () => {
-    const r = evaluateCoupon(
-      { ...baseCoupon, valid_from: new Date(Date.now() + 86_400_000).toISOString() },
-      ctx,
+    expectError(
+      evaluateCoupon(
+        { ...baseCoupon, valid_from: new Date(Date.now() + 86_400_000).toISOString() },
+        ctx,
+      ),
+      "not_started",
     );
-    if (!r.valid) expect(r.error_code).toBe("not_started");
   });
 
   it("renvoie limit_reached quand max atteint", () => {
-    const r = evaluateCoupon({ ...baseCoupon, max_redemptions: 5, times_redeemed: 5 }, ctx);
-    if (!r.valid) expect(r.error_code).toBe("limit_reached");
+    expectError(
+      evaluateCoupon({ ...baseCoupon, max_redemptions: 5, times_redeemed: 5 }, ctx),
+      "limit_reached",
+    );
   });
 
   it("renvoie plan_not_eligible", () => {
-    const r = evaluateCoupon({ ...baseCoupon, plans_applicables: ["premium"] }, ctx);
-    if (!r.valid) expect(r.error_code).toBe("plan_not_eligible");
+    expectError(
+      evaluateCoupon({ ...baseCoupon, plans_applicables: ["premium"] }, ctx),
+      "plan_not_eligible",
+    );
   });
 
   it("calcule la réduction correctement (10% sur 5900)", () => {
