@@ -24,6 +24,7 @@ import {
   Heart,
   MessageSquareWarning,
   Calculator,
+  Ticket,
 } from 'lucide-react';
 import { useUnreadSuggestions } from '@/hooks/useUnreadSuggestions';
 
@@ -69,6 +70,7 @@ const navGroups = [
     items: [
       { to: '/admin/users', label: 'Tous les utilisateurs', icon: Users },
       { to: '/admin/subscriptions', label: 'Abonnements', icon: CreditCard },
+      { to: '/admin/coupons', label: 'Coupons', icon: Ticket },
       { to: '/admin/emails', label: 'Emails envoyés', icon: Mail },
     ],
   },
