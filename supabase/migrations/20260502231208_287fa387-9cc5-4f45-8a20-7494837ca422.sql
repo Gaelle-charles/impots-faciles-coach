@@ -1,0 +1,1 @@
+UPDATE public.simulateurs SET is_active = true WHERE slug = 'frais-reels';
