@@ -104,6 +104,175 @@ export type Database = {
           },
         ]
       }
+      coupon_audit_log: {
+        Row: {
+          action_type: Database["public"]["Enums"]["coupon_audit_action"]
+          admin_user_id: string | null
+          coupon_id: string | null
+          created_at: string
+          details: Json | null
+          id: string
+        }
+        Insert: {
+          action_type: Database["public"]["Enums"]["coupon_audit_action"]
+          admin_user_id?: string | null
+          coupon_id?: string | null
+          created_at?: string
+          details?: Json | null
+          id?: string
+        }
+        Update: {
+          action_type?: Database["public"]["Enums"]["coupon_audit_action"]
+          admin_user_id?: string | null
+          coupon_id?: string | null
+          created_at?: string
+          details?: Json | null
+          id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "coupon_audit_log_coupon_id_fkey"
+            columns: ["coupon_id"]
+            isOneToOne: false
+            referencedRelation: "coupons"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      coupon_redemptions: {
+        Row: {
+          amount_paid: number
+          amount_saved: number
+          coupon_id: string
+          id: string
+          plan_purchased: Database["public"]["Enums"]["coupon_plan"]
+          redeemed_at: string
+          stripe_session_id: string | null
+          stripe_subscription_id: string | null
+          user_id: string | null
+        }
+        Insert: {
+          amount_paid: number
+          amount_saved: number
+          coupon_id: string
+          id?: string
+          plan_purchased: Database["public"]["Enums"]["coupon_plan"]
+          redeemed_at?: string
+          stripe_session_id?: string | null
+          stripe_subscription_id?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          amount_paid?: number
+          amount_saved?: number
+          coupon_id?: string
+          id?: string
+          plan_purchased?: Database["public"]["Enums"]["coupon_plan"]
+          redeemed_at?: string
+          stripe_session_id?: string | null
+          stripe_subscription_id?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "coupon_redemptions_coupon_id_fkey"
+            columns: ["coupon_id"]
+            isOneToOne: false
+            referencedRelation: "coupons"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "coupon_redemptions_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      coupons: {
+        Row: {
+          active: boolean
+          code: string
+          created_at: string
+          created_by: string | null
+          id: string
+          max_redemptions: number | null
+          notes: string | null
+          parrain_external_email: string | null
+          parrain_external_name: string | null
+          parrain_external_type:
+            | Database["public"]["Enums"]["coupon_parrain_external_type"]
+            | null
+          parrain_type: Database["public"]["Enums"]["coupon_parrain_type"]
+          parrain_user_id: string | null
+          percent_off: number
+          plans_applicables: Json
+          stripe_coupon_id: string | null
+          stripe_promo_code_id: string | null
+          times_redeemed: number
+          updated_at: string
+          valid_from: string
+          valid_until: string | null
+        }
+        Insert: {
+          active?: boolean
+          code: string
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          max_redemptions?: number | null
+          notes?: string | null
+          parrain_external_email?: string | null
+          parrain_external_name?: string | null
+          parrain_external_type?:
+            | Database["public"]["Enums"]["coupon_parrain_external_type"]
+            | null
+          parrain_type?: Database["public"]["Enums"]["coupon_parrain_type"]
+          parrain_user_id?: string | null
+          percent_off: number
+          plans_applicables?: Json
+          stripe_coupon_id?: string | null
+          stripe_promo_code_id?: string | null
+          times_redeemed?: number
+          updated_at?: string
+          valid_from?: string
+          valid_until?: string | null
+        }
+        Update: {
+          active?: boolean
+          code?: string
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          max_redemptions?: number | null
+          notes?: string | null
+          parrain_external_email?: string | null
+          parrain_external_name?: string | null
+          parrain_external_type?:
+            | Database["public"]["Enums"]["coupon_parrain_external_type"]
+            | null
+          parrain_type?: Database["public"]["Enums"]["coupon_parrain_type"]
+          parrain_user_id?: string | null
+          percent_off?: number
+          plans_applicables?: Json
+          stripe_coupon_id?: string | null
+          stripe_promo_code_id?: string | null
+          times_redeemed?: number
+          updated_at?: string
+          valid_from?: string
+          valid_until?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "coupons_parrain_user_id_fkey"
+            columns: ["parrain_user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       email_send_log: {
         Row: {
           created_at: string
@@ -1263,7 +1432,19 @@ export type Database = {
       user_can_access_module: { Args: { _module_id: string }; Returns: boolean }
     }
     Enums: {
-      [_ in never]: never
+      coupon_audit_action:
+        | "create"
+        | "update"
+        | "deactivate"
+        | "reactivate"
+        | "delete"
+      coupon_parrain_external_type:
+        | "influenceur"
+        | "partenaire"
+        | "ami"
+        | "autre"
+      coupon_parrain_type: "user" | "external" | "none"
+      coupon_plan: "starter" | "expert" | "premium"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -1390,6 +1571,22 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      coupon_audit_action: [
+        "create",
+        "update",
+        "deactivate",
+        "reactivate",
+        "delete",
+      ],
+      coupon_parrain_external_type: [
+        "influenceur",
+        "partenaire",
+        "ami",
+        "autre",
+      ],
+      coupon_parrain_type: ["user", "external", "none"],
+      coupon_plan: ["starter", "expert", "premium"],
+    },
   },
 } as const
