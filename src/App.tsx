@@ -125,12 +125,13 @@ const App = () => (
             <Route element={<ProtectedRoute><AppLayout /></ProtectedRoute>}>
               <Route path="/dashboard" element={<Dashboard />} />
               <Route path="/mes-simulateurs" element={<MesSimulateurs />} />
-              <Route path="/simulateur" element={<Simulateur />} />
+              <Route path="/simulateur" element={<AccessGuard requires="expert"><Simulateur /></AccessGuard>} />
               <Route path="/simulateur-de-frais" element={<SimulateurFrais />} />
-              <Route path="/simulateur/ir-bareme" element={<SimulateurIRBareme />} />
-              <Route path="/simulateur/quotient-familial" element={<SimulateurQuotientFamilial />} />
-              <Route path="/simulateur/pas" element={<SimulateurPAS />} />
-              <Route path="/simulateur/credits-reductions" element={<SimulateurCreditsReductions />} />
+              <Route path="/simulateur/frais-reels" element={<AccessGuard requires="starter"><SimulateurFrais /></AccessGuard>} />
+              <Route path="/simulateur/ir-bareme" element={<AccessGuard requires="expert"><SimulateurIRBareme /></AccessGuard>} />
+              <Route path="/simulateur/quotient-familial" element={<AccessGuard requires="expert"><SimulateurQuotientFamilial /></AccessGuard>} />
+              <Route path="/simulateur/pas" element={<AccessGuard requires="expert"><SimulateurPAS /></AccessGuard>} />
+              <Route path="/simulateur/credits-reductions" element={<AccessGuard requires="expert"><SimulateurCreditsReductions /></AccessGuard>} />
               <Route path="/fiche-metier/:id" element={<FicheMetier />} />
               <Route path="/fiches/:type/:slug" element={<Fiche />} />
               <Route path="/profil" element={<Profil />} />
