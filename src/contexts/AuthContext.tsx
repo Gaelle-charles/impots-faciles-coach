@@ -45,6 +45,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setUser(session?.user ?? null);
       setLoading(false);
 
+      // Welcome email — déclenché à chaque SIGNED_IN, l'edge function gère l'idempotence
+      // (ne renvoie pas si welcome_email_sent_at est déjà rempli)
+      if (event === 'SIGNED_IN' && session) {
+        // setTimeout pour ne pas bloquer le callback auth (anti-deadlock Supabase)
+        setTimeout(() => {
+          supabase.functions.invoke('send-welcome-email').catch((e) => {
+            console.warn('[welcome-email] invoke failed:', e);
+          });
+        }, 0);
+      }
+
       // Handle pending admin login from Google OAuth
       if (event === 'SIGNED_IN' && session && sessionStorage.getItem('pendingAdminLogin')) {
         sessionStorage.removeItem('pendingAdminLogin');
