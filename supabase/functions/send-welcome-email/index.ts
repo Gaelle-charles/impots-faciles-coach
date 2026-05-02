@@ -50,8 +50,11 @@ Deno.serve(async (req) => {
       .maybeSingle();
 
     if (profErr || !profile) {
-      return new Response(JSON.stringify({ error: "Profil introuvable" }), {
-        status: 404, headers: { ...corsHeaders, "Content-Type": "application/json" },
+      // Profil pas encore créé (trigger handle_new_user en cours) — on skip silencieusement.
+      // Le prochain SIGNED_IN déclenchera à nouveau l'envoi.
+      console.warn("[send-welcome-email] profile not found yet for", u.user.id);
+      return new Response(JSON.stringify({ skipped: true, reason: "profile_not_found" }), {
+        status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
 
