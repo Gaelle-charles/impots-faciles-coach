@@ -52,6 +52,7 @@ import AdminModuleQuiz from "./pages/AdminModuleQuiz";
 import AdminSubscriptions from "./pages/AdminSubscriptions";
 import AdminEmails from "./pages/AdminEmails";
 import AdminSettings from "./pages/AdminSettings";
+import AdminCoupons from "./pages/AdminCoupons";
 import AuthCallback from "./pages/AuthCallback";
 import CommentCaMarche from "./pages/CommentCaMarche";
 import PaiementSucces from "./pages/PaiementSucces";
@@ -161,6 +162,7 @@ const App = () => (
               <Route path="/admin/recommandations" element={<AdminRecommandations />} />
               <Route path="/admin/simulateurs" element={<AdminSimulateurs />} />
               <Route path="/admin/suggestions" element={<AdminSuggestions />} />
+              <Route path="/admin/coupons" element={<AdminCoupons />} />
             </Route>
 
             {/* Quizz has its own layout */}
