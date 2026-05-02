@@ -178,8 +178,8 @@ export default function AdminCoupons() {
                 Aucun coupon
               </TableCell></TableRow>
             ) : filtered.map((c) => (
-              <TableRow key={c.id}>
-                <TableCell className="font-mono font-semibold">{c.code}</TableCell>
+              <TableRow key={c.id} className="cursor-pointer" onClick={() => window.location.assign(`/admin/coupons/${c.id}`)}>
+                <TableCell className="font-mono font-semibold text-primary hover:underline">{c.code}</TableCell>
                 <TableCell>{c.percent_off}%</TableCell>
                 <TableCell className="text-sm">
                   {c.parrain_type === 'user' && <span className="text-blue-700">Utilisateur</span>}
