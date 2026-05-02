@@ -158,7 +158,7 @@ const Index = () => {
               mieux comprendre votre déclaration de revenus, étape par étape.
             </p>
             <p className="mt-3 max-w-xl text-sm italic text-muted-foreground/80">
-              Plateforme pédagogique destinée aux particuliers — ne se substitue
+              Plateforme pédagogique destinée aux particuliers, ne se substitue
               pas à un conseil professionnel.
             </p>
 
@@ -368,7 +368,7 @@ const Index = () => {
                 Adapté à votre profil
               </h3>
               <p className="mt-2 text-sm text-muted-foreground leading-relaxed">
-                Salarié, indépendant, retraité, expatrié — chaque parcours
+                Salarié, indépendant, retraité, expatrié , chaque parcours
                 s'adapte à votre situation.
               </p>
             </div>
@@ -384,7 +384,7 @@ const Index = () => {
                   <p className="mt-2 text-sm text-muted-foreground leading-relaxed">
                     12 outils interactifs pour estimer votre impôt, comparer
                     plusieurs scénarios et prendre les bonnes décisions
-                    fiscales — sans formules à connaître par cœur. Modifiez vos
+                    fiscales sans formules à connaître par cœur. Modifiez vos
                     paramètres en temps réel et visualisez l'impact immédiat
                     sur votre imposition.
                   </p>
