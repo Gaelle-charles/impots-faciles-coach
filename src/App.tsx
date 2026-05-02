@@ -54,6 +54,8 @@ import AdminEmails from "./pages/AdminEmails";
 import AdminSettings from "./pages/AdminSettings";
 import AdminCoupons from "./pages/AdminCoupons";
 import AdminCouponDetail from "./pages/AdminCouponDetail";
+import AdminCouponsParrains from "./pages/AdminCouponsParrains";
+import AdminCouponParrainDetail from "./pages/AdminCouponParrainDetail";
 import AuthCallback from "./pages/AuthCallback";
 import CommentCaMarche from "./pages/CommentCaMarche";
 import PaiementSucces from "./pages/PaiementSucces";
@@ -164,6 +166,8 @@ const App = () => (
               <Route path="/admin/simulateurs" element={<AdminSimulateurs />} />
               <Route path="/admin/suggestions" element={<AdminSuggestions />} />
               <Route path="/admin/coupons" element={<AdminCoupons />} />
+              <Route path="/admin/coupons/parrains" element={<AdminCouponsParrains />} />
+              <Route path="/admin/coupons/parrains/:id" element={<AdminCouponParrainDetail />} />
               <Route path="/admin/coupons/:id" element={<AdminCouponDetail />} />
             </Route>
 
