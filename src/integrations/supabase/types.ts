@@ -838,6 +838,7 @@ export type Database = {
           stripe_customer_id: string | null
           stripe_subscription_id: string | null
           tranche_revenus: string | null
+          welcome_email_sent_at: string | null
         }
         Insert: {
           a_activite_secondaire?: boolean | null
@@ -882,6 +883,7 @@ export type Database = {
           stripe_customer_id?: string | null
           stripe_subscription_id?: string | null
           tranche_revenus?: string | null
+          welcome_email_sent_at?: string | null
         }
         Update: {
           a_activite_secondaire?: boolean | null
@@ -926,6 +928,7 @@ export type Database = {
           stripe_customer_id?: string | null
           stripe_subscription_id?: string | null
           tranche_revenus?: string | null
+          welcome_email_sent_at?: string | null
         }
         Relationships: [
           {
