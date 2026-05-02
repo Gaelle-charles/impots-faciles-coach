@@ -20,7 +20,7 @@ import {
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
 
-const PRICE_PER_LIC: Record<string, number> = { starter: 44, expert: 71, premium: 107 };
+const PRICE_PER_LIC: Record<string, number> = { starter: 44, expert: 89, premium: 143 };
 
 interface Org {
   id: string;

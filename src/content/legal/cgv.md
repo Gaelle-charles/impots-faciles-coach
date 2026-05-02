@@ -67,8 +67,8 @@ Les CGV s'appliquent aux clients résidant hors de France métropolitaine (DOM-T
 | Plan | Prix annuel TTC | Contenu |
 |---|---|---|
 | **Starter** | 49 € / an | 7 modules pédagogiques essentiels, simulateurs de base, contenu personnalisé selon profil |
-| **Expert** | 79 € / an | Tout Starter + fiches profil contribuable + fiches métier + fiches pays + simulateurs avancés + parcours adaptatif IA |
-| **Premium** | 119 € / an | Tout Expert + parcours pédagogique IA hyperpersonnalisé + 5 webinaires thématiques + fiches pays approfondies |
+| **Expert** | 99 € / an | Tout Starter + fiches profil contribuable + fiches métier + fiches pays + simulateurs avancés + parcours adaptatif IA |
+| **Premium** | 159 € / an | Tout Expert + parcours pédagogique IA hyperpersonnalisé + 5 webinaires thématiques + fiches pays approfondies |
 
 Un module gratuit (Module 0) est accessible sans engagement à toute personne créant un compte.
 
@@ -81,8 +81,8 @@ Les tarifs B2B correspondent aux tarifs B2C unitaires, auxquels s'applique autom
 | Plan | Tarif B2C unitaire | Tarif B2B (par licence/an, après −10 %) |
 |---|---|---|
 | **Impôts Team Starter** | 49 € / an | −10 % appliqué automatiquement |
-| **Impôts Team Expert** | 79 € / an | −10 % appliqué automatiquement |
-| **Impôts Team Premium** | 119 € / an | −10 % appliqué automatiquement |
+| **Impôts Team Expert** | 99 € / an | −10 % appliqué automatiquement |
+| **Impôts Team Premium** | 159 € / an | −10 % appliqué automatiquement |
 
 > Le montant exact facturé est calculé par Stripe lors de la souscription : *Tarif B2C × Nombre de licences × 0,90 = montant total annuel TTC*
 

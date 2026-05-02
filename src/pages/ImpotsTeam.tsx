@@ -16,8 +16,8 @@ import { Users, GraduationCap, Sparkles, Lightbulb, AlertTriangle } from 'lucide
 
 const TEAM_PLANS = {
   starter: { label: 'Starter', individuel: 49, team: 44, desc: 'Bases : déclaration, crédits/réductions' },
-  expert: { label: 'Expert', individuel: 79, team: 71, desc: 'Tout Starter + simulateurs avancés' },
-  premium: { label: 'Premium', individuel: 119, team: 107, desc: 'Tout Expert + accompagnement complet' },
+  expert: { label: 'Expert', individuel: 99, team: 89, desc: 'Tout Starter + simulateurs avancés' },
+  premium: { label: 'Premium', individuel: 159, team: 143, desc: 'Tout Expert + accompagnement complet' },
 } as const;
 
 type TeamPlan = keyof typeof TEAM_PLANS;

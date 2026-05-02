@@ -116,8 +116,8 @@ const TRANCHE_REVENUS_OPTIONS = [
 
 const PLANS = [
   { slug: 'starter', name: 'Starter', price: 49, features: ['7 modules pédagogiques', 'Contenu personnalisé', 'Simulateur de frais'] },
-  { slug: 'expert', name: 'Expert', price: 79, features: ['Tout Starter +', 'Fiches profil contribuable', 'Fiches métier', 'Parcours adaptatif IA'] },
-  { slug: 'premium', name: 'Premium', price: 119, features: ['Tout Expert +', 'Parcours pédagogique IA personnalisé', '5 webinaires thématiques'] },
+  { slug: 'expert', name: 'Expert', price: 99, features: ['Tout Starter +', 'Fiches profil contribuable', 'Fiches métier', 'Parcours adaptatif IA'] },
+  { slug: 'premium', name: 'Premium', price: 159, features: ['Tout Expert +', 'Parcours pédagogique IA personnalisé', '5 webinaires thématiques'] },
 ];
 
 interface FormData {
