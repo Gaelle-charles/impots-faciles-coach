@@ -71,6 +71,7 @@ const navGroups = [
       { to: '/admin/users', label: 'Tous les utilisateurs', icon: Users },
       { to: '/admin/subscriptions', label: 'Abonnements', icon: CreditCard },
       { to: '/admin/coupons', label: 'Coupons', icon: Ticket },
+      { to: '/admin/coupons/parrains', label: 'Performance parrains', icon: TrendingUp },
       { to: '/admin/emails', label: 'Emails envoyés', icon: Mail },
     ],
   },

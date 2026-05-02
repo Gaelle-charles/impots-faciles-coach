@@ -193,7 +193,15 @@ export default function AdminCouponDetail() {
   }
 
   return (
-    <div className="p-6 max-w-6xl mx-auto space-y-6">
+    <div className="p-4 md:p-6 max-w-6xl mx-auto space-y-6">
+      {/* Breadcrumb */}
+      <nav className="text-sm text-muted-foreground flex items-center gap-2 flex-wrap">
+        <Link to="/admin" className="hover:text-foreground">Admin</Link>
+        <span>/</span>
+        <Link to="/admin/coupons" className="hover:text-foreground">Coupons</Link>
+        <span>/</span>
+        <span className="text-foreground font-mono">{coupon.code}</span>
+      </nav>
       <div>
         <Link to="/admin/coupons" className="text-sm text-muted-foreground hover:text-foreground inline-flex items-center gap-1">
           <ArrowLeft className="h-4 w-4" /> Tous les coupons

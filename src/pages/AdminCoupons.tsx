@@ -23,7 +23,9 @@ import {
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Switch } from '@/components/ui/switch';
 import { toast } from '@/hooks/use-toast';
-import { Dice5, Plus, Power, Trash2, Loader2, AlertTriangle } from 'lucide-react';
+import { Dice5, Plus, Power, Trash2, Loader2, AlertTriangle, Download, TrendingUp } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { downloadCSV } from '@/lib/csvExport';
 
 type Plan = 'starter' | 'expert' | 'premium';
 type ParrainType = 'user' | 'external' | 'none';
@@ -135,16 +137,56 @@ export default function AdminCoupons() {
     }
   }
 
+  function exportCSV() {
+    downloadCSV(
+      `coupons-${new Date().toISOString().slice(0, 10)}.csv`,
+      ['Code', 'Pourcentage', 'Plans', 'Utilisations', 'Limite max', 'Type parrain', 'Nom parrain', 'Email parrain', 'Statut', 'Valide du', 'Valide jusqu\'au', 'Créé le', 'Notes'],
+      filtered.map((c) => [
+        c.code,
+        c.percent_off + '%',
+        c.plans_applicables.join(' | '),
+        c.times_redeemed,
+        c.max_redemptions ?? 'Illimité',
+        c.parrain_type === 'user' ? 'Utilisateur' : c.parrain_type === 'external' ? 'Externe' : 'Aucun',
+        c.parrain_type === 'external' ? (c.parrain_external_name ?? '') : '',
+        c.parrain_type === 'external' ? (c.parrain_external_email ?? '') : '',
+        c.active ? 'Actif' : 'Inactif',
+        new Date(c.valid_from).toLocaleDateString('fr-FR'),
+        c.valid_until ? new Date(c.valid_until).toLocaleDateString('fr-FR') : 'Aucune',
+        new Date(c.created_at).toLocaleDateString('fr-FR'),
+        c.notes ?? '',
+      ]),
+    );
+    toast({ title: 'Export CSV téléchargé' });
+  }
+
   return (
-    <div className="space-y-6 p-6 max-w-7xl mx-auto">
+    <div className="space-y-6 p-4 md:p-6 max-w-7xl mx-auto">
+      {/* Breadcrumb */}
+      <nav className="text-sm text-muted-foreground flex items-center gap-2">
+        <Link to="/admin" className="hover:text-foreground">Admin</Link>
+        <span>/</span>
+        <span className="text-foreground">Coupons</span>
+      </nav>
+
       <div className="flex items-center justify-between flex-wrap gap-4">
         <div>
           <h1 className="font-heading text-2xl font-bold">Coupons</h1>
           <p className="text-sm text-muted-foreground">Gérez les codes promo et le suivi parrainage.</p>
         </div>
-        <Button onClick={() => setOpenCreate(true)} className="gap-2">
-          <Plus className="h-4 w-4" /> Nouveau coupon
-        </Button>
+        <div className="flex gap-2 flex-wrap">
+          <Button variant="outline" asChild>
+            <Link to="/admin/coupons/parrains" className="gap-2">
+              <TrendingUp className="h-4 w-4" /> Performance parrains
+            </Link>
+          </Button>
+          <Button variant="outline" onClick={exportCSV} className="gap-2">
+            <Download className="h-4 w-4" /> Exporter CSV
+          </Button>
+          <Button onClick={() => setOpenCreate(true)} className="gap-2">
+            <Plus className="h-4 w-4" /> Nouveau coupon
+          </Button>
+        </div>
       </div>
 
       <Tabs value={filter} onValueChange={(v) => setFilter(v as typeof filter)}>

@@ -153,6 +153,51 @@ Deno.serve(async (req) => {
               console.log(
                 `[webhook] coupon redemption recorded: coupon=${couponRow.id} user=${userId} saved=${amountDiscount}`,
               );
+
+              // === Send enriched coupon confirmation email ===
+              try {
+                const { data: cFull } = await supabase
+                  .from("coupons").select("code, percent_off")
+                  .eq("id", couponRow.id).maybeSingle();
+                const { data: profile } = await supabase
+                  .from("profiles").select("email, prenom, nom")
+                  .eq("id", userId).maybeSingle();
+
+                const recipient =
+                  (profile?.email as string | undefined) ||
+                  (typeof session.customer_details?.email === "string" ? session.customer_details.email : undefined);
+
+                if (recipient && cFull) {
+                  const userName = [profile?.prenom, profile?.nom].filter(Boolean).join(" ").trim() || null;
+                  const renewal = new Date();
+                  renewal.setFullYear(renewal.getFullYear() + 1);
+
+                  const fnUrl = `${Deno.env.get("SUPABASE_URL")}/functions/v1/send-coupon-confirmation`;
+                  const emailRes = await fetch(fnUrl, {
+                    method: "POST",
+                    headers: {
+                      "Content-Type": "application/json",
+                      Authorization: `Bearer ${Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")}`,
+                    },
+                    body: JSON.stringify({
+                      to: recipient,
+                      user_name: userName,
+                      coupon_code: cFull.code,
+                      percent_off: cFull.percent_off,
+                      plan,
+                      amount_paid_cents: amountPaid,
+                      amount_saved_cents: amountDiscount,
+                      amount_normal_cents: amountPaid + amountDiscount,
+                      next_renewal_iso: renewal.toISOString(),
+                    }),
+                  });
+                  if (!emailRes.ok) {
+                    console.error("[webhook] send-coupon-confirmation failed", emailRes.status);
+                  }
+                }
+              } catch (mailErr) {
+                console.error("[webhook] coupon confirmation email error", mailErr);
+              }
             }
           } else {
             console.warn(
