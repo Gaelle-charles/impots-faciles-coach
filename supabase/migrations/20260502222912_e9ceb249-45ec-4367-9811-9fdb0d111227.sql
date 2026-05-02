@@ -1,0 +1,1 @@
+UPDATE public.simulateurs SET plan_minimum = 'expert' WHERE slug IN ('ir-bareme','quotient-familial','pas','credits-reductions','tmi-taux-effectif','revenus-remplacement');
