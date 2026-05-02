@@ -7,8 +7,8 @@ import { Euro, TrendingUp, Users, CreditCard, Percent } from 'lucide-react';
 export const PLAN_PRICES: Record<string, number> = {
   nouveau: 0,
   starter: 49,
-  expert: 79,
-  premium: 119,
+  expert: 99,
+  premium: 159,
 };
 
 const PLAN_LABELS: Record<string, string> = {

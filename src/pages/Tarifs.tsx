@@ -33,8 +33,8 @@ const plans = [
     name: 'Expert',
     slug: 'expert',
     tagline: 'Le plus complet',
-    price: 79,
-    perMonth: 'Soit moins de 6,60€ par mois',
+    price: 99,
+    perMonth: 'Soit moins de 8,25€ par mois',
     popular: true,
     features: [
       'Formule Expert inclus',
@@ -47,8 +47,8 @@ const plans = [
     name: 'Premium',
     slug: 'premium',
     tagline: 'Pour situations complexes',
-    price: 119,
-    perMonth: 'Soit moins de 9,95€ par mois',
+    price: 159,
+    perMonth: 'Soit moins de 13,25€ par mois',
     popular: false,
     features: [
       'Formule Expert inclus',

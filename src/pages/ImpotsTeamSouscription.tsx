@@ -15,8 +15,8 @@ import { Checkbox } from '@/components/ui/checkbox';
 
 const PRICES = {
   starter: { individuel: 49, team: 44, label: 'Starter' },
-  expert: { individuel: 79, team: 71, label: 'Expert' },
-  premium: { individuel: 119, team: 107, label: 'Premium' },
+  expert: { individuel: 99, team: 89, label: 'Expert' },
+  premium: { individuel: 159, team: 143, label: 'Premium' },
 } as const;
 type Plan = keyof typeof PRICES;
 
@@ -201,7 +201,7 @@ export default function ImpotsTeamSouscription() {
                     <div>
                       <Label>Plan</Label>
                       <div className="mt-2 flex h-10 items-center rounded-md border border-input bg-muted/30 px-3 text-sm font-medium">
-                        Premium (107€/lic)
+                        Premium (143€/lic)
                       </div>
                     </div>
                     <div>
