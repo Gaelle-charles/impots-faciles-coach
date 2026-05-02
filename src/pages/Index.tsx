@@ -374,17 +374,35 @@ const Index = () => {
             </div>
 
             {/* Card rose pâle */}
-            <div className="rounded-3xl p-8 md:col-span-3" style={{ background: 'hsl(var(--rose-light))' }}>
-              <div className="flex flex-col md:flex-row items-start md:items-center gap-4 md:gap-6">
+            <div className="rounded-3xl p-8 md:col-span-3 h-auto" style={{ background: 'hsl(var(--rose-light))' }}>
+              <div className="flex flex-col md:flex-row items-start gap-4 md:gap-8">
                 <div className="inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-background text-rose-dynamic shrink-0">
                   <Wrench className="h-6 w-6" />
                 </div>
                 <div className="flex-1">
                   <h3 className="font-display text-2xl text-foreground">Simulateurs inclus</h3>
-                  <p className="mt-1 text-sm text-muted-foreground leading-relaxed">
-                    12 outils pour estimer votre impôt et explorer différents
-                    scénarios fiscaux.
+                  <p className="mt-2 text-sm text-muted-foreground leading-relaxed">
+                    12 outils interactifs pour estimer votre impôt, comparer
+                    plusieurs scénarios et prendre les bonnes décisions
+                    fiscales — sans formules à connaître par cœur. Modifiez vos
+                    paramètres en temps réel et visualisez l'impact immédiat
+                    sur votre imposition.
                   </p>
+                  <ul className="mt-4 grid gap-x-6 gap-y-2 sm:grid-cols-2 lg:grid-cols-3 text-sm text-foreground">
+                    {[
+                      'Impôt sur le revenu (barème)',
+                      'Quotient familial',
+                      'Prélèvement à la source',
+                      'Frais réels vs forfait',
+                      'Crédits & réductions d\'impôt',
+                      'Et 7 autres simulateurs',
+                    ].map((s) => (
+                      <li key={s} className="flex items-start gap-2">
+                        <Check className="h-4 w-4 text-rose-dynamic shrink-0 mt-0.5" />
+                        <span>{s}</span>
+                      </li>
+                    ))}
+                  </ul>
                 </div>
               </div>
             </div>
