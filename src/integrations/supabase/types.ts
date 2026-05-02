@@ -1429,6 +1429,18 @@ export type Database = {
           read_ct: number
         }[]
       }
+      record_coupon_redemption: {
+        Args: {
+          p_amount_paid: number
+          p_amount_saved: number
+          p_coupon_id: string
+          p_plan: Database["public"]["Enums"]["coupon_plan"]
+          p_stripe_session_id: string
+          p_stripe_subscription_id: string
+          p_user_id: string
+        }
+        Returns: string
+      }
       user_can_access_module: { Args: { _module_id: string }; Returns: boolean }
     }
     Enums: {
