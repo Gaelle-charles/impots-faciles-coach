@@ -58,7 +58,7 @@ const faqItems = [
   {
     question: 'Comment télécharger mes factures ?',
     answer:
-      "Vos factures sont envoyées automatiquement par email à chaque paiement (depuis info@stripe.com ou contact@impotsfacile.com). Vous pouvez également les consulter à tout moment depuis votre espace personnel : 1) Connectez-vous à impotsfacile.com, 2) Cliquez sur « Mon abonnement » dans le menu, 3) Cliquez sur « Voir mes factures », 4) Téléchargez le PDF de la facture souhaitée. Si vous ne trouvez pas une facture, contactez-nous à contact@impotsfacile.com en précisant la date de paiement concernée.",
+      "Vos factures sont envoyées automatiquement par email à chaque paiement (depuis info@stripe.com ou info@impotsfacile.com). Vous pouvez également les consulter à tout moment depuis votre espace personnel : 1) Connectez-vous à impotsfacile.com,\n 2) Cliquez sur « Mon abonnement » dans le menu, \n3) Cliquez sur « Voir mes factures », \n4) Téléchargez le PDF de la facture souhaitée. \nSi vous ne trouvez pas une facture, contactez-nous à info@impotsfacile.com en précisant la date de paiement concernée.",
   },
 ];
 
