@@ -237,39 +237,52 @@ Deno.serve(async (req) => {
           }
         }
 
-        // 5. Désactivation des sessions Auth (ban "permanent" 100 ans)
-        const { error: banError } = await adminClient.auth.admin.updateUserById(userId, {
-          ban_duration: "876000h",
-        });
-        if (banError) {
-          console.error("[soft_delete] ban failed:", banError);
-          return new Response(JSON.stringify({ error: `Ban auth: ${banError.message}` }), {
-            status: 500,
-            headers: { ...corsHeaders, "Content-Type": "application/json" },
-          });
-        }
-
-        // 6. Marquer deleted_at sur profile + désactiver
+        // 5. Anonymiser le profil AVANT de supprimer auth.users
+        //    On garde l'archive (deleted_at) mais on libère l'email d'origine
+        //    pour permettre une réinscription future avec la même adresse.
         const { error: profileError } = await adminClient
           .from("profiles")
-          .update({ deleted_at: new Date().toISOString(), is_active: false } as any)
+          .update({
+            deleted_at: new Date().toISOString(),
+            is_active: false,
+            email: `deleted_${userId}@deleted.local`,
+            nom: null,
+            prenom: null,
+            situation_principale: null,
+            metier_id: null,
+            profils_detectes: null,
+            metiers_detectes: null,
+            pays_concernes: null,
+            stripe_customer_id: null,
+            stripe_subscription_id: null,
+          } as any)
           .eq("id", userId);
         if (profileError) {
-          console.error("[soft_delete] update profile failed:", profileError);
+          console.error("[hard_delete] anonymise profile failed:", profileError);
           return new Response(JSON.stringify({ error: `Profil: ${profileError.message}` }), {
             status: 500,
             headers: { ...corsHeaders, "Content-Type": "application/json" },
           });
         }
 
-        // 7. Si membre d'organisation : libérer la licence
+        // 6. Si membre d'organisation : libérer la licence
         await adminClient
           .from("organization_members")
           .update({ removed_at: new Date().toISOString() } as any)
           .eq("user_id", userId)
           .is("removed_at", null);
 
-        console.log(`[soft_delete] user ${userId} marqué supprimé. Stripe:`, stripeResult);
+        // 7. Suppression définitive dans auth.users → libère l'email pour réinscription
+        const { error: authDelErr } = await adminClient.auth.admin.deleteUser(userId);
+        if (authDelErr) {
+          console.error("[hard_delete] auth delete failed:", authDelErr);
+          return new Response(JSON.stringify({ error: `Auth: ${authDelErr.message}` }), {
+            status: 500,
+            headers: { ...corsHeaders, "Content-Type": "application/json" },
+          });
+        }
+
+        console.log(`[hard_delete] user ${userId} supprimé (auth + profil anonymisé). Stripe:`, stripeResult);
 
         return new Response(JSON.stringify({ success: true, stripe: stripeResult }), {
           headers: { ...corsHeaders, "Content-Type": "application/json" },
