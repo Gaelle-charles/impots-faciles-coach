@@ -111,6 +111,59 @@ Deno.serve(async (req) => {
       }
 
       console.log(`[webhook] checkout.session.completed → user ${userId} → plan ${plan}`);
+
+      // === Coupon redemption tracking ===
+      try {
+        const amountDiscount = session.total_details?.amount_discount ?? 0;
+        const couponIdMeta = session.metadata?.coupon_id ?? null;
+        const promoCodeMeta = session.metadata?.stripe_promo_code_id ?? null;
+
+        if (amountDiscount > 0 && (couponIdMeta || promoCodeMeta)) {
+          // Récupère via metadata en priorité (posée à la création de session) ; fallback via promo code Stripe
+          let couponRow: { id: string } | null = null;
+          if (couponIdMeta) {
+            const { data } = await supabase
+              .from("coupons").select("id").eq("id", couponIdMeta).maybeSingle();
+            couponRow = data;
+          }
+          if (!couponRow && promoCodeMeta) {
+            const { data } = await supabase
+              .from("coupons").select("id").eq("stripe_promo_code_id", promoCodeMeta).maybeSingle();
+            couponRow = data;
+          }
+
+          if (couponRow) {
+            const amountPaid = session.amount_total ?? 0;
+            const subId =
+              typeof session.subscription === "string" ? session.subscription : null;
+
+            const { error: rpcErr } = await supabase.rpc("record_coupon_redemption", {
+              p_coupon_id: couponRow.id,
+              p_user_id: userId,
+              p_plan: plan,
+              p_amount_paid: amountPaid,
+              p_amount_saved: amountDiscount,
+              p_stripe_session_id: session.id,
+              p_stripe_subscription_id: subId,
+            });
+
+            if (rpcErr) {
+              console.error("[webhook] record_coupon_redemption failed", rpcErr);
+            } else {
+              console.log(
+                `[webhook] coupon redemption recorded: coupon=${couponRow.id} user=${userId} saved=${amountDiscount}`,
+              );
+            }
+          } else {
+            console.warn(
+              `[webhook] discount detected but coupon not found (id=${couponIdMeta}, promo=${promoCodeMeta})`,
+            );
+          }
+        }
+      } catch (couponErr) {
+        // Ne bloque jamais l'activation du plan si tracking échoue
+        console.error("[webhook] coupon tracking error", couponErr);
+      }
     }
 
     if (event.type === "customer.subscription.updated") {

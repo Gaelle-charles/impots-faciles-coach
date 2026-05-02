@@ -79,7 +79,44 @@ Deno.serve(async (req) => {
 
     const origin = req.headers.get("origin") ?? req.headers.get("referer")?.replace(/\/$/, "") ?? "";
 
-    const session = await stripe.checkout.sessions.create({
+    // Optional coupon — re-validated server-side ici aussi pour défense en profondeur
+    const couponCode = (body?.coupon_code as string | undefined)?.toString().trim().toUpperCase();
+    let appliedPromoCodeId: string | null = null;
+    let appliedCouponId: string | null = null;
+
+    if (couponCode) {
+      const serviceClient = createClient(
+        Deno.env.get("SUPABASE_URL")!,
+        Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
+        { auth: { persistSession: false, autoRefreshToken: false } },
+      );
+      const { data: c } = await serviceClient
+        .from("coupons")
+        .select("id, stripe_promo_code_id, active, plans_applicables, max_redemptions, times_redeemed, valid_from, valid_until")
+        .eq("code", couponCode)
+        .maybeSingle();
+
+      const now = new Date();
+      const isValid =
+        !!c &&
+        c.active &&
+        Array.isArray(c.plans_applicables) &&
+        (c.plans_applicables as string[]).includes(plan) &&
+        (!c.valid_from || new Date(c.valid_from) <= now) &&
+        (!c.valid_until || new Date(c.valid_until) >= now) &&
+        (c.max_redemptions == null || (c.times_redeemed ?? 0) < c.max_redemptions);
+
+      if (!isValid) {
+        return new Response(
+          JSON.stringify({ error: "Code promo invalide ou expiré" }),
+          { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } },
+        );
+      }
+      appliedPromoCodeId = c!.stripe_promo_code_id;
+      appliedCouponId = c!.id;
+    }
+
+    const sessionParams: Stripe.Checkout.SessionCreateParams = {
       mode: "subscription",
       line_items: [{ price: priceId, quantity: 1 }],
       customer_email: profile?.stripe_customer_id ? undefined : email,
@@ -87,11 +124,25 @@ Deno.serve(async (req) => {
       client_reference_id: user.id,
       success_url: `${origin}/paiement-succes?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${origin}/tarifs`,
-      metadata: { plan, user_id: user.id },
+      metadata: {
+        plan,
+        user_id: user.id,
+        ...(appliedCouponId ? { coupon_id: appliedCouponId } : {}),
+        ...(appliedPromoCodeId ? { stripe_promo_code_id: appliedPromoCodeId } : {}),
+      },
       subscription_data: {
         metadata: { plan, user_id: user.id },
       },
-    });
+    };
+
+    if (appliedPromoCodeId) {
+      sessionParams.discounts = [{ promotion_code: appliedPromoCodeId }];
+    } else {
+      // Permet la saisie manuelle d'un promotion code dans Stripe Checkout si non pré-appliqué
+      sessionParams.allow_promotion_codes = true;
+    }
+
+    const session = await stripe.checkout.sessions.create(sessionParams);
 
     // Journalisation des acceptations légales (preuve juridique immuable)
     try {

@@ -722,6 +722,7 @@ const Onboarding = () => {
     cgv_accepted_at: string;
     cgu_accepted_at: string;
     waiver_accepted_at: string;
+    coupon_code?: string;
   }) => {
     if (!pendingPlan) return;
     try {
@@ -906,6 +907,7 @@ const Onboarding = () => {
         }}
         planLabel={PLANS.find((p) => p.slug === pendingPlan)?.name ?? ''}
         planPrice={PLANS.find((p) => p.slug === pendingPlan)?.price ?? 0}
+        planSlug={pendingPlan ?? ''}
         loading={checkoutLoading !== null}
         onConfirm={confirmCheckout}
       />

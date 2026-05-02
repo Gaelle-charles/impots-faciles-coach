@@ -131,6 +131,7 @@ const Tarifs = () => {
     cgv_accepted_at: string;
     cgu_accepted_at: string;
     waiver_accepted_at: string;
+    coupon_code?: string;
   }) => {
     if (!pendingPlan) return;
     try {
@@ -466,6 +467,7 @@ const Tarifs = () => {
         }}
         planLabel={plans.find((p) => p.slug === pendingPlan)?.name ?? ''}
         planPrice={plans.find((p) => p.slug === pendingPlan)?.price ?? 0}
+        planSlug={pendingPlan ?? ''}
         loading={loadingPlan !== null}
         onConfirm={confirmCheckout}
       />
