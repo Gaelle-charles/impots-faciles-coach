@@ -112,9 +112,9 @@ const MesModules = () => {
               <h2 className="font-heading text-base font-bold text-amber-900 dark:text-amber-100">
                 Parcours pédagogique séquentiel
               </h2>
-              <p className="text-sm text-amber-900/90 dark:text-amber-100/90 leading-relaxed">
-                Les modules se débloquent dans l'ordre : tu dois terminer toutes les étapes
-                du module en cours pour accéder au suivant. Le module 1 est ouvert d'office.
+              <p className="text-sm text-amber-900/90 dark:text-amber-100/90 leading-relaxed whitespace-pre-line">
+                Une étape à la fois, pour bien tout assimiler ! {"\n"}
+                Ton parcours suit un ordre logique : termine toutes les étapes du module en cours pour ouvrir le suivant. Prends le temps qu'il te faut, l'important c'est que tu progresses sereinement.
               </p>
               {nextToComplete && (
                 <p className="text-sm text-amber-900 dark:text-amber-100 flex items-center gap-1.5 pt-1">
