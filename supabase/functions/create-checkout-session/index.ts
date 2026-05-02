@@ -118,6 +118,7 @@ Deno.serve(async (req) => {
 
     const sessionParams: Stripe.Checkout.SessionCreateParams = {
       mode: "subscription",
+      locale: "fr",
       line_items: [{ price: priceId, quantity: 1 }],
       customer_email: profile?.stripe_customer_id ? undefined : email,
       customer: profile?.stripe_customer_id ?? undefined,

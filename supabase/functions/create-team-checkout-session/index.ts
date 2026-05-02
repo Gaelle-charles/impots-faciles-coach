@@ -228,6 +228,7 @@ Deno.serve(async (req) => {
 
     const session = await stripe.checkout.sessions.create({
       mode: "subscription",
+      locale: "fr",
       line_items: [{ price: priceId, quantity: nbLic }],
       payment_method_types: ["card"],
       customer_email: user.email,
