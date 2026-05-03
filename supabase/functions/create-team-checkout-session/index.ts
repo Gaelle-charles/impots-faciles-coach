@@ -3,8 +3,6 @@ import { createClient } from "npm:@supabase/supabase-js@2.95.0";
 import Stripe from "npm:stripe@17.5.0";
 
 const TEAM_PRICE_IDS: Record<string, string | undefined> = {
-  starter: Deno.env.get("STRIPE_PRICE_ID_TEAM_STARTER"),
-  expert: Deno.env.get("STRIPE_PRICE_ID_TEAM_EXPERT"),
   premium: Deno.env.get("STRIPE_PRICE_ID_TEAM_PREMIUM"),
 };
 
@@ -54,8 +52,8 @@ Deno.serve(async (req) => {
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
-    if (!plan || !["starter", "expert", "premium"].includes(plan)) {
-      return new Response(JSON.stringify({ error: "Plan invalide" }), {
+    if (plan !== "premium") {
+      return new Response(JSON.stringify({ error: "Plan invalide (premium uniquement)" }), {
         status: 400,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
