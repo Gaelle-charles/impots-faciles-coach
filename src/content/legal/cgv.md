@@ -250,6 +250,20 @@ Date : [___]
 
 ---
 
+## Article 6 bis — Accès immédiat et renonciation au droit de rétractation
+
+> **⚠️ Placeholder — texte à valider par Laure avant mise en production.**
+
+Conformément à l'article L221-28, 13° du Code de la consommation, le Client reconnaît qu'en souscrivant au service Impôts Facile, il demande expressément un accès immédiat au contenu numérique de la plateforme dès la validation de son paiement.
+
+En conséquence, et conformément aux dispositions légales applicables aux contenus numériques fournis sur support immatériel, le Client renonce expressément à son droit de rétractation de 14 jours prévu aux articles L221-18 et suivants du Code de la consommation.
+
+Cette renonciation prend effet dès lors que l'accès à la plateforme est activé par ANNUL IMPOTS, ce qui intervient automatiquement à la validation du paiement.
+
+Le Client reconnaît avoir été informé de cette renonciation préalablement à la conclusion du contrat, conformément à l'article L221-13 du Code de la consommation.
+
+---
+
 ## Article 7 — Modalités de remboursement
 
 ### 7.1 Délai
