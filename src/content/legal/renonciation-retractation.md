@@ -72,7 +72,7 @@ Le récapitulatif envoyé au Client par email après validation de la commande d
 >
 > - Numéro de commande : [n° Stripe]
 > - Date : [date]
-> - Plan souscrit : [Starter / Expert / Premium / Impôts Team Starter / Expert / Premium]
+> - Plan souscrit : [Starter / Expert / Premium / Impôts Team Premium]
 > - Montant : [montant TTC]
 >
 > **Renonciation au droit de rétractation** : ☑ Vous avez expressément demandé un accès immédiat au contenu numérique en cochant la case correspondante lors de votre commande. Conformément à l'article L221-28, 13° du Code de la consommation, vous avez perdu votre droit de rétractation dès l'activation de votre accès. Vous trouverez ci-joint la facture correspondante.

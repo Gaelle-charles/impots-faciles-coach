@@ -80,8 +80,6 @@ Les tarifs B2B correspondent aux tarifs B2C unitaires, auxquels s'applique autom
 
 | Plan | Tarif B2C unitaire | Tarif B2B (par licence/an, après −10 %) |
 |---|---|---|
-| **Impôts Team Starter** | 49 € / an | −10 % appliqué automatiquement |
-| **Impôts Team Expert** | 99 € / an | −10 % appliqué automatiquement |
 | **Impôts Team Premium** | 159 € / an | −10 % appliqué automatiquement |
 
 > Le montant exact facturé est calculé par Stripe lors de la souscription : *Tarif B2C × Nombre de licences × 0,90 = montant total annuel TTC*
@@ -239,8 +237,7 @@ Je notifie par la présente ma rétractation du contrat portant sur :
 
 Commande passée le : [___]
 Numéro de commande : [___]
-Plan souscrit : Starter / Expert / Premium
-                Impôts Team Starter / Impôts Team Expert / Impôts Team Premium
+Plan souscrit : Starter / Expert / Premium / Impôts Team Premium
 
 Nom du Client : [___]
 Adresse : [___]
