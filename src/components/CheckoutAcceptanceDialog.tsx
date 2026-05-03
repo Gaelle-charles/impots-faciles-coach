@@ -48,7 +48,6 @@ export function CheckoutAcceptanceDialog({
 }: Props) {
   const [cgv, setCgv] = useState(false);
   const [cgu, setCgu] = useState(false);
-  const [waiver, setWaiver] = useState(false);
 
   // Coupon state
   const [couponOpen, setCouponOpen] = useState(false);
@@ -59,13 +58,13 @@ export function CheckoutAcceptanceDialog({
 
   useEffect(() => {
     if (!open) {
-      setCgv(false); setCgu(false); setWaiver(false);
+      setCgv(false); setCgu(false);
       setCouponOpen(false); setCouponInput('');
       setCouponError(null); setAppliedCoupon(null);
     }
   }, [open]);
 
-  const allAccepted = cgv && cgu && waiver;
+  const allAccepted = cgv && cgu;
 
   const errorMessage = (errorCode?: string, fallback?: string): string => {
     switch (errorCode) {
@@ -270,32 +269,13 @@ export function CheckoutAcceptanceDialog({
             </span>
           </label>
 
-          <div className="rounded-lg border border-amber-300 bg-amber-50 p-3">
-            <label className="flex items-start gap-3 cursor-pointer">
-              <Checkbox
-                checked={waiver}
-                onCheckedChange={(v) => setWaiver(v === true)}
-                className="mt-0.5"
-                disabled={loading}
-              />
-              <span className="text-sm leading-relaxed text-amber-900">
-                Je reconnais avoir expressément demandé un accès immédiat au contenu numérique
-                commandé avant l'expiration du délai légal de rétractation de 14 jours. En cochant
-                cette case, j'accepte expressément et en toute connaissance de cause de{' '}
-                <strong>perdre définitivement mon droit de rétractation</strong> dès lors que
-                l'accès à la plateforme Impôts Facile sera activé par ANNUL IMPOTS, conformément à
-                l'article L221-28, alinéa 13° du Code de la consommation. J'ai pris connaissance
-                des Conditions Générales de Vente et de la présente renonciation avant de valider
-                ma commande.
-              </span>
-            </label>
-            <p className="mt-2 pl-7 text-xs text-amber-800 italic">
-              Cette case est obligatoire pour accéder immédiatement à votre contenu. Si vous
-              souhaitez conserver votre droit de rétractation de 14 jours, ne validez pas cette
-              commande — contactez-nous à info@impotsfacile.com pour différer l'activation après le
-              délai légal.
-            </p>
-          </div>
+          <p className="text-sm text-muted-foreground pt-1">
+            Accès immédiat dès paiement. Aucun droit de rétractation possible (voir{' '}
+            <Link to="/legal/cgv" target="_blank" rel="noopener noreferrer" className="underline">
+              CGV
+            </Link>
+            ).
+          </p>
         </div>
 
         <DialogFooter className="gap-2 sm:gap-2">
