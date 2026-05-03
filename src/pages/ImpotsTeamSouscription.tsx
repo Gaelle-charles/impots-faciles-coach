@@ -14,8 +14,6 @@ import { Loader2, ExternalLink } from 'lucide-react';
 import { Checkbox } from '@/components/ui/checkbox';
 
 const PRICES = {
-  starter: { individuel: 49, team: 44, label: 'Starter' },
-  expert: { individuel: 99, team: 89, label: 'Expert' },
   premium: { individuel: 159, team: 143, label: 'Premium' },
 } as const;
 type Plan = keyof typeof PRICES;
@@ -59,7 +57,7 @@ export default function ImpotsTeamSouscription() {
     const cleanSiret = siret.replace(/\s/g, '');
     if (!/^\d{14}$/.test(cleanSiret)) return 'SIRET invalide (14 chiffres)';
     if (adresse.trim().length < 5) return 'Adresse de facturation requise';
-    if (!['starter', 'expert', 'premium'].includes(plan)) return 'Plan invalide';
+    if (plan !== 'premium') return 'Plan invalide';
     if (nbLicences < 2 || nbLicences > 500) return 'Nb licences entre 2 et 500';
     return null;
   };
