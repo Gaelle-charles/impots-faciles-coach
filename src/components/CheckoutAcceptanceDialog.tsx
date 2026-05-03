@@ -48,7 +48,6 @@ export function CheckoutAcceptanceDialog({
 }: Props) {
   const [cgv, setCgv] = useState(false);
   const [cgu, setCgu] = useState(false);
-  const [waiver, setWaiver] = useState(false);
 
   // Coupon state
   const [couponOpen, setCouponOpen] = useState(false);
@@ -59,13 +58,13 @@ export function CheckoutAcceptanceDialog({
 
   useEffect(() => {
     if (!open) {
-      setCgv(false); setCgu(false); setWaiver(false);
+      setCgv(false); setCgu(false);
       setCouponOpen(false); setCouponInput('');
       setCouponError(null); setAppliedCoupon(null);
     }
   }, [open]);
 
-  const allAccepted = cgv && cgu && waiver;
+  const allAccepted = cgv && cgu;
 
   const errorMessage = (errorCode?: string, fallback?: string): string => {
     switch (errorCode) {
