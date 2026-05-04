@@ -43,7 +43,7 @@ export default function PasseportFiscal() {
     <div className="space-y-6">
       <div>
         <h1 className="font-display text-4xl md:text-5xl text-foreground">
-          👑 Votre <em className="accent-serif">Passeport Fiscal</em>
+          Votre <em className="accent-serif">Passeport Fiscal</em>
         </h1>
         <p className="mt-2 text-muted-foreground">
           Votre passeport personnalisé en fonction de votre profil et de votre régime.

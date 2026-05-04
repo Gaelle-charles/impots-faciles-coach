@@ -36,7 +36,7 @@ export default function SimulateurLayout({ emoji, title, subtitle, children }: P
 
       <div>
         <h1 className="font-display text-4xl md:text-5xl text-foreground">
-          {emoji} <em className="accent-serif">{title}</em>
+          <em className="accent-serif">{title}</em>
         </h1>
         <p className="mt-2 text-muted-foreground">{subtitle}</p>
       </div>

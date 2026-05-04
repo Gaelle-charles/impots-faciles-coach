@@ -37,7 +37,7 @@ const MesSimulateurs = () => {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="font-display text-4xl md:text-5xl text-foreground">🧮 Mes <em className="accent-serif">simulateurs</em></h1>
+        <h1 className="font-display text-4xl md:text-5xl text-foreground">Mes <em className="accent-serif">simulateurs</em></h1>
         <p className="mt-2 text-muted-foreground">
           Tous les outils pour estimer vos impôts 2026 (sur revenus 2025) — pédagogique, gratuit, conforme PLF 2026.
         </p>
