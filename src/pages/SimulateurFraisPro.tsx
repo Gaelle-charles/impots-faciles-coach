@@ -23,7 +23,29 @@ type FormState = {
   fraisAstreinte: number;
   nbJoursAstreinte: number;
   indemAstreinte: number;
+  // étape 6
+  tel: number;
+  doubleResidence: number;
+  demenagementPro: number;
+  interetsEmprunt: number;
+  cotisations: number;
+  forfaitInternet: number;
+  fraisBancaire: number;
+  achatLogiciel: number;
+  autresFrais: number;
 };
+
+const STEP6_FIELDS: { name: keyof FormState; label: string }[] = [
+  { name: "tel", label: "Frais de téléphone professionnel (€/an)" },
+  { name: "doubleResidence", label: "Double résidence (€/an)" },
+  { name: "demenagementPro", label: "Déménagement professionnel (€)" },
+  { name: "interetsEmprunt", label: "Intérêts d'emprunt professionnels (€/an)" },
+  { name: "cotisations", label: "Cotisations professionnelles (€/an)" },
+  { name: "forfaitInternet", label: "Forfait internet (€/an)" },
+  { name: "fraisBancaire", label: "Frais bancaires professionnels (€/an)" },
+  { name: "achatLogiciel", label: "Achat de logiciels (€)" },
+  { name: "autresFrais", label: "Autres frais (€)" },
+];
 
 const BAREME_REPAS = 5.35;
 const BAREME_BLANCHISSEMENT = 0.65;
