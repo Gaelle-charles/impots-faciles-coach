@@ -284,24 +284,29 @@ export default function SimulateurFraisPro() {
           return (
             <Card
               key={idx}
-              className={isActive ? "border-primary" : "border-border"}
+              className={`transition-shadow ${
+                isActive
+                  ? "border-[#2D1B4E] shadow-md"
+                  : "border-border hover:shadow-sm"
+              }`}
             >
               <CardHeader
                 className="cursor-pointer flex-row items-center gap-3 space-y-0 py-4"
                 onClick={() => setActiveStep(idx)}
               >
                 <div
-                  className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-sm font-bold ${
+                  className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-sm font-bold transition-colors ${
                     isDone
-                      ? "bg-primary text-primary-foreground"
+                      ? "bg-green-500 text-white"
                       : isActive
-                      ? "bg-primary text-primary-foreground"
+                      ? "bg-[#2D1B4E] text-white"
                       : "bg-muted text-muted-foreground"
                   }`}
+                  aria-label={`Étape ${idx + 1}`}
                 >
-                  {isDone ? <Check className="h-4 w-4" /> : idx + 1}
+                  {isDone ? <Check className="h-5 w-5" /> : idx + 1}
                 </div>
-                <CardTitle className="text-base font-semibold">
+                <CardTitle className="text-sm sm:text-base font-semibold flex-1">
                   {title}
                 </CardTitle>
               </CardHeader>
