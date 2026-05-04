@@ -320,11 +320,17 @@ const Profil = () => {
 
   return (
     <div className="space-y-8 max-w-3xl">
-      {/* Header */}
-      <h1 className="font-display text-4xl md:text-5xl text-foreground">Mon <em className="accent-serif">profil</em></h1>
+      <div>
+        <h1 className="font-display text-4xl md:text-5xl text-foreground leading-tight">
+          Mon <em className="accent-serif">profil</em>
+        </h1>
+        <p className="mt-3 text-lg text-muted-foreground">
+          Gérez vos informations personnelles, votre abonnement et la sécurité de votre compte.
+        </p>
+      </div>
 
       {/* ── Informations personnelles ── */}
-      <Card className="border-border bg-background shadow-sm">
+      <Card className="border-border bg-background rounded-3xl shadow-sm">
         <CardHeader className="pb-3">
           <CardTitle className="font-heading text-lg">Informations personnelles</CardTitle>
         </CardHeader>
@@ -371,7 +377,7 @@ const Profil = () => {
       </Card>
 
       {/* ── Mon abonnement ── */}
-      <Card className="border-border bg-background shadow-sm">
+      <Card className="border-border bg-background rounded-3xl shadow-sm">
         <CardHeader className="pb-3">
           <CardTitle className="font-heading text-lg flex items-center gap-2">
             <CreditCard className="h-4 w-4" />
@@ -493,7 +499,7 @@ const Profil = () => {
       </Dialog>
 
       {/* ── Sécurité ── */}
-      <Card className="border-border bg-background shadow-sm">
+      <Card className="border-border bg-background rounded-3xl shadow-sm">
         <CardHeader className="pb-3">
           <CardTitle className="font-heading text-lg flex items-center gap-2">
             <Lock className="h-4 w-4" />
@@ -512,7 +518,7 @@ const Profil = () => {
       </Card>
 
       {/* ── Mes statistiques ── */}
-      <Card className="border-border bg-background shadow-sm">
+      <Card className="border-border bg-background rounded-3xl shadow-sm">
         <CardHeader className="pb-3">
           <CardTitle className="font-heading text-lg">Mes statistiques</CardTitle>
         </CardHeader>

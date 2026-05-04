@@ -5,6 +5,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { usePasseportFiscal } from '@/hooks/usePasseportFiscal';
 import { PasseportFiscalCard } from '@/components/dashboard/PasseportFiscalCard';
 import { Card, CardContent } from '@/components/ui/card';
+import { AccentText } from '@/components/ui/accent-text';
 import { Crown } from 'lucide-react';
 
 export default function PasseportFiscal() {
@@ -40,18 +41,18 @@ export default function PasseportFiscal() {
   if (profile?.plan !== 'premium') return <Navigate to="/dashboard" replace />;
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
       <div>
-        <h1 className="font-display text-4xl md:text-5xl text-foreground">
-          Votre <em className="accent-serif">Passeport Fiscal</em>
+        <h1 className="font-display text-4xl md:text-5xl text-foreground leading-tight">
+          Votre <AccentText>Passeport Fiscal</AccentText>
         </h1>
-        <p className="mt-2 text-muted-foreground">
+        <p className="mt-3 text-lg text-muted-foreground">
           Votre passeport personnalisé en fonction de votre profil et de votre régime.
         </p>
       </div>
 
-      <div className="rounded-lg bg-yellow-vivid/15 border border-yellow-vivid/30 p-4 text-sm text-foreground">
-        <span className="font-semibold">⚠️ Estimations pédagogiques.</span>{" "}
+      <div className="rounded-2xl bg-yellow-vivid/15 border border-yellow-vivid/30 p-4 text-sm text-foreground">
+        <span className="font-semibold">Estimations pédagogiques.</span>{" "}
         Non opposables à la DGFIP. Pour votre déclaration officielle, rendez-vous sur impots.gouv.fr.
       </div>
 

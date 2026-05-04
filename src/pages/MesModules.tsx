@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Lock, LockKeyhole, Info, ArrowRight, Trophy } from 'lucide-react';
+import { AccentText } from '@/components/ui/accent-text';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import type { Tables } from '@/integrations/supabase/types';
 import { useAccess } from '@/hooks/useAccess';
@@ -94,17 +95,19 @@ const MesModules = () => {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
       <div>
-        <h1 className="font-display text-3xl sm:text-4xl md:text-5xl text-foreground leading-tight">Mon parcours <em className="accent-serif">déclaration</em></h1>
-        <p className="mt-1 text-muted-foreground">
-          {modules.length} modules disponibles dans ta formation.
+        <h1 className="font-display text-4xl md:text-5xl text-foreground leading-tight">
+          Mon parcours <AccentText>déclaration</AccentText>
+        </h1>
+        <p className="mt-3 text-lg text-muted-foreground">
+          {modules.length} modules disponibles dans votre formation.
         </p>
       </div>
       <Tabs defaultValue="modules" className="w-full">
-        <TabsList>
-          <TabsTrigger value="modules">📚 Mes modules</TabsTrigger>
-          <TabsTrigger value="quizz">🎯 Mes quizz</TabsTrigger>
+        <TabsList className="bg-rose-light/50 rounded-full p-1">
+          <TabsTrigger value="modules" className="rounded-full data-[state=active]:bg-background">Mes modules</TabsTrigger>
+          <TabsTrigger value="quizz" className="rounded-full data-[state=active]:bg-background">Mes quizz</TabsTrigger>
         </TabsList>
 
         <TabsContent value="modules" className="space-y-6 mt-6">
@@ -200,7 +203,7 @@ const MesModules = () => {
           return (
             <Card
               key={mod.id}
-              className={`relative overflow-hidden border-border bg-background shadow-sm ${!hasAccess ? 'opacity-60' : ''}`}
+              className={`relative overflow-hidden border-border bg-background rounded-3xl shadow-sm transition-all hover:-translate-y-1 hover:shadow-xl ${!hasAccess ? 'opacity-60' : ''}`}
             >
               <CardContent className="p-5 space-y-3">
                 <div className="flex items-start justify-between gap-2">
@@ -310,9 +313,9 @@ const MesModules = () => {
 
         <TabsContent value="quizz" className="space-y-4 mt-6">
           <div>
-            <h2 className="font-heading text-xl font-bold text-foreground">🎯 Mes résultats de quizz</h2>
-            <p className="text-sm text-muted-foreground mt-1">
-              Retrouve ici tous les quizz disponibles et tes meilleurs scores.
+            <h2 className="font-display text-2xl md:text-3xl text-foreground">Mes <AccentText>résultats de quizz</AccentText></h2>
+            <p className="text-sm text-muted-foreground mt-2">
+              Retrouvez ici tous les quizz disponibles et vos meilleurs scores.
             </p>
           </div>
 
@@ -325,7 +328,7 @@ const MesModules = () => {
               const attempts = results.filter((r) => r.module_id === mod.id).length;
 
               return (
-                <Card key={mod.id} className={`border-border ${!hasAccess ? 'opacity-60' : ''}`}>
+                <Card key={mod.id} className={`border-border rounded-3xl shadow-sm transition-all hover:-translate-y-1 hover:shadow-xl ${!hasAccess ? 'opacity-60' : ''}`}>
                   <CardContent className="p-4 space-y-3">
                     <div className="flex items-start justify-between gap-2">
                       <h3 className="font-heading text-sm font-semibold text-foreground leading-snug">

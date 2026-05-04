@@ -4,6 +4,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Heart, ExternalLink, Sparkles } from 'lucide-react';
+import { AccentText } from '@/components/ui/accent-text';
 
 type Reco = {
   id: string;
@@ -27,7 +28,7 @@ function getInitials(nom: string) {
 
 function RecoCard({ reco }: { reco: Reco }) {
   return (
-    <Card className="border-border bg-background shadow-sm hover:shadow-md transition-shadow overflow-hidden">
+    <Card className="border-border bg-background rounded-3xl shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all overflow-hidden">
       <CardContent className="p-5 flex flex-col h-full gap-4">
         <div className="flex items-center gap-3">
           {reco.logo_url ? (
@@ -91,19 +92,13 @@ export default function Recommandations() {
   const partenaires = recos.filter((r) => r.type === 'partenaire');
 
   return (
-    <div className="space-y-8 p-6 sm:p-8 max-w-6xl mx-auto">
-      <header className="space-y-2">
-        <div className="flex items-center gap-3">
-          <div
-            className="h-10 w-10 rounded-full flex items-center justify-center"
-            style={{ backgroundColor: '#FFE4FA' }}
-          >
-            <Heart className="h-5 w-5" style={{ color: '#E15A97' }} />
-          </div>
-          <h1 className="font-display text-4xl md:text-5xl text-foreground">Nos <em className="accent-serif">recommandations</em></h1>
-        </div>
-        <p className="text-muted-foreground">
-          Associations et partenaires sélectionnés pour vous accompagner.
+    <div className="space-y-8">
+      <header className="space-y-3">
+        <h1 className="font-display text-4xl md:text-5xl text-foreground leading-tight">
+          Nos <AccentText>recommandations</AccentText>
+        </h1>
+        <p className="text-lg text-muted-foreground">
+          Associations et partenaires sélectionnés pour vous accompagner. Un don à une association ouvre droit à une réduction d'impôt jusqu'à 66 % (75 % pour l'aide aux personnes en difficulté).
         </p>
       </header>
 
@@ -122,8 +117,8 @@ export default function Recommandations() {
       ) : (
         <>
           <section className="space-y-4">
-            <h2 className="font-heading text-xl font-bold" style={{ color: '#2C1338' }}>
-              Associations à soutenir
+            <h2 className="font-display text-2xl md:text-3xl text-foreground">
+              Associations à <AccentText>soutenir</AccentText>
             </h2>
             {associations.length === 0 ? (
               <p className="text-sm text-muted-foreground italic">Aucune association pour le moment.</p>
@@ -137,8 +132,8 @@ export default function Recommandations() {
           </section>
 
           <section className="space-y-4">
-            <h2 className="font-heading text-xl font-bold" style={{ color: '#2C1338' }}>
-              Nos partenaires
+            <h2 className="font-display text-2xl md:text-3xl text-foreground">
+              Nos <AccentText>partenaires</AccentText>
             </h2>
             {partenaires.length === 0 ? (
               <p className="text-sm text-muted-foreground italic">Aucun partenaire pour le moment.</p>
