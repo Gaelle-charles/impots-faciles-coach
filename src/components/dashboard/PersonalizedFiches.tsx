@@ -420,7 +420,10 @@ export const PersonalizedFiches = () => {
       return acc;
     }, new Map<string, typeof paysItems>()),
   )
-    .map(([key, items]) => ({ key, label: key, items }))
+    .map(([key, items]) => {
+      const meta = PAYS_ZONES[key] ?? PAYS_ZONES.Autres;
+      return { key, label: meta.label, icon: meta.icon, items };
+    })
     .sort((a, b) => a.label.localeCompare(b.label));
 
   const visibleMetiers = selectedMetierCat
