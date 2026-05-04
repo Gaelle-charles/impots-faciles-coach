@@ -112,6 +112,15 @@ export default function SimulateurFraisPro() {
     fraisAstreinte: 49,
     nbJoursAstreinte: 0,
     indemAstreinte: 0,
+    tel: 0,
+    doubleResidence: 0,
+    demenagementPro: 0,
+    interetsEmprunt: 0,
+    cotisations: 0,
+    forfaitInternet: 0,
+    fraisBancaire: 0,
+    achatLogiciel: 0,
+    autresFrais: 0,
   });
 
   const [step1Error, setStep1Error] = useState<string | null>(null);
