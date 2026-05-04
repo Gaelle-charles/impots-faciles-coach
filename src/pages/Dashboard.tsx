@@ -282,7 +282,7 @@ const Dashboard = () => {
 
       {/* Modules list with access control */}
       <section id="modules">
-        <h2 className="font-heading text-2xl font-bold text-foreground mb-5">Mes modules</h2>
+        <h2 className="font-heading text-2xl font-bold text-foreground mb-5">Mon parcours déclaration</h2>
         {accessLoading ? (
           <div className="grid gap-4 sm:grid-cols-2">
             {Array.from({ length: 4 }).map((_, i) => (
