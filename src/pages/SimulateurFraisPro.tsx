@@ -268,6 +268,27 @@ export default function SimulateurFraisPro() {
                         <p className="text-sm text-destructive">{step1Error}</p>
                       )}
                     </div>
+                  ) : idx === 1 ? (
+                    <div className="space-y-4">
+                      <NumberInput
+                        id="kgSemaine"
+                        label="Nombre de kg de linge professionnel par semaine"
+                        value={form.kgSemaine}
+                        onChange={(v) => setField("kgSemaine", v)}
+                      />
+                      <NumberInput
+                        id="nbSemaines"
+                        label="Nombre de semaines travaillées dans l'année"
+                        value={form.nbSemaines}
+                        onChange={(v) => setField("nbSemaines", v)}
+                      />
+                      <p className="text-xs text-muted-foreground">
+                        Barème fiscal : 0,65 € par kg de linge
+                      </p>
+                      {step2Error && (
+                        <p className="text-sm text-destructive">{step2Error}</p>
+                      )}
+                    </div>
                   ) : (
                     <p className="text-sm text-muted-foreground">
                       Contenu à compléter pour cette étape.
