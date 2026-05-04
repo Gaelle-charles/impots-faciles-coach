@@ -10,6 +10,9 @@ type FormState = {
   nbRepasInf: number;
   nbRepasSup: number;
   montantRepasSup: number;
+  // étape 2
+  kgSemaine: number;
+  nbSemaines: number;
   // étape 4
   surfaceBureau: number;
   surfaceLogement: number;
@@ -17,6 +20,7 @@ type FormState = {
 };
 
 const BAREME_REPAS = 5.35;
+const BAREME_BLANCHISSEMENT = 0.65;
 
 type Sections = {
   sectionA: number;
@@ -72,12 +76,15 @@ export default function SimulateurFraisPro() {
     nbRepasInf: 0,
     nbRepasSup: 0,
     montantRepasSup: 0,
+    kgSemaine: 0,
+    nbSemaines: 0,
     surfaceBureau: 0,
     surfaceLogement: 0,
     chargesAnnuelles: 0,
   });
 
   const [step1Error, setStep1Error] = useState<string | null>(null);
+  const [step2Error, setStep2Error] = useState<string | null>(null);
 
   const [sections, setSections] = useState<Sections>({
     sectionA: 0,
@@ -112,6 +119,17 @@ export default function SimulateurFraisPro() {
       const totalRepasSup = form.montantRepasSup - repasTotalStep1;
       const totalRepas = totalRepasSup + totalRepasInf;
       setSections((s) => ({ ...s, sectionA: totalRepas }));
+    }
+    if (activeStep === 1) {
+      if (!(form.kgSemaine > 0) || !(form.nbSemaines > 0)) {
+        setStep2Error("Veuillez renseigner le linge et les semaines travaillées.");
+        return;
+      }
+      setStep2Error(null);
+      setSections((s) => ({
+        ...s,
+        sectionB: form.kgSemaine * form.nbSemaines * BAREME_BLANCHISSEMENT,
+      }));
     }
     if (activeStep === 3) {
       setSections((s) => ({ ...s, sectionD: sectionDLive }));
@@ -248,6 +266,27 @@ export default function SimulateurFraisPro() {
                       </p>
                       {step1Error && (
                         <p className="text-sm text-destructive">{step1Error}</p>
+                      )}
+                    </div>
+                  ) : idx === 1 ? (
+                    <div className="space-y-4">
+                      <NumberInput
+                        id="kgSemaine"
+                        label="Nombre de kg de linge professionnel par semaine"
+                        value={form.kgSemaine}
+                        onChange={(v) => setField("kgSemaine", v)}
+                      />
+                      <NumberInput
+                        id="nbSemaines"
+                        label="Nombre de semaines travaillées dans l'année"
+                        value={form.nbSemaines}
+                        onChange={(v) => setField("nbSemaines", v)}
+                      />
+                      <p className="text-xs text-muted-foreground">
+                        Barème fiscal : 0,65 € par kg de linge
+                      </p>
+                      {step2Error && (
+                        <p className="text-sm text-destructive">{step2Error}</p>
                       )}
                     </div>
                   ) : (
