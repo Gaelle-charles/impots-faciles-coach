@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { Card } from "@/components/ui/card";
 import { ArrowRight, Clock, Lock } from "lucide-react";
+import { AccentText } from "@/components/ui/accent-text";
 import { useSimulateurs } from "@/hooks/useSimulateurs";
 import { useAccess, type Plan } from "@/hooks/useAccess";
 
@@ -35,16 +36,18 @@ const MesSimulateurs = () => {
   const userRank = PLAN_RANK[plan] ?? 0;
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
       <div>
-        <h1 className="font-display text-4xl md:text-5xl text-foreground">Mes <em className="accent-serif">simulateurs</em></h1>
-        <p className="mt-2 text-muted-foreground">
+        <h1 className="font-display text-4xl md:text-5xl text-foreground leading-tight">
+          Mes <AccentText>simulateurs</AccentText>
+        </h1>
+        <p className="mt-3 text-lg text-muted-foreground">
           Tous les outils pour estimer vos impôts 2026 (sur revenus 2025) — pédagogique, gratuit, conforme PLF 2026.
         </p>
       </div>
 
-      <div className="rounded-lg bg-yellow-vivid/15 border border-yellow-vivid/30 p-4 text-sm text-foreground">
-        <span className="font-semibold">⚠️ Estimations pédagogiques.</span>{" "}
+      <div className="rounded-2xl bg-yellow-vivid/15 border border-yellow-vivid/30 p-4 text-sm text-foreground">
+        <span className="font-semibold">Estimations pédagogiques.</span>{" "}
         Non opposables à la DGFIP. Pour votre déclaration officielle, rendez-vous sur impots.gouv.fr.
       </div>
 
@@ -60,7 +63,7 @@ const MesSimulateurs = () => {
               const planLabel = PLAN_LABEL[s.plan_minimum] ?? s.plan_minimum;
 
               const cardInner = (
-                <Card className={`h-full p-5 transition-all ${isLocked ? "opacity-70 hover:opacity-100" : "hover:shadow-lg hover:-translate-y-0.5 hover:border-primary/50"}`}>
+                <Card className={`h-full p-5 rounded-3xl transition-all ${isLocked ? "opacity-70 hover:opacity-100" : "hover:shadow-xl hover:-translate-y-1 hover:border-primary/50"}`}>
                   <div className="flex gap-4">
                     <div className={`shrink-0 h-12 w-12 rounded-xl bg-gradient-to-br ${v.color} flex items-center justify-center text-2xl shadow-md relative`}>
                       {v.emoji}
@@ -107,10 +110,10 @@ const MesSimulateurs = () => {
           </div>
 
           {aVenir.length > 0 && (
-            <Card className="p-5 bg-secondary/40 border-dashed">
+            <Card className="p-5 rounded-3xl bg-secondary/40 border-dashed">
               <div className="flex items-center gap-2 mb-2">
                 <Clock className="h-4 w-4 text-muted-foreground" />
-                <h3 className="font-heading text-base font-bold text-foreground">📅 Bientôt disponibles</h3>
+                <h3 className="font-heading text-base font-bold text-foreground">Bientôt disponibles</h3>
               </div>
               <ul className="text-sm text-muted-foreground space-y-1 ml-6 list-disc">
                 {aVenir.map((s) => <li key={s.id}>{s.nom}</li>)}
