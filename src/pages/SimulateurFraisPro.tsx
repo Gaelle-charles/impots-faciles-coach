@@ -69,10 +69,15 @@ export default function SimulateurFraisPro() {
   const [showResults, setShowResults] = useState(false);
 
   const [form, setForm] = useState<FormState>({
+    nbRepasInf: 0,
+    nbRepasSup: 0,
+    montantRepasSup: 0,
     surfaceBureau: 0,
     surfaceLogement: 0,
     chargesAnnuelles: 0,
   });
+
+  const [step1Error, setStep1Error] = useState<string | null>(null);
 
   const [sections, setSections] = useState<Sections>({
     sectionA: 0,
