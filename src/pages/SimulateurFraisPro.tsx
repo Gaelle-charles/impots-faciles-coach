@@ -888,6 +888,7 @@ export default function SimulateurFraisPro() {
                           label="Nombre de jours travaillés dans l'année"
                           value={form.nbJoursTravailles}
                           onChange={(v) => setField("nbJoursTravailles", v)}
+                          integer
                         />
                         <p className="text-xs text-muted-foreground">
                           Barème kilométrique {FISCAL_YEAR} (non revalorisé depuis 2023, simplifié
