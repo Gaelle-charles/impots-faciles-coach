@@ -253,21 +253,29 @@ export default function SimulateurFraisPro() {
   const totalArrondi = Math.round(total);
 
   return (
-    <div className="container mx-auto max-w-3xl py-8 px-4 space-y-8">
-      <header className="space-y-2">
-        <h1 className="font-heading text-3xl font-bold text-foreground">
-          Simulateur de frais
-        </h1>
-        <p className="text-muted-foreground">
-          Estimez facilement vos frais professionnels déductibles des impôts
-        </p>
+    <div className="min-h-screen bg-muted/30">
+      <header className="bg-[#2D1B4E] text-white">
+        <div className="container mx-auto max-w-3xl px-4 py-8 sm:py-10">
+          <div className="flex items-center gap-3">
+            <span className="text-3xl sm:text-4xl" aria-hidden>🧾</span>
+            <div>
+              <h1 className="font-heading text-2xl sm:text-3xl font-bold text-white">
+                Simulateur de frais
+              </h1>
+              <p className="text-sm sm:text-base text-white/80 mt-1">
+                Estimez facilement vos frais professionnels déductibles des impôts
+              </p>
+            </div>
+          </div>
+        </div>
       </header>
 
-      <p className="text-sm text-foreground/80">
-        Cet outil vous permet de calculer vos frais réels professionnels pour
-        votre déclaration d'impôts. Remplissez les informations ci-dessous pour
-        obtenir une estimation de vos frais déductibles.
-      </p>
+      <div className="container mx-auto max-w-3xl px-4 py-6 sm:py-8 space-y-6">
+        <p className="text-sm text-foreground/80">
+          Cet outil vous permet de calculer vos frais réels professionnels pour
+          votre déclaration d'impôts. Remplissez les informations ci-dessous pour
+          obtenir une estimation de vos frais déductibles.
+        </p>
 
       <div className="space-y-3">
         {STEP_TITLES.map((title, idx) => {
