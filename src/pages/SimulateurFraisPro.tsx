@@ -223,6 +223,33 @@ export default function SimulateurFraisPro() {
                         </p>
                       </div>
                     </div>
+                  ) : idx === 0 ? (
+                    <div className="space-y-4">
+                      <NumberInput
+                        id="nbRepasInf"
+                        label="Nombre de repas par semaine inférieurs ou égaux à 5,35 €"
+                        value={form.nbRepasInf}
+                        onChange={(v) => setField("nbRepasInf", v)}
+                      />
+                      <NumberInput
+                        id="nbRepasSup"
+                        label="Nombre de repas par semaine supérieurs à 5,35 €"
+                        value={form.nbRepasSup}
+                        onChange={(v) => setField("nbRepasSup", v)}
+                      />
+                      <NumberInput
+                        id="montantRepasSup"
+                        label="Montant moyen par repas supérieur à 5,35 € (en €)"
+                        value={form.montantRepasSup}
+                        onChange={(v) => setField("montantRepasSup", v)}
+                      />
+                      <p className="text-xs text-muted-foreground">
+                        Barème fiscal : 5,35 € par repas
+                      </p>
+                      {step1Error && (
+                        <p className="text-sm text-destructive">{step1Error}</p>
+                      )}
+                    </div>
                   ) : (
                     <p className="text-sm text-muted-foreground">
                       Contenu à compléter pour cette étape.
