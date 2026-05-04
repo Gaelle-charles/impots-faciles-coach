@@ -4,8 +4,9 @@ import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
-import { Lock, Sparkles, ArrowRight } from 'lucide-react';
+import { Lock, Sparkles, ArrowRight, Star } from 'lucide-react';
 import type { Tables } from '@/integrations/supabase/types';
 
 type FicheProfil = Tables<'fiches_profils'>;
@@ -27,12 +28,23 @@ interface FicheCardItem {
   nom: string;
   description: string | null;
   slug: string;
+  recommended?: boolean;
 }
 
 const FicheCard = ({ item, type }: { item: FicheCardItem; type: 'profil' | 'metier' | 'pays' }) => {
   const navigate = useNavigate();
   return (
-    <Card className="border border-border bg-background rounded-3xl shadow-none hover:-translate-y-1 hover:shadow-xl transition-all">
+    <Card
+      className={`relative border bg-background rounded-3xl shadow-none hover:-translate-y-1 hover:shadow-xl transition-all ${
+        item.recommended ? 'border-primary/40 ring-1 ring-primary/20' : 'border-border'
+      }`}
+    >
+      {item.recommended && (
+        <Badge className="absolute -top-2 right-4 gap-1 bg-primary text-primary-foreground">
+          <Star className="h-3 w-3" />
+          Pour vous
+        </Badge>
+      )}
       <CardContent className="p-7 space-y-4">
         <div className="flex items-start gap-3">
           <span className="text-3xl shrink-0" aria-hidden>
@@ -72,11 +84,11 @@ const LockedSection = ({
   const navigate = useNavigate();
   const planCap = requiredPlan.charAt(0).toUpperCase() + requiredPlan.slice(1);
   return (
-    <Card className="relative overflow-hidden border-border bg-background shadow-sm">
-      <CardContent className="p-6 space-y-3">
+    <Card className="relative overflow-hidden border-border bg-background rounded-3xl shadow-none">
+      <CardContent className="p-7 space-y-3">
         <div className="flex items-center gap-2">
           <Lock className="h-4 w-4 text-muted-foreground" />
-          <h3 className="font-heading text-lg font-bold text-foreground">{title}</h3>
+          <h3 className="font-display text-xl text-foreground">{title}</h3>
         </div>
         <p className="text-sm text-muted-foreground">
           {count > 0
@@ -92,6 +104,12 @@ const LockedSection = ({
     </Card>
   );
 };
+
+const sortRecommendedFirst = <T extends { recommended?: boolean; nom: string }>(items: T[]) =>
+  [...items].sort((a, b) => {
+    if (!!b.recommended !== !!a.recommended) return b.recommended ? 1 : -1;
+    return a.nom.localeCompare(b.nom);
+  });
 
 export const PersonalizedFiches = () => {
   const { user } = useAuth();
@@ -119,20 +137,33 @@ export const PersonalizedFiches = () => {
       }
       setProfile(prof as ProfileLite);
 
+      const userPlan = (prof as ProfileLite).plan;
       const profilsSlugs = prof.profils_detectes ?? [];
       const metiersIds = prof.metiers_detectes ?? [];
       const paysIds = prof.pays_concernes ?? [];
 
+      // Pour expert/premium : on charge TOUTES les fiches actives
+      // Pour starter : on charge seulement les détectées
+      // Pour nouveau : on charge seulement le compte (via détectées)
+      const loadAllProfilsAndMetiers = userPlan === 'expert' || userPlan === 'premium';
+      const loadAllPays = userPlan === 'premium';
+
       const [fpRes, mRes, pRes] = await Promise.all([
-        profilsSlugs.length > 0
-          ? supabase.from('fiches_profils').select('*').in('slug', profilsSlugs).eq('is_active', true)
-          : Promise.resolve({ data: [] as FicheProfil[] }),
-        metiersIds.length > 0
-          ? supabase.from('metiers').select('*').in('id', metiersIds).eq('is_active', true)
-          : Promise.resolve({ data: [] as Metier[] }),
-        paysIds.length > 0
-          ? supabase.from('pays').select('*').in('id', paysIds).eq('is_active', true)
-          : Promise.resolve({ data: [] as Pays[] }),
+        loadAllProfilsAndMetiers
+          ? supabase.from('fiches_profils').select('*').eq('is_active', true).order('order_display', { ascending: true })
+          : profilsSlugs.length > 0
+            ? supabase.from('fiches_profils').select('*').in('slug', profilsSlugs).eq('is_active', true)
+            : Promise.resolve({ data: [] as FicheProfil[] }),
+        loadAllProfilsAndMetiers
+          ? supabase.from('metiers').select('*').eq('is_active', true).order('order_display', { ascending: true })
+          : metiersIds.length > 0
+            ? supabase.from('metiers').select('*').in('id', metiersIds).eq('is_active', true)
+            : Promise.resolve({ data: [] as Metier[] }),
+        loadAllPays
+          ? supabase.from('pays').select('*').eq('is_active', true).order('order_display', { ascending: true })
+          : paysIds.length > 0
+            ? supabase.from('pays').select('*').in('id', paysIds).eq('is_active', true)
+            : Promise.resolve({ data: [] as Pays[] }),
       ]);
 
       setFichesProfils((fpRes.data ?? []) as FicheProfil[]);
@@ -168,10 +199,10 @@ export const PersonalizedFiches = () => {
   if (!profile.onboarding_done) {
     return (
       <section id="fiches">
-        <h2 className="font-heading text-2xl font-bold text-foreground mb-5">
+        <h2 className="font-display text-2xl text-foreground mb-5">
           Vos fiches personnalisées
         </h2>
-        <Card className="border-dashed border-2 border-border bg-background">
+        <Card className="border-dashed border-2 border-border bg-background rounded-3xl">
           <CardContent className="p-8 text-center space-y-4">
             <Sparkles className="h-10 w-10 text-primary mx-auto" />
             <p className="text-foreground">
@@ -186,35 +217,17 @@ export const PersonalizedFiches = () => {
     );
   }
 
-  // === État vide : onboarding fait mais aucun matching ===
-  if (totalDetected === 0) {
-    return (
-      <section id="fiches">
-        <h2 className="font-heading text-2xl font-bold text-foreground mb-5">
-          Vos fiches personnalisées
-        </h2>
-        <Card className="border-border bg-background shadow-sm">
-          <CardContent className="p-6 text-center">
-            <p className="text-muted-foreground">
-              Votre situation est standard, les fiches génériques vous conviendront.
-            </p>
-          </CardContent>
-        </Card>
-      </section>
-    );
-  }
-
   // === FREEMIUM (nouveau) : teaser flouté ===
   if (plan === 'nouveau') {
     return (
       <section id="fiches">
-        <h2 className="font-heading text-2xl font-bold text-foreground mb-5">
+        <h2 className="font-display text-2xl text-foreground mb-5">
           Vos fiches personnalisées
         </h2>
-        <div className="relative overflow-hidden rounded-xl">
+        <div className="relative overflow-hidden rounded-3xl">
           <div className="grid gap-4 sm:grid-cols-2 blur-sm pointer-events-none select-none">
             {Array.from({ length: 4 }).map((_, i) => (
-              <Card key={i} className="border-border bg-background">
+              <Card key={i} className="border-border bg-background rounded-3xl">
                 <CardContent className="p-5 space-y-3">
                   <div className="h-6 w-3/4 bg-muted rounded" />
                   <div className="h-4 w-full bg-muted/60 rounded" />
@@ -225,10 +238,10 @@ export const PersonalizedFiches = () => {
             ))}
           </div>
           <div className="absolute inset-0 flex items-center justify-center bg-background/40 backdrop-blur-[2px]">
-            <Card className="max-w-md border-border bg-background shadow-xl">
+            <Card className="max-w-md border-border bg-background shadow-xl rounded-3xl">
               <CardContent className="p-6 text-center space-y-4">
                 <Sparkles className="h-10 w-10 text-primary mx-auto" />
-                <h3 className="font-heading text-lg font-bold text-foreground">
+                <h3 className="font-display text-xl text-foreground">
                   {totalDetected} fiche{totalDetected > 1 ? 's' : ''} ont été identifiées pour votre profil
                 </h3>
                 <p className="text-sm text-muted-foreground">
@@ -250,103 +263,157 @@ export const PersonalizedFiches = () => {
     profile.situation_principale === 'independant' ||
     profile.situation_principale === 'dirigeant';
 
+  // Préparer les items avec flag "recommended"
+  const profilsItems: FicheCardItem[] = sortRecommendedFirst(
+    fichesProfils.map((f) => ({
+      id: f.id,
+      icone: f.icone,
+      nom: f.nom,
+      description: f.description,
+      slug: f.slug,
+      recommended: profilsSlugs.includes(f.slug),
+    }))
+  );
+
+  const metiersItems: FicheCardItem[] = sortRecommendedFirst(
+    metiers.map((m) => ({
+      id: m.id,
+      icone: m.icone,
+      nom: m.nom,
+      description: m.description,
+      slug: m.slug ?? m.id,
+      recommended: metiersIds.includes(m.id),
+    }))
+  );
+
+  const paysItems: FicheCardItem[] = sortRecommendedFirst(
+    pays.map((p) => ({
+      id: p.id,
+      icone: p.icone,
+      nom: p.nom,
+      description: null,
+      slug: p.slug ?? p.id,
+      recommended: paysIds.includes(p.id),
+    }))
+  );
+
+  const nbRecoProfils = profilsItems.filter((i) => i.recommended).length;
+  const nbRecoMetiers = metiersItems.filter((i) => i.recommended).length;
+  const nbRecoPays = paysItems.filter((i) => i.recommended).length;
+
   return (
-    <section id="fiches" className="space-y-8">
+    <section id="fiches" className="space-y-10">
       <div>
-        <h2 className="font-heading text-2xl font-bold text-foreground mb-2">
-          Vos fiches personnalisées
+        <h2 className="font-display text-2xl text-foreground mb-2">
+          Vos fiches
         </h2>
         <p className="text-sm text-muted-foreground">
-          Sélectionnées en fonction de votre profil et de votre plan {plan.charAt(0).toUpperCase() + plan.slice(1)}.
+          Plan {plan.charAt(0).toUpperCase() + plan.slice(1)} —
+          {plan === 'starter' && ' accès aux fiches profils correspondant à votre situation.'}
+          {plan === 'expert' && ' accès complet à toutes les fiches profils et métiers, mises en avant selon votre profil.'}
+          {plan === 'premium' && ' accès complet à toutes les fiches profils, métiers et pays, mises en avant selon votre profil.'}
         </p>
       </div>
 
-      {/* === STARTER === */}
-      {/* Fiches profils visibles pour starter, expert, premium */}
-      {fichesProfils.length > 0 && (
+      {/* === FICHES PROFILS === */}
+      {profilsItems.length > 0 && (
         <div>
-          <h3 className="font-heading text-lg font-bold text-foreground mb-4">
-            Vos fiches profils
-          </h3>
+          <div className="flex items-baseline justify-between mb-4 gap-3 flex-wrap">
+            <h3 className="font-display text-xl text-foreground">
+              Fiches profils contribuable
+            </h3>
+            {(plan === 'expert' || plan === 'premium') && nbRecoProfils > 0 && (
+              <span className="text-xs text-muted-foreground">
+                {nbRecoProfils} recommandée{nbRecoProfils > 1 ? 's' : ''} pour vous
+              </span>
+            )}
+          </div>
           <div className="grid gap-4 sm:grid-cols-2">
-            {fichesProfils.map((f) => (
-              <FicheCard
-                key={f.id}
-                type="profil"
-                item={{ id: f.id, icone: f.icone, nom: f.nom, description: f.description, slug: f.slug }}
-              />
+            {profilsItems.map((item) => (
+              <FicheCard key={item.id} type="profil" item={item} />
             ))}
           </div>
         </div>
       )}
 
-      {/* === EXPERT + PREMIUM : métiers + pays === */}
-      {(plan === 'expert' || plan === 'premium') ? (
-        <>
-          {metiers.length > 0 && (
-            <div>
-              <h3 className="font-heading text-lg font-bold text-foreground mb-4">
-                Vos fiches métiers
+      {/* === FICHES MÉTIERS (expert + premium) === */}
+      {plan === 'expert' || plan === 'premium' ? (
+        metiersItems.length > 0 && (
+          <div>
+            <div className="flex items-baseline justify-between mb-4 gap-3 flex-wrap">
+              <h3 className="font-display text-xl text-foreground">
+                Fiches métiers
               </h3>
-              <div className="grid gap-4 sm:grid-cols-2">
-                {metiers.map((m) => (
-                  <FicheCard
-                    key={m.id}
-                    type="metier"
-                    item={{ id: m.id, icone: m.icone, nom: m.nom, description: m.description, slug: m.slug ?? m.id }}
-                  />
-                ))}
-              </div>
+              {nbRecoMetiers > 0 && (
+                <span className="text-xs text-muted-foreground">
+                  {nbRecoMetiers} recommandée{nbRecoMetiers > 1 ? 's' : ''} pour vous
+                </span>
+              )}
             </div>
-          )}
-
-          {pays.length > 0 && (
-            <div>
-              <h3 className="font-heading text-lg font-bold text-foreground mb-4">
-                Vos pays concernés
-              </h3>
-              <div className="grid gap-4 sm:grid-cols-2">
-                {pays.map((p) => (
-                  <FicheCard
-                    key={p.id}
-                    type="pays"
-                    item={{ id: p.id, icone: p.icone, nom: p.nom, description: null, slug: p.slug ?? p.id }}
-                  />
-                ))}
-              </div>
+            <div className="grid gap-4 sm:grid-cols-2">
+              {metiersItems.map((item) => (
+                <FicheCard key={item.id} type="metier" item={item} />
+              ))}
             </div>
-          )}
-        </>
-      ) : (
-        // Starter : section flouttée pour métiers + pays
-        (metiersIds.length > 0 || paysIds.length > 0) && (
-          <LockedSection
-            title="Vos fiches métiers & pays"
-            count={metiersIds.length + paysIds.length}
-            requiredPlan="expert"
-            description="Accédez aux fiches métiers et pays personnalisées avec le plan Expert."
-          />
+          </div>
         )
+      ) : (
+        <LockedSection
+          title="Fiches métiers"
+          count={metiersIds.length}
+          requiredPlan="expert"
+          description="Accédez à l'ensemble des fiches métiers, avec mise en avant de celles qui correspondent à votre profil, avec le plan Expert."
+        />
+      )}
+
+      {/* === FICHES PAYS (premium seulement) === */}
+      {plan === 'premium' ? (
+        paysItems.length > 0 && (
+          <div>
+            <div className="flex items-baseline justify-between mb-4 gap-3 flex-wrap">
+              <h3 className="font-display text-xl text-foreground">
+                Fiches pays
+              </h3>
+              {nbRecoPays > 0 && (
+                <span className="text-xs text-muted-foreground">
+                  {nbRecoPays} recommandée{nbRecoPays > 1 ? 's' : ''} pour vous
+                </span>
+              )}
+            </div>
+            <div className="grid gap-4 sm:grid-cols-2">
+              {paysItems.map((item) => (
+                <FicheCard key={item.id} type="pays" item={item} />
+              ))}
+            </div>
+          </div>
+        )
+      ) : (
+        <LockedSection
+          title="Fiches pays"
+          count={paysIds.length}
+          requiredPlan="premium"
+          description="Accédez à l'ensemble des fiches pays, avec mise en avant de celles qui correspondent à votre profil, avec le plan Premium."
+        />
       )}
 
       {/* === PREMIUM : passeport personnalisé === */}
       {plan === 'premium' && showPasseport && (
         <div>
-          <h3 className="font-heading text-lg font-bold text-foreground mb-4">
+          <h3 className="font-display text-xl text-foreground mb-4">
             Votre passeport personnalisé
           </h3>
           <button
             type="button"
             onClick={() => navigate('/passeport-fiscal')}
-            className="block w-full text-left group rounded-lg focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
+            className="block w-full text-left group rounded-3xl focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
             aria-label="Consulter votre passeport fiscal personnalisé"
           >
-            <Card className="border-border bg-gradient-to-br from-primary/5 to-primary/10 shadow-sm transition-all group-hover:shadow-md group-hover:border-primary/40 cursor-pointer">
+            <Card className="border-border bg-gradient-to-br from-primary/5 to-primary/10 rounded-3xl shadow-none transition-all group-hover:shadow-md group-hover:border-primary/40 cursor-pointer">
               <CardContent className="p-6 space-y-3">
                 <div className="flex items-center gap-3">
                   <span className="text-3xl">🛂</span>
                   <div className="flex-1">
-                    <h4 className="font-heading text-base font-semibold text-foreground">
+                    <h4 className="font-display text-lg text-foreground">
                       Régime détecté : {profile.situation_principale === 'independant' ? 'Indépendant' : 'Dirigeant'}
                     </h4>
                     <p className="text-sm text-muted-foreground">
@@ -360,7 +427,6 @@ export const PersonalizedFiches = () => {
           </button>
         </div>
       )}
-
 
       {/* === EXPERT : teaser passeport personnalisé === */}
       {plan === 'expert' && showPasseport && (
