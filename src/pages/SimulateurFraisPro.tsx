@@ -112,7 +112,7 @@ export default function SimulateurFraisPro() {
   const [activeStep, setActiveStep] = useState(0);
   const [showResults, setShowResults] = useState(false);
 
-  const [form, setForm] = useState<FormState>({
+  const initialForm: FormState = {
     nbRepasInf: 0,
     nbRepasSup: 0,
     montantRepasSup: 0,
@@ -137,8 +137,18 @@ export default function SimulateurFraisPro() {
     surcout: 0,
     interile: 0,
     internetMobile: 0,
-  });
+  };
+  const initialSections: Sections = {
+    sectionA: 0,
+    sectionB: 0,
+    sectionC: 0,
+    sectionD: 0,
+    sectionE: 0,
+    sectionF: 0,
+    sectionG: 0,
+  };
 
+  const [form, setForm] = useState<FormState>(initialForm);
   const [step1Error, setStep1Error] = useState<string | null>(null);
   const [step2Error, setStep2Error] = useState<string | null>(null);
   const [articles, setArticles] = useState<Article[]>([]);
