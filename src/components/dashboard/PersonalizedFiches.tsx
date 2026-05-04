@@ -405,7 +405,10 @@ export const PersonalizedFiches = () => {
       return acc;
     }, new Map<string, typeof metiersItems>()),
   )
-    .map(([key, items]) => ({ key, label: key, items }))
+    .map(([key, items]) => {
+      const meta = METIER_CATEGORIES[key] ?? METIER_CATEGORIES.Autres;
+      return { key, label: meta.label, icon: meta.icon, items };
+    })
     .sort((a, b) => a.label.localeCompare(b.label));
 
   // Zones pays
