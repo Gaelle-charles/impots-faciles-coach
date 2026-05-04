@@ -574,40 +574,44 @@ export default function SimulateurFraisPro() {
         ].filter((r) => r.value > 0);
 
         return (
-          <Card className="border-primary">
+          <Card className="border-2 border-[#2D1B4E]/30 bg-[#FFF8E7] rounded-2xl shadow-lg">
             <CardHeader>
-              <CardTitle>Résultat de votre simulation</CardTitle>
+              <CardTitle className="text-xl sm:text-2xl text-[#2D1B4E]">
+                Résultat de votre simulation
+              </CardTitle>
             </CardHeader>
             <CardContent className="space-y-6">
-              <div className="text-center space-y-3 py-4">
-                <p className="text-sm text-foreground">
+              <div className="rounded-xl bg-[#2D1B4E] text-white text-center px-4 py-8 shadow-inner">
+                <p className="text-sm sm:text-base text-white/80">
                   Vos frais réels professionnels pour votre déclaration d'impôt s'élèvent à :
                 </p>
-                <p className="font-heading text-5xl font-bold text-primary">
+                <p className="font-heading text-4xl sm:text-6xl font-extrabold text-[#F9E900] mt-3">
                   {totalArrondi} €
                 </p>
               </div>
 
               <div className="space-y-3">
-                <h3 className="font-semibold text-foreground">Détails de votre simulation :</h3>
-                <div className="rounded-md border border-border overflow-hidden">
+                <h3 className="font-semibold text-[#2D1B4E]">
+                  Détails de votre simulation :
+                </h3>
+                <div className="rounded-lg border border-[#2D1B4E]/20 overflow-hidden bg-white">
                   <table className="w-full text-sm">
-                    <thead className="bg-muted">
+                    <thead className="bg-[#2D1B4E]/10">
                       <tr>
-                        <th className="text-left px-4 py-2 font-medium">Catégorie</th>
-                        <th className="text-right px-4 py-2 font-medium">Montant</th>
+                        <th className="text-left px-4 py-2 font-semibold text-[#2D1B4E]">Catégorie</th>
+                        <th className="text-right px-4 py-2 font-semibold text-[#2D1B4E]">Montant</th>
                       </tr>
                     </thead>
                     <tbody>
                       {rows.map((r) => (
                         <tr key={r.label} className="border-t border-border">
                           <td className="px-4 py-2">{r.label}</td>
-                          <td className="px-4 py-2 text-right">{r.value} €</td>
+                          <td className="px-4 py-2 text-right font-medium">{r.value} €</td>
                         </tr>
                       ))}
-                      <tr className="border-t border-border bg-muted/50 font-bold">
-                        <td className="px-4 py-2">TOTAL</td>
-                        <td className="px-4 py-2 text-right text-primary">{totalArrondi} €</td>
+                      <tr className="border-t-2 border-[#2D1B4E] bg-[#F9E900]/30 font-bold">
+                        <td className="px-4 py-3 text-[#2D1B4E]">TOTAL</td>
+                        <td className="px-4 py-3 text-right text-[#2D1B4E]">{totalArrondi} €</td>
                       </tr>
                     </tbody>
                   </table>
@@ -615,7 +619,12 @@ export default function SimulateurFraisPro() {
               </div>
 
               <div className="flex justify-center pt-2">
-                <Button variant="outline" onClick={handleReset}>
+                <Button
+                  variant="outline"
+                  onClick={handleReset}
+                  className="border-[#2D1B4E] text-[#2D1B4E] hover:bg-[#2D1B4E] hover:text-white"
+                >
+                  <RefreshCw className="h-4 w-4" />
                   Recommencer la simulation
                 </Button>
               </div>
