@@ -10,8 +10,6 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { Lock, LockKeyhole, Info, ArrowRight } from 'lucide-react';
 import type { Tables } from '@/integrations/supabase/types';
 import { useAccess } from '@/hooks/useAccess';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import PersonalizedFiches from '@/components/dashboard/PersonalizedFiches';
 
 type ModuleRow = Tables<'modules'> & { nb_steps_total: number };
 type ProgressionRow = Tables<'progressions'>;
