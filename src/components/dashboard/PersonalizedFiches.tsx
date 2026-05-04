@@ -419,7 +419,7 @@ export const PersonalizedFiches = () => {
   )
     .map(([key, items]) => {
       const meta = METIER_CATEGORIES[key] ?? METIER_CATEGORIES.Autres;
-      return { key, label: meta.label, icon: meta.icon, items };
+      return { key, label: meta.label, icon: meta.icon, description: meta.description, items };
     })
     .sort((a, b) => a.label.localeCompare(b.label));
 
@@ -434,7 +434,7 @@ export const PersonalizedFiches = () => {
   )
     .map(([key, items]) => {
       const meta = PAYS_ZONES[key] ?? PAYS_ZONES.Autres;
-      return { key, label: meta.label, icon: meta.icon, items };
+      return { key, label: meta.label, icon: meta.icon, description: meta.description, items };
     })
     .sort((a, b) => a.label.localeCompare(b.label));
 
