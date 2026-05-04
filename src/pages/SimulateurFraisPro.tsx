@@ -235,6 +235,7 @@ export default function SimulateurFraisPro() {
   };
 
   const total = Object.values(sections).reduce((a, b) => a + b, 0);
+  const totalArrondi = Math.round(total);
 
   return (
     <div className="container mx-auto max-w-3xl py-8 px-4 space-y-8">
