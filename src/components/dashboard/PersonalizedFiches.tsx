@@ -6,7 +6,34 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
-import { Lock, Sparkles, ArrowRight, Star, Briefcase, Globe, Users, FolderOpen } from 'lucide-react';
+import {
+  Lock, Sparkles, ArrowRight, Star, Briefcase, Globe, Users, FolderOpen,
+  Palette, GraduationCap, Scale, Hammer, Plane, Stethoscope, MoreHorizontal,
+  Mountain, Map as MapIcon, Building2, Sparkle, type LucideIcon,
+} from 'lucide-react';
+
+// Catégories métiers : icône + libellé lisible
+const METIER_CATEGORIES: Record<string, { label: string; icon: LucideIcon }> = {
+  culture_creation: { label: 'Culture & création', icon: Palette },
+  education_asso: { label: 'Éducation & associatif', icon: GraduationCap },
+  liberaux_cadres: { label: 'Libéraux & cadres', icon: Scale },
+  manuels_terrain: { label: 'Manuels & terrain', icon: Hammer },
+  mobilite_specifiques: { label: 'Mobilité & spécifiques', icon: Plane },
+  sante_soin: { label: 'Santé & soin', icon: Stethoscope },
+  Autres: { label: 'Autres', icon: MoreHorizontal },
+};
+
+// Zones pays : icône + libellé
+const PAYS_ZONES: Record<string, { label: string; icon: LucideIcon }> = {
+  Afrique: { label: 'Afrique', icon: Mountain },
+  Amériques: { label: 'Amériques', icon: MapIcon },
+  Asie: { label: 'Asie', icon: Globe },
+  Europe: { label: 'Europe', icon: Building2 },
+  'Moyen-Orient': { label: 'Moyen-Orient', icon: MapIcon },
+  Océanie: { label: 'Océanie', icon: Globe },
+  special: { label: 'Régimes spéciaux', icon: Sparkle },
+  Autres: { label: 'Autres', icon: MoreHorizontal },
+};
 import type { Tables } from '@/integrations/supabase/types';
 import { cn } from '@/lib/utils';
 
