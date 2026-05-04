@@ -7,7 +7,8 @@ import { Progress } from '@/components/ui/progress';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
-import { Lock, LockKeyhole, Info, ArrowRight } from 'lucide-react';
+import { Lock, LockKeyhole, Info, ArrowRight, Trophy } from 'lucide-react';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import type { Tables } from '@/integrations/supabase/types';
 import { useAccess } from '@/hooks/useAccess';
 
@@ -100,7 +101,13 @@ const MesModules = () => {
           {modules.length} modules disponibles dans ta formation.
         </p>
       </div>
+      <Tabs defaultValue="modules" className="w-full">
+        <TabsList>
+          <TabsTrigger value="modules">📚 Mes modules</TabsTrigger>
+          <TabsTrigger value="quizz">🎯 Mes quizz</TabsTrigger>
+        </TabsList>
 
+        <TabsContent value="modules" className="space-y-6 mt-6">
 
       {!bypassSequential && (
         <Card className="border-amber-300 dark:border-amber-900/60 bg-amber-50 dark:bg-amber-950/20">
@@ -299,6 +306,64 @@ const MesModules = () => {
           );
         })}
       </div>
+        </TabsContent>
+
+        <TabsContent value="quizz" className="space-y-4 mt-6">
+          <div>
+            <h2 className="font-heading text-xl font-bold text-foreground">🎯 Mes résultats de quizz</h2>
+            <p className="text-sm text-muted-foreground mt-1">
+              Retrouve ici tous les quizz disponibles et tes meilleurs scores.
+            </p>
+          </div>
+
+          <div className="grid gap-3 sm:grid-cols-2">
+            {modules.filter((m) => (m.nb_steps_total ?? 0) > 0).map((mod) => {
+              const hasAccess = hasModuleAccess(mod);
+              const lastQuiz = lastResultMap.get(mod.id);
+              const bestScore = bestScoreMap.get(mod.id) ?? 0;
+              const isValidated = bestScore >= 70;
+              const attempts = results.filter((r) => r.module_id === mod.id).length;
+
+              return (
+                <Card key={mod.id} className={`border-border ${!hasAccess ? 'opacity-60' : ''}`}>
+                  <CardContent className="p-4 space-y-3">
+                    <div className="flex items-start justify-between gap-2">
+                      <h3 className="font-heading text-sm font-semibold text-foreground leading-snug">
+                        {mod.titre}
+                      </h3>
+                      {isValidated && (
+                        <Badge className="bg-green-600 text-white hover:bg-green-700 text-xs shrink-0">
+                          <Trophy className="h-3 w-3 mr-1" /> Validé
+                        </Badge>
+                      )}
+                    </div>
+
+                    {attempts > 0 ? (
+                      <div className="space-y-1 text-xs text-muted-foreground">
+                        <p>Meilleur score : <span className="font-bold text-foreground">{bestScore}%</span></p>
+                        <p>Dernier essai : <span className="font-medium text-foreground">{Math.round(Number(lastQuiz?.pourcentage ?? 0))}%</span></p>
+                        <p>{attempts} tentative{attempts > 1 ? 's' : ''}</p>
+                      </div>
+                    ) : (
+                      <p className="text-xs text-muted-foreground italic">Pas encore tenté</p>
+                    )}
+
+                    <Button
+                      size="sm"
+                      variant={attempts > 0 ? 'outline' : 'default'}
+                      className="w-full"
+                      disabled={!hasAccess}
+                      onClick={() => navigate(`/quizz/${mod.module_slug}`)}
+                    >
+                      {!hasAccess ? '🔒 Verrouillé' : attempts > 0 ? 'Refaire le quizz' : 'Commencer le quizz'}
+                    </Button>
+                  </CardContent>
+                </Card>
+              );
+            })}
+          </div>
+        </TabsContent>
+      </Tabs>
     </div>
   );
 };
