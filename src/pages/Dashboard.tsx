@@ -232,7 +232,7 @@ const Dashboard = () => {
             Mon parcours <AccentText>déclaration</AccentText>
           </h2>
           <p className="mt-2 text-sm text-muted-foreground leading-relaxed flex-1">
-            Suivez les modules dans l'ordre, validez vos acquis avec les quiz et obtenez votre certificat de parcours.
+            Retrouvez ici les fiches pratiques recommandées en fonction de votre profil — fiches contribuable, fiches métiers et fiches pays — pour vous accompagner pas à pas dans votre déclaration de revenus : cases à cocher, justificatifs à préparer, abattements et déductions à ne pas oublier.
           </p>
           <div className="mt-5 flex items-center justify-between text-sm">
             <span className="text-muted-foreground">
