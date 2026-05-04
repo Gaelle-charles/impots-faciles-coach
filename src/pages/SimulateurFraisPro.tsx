@@ -334,10 +334,6 @@ export default function SimulateurFraisPro() {
           </p>
         </div>
 
-        <p className="text-sm text-foreground/80">
-          Cet outil vous permet d'estimer le montant de vos frais réels à titre pédagogique.
-          Cet outil ne remplace pas votre déclaration officielle ni l'avis d'un professionnel.
-        </p>
 
         {constantsLoading && (
           <div className="flex items-center gap-2 text-sm text-muted-foreground">
