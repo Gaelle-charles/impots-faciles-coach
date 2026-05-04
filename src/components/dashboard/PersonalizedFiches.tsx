@@ -202,7 +202,7 @@ const CategoryGrid = <T extends { id: string; nom: string; icone: string | null 
   onSelect,
   themeKey,
 }: {
-  groups: { key: string; label: string; items: T[] }[];
+  groups: { key: string; label: string; icon: LucideIcon; items: T[] }[];
   selected: string | null;
   onSelect: (key: string | null) => void;
   themeKey: SectionKey;
@@ -212,6 +212,7 @@ const CategoryGrid = <T extends { id: string; nom: string; icone: string | null 
     <div className="grid gap-3 grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
       {groups.map((g) => {
         const active = selected === g.key;
+        const Icon = g.icon;
         return (
           <button
             key={g.key}
@@ -224,7 +225,7 @@ const CategoryGrid = <T extends { id: string; nom: string; icone: string | null 
             style={active ? { boxShadow: `0 0 0 2px hsl(var(--primary) / 0.4)` } : undefined}
           >
             <div className={cn('inline-flex h-9 w-9 items-center justify-center rounded-xl mb-2', t.iconBg)}>
-              <FolderOpen className="h-4 w-4" />
+              <Icon className="h-4 w-4" />
             </div>
             <p className="font-heading font-semibold text-sm text-foreground leading-tight">{g.label}</p>
             <p className="text-xs text-muted-foreground mt-1">
