@@ -141,6 +141,10 @@ export default function SimulateurFraisPro() {
         sectionB: form.kgSemaine * form.nbSemaines * BAREME_BLANCHISSEMENT,
       }));
     }
+    if (activeStep === 2) {
+      const sectionC = articles.reduce((sum, item) => sum + (item.prix || 0), 0);
+      setSections((s) => ({ ...s, sectionC }));
+    }
     if (activeStep === 3) {
       setSections((s) => ({ ...s, sectionD: sectionDLive }));
     }
