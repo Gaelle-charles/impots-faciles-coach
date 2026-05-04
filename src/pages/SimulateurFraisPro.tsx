@@ -33,6 +33,11 @@ type FormState = {
   fraisBancaire: number;
   achatLogiciel: number;
   autresFrais: number;
+  // étape 7
+  distance: number;
+  surcout: number;
+  interile: number;
+  internetMobile: number;
 };
 
 const STEP6_FIELDS: { name: keyof FormState; label: string }[] = [
@@ -45,6 +50,13 @@ const STEP6_FIELDS: { name: keyof FormState; label: string }[] = [
   { name: "fraisBancaire", label: "Frais bancaires professionnels (€/an)" },
   { name: "achatLogiciel", label: "Achat de logiciels (€)" },
   { name: "autresFrais", label: "Autres frais (€)" },
+];
+
+const STEP7_FIELDS: { name: keyof FormState; label: string }[] = [
+  { name: "distance", label: "Kilométrage domicile-travail (km/an)" },
+  { name: "surcout", label: "Surcoût de la vie en DOM (€/an)" },
+  { name: "interile", label: "Indemnité d'interîle reçue (€/an)" },
+  { name: "internetMobile", label: "Forfait internet + mobile (€/an)" },
 ];
 
 const BAREME_REPAS = 5.35;
