@@ -347,7 +347,91 @@ export default function SimulateurFraisPro() {
           </div>
         )}
 
-        <div className="space-y-3">
+        <div className="grid gap-6 lg:grid-cols-[360px_1fr]">
+          <aside className="lg:sticky lg:top-6 self-start space-y-4">
+            {(() => {
+              const rows: { label: string; value: number }[] = [
+                { label: "Frais de repas hors domicile", value: Math.round(sections.sectionA) },
+                { label: "Frais de blanchissement", value: Math.round(sections.sectionB) },
+                { label: "Matériel professionnel", value: Math.round(sections.sectionC) },
+                { label: "Bureau à domicile", value: Math.round(sections.sectionD) },
+                { label: "Frais divers", value: Math.round(sections.sectionE) },
+                { label: "Frais kilométriques", value: Math.round(sections.sectionF) },
+              ];
+              const nonZero = rows.filter((r) => r.value > 0);
+              return (
+                <Card className="border-2 border-[#2D1B4E]/30 bg-[#FFF8E7] rounded-2xl shadow-lg">
+                  <CardHeader className="pb-3">
+                    <CardTitle className="text-base sm:text-lg text-[#2D1B4E]">
+                      {showResults ? "Résultat de votre simulation" : "Estimation en cours"}
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <div className="rounded-xl bg-[#2D1B4E] text-white text-center px-4 py-6 shadow-inner">
+                      <p className="text-xs sm:text-sm text-white/80">
+                        Total estimé de vos frais réels :
+                      </p>
+                      <p className="font-heading text-3xl sm:text-4xl font-extrabold text-[#F9E900] mt-2">
+                        {totalArrondi} €
+                      </p>
+                    </div>
+
+                    {nonZero.length > 0 ? (
+                      <div className="rounded-lg border border-[#2D1B4E]/20 overflow-hidden bg-white">
+                        <table className="w-full text-xs sm:text-sm">
+                          <tbody>
+                            {nonZero.map((r) => (
+                              <tr key={r.label} className="border-t border-border first:border-t-0">
+                                <td className="px-3 py-2 text-foreground/80">{r.label}</td>
+                                <td className="px-3 py-2 text-right font-medium tabular-nums">{r.value} €</td>
+                              </tr>
+                            ))}
+                            <tr className="border-t-2 border-[#2D1B4E] bg-[#F9E900]/30 font-bold">
+                              <td className="px-3 py-2 text-[#2D1B4E]">TOTAL</td>
+                              <td className="px-3 py-2 text-right text-[#2D1B4E] tabular-nums">{totalArrondi} €</td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    ) : (
+                      <p className="text-xs text-muted-foreground text-center italic">
+                        Remplissez les étapes à droite pour voir le détail apparaître ici.
+                      </p>
+                    )}
+
+                    <p className="text-xs text-foreground/70">
+                      Cette somme se déduit de votre revenu imposable, pas directement de votre impôt.
+                      L'économie réelle dépend de votre TMI.
+                    </p>
+
+                    {showResults && (
+                      <div className="flex flex-col gap-2 pt-1">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => navigate("/simulateur/ir-bareme")}
+                          className="border-[#2D1B4E] text-[#2D1B4E] hover:bg-[#2D1B4E] hover:text-white"
+                        >
+                          → Estimer mon impôt (IR Barème)
+                        </Button>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={handleReset}
+                          className="border-[#2D1B4E] text-[#2D1B4E] hover:bg-[#2D1B4E] hover:text-white"
+                        >
+                          <RefreshCw className="h-4 w-4" />
+                          Recommencer
+                        </Button>
+                      </div>
+                    )}
+                  </CardContent>
+                </Card>
+              );
+            })()}
+          </aside>
+
+          <div className="space-y-3 min-w-0">
           {STEP_TITLES.map((title, idx) => {
             const isActive = idx === activeStep;
             const isDone = idx < activeStep;
