@@ -416,6 +416,24 @@ export default function SimulateurFraisPro() {
                       L'économie réelle dépend de votre TMI.
                     </p>
 
+                    {sections.sectionG > 0 && (
+                      <div className="flex flex-col gap-2 rounded-lg border border-blue-200 bg-blue-50 p-3 text-xs text-blue-900">
+                        <p>
+                          Vous résidez en outre-mer ? Pour estimer votre impôt final tenant compte
+                          de la réfaction DROM ({constants?.refaction_drom_zone1 ?? 30}% ou {constants?.refaction_drom_zone2 ?? 40}%
+                          selon votre territoire), utilisez ensuite le simulateur IR Barème.
+                        </p>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => navigate("/simulateur/ir-bareme")}
+                          className="self-start border-blue-300 text-blue-900 hover:bg-blue-100"
+                        >
+                          → Simulateur IR Barème
+                        </Button>
+                      </div>
+                    )}
+
                     {showResults && (
                       <div className="flex flex-col gap-2 pt-1">
                         <Button
