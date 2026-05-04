@@ -24,6 +24,7 @@ import Module from "./pages/Module";
 import Quizz from "./pages/Quizz";
 import Simulateur from "./pages/Simulateur";
 import SimulateurFrais from "./pages/SimulateurFrais";
+import SimulateurFraisPro from "./pages/SimulateurFraisPro";
 import MesSimulateurs from "./pages/MesSimulateurs";
 import SimulateurPAS from "./pages/SimulateurPAS";
 import SimulateurIRBareme from "./pages/SimulateurIRBareme";
