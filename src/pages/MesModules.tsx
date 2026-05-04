@@ -203,14 +203,16 @@ const MesModules = () => {
           return (
             <Card
               key={mod.id}
-              className={`relative overflow-hidden border-border bg-background rounded-3xl shadow-sm transition-all hover:-translate-y-1 hover:shadow-xl ${!hasAccess ? 'opacity-60' : ''}`}
+              className={`relative overflow-hidden border border-border bg-background rounded-3xl shadow-none transition-all hover:-translate-y-1 hover:shadow-xl ${!hasAccess ? 'opacity-60' : ''}`}
             >
-              <CardContent className="p-5 space-y-3">
-                <div className="flex items-start justify-between gap-2">
-                  <h3 className="font-heading text-base font-semibold text-foreground leading-snug">
-                    <span className="text-muted-foreground mr-1">{idx + 1}.</span>
-                    {mod.titre}
-                  </h3>
+              <CardContent className="p-7 space-y-4">
+                <div className="flex items-start justify-between gap-3">
+                  <div className="space-y-1">
+                    <p className="font-display text-5xl text-rose-light leading-none">{String(idx + 1).padStart(2, '0')}</p>
+                    <h3 className="font-display text-xl text-foreground leading-tight pt-2">
+                      {mod.titre}
+                    </h3>
+                  </div>
                   {hasAccess && (
                     <div className="flex shrink-0 flex-col items-end gap-1">
                       {isModuleValidated && (
@@ -237,7 +239,7 @@ const MesModules = () => {
                         className="text-xs text-muted-foreground hover:text-primary transition-colors cursor-pointer text-left"
                         onClick={() => navigate(`/quizz/${mod.module_slug}`)}
                       >
-                        🎯 Quiz : <span className="font-semibold text-foreground">{Math.round(Number(lastQuiz.pourcentage))}%</span>
+                        Quiz : <span className="font-semibold text-foreground">{Math.round(Number(lastQuiz.pourcentage))}%</span>
                       </button>
                     )}
                   </>

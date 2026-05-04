@@ -1,26 +1,35 @@
 import { Link } from "react-router-dom";
-import { Card } from "@/components/ui/card";
-import { ArrowRight, Clock, Lock } from "lucide-react";
+import { ArrowRight, Clock, Lock, Calculator, Users, Briefcase, Gift, Receipt, BarChart3, PiggyBank, Scale, Home, TrendingUp, Heart, Gem } from "lucide-react";
 import { AccentText } from "@/components/ui/accent-text";
 import { useSimulateurs } from "@/hooks/useSimulateurs";
 import { useAccess, type Plan } from "@/hooks/useAccess";
+import type { LucideIcon } from "lucide-react";
 
-const VISUALS: Record<string, { emoji: string; color: string; badge: string }> = {
-  "ir-bareme":           { emoji: "🧮", color: "from-violet-500 to-purple-600",  badge: "Le plus complet" },
-  "quotient-familial":   { emoji: "👪", color: "from-pink-500 to-rose-600",      badge: "Familles" },
-  "pas":                 { emoji: "💼", color: "from-blue-500 to-cyan-600",      badge: "Mensuel" },
-  "credits-reductions":  { emoji: "🎁", color: "from-emerald-500 to-teal-600",   badge: "Optimisation" },
-  "frais-reels":         { emoji: "🧾", color: "from-amber-500 to-orange-600",   badge: "Salariés" },
-  "tmi-taux-effectif":   { emoji: "📊", color: "from-sky-500 to-indigo-600",     badge: "Comprendre" },
-  "per":                 { emoji: "🏦", color: "from-purple-500 to-fuchsia-600", badge: "Épargne" },
-  "micro-vs-reel":       { emoji: "⚖️", color: "from-teal-500 to-emerald-600",   badge: "Indépendants" },
-  "revenus-fonciers":    { emoji: "🏠", color: "from-red-500 to-rose-600",       badge: "Bailleurs" },
-  "plus-values":         { emoji: "📈", color: "from-cyan-500 to-blue-600",      badge: "Placements" },
-  "optimisation-couple": { emoji: "💑", color: "from-pink-500 to-purple-600",    badge: "Couple" },
-  "cdhr":                { emoji: "💎", color: "from-yellow-500 to-amber-600",   badge: "Hauts revenus" },
+type Tone = "rose" | "yellow" | "violet" | "neutral";
+
+const VISUALS: Record<string, { icon: LucideIcon; tone: Tone; badge: string }> = {
+  "ir-bareme":           { icon: Calculator, tone: "violet",  badge: "Le plus complet" },
+  "quotient-familial":   { icon: Users,      tone: "rose",    badge: "Familles" },
+  "pas":                 { icon: Briefcase,  tone: "violet",  badge: "Mensuel" },
+  "credits-reductions":  { icon: Gift,       tone: "yellow",  badge: "Optimisation" },
+  "frais-reels":         { icon: Receipt,    tone: "rose",    badge: "Salariés" },
+  "tmi-taux-effectif":   { icon: BarChart3,  tone: "violet",  badge: "Comprendre" },
+  "per":                 { icon: PiggyBank,  tone: "yellow",  badge: "Épargne" },
+  "micro-vs-reel":       { icon: Scale,      tone: "neutral", badge: "Indépendants" },
+  "revenus-fonciers":    { icon: Home,       tone: "rose",    badge: "Bailleurs" },
+  "plus-values":         { icon: TrendingUp, tone: "violet",  badge: "Placements" },
+  "optimisation-couple": { icon: Heart,      tone: "rose",    badge: "Couple" },
+  "cdhr":                { icon: Gem,        tone: "yellow",  badge: "Hauts revenus" },
 };
 
-const DEFAULT_VISUAL = { emoji: "🧮", color: "from-slate-500 to-slate-700", badge: "Outil" };
+const DEFAULT_VISUAL = { icon: Calculator, tone: "neutral" as Tone, badge: "Outil" };
+
+const TONE_ICON: Record<Tone, string> = {
+  rose: "bg-rose-light text-rose-dynamic",
+  yellow: "bg-yellow-vivid/25 text-violet-deep",
+  violet: "bg-primary/10 text-primary",
+  neutral: "bg-muted text-foreground",
+};
 
 const PLAN_RANK: Record<Plan, number> = { nouveau: 0, starter: 1, expert: 2, premium: 3 };
 const PLAN_LABEL: Record<string, string> = { starter: "Starter", expert: "Expert", premium: "Premium" };
@@ -55,54 +64,59 @@ const MesSimulateurs = () => {
         <p className="text-sm text-muted-foreground">Chargement…</p>
       ) : (
         <>
-          <div className="grid gap-4 md:grid-cols-2">
+          <div className="grid gap-5 md:grid-cols-2">
             {actifs.map((s) => {
               const v = VISUALS[s.slug] ?? DEFAULT_VISUAL;
+              const Icon = v.icon;
               const requiredRank = PLAN_RANK[s.plan_minimum as Plan] ?? 1;
               const isLocked = !isAdmin && userRank < requiredRank;
               const planLabel = PLAN_LABEL[s.plan_minimum] ?? s.plan_minimum;
 
               const cardInner = (
-                <Card className={`h-full p-5 rounded-3xl transition-all ${isLocked ? "opacity-70 hover:opacity-100" : "hover:shadow-xl hover:-translate-y-1 hover:border-primary/50"}`}>
-                  <div className="flex gap-4">
-                    <div className={`shrink-0 h-12 w-12 rounded-xl bg-gradient-to-br ${v.color} flex items-center justify-center text-2xl shadow-md relative`}>
-                      {v.emoji}
-                      {isLocked && (
-                        <div className="absolute inset-0 rounded-xl bg-black/40 flex items-center justify-center">
-                          <Lock className="h-5 w-5 text-white" />
-                        </div>
-                      )}
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2 flex-wrap">
-                        <h3 className={`font-heading text-lg font-bold ${isLocked ? "text-muted-foreground" : "text-foreground group-hover:text-primary"} transition-colors`}>
-                          {s.nom}
-                        </h3>
-                        {isLocked ? (
-                          <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-yellow-vivid/30 text-foreground uppercase tracking-wide">
-                            {planLabel} requis
-                          </span>
-                        ) : (
-                          <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-primary/10 text-primary uppercase tracking-wide">
-                            {v.badge}
-                          </span>
-                        )}
+                <div
+                  className={`group relative h-full rounded-3xl border border-border bg-background p-7 transition-all ${
+                    isLocked ? "opacity-80" : "hover:-translate-y-1 hover:shadow-xl"
+                  }`}
+                >
+                  <div className={`relative inline-flex h-12 w-12 items-center justify-center rounded-2xl mb-5 ${TONE_ICON[v.tone]}`}>
+                    <Icon className="h-5 w-5" />
+                    {isLocked && (
+                      <div className="absolute inset-0 rounded-2xl bg-foreground/60 flex items-center justify-center">
+                        <Lock className="h-4 w-4 text-background" />
                       </div>
-                      <p className="text-sm text-muted-foreground mt-1">{s.description}</p>
-                      <div className={`flex items-center gap-1 mt-3 text-sm font-medium ${isLocked ? "text-yellow-vivid" : "text-primary opacity-0 group-hover:opacity-100"} transition-opacity`}>
-                        {isLocked ? <>Passer en {planLabel} <ArrowRight className="h-4 w-4" /></> : <>Lancer <ArrowRight className="h-4 w-4" /></>}
-                      </div>
-                    </div>
+                    )}
                   </div>
-                </Card>
+
+                  <div className="flex items-center gap-2 flex-wrap mb-2">
+                    <h3 className="font-display text-2xl text-foreground leading-tight">
+                      {s.nom}
+                    </h3>
+                  </div>
+
+                  <p className="text-sm text-muted-foreground leading-relaxed">{s.description}</p>
+
+                  <div className="mt-5 flex items-center justify-between">
+                    <span className={`text-[11px] font-semibold px-2.5 py-1 rounded-full uppercase tracking-wide ${
+                      isLocked ? "bg-yellow-vivid/30 text-violet-deep" : "bg-rose-light text-rose-dynamic"
+                    }`}>
+                      {isLocked ? `${planLabel} requis` : v.badge}
+                    </span>
+                    <span className={`inline-flex items-center gap-1 text-sm font-semibold ${
+                      isLocked ? "text-violet-deep" : "text-primary"
+                    } group-hover:gap-2 transition-all`}>
+                      {isLocked ? <>Débloquer</> : <>Lancer</>}
+                      <ArrowRight className="h-4 w-4" />
+                    </span>
+                  </div>
+                </div>
               );
 
               return isLocked ? (
-                <Link key={s.id} to={`/tarifs?recommended=${s.plan_minimum}`} className="group">
+                <Link key={s.id} to={`/tarifs?recommended=${s.plan_minimum}`} className="block">
                   {cardInner}
                 </Link>
               ) : (
-                <Link key={s.id} to={`/simulateur/${s.slug}`} className="group">
+                <Link key={s.id} to={`/simulateur/${s.slug}`} className="block">
                   {cardInner}
                 </Link>
               );
@@ -110,15 +124,17 @@ const MesSimulateurs = () => {
           </div>
 
           {aVenir.length > 0 && (
-            <Card className="p-5 rounded-3xl bg-secondary/40 border-dashed">
-              <div className="flex items-center gap-2 mb-2">
-                <Clock className="h-4 w-4 text-muted-foreground" />
-                <h3 className="font-heading text-base font-bold text-foreground">Bientôt disponibles</h3>
+            <div className="rounded-3xl border-2 border-dashed border-border bg-background p-6">
+              <div className="flex items-center gap-2 mb-3">
+                <div className="inline-flex h-9 w-9 items-center justify-center rounded-xl bg-rose-light text-rose-dynamic">
+                  <Clock className="h-4 w-4" />
+                </div>
+                <h3 className="font-display text-xl text-foreground">Bientôt disponibles</h3>
               </div>
-              <ul className="text-sm text-muted-foreground space-y-1 ml-6 list-disc">
+              <ul className="text-sm text-muted-foreground space-y-1 ml-11 list-disc">
                 {aVenir.map((s) => <li key={s.id}>{s.nom}</li>)}
               </ul>
-            </Card>
+            </div>
           )}
         </>
       )}

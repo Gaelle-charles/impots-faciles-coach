@@ -28,42 +28,36 @@ function getInitials(nom: string) {
 
 function RecoCard({ reco }: { reco: Reco }) {
   return (
-    <Card className="border-border bg-background rounded-3xl shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all overflow-hidden">
-      <CardContent className="p-5 flex flex-col h-full gap-4">
+    <Card className="border border-border bg-background rounded-3xl shadow-none hover:shadow-xl hover:-translate-y-1 transition-all overflow-hidden">
+      <CardContent className="p-7 flex flex-col h-full gap-5">
         <div className="flex items-center gap-3">
           {reco.logo_url ? (
             <img
               src={reco.logo_url}
               alt={reco.nom}
-              className="h-12 w-12 shrink-0 rounded-lg object-contain bg-white border border-border"
+              className="h-12 w-12 shrink-0 rounded-2xl object-contain bg-white border border-border"
             />
           ) : (
-            <div
-              className="h-12 w-12 shrink-0 rounded-lg flex items-center justify-center font-heading font-bold text-sm text-primary-foreground"
-              style={{ backgroundColor: '#E15A97' }}
-            >
+            <div className="h-12 w-12 shrink-0 rounded-2xl flex items-center justify-center font-heading font-bold text-sm bg-rose-light text-rose-dynamic">
               {getInitials(reco.nom) || <Sparkles className="h-5 w-5" />}
             </div>
           )}
-          <h3 className="font-heading text-lg font-bold text-foreground leading-tight">
+          <h3 className="font-display text-xl text-foreground leading-tight">
             {reco.nom}
           </h3>
         </div>
 
-        <p className="text-sm text-muted-foreground flex-1">{reco.description}</p>
+        <p className="text-sm text-muted-foreground leading-relaxed flex-1">{reco.description}</p>
 
-        <div
-          className="rounded-lg p-3 text-sm"
-          style={{ backgroundColor: '#FFE4FA', color: '#2C1338' }}
-        >
-          <p className="font-semibold text-xs uppercase tracking-wide mb-1 opacity-70">
+        <div className="rounded-2xl p-4 text-sm bg-rose-light text-foreground">
+          <p className="font-semibold text-[11px] uppercase tracking-wide mb-1 text-rose-dynamic">
             Ce que ça vous apporte
           </p>
           <p>{reco.benefice_user}</p>
         </div>
 
         <a href={reco.url} target="_blank" rel="noopener noreferrer" className="block">
-          <Button className="w-full gap-2" style={{ backgroundColor: '#2C1338', color: '#F9E900' }}>
+          <Button className="w-full gap-2 bg-primary text-primary-foreground hover:bg-primary/90">
             Découvrir <ExternalLink className="h-4 w-4" />
           </Button>
         </a>
