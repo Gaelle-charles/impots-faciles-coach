@@ -101,7 +101,18 @@ export default function SimulateurFraisPro() {
     setForm((f) => ({ ...f, [key]: val }));
 
   const handleNext = () => {
-    // À la sortie de l'étape 4, on stocke sectionD
+    if (activeStep === 0) {
+      if (!(form.nbRepasInf > 0) || !(form.nbRepasSup > 0)) {
+        setStep1Error("Veuillez renseigner le nombre de repas.");
+        return;
+      }
+      setStep1Error(null);
+      const totalRepasInf = form.nbRepasInf * BAREME_REPAS;
+      const repasTotalStep1 = form.nbRepasSup * BAREME_REPAS;
+      const totalRepasSup = form.montantRepasSup - repasTotalStep1;
+      const totalRepas = totalRepasSup + totalRepasInf;
+      setSections((s) => ({ ...s, sectionA: totalRepas }));
+    }
     if (activeStep === 3) {
       setSections((s) => ({ ...s, sectionD: sectionDLive }));
     }
@@ -109,7 +120,6 @@ export default function SimulateurFraisPro() {
       setActiveStep(activeStep + 1);
       setShowResults(false);
     } else {
-      // Calculer (dernière étape)
       setShowResults(true);
     }
   };
