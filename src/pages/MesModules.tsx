@@ -103,12 +103,6 @@ const MesModules = () => {
         </p>
       </div>
 
-      <Tabs defaultValue="modules" className="w-full">
-        <TabsList>
-          <TabsTrigger value="modules">Modules</TabsTrigger>
-          <TabsTrigger value="fiches">Fiches personnalisées</TabsTrigger>
-        </TabsList>
-        <TabsContent value="modules" className="space-y-6 mt-6">
 
       {!bypassSequential && (
         <Card className="border-amber-300 dark:border-amber-900/60 bg-amber-50 dark:bg-amber-950/20">
