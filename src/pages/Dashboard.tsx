@@ -379,8 +379,7 @@ const Dashboard = () => {
         )}
       </section>
 
-      {/* Personalized fiches by plan */}
-      <PersonalizedFiches />
+      {/* Fiches personnalisées déplacées vers /mes-modules (onglet) */}
 
       {/* Certificat de parcours (si tous les modules sont validés) */}
       {certificat && (
