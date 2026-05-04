@@ -17,6 +17,26 @@ import { supabase } from "@/integrations/supabase/client";
 
 const FISCAL_YEAR = 2025;
 
+const VETEMENTS_PRO = [
+  "Blouse",
+  "Bleu de travail",
+  "Combinaison",
+  "Tablier",
+  "Veste de cuisine",
+  "Pantalon de cuisine",
+  "Toque",
+  "Uniforme",
+  "Costume / Tailleur",
+  "Chemise professionnelle",
+  "Robe de magistrat",
+  "Tenue médicale (scrub)",
+  "Tenue de chantier",
+  "Chaussures de sécurité",
+  "Gants de travail",
+  "Casque / EPI",
+  "Autre vêtement professionnel",
+] as const;
+
 type Article = { description: string; prix: number };
 type LingeLigne = {
   vetement: string;
@@ -568,12 +588,19 @@ export default function SimulateurFraisPro() {
                               >
                                 <div className="space-y-1.5">
                                   <Label htmlFor={`vet-${i}`}>Vêtement</Label>
-                                  <Input
-                                    id={`vet-${i}`}
+                                  <Select
                                     value={ligne.vetement}
-                                    onChange={(e) => updateLigneLinge(i, { vetement: e.target.value })}
-                                    placeholder="Ex : Blouse"
-                                  />
+                                    onValueChange={(v) => updateLigneLinge(i, { vetement: v })}
+                                  >
+                                    <SelectTrigger id={`vet-${i}`}>
+                                      <SelectValue placeholder="Choisir un vêtement…" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                      {VETEMENTS_PRO.map((v) => (
+                                        <SelectItem key={v} value={v}>{v}</SelectItem>
+                                      ))}
+                                    </SelectContent>
+                                  </Select>
                                 </div>
                                 <div className="space-y-1.5">
                                   <Label htmlFor={`nbp-${i}`}>Pièces</Label>
