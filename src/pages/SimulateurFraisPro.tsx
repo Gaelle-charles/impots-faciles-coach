@@ -372,6 +372,33 @@ export default function SimulateurFraisPro() {
                         Ajouter un article
                       </Button>
                     </div>
+                  ) : idx === 4 ? (
+                    <div className="space-y-4">
+                      <p className="text-sm text-muted-foreground">
+                        Cette section est optionnelle.
+                      </p>
+                      <NumberInput
+                        id="fraisAstreinte"
+                        label="Frais d'astreinte (€ par jour)"
+                        value={form.fraisAstreinte}
+                        onChange={(v) => setField("fraisAstreinte", v)}
+                      />
+                      <NumberInput
+                        id="nbJoursAstreinte"
+                        label="Nombre de jours d'astreinte dans l'année"
+                        value={form.nbJoursAstreinte}
+                        onChange={(v) => setField("nbJoursAstreinte", v)}
+                      />
+                      <NumberInput
+                        id="indemAstreinte"
+                        label="Indemnité d'astreinte reçue de l'employeur (€)"
+                        value={form.indemAstreinte}
+                        onChange={(v) => setField("indemAstreinte", v)}
+                      />
+                      <p className="text-xs text-muted-foreground">
+                        Frais nets déductibles = (frais journalier × nombre de jours) − indemnité reçue
+                      </p>
+                    </div>
                   ) : (
                     <p className="text-sm text-muted-foreground">
                       Contenu à compléter pour cette étape.
