@@ -893,6 +893,42 @@ export default function SimulateurFraisPro() {
                           le simulateur officiel sur impots.gouv.fr.
                         </p>
                       </div>
+                    ) : idx === 6 ? (
+                      <div className="space-y-4">
+                        <p className="text-sm text-muted-foreground flex items-start gap-2">
+                          <Palmtree className="h-4 w-4 mt-0.5 shrink-0" />
+                          <span>
+                            Cette section concerne les contribuables résidant en Guadeloupe, Martinique,
+                            Guyane, La Réunion ou Mayotte. Section optionnelle.
+                          </span>
+                        </p>
+                        <div className="flex gap-3 rounded-lg border border-blue-200 bg-blue-50 p-4 text-sm text-blue-900">
+                          <Info className="h-5 w-5 shrink-0 mt-0.5" />
+                          <div className="space-y-2">
+                            <p>
+                              <strong>Important</strong> — Si vous résidez dans un DROM, votre impôt sur
+                              le revenu bénéficie d'une réfaction appliquée sur l'impôt brut :
+                            </p>
+                            <ul className="list-disc pl-5 space-y-1">
+                              <li>{constants?.refaction_drom_zone1 ?? 30}% en Guadeloupe, Martinique et La Réunion</li>
+                              <li>{constants?.refaction_drom_zone2 ?? 40}% en Guyane et Mayotte</li>
+                            </ul>
+                            <p>
+                              Cette réfaction n'est pas un frais réel. Elle est calculée séparément
+                              sur l'impôt final, pas sur le revenu imposable. Le « surcoût de la vie » en
+                              outre-mer n'est pas déductible en frais réels — la réfaction DROM est
+                              précisément le mécanisme prévu par le législateur pour en tenir compte.
+                            </p>
+                          </div>
+                        </div>
+                        <NumberInput
+                          id="fraisInterIles"
+                          label="Frais de déplacements inter-îles ou inter-territoires engagés à titre professionnel (€/an)"
+                          value={form.fraisInterIles}
+                          onChange={(v) => setField("fraisInterIles", v)}
+                          hint="Total des billets d'avion, de bateau, etc. pour des déplacements liés à votre activité professionnelle (tournées clientèle, missions inter-îles pour libéraux, etc.). Sur justificatifs uniquement. N'inclure ni vos déplacements personnels, ni vos trajets domicile-travail réguliers (déjà déclarés en section 6)."
+                        />
+                      </div>
                     ) : null}
 
                     <div className="flex flex-col-reverse sm:flex-row sm:justify-between gap-3 pt-2">
