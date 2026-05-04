@@ -584,78 +584,80 @@ export default function SimulateurFraisPro() {
                             {lingeLignes.map((ligne, i) => (
                               <div
                                 key={i}
-                                className="grid gap-3 sm:grid-cols-[1fr_100px_120px_120px_auto] items-end rounded-md border border-border p-3"
+                                className="space-y-2 rounded-md border border-border p-3"
                               >
-                                <div className="space-y-1.5">
-                                  <Label htmlFor={`vet-${i}`}>Vêtement</Label>
-                                  <Select
-                                    value={ligne.vetement}
-                                    onValueChange={(v) => updateLigneLinge(i, { vetement: v })}
+                                <div className="grid gap-3 sm:grid-cols-[1fr_90px_170px_140px_auto] items-end">
+                                  <div className="space-y-1.5">
+                                    <Label htmlFor={`vet-${i}`}>Vêtement</Label>
+                                    <Select
+                                      value={ligne.vetement}
+                                      onValueChange={(v) => updateLigneLinge(i, { vetement: v })}
+                                    >
+                                      <SelectTrigger id={`vet-${i}`}>
+                                        <SelectValue placeholder="Choisir un vêtement…" />
+                                      </SelectTrigger>
+                                      <SelectContent>
+                                        {VETEMENTS_PRO.map((v) => (
+                                          <SelectItem key={v} value={v}>{v}</SelectItem>
+                                        ))}
+                                      </SelectContent>
+                                    </Select>
+                                  </div>
+                                  <div className="space-y-1.5">
+                                    <Label htmlFor={`nbp-${i}`}>Pièces</Label>
+                                    <Input
+                                      id={`nbp-${i}`}
+                                      type="number"
+                                      step="1"
+                                      min={0}
+                                      inputMode="numeric"
+                                      value={ligne.nbPieces || ""}
+                                      onChange={(e) =>
+                                        updateLigneLinge(i, { nbPieces: Math.max(0, Math.floor(Number(e.target.value) || 0)) })
+                                      }
+                                    />
+                                  </div>
+                                  <div className="space-y-1.5">
+                                    <Label htmlFor={`tar-${i}`}>Tarif pressing réf. (€)</Label>
+                                    <Input
+                                      id={`tar-${i}`}
+                                      type="number"
+                                      step="0.01"
+                                      min={0}
+                                      value={ligne.tarifPressing || ""}
+                                      onChange={(e) =>
+                                        updateLigneLinge(i, { tarifPressing: Number(e.target.value) || 0 })
+                                      }
+                                    />
+                                  </div>
+                                  <div className="space-y-1.5">
+                                    <Label htmlFor={`lav-${i}`}>Lavages / an</Label>
+                                    <Input
+                                      id={`lav-${i}`}
+                                      type="number"
+                                      step="1"
+                                      min={0}
+                                      inputMode="numeric"
+                                      value={ligne.nbLavages || ""}
+                                      onChange={(e) =>
+                                        updateLigneLinge(i, { nbLavages: Math.max(0, Math.floor(Number(e.target.value) || 0)) })
+                                      }
+                                    />
+                                  </div>
+                                  <Button
+                                    type="button"
+                                    variant="outline"
+                                    size="sm"
+                                    onClick={() => removeLigneLinge(i)}
                                   >
-                                    <SelectTrigger id={`vet-${i}`}>
-                                      <SelectValue placeholder="Choisir un vêtement…" />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                      {VETEMENTS_PRO.map((v) => (
-                                        <SelectItem key={v} value={v}>{v}</SelectItem>
-                                      ))}
-                                    </SelectContent>
-                                  </Select>
+                                    <Trash2 className="h-4 w-4" />
+                                  </Button>
                                 </div>
-                                <div className="space-y-1.5">
-                                  <Label htmlFor={`nbp-${i}`}>Pièces</Label>
-                                  <Input
-                                    id={`nbp-${i}`}
-                                    type="number"
-                                    step="1"
-                                    min={0}
-                                    inputMode="numeric"
-                                    value={ligne.nbPieces || ""}
-                                    onChange={(e) =>
-                                      updateLigneLinge(i, { nbPieces: Math.max(0, Math.floor(Number(e.target.value) || 0)) })
-                                    }
-                                  />
-                                </div>
-                                <div className="space-y-1.5">
-                                  <Label htmlFor={`tar-${i}`}>Tarif pressing de référence (€)</Label>
-                                  <Input
-                                    id={`tar-${i}`}
-                                    type="number"
-                                    step="0.01"
-                                    min={0}
-                                    value={ligne.tarifPressing || ""}
-                                    onChange={(e) =>
-                                      updateLigneLinge(i, { tarifPressing: Number(e.target.value) || 0 })
-                                    }
-                                  />
-                                  <p className="text-[11px] text-muted-foreground">
-                                    Tarif pressing local utilisé comme base ; une décote de{" "}
-                                    {constants?.blanchissage_decote_domicile ?? 30}% est
-                                    automatiquement appliquée pour le lavage à domicile.
-                                  </p>
-                                </div>
-                                <div className="space-y-1.5">
-                                  <Label htmlFor={`lav-${i}`}>Lavages à domicile / an</Label>
-                                  <Input
-                                    id={`lav-${i}`}
-                                    type="number"
-                                    step="1"
-                                    min={0}
-                                    inputMode="numeric"
-                                    value={ligne.nbLavages || ""}
-                                    onChange={(e) =>
-                                      updateLigneLinge(i, { nbLavages: Math.max(0, Math.floor(Number(e.target.value) || 0)) })
-                                    }
-                                  />
-                                </div>
-                                <Button
-                                  type="button"
-                                  variant="outline"
-                                  size="sm"
-                                  onClick={() => removeLigneLinge(i)}
-                                >
-                                  <Trash2 className="h-4 w-4" />
-                                </Button>
+                                <p className="text-[11px] text-muted-foreground">
+                                  Tarif pressing local utilisé comme base ; une décote de{" "}
+                                  {constants?.blanchissage_decote_domicile ?? 30}% est
+                                  automatiquement appliquée pour le lavage à domicile.
+                                </p>
                               </div>
                             ))}
                             <Button type="button" variant="outline" onClick={addLigneLinge}>
