@@ -87,6 +87,9 @@ export default function SimulateurFraisPro() {
     surfaceBureau: 0,
     surfaceLogement: 0,
     chargesAnnuelles: 0,
+    fraisAstreinte: 49,
+    nbJoursAstreinte: 0,
+    indemAstreinte: 0,
   });
 
   const [step1Error, setStep1Error] = useState<string | null>(null);
