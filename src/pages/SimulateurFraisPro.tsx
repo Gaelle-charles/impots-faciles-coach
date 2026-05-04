@@ -10,6 +10,9 @@ type FormState = {
   nbRepasInf: number;
   nbRepasSup: number;
   montantRepasSup: number;
+  // étape 2
+  kgSemaine: number;
+  nbSemaines: number;
   // étape 4
   surfaceBureau: number;
   surfaceLogement: number;
@@ -17,6 +20,7 @@ type FormState = {
 };
 
 const BAREME_REPAS = 5.35;
+const BAREME_BLANCHISSEMENT = 0.65;
 
 type Sections = {
   sectionA: number;
