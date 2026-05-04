@@ -3,8 +3,8 @@ import { LayoutDashboard, BookOpen, Calculator, FileText, User } from 'lucide-re
 
 const items = [
   { to: '/dashboard', label: 'Accueil', icon: LayoutDashboard },
-  { to: '/mes-modules', label: 'Mon parcours', icon: BookOpen },
-  { to: '/fiches-personnalisees', label: 'Fiches', icon: FileText },
+  { to: '/mes-modules', label: 'Formations', icon: BookOpen },
+  { to: '/fiches-personnalisees', label: 'Parcours', icon: FileText },
   { to: '/mes-simulateurs', label: 'Simulateurs', icon: Calculator },
   { to: '/profil', label: 'Profil', icon: User },
 ];
