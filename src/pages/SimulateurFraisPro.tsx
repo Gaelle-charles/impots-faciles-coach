@@ -494,17 +494,19 @@ export default function SimulateurFraisPro() {
                       <div className="space-y-4">
                         <NumberInput
                           id="nbRepasSansJustif"
-                          label="Nombre de repas par jour pris à l'extérieur SANS justificatif (cantine d'entreprise par ex.)"
+                          label="Nombre de repas SANS justificatif (cantine d'entreprise par ex.)"
                           hint="Repas sans facture conservée."
                           value={form.nbRepasSansJustif}
                           onChange={(v) => setField("nbRepasSansJustif", v)}
+                          integer
                         />
                         <NumberInput
                           id="nbRepasAvecJustif"
-                          label="Nombre de repas par jour pris à l'extérieur AVEC justificatif (factures conservées)"
+                          label="Nombre de repas AVEC justificatif (factures conservées)"
                           hint="Repas dont vous avez gardé les tickets."
                           value={form.nbRepasAvecJustif}
                           onChange={(v) => setField("nbRepasAvecJustif", v)}
+                          integer
                         />
                         <NumberInput
                           id="coutMoyenRepas"
@@ -518,6 +520,7 @@ export default function SimulateurFraisPro() {
                           hint="En général entre 210 et 230 jours."
                           value={form.nbJoursRepas}
                           onChange={(v) => setField("nbJoursRepas", v)}
+                          integer
                         />
                         {constants && (
                           <p className="text-xs text-muted-foreground">
