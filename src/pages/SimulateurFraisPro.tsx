@@ -3,7 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Check, Plus, Trash2 } from "lucide-react";
+import { Check, ChevronDown, Plus, Trash2, RefreshCw, Receipt } from "lucide-react";
 
 type Article = { description: string; prix: number };
 
