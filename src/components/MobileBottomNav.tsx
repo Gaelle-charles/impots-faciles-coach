@@ -25,12 +25,12 @@ export function MobileBottomNav() {
           <NavLink
             key={item.to}
             to={item.to}
-            className={`flex flex-col items-center gap-0.5 text-xs transition-colors ${
+            className={`flex min-w-0 flex-1 flex-col items-center gap-0.5 px-1 text-[11px] transition-colors ${
               active ? 'text-primary font-semibold' : 'text-muted-foreground'
             }`}
           >
-            <item.icon className="h-5 w-5" />
-            <span>{item.label}</span>
+            <item.icon className="h-5 w-5 shrink-0" />
+            <span className="max-w-full truncate">{item.label}</span>
           </NavLink>
         );
       })}
