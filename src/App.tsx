@@ -131,8 +131,8 @@ const App = () => (
               <Route path="/mes-simulateurs" element={<MesSimulateurs />} />
               <Route path="/simulateur" element={<AccessGuard requires="expert"><Simulateur /></AccessGuard>} />
               <Route path="/simulateur-de-frais" element={<SimulateurFrais />} />
-              <Route path="/simulateur-frais-pro" element={<SimulateurFraisPro />} />
-              <Route path="/simulateur/frais-reels" element={<AccessGuard requires="starter"><SimulateurFrais /></AccessGuard>} />
+              <Route path="/simulateur-frais-pro" element={<AccessGuard requires="expert"><SimulateurFraisPro /></AccessGuard>} />
+              <Route path="/simulateur/frais-reels" element={<SimulateurFrais />}/>
               <Route path="/simulateur/ir-bareme" element={<AccessGuard requires="expert"><SimulateurIRBareme /></AccessGuard>} />
               <Route path="/simulateur/quotient-familial" element={<AccessGuard requires="expert"><SimulateurQuotientFamilial /></AccessGuard>} />
               <Route path="/simulateur/pas" element={<AccessGuard requires="expert"><SimulateurPAS /></AccessGuard>} />
