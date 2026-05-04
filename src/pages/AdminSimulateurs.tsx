@@ -31,6 +31,21 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { Plus, Pencil, GripVertical, Calculator, Eye } from 'lucide-react';
+import SimulateurIRBareme from '@/pages/SimulateurIRBareme';
+import SimulateurQuotientFamilial from '@/pages/SimulateurQuotientFamilial';
+import SimulateurPAS from '@/pages/SimulateurPAS';
+import SimulateurCreditsReductions from '@/pages/SimulateurCreditsReductions';
+import SimulateurFrais from '@/pages/SimulateurFrais';
+import SimulateurFraisPro from '@/pages/SimulateurFraisPro';
+
+const SIMULATOR_COMPONENTS: Record<string, React.ComponentType> = {
+  'ir-bareme': SimulateurIRBareme,
+  'quotient-familial': SimulateurQuotientFamilial,
+  'pas': SimulateurPAS,
+  'credits-reductions': SimulateurCreditsReductions,
+  'frais-reels': SimulateurFrais,
+  'frais-reels-pro': SimulateurFraisPro,
+};
 import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from '@/components/ui/tooltip';
 import { toast } from 'sonner';
 import {
@@ -468,8 +483,8 @@ export default function AdminSimulateurs() {
 
       {/* Aperçu simulateur */}
       <Dialog open={!!previewSim} onOpenChange={(o) => !o && setPreviewSim(null)}>
-        <DialogContent className="max-w-md">
-          <DialogHeader>
+        <DialogContent className="max-w-6xl w-[95vw] h-[90vh] p-0 overflow-hidden flex flex-col">
+          <DialogHeader className="px-6 pt-6 pb-3 border-b shrink-0">
             <DialogTitle className="flex items-center gap-2">
               <Eye className="h-5 w-5" /> Aperçu — {previewSim?.nom}
             </DialogTitle>
@@ -477,30 +492,37 @@ export default function AdminSimulateurs() {
               Mode admin : le compteur d'utilisations n'est pas incrémenté.
             </DialogDescription>
           </DialogHeader>
-          {previewSim?.is_active ? (
-            <div className="space-y-4">
-              <p className="text-sm text-muted-foreground">
-                L'aperçu s'ouvre dans un nouvel onglet (l'embed iframe est bloqué par la plateforme d'aperçu).
-              </p>
-              <Button
-                className="w-full gap-2"
-                onClick={() => {
-                  window.open(`/simulateur/${previewSim.slug}?preview=1`, '_blank', 'noopener,noreferrer');
-                  setPreviewSim(null);
-                }}
-              >
-                <Eye className="h-4 w-4" /> Ouvrir le simulateur dans un nouvel onglet
-              </Button>
-            </div>
-          ) : (
-            <div className="flex flex-col items-center text-center p-4 gap-3">
-              <Calculator className="h-12 w-12 text-muted-foreground" />
-              <h3 className="font-heading text-xl font-bold">Simulateur en cours de développement</h3>
-              <p className="text-sm text-muted-foreground max-w-md">
-                Ce simulateur ({previewSim?.nom}) n'est pas encore actif. Activez-le depuis la liste pour le rendre disponible aux utilisateurs.
-              </p>
-            </div>
-          )}
+          <div className="flex-1 overflow-auto bg-background">
+            {previewSim?.is_active ? (
+              (() => {
+                const Comp = SIMULATOR_COMPONENTS[previewSim.slug];
+                if (!Comp) {
+                  return (
+                    <div className="h-full flex flex-col items-center justify-center text-center p-8 gap-3">
+                      <Calculator className="h-12 w-12 text-muted-foreground" />
+                      <h3 className="font-heading text-xl font-bold">Aperçu indisponible</h3>
+                      <p className="text-sm text-muted-foreground max-w-md">
+                        Ce simulateur ({previewSim.slug}) n'a pas encore de composant React lié.
+                      </p>
+                    </div>
+                  );
+                }
+                return (
+                  <div className="p-6">
+                    <Comp />
+                  </div>
+                );
+              })()
+            ) : (
+              <div className="h-full flex flex-col items-center justify-center text-center p-8 gap-3">
+                <Calculator className="h-12 w-12 text-muted-foreground" />
+                <h3 className="font-heading text-xl font-bold">Simulateur en cours de développement</h3>
+                <p className="text-sm text-muted-foreground max-w-md">
+                  Ce simulateur ({previewSim?.nom}) n'est pas encore actif. Activez-le depuis la liste pour le rendre disponible aux utilisateurs.
+                </p>
+              </div>
+            )}
+          </div>
         </DialogContent>
       </Dialog>
     </div>
