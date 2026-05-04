@@ -312,6 +312,66 @@ const Admin = () => {
           </Table>
         </CardContent>
       </Card>
+
+      {/* Aperçu Passeports fiscaux */}
+      <Card className="border-border bg-background shadow-sm">
+        <CardHeader className="flex flex-row items-center justify-between gap-4 space-y-0">
+          <div className="flex items-center gap-3">
+            <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary/10">
+              <BookMarked className="h-4 w-4 text-primary" />
+            </div>
+            <div>
+              <CardTitle className="font-heading text-lg">Passeports fiscaux</CardTitle>
+              <p className="text-xs text-muted-foreground mt-0.5">
+                {passeports.length} fiche{passeports.length > 1 ? 's' : ''} —{' '}
+                {passeports.filter((p) => p.is_active).length} active{passeports.filter((p) => p.is_active).length > 1 ? 's' : ''}
+              </p>
+            </div>
+          </div>
+          <Button asChild variant="outline" size="sm">
+            <Link to="/admin/passeports-fiscaux">
+              Gérer <ArrowRight className="h-3.5 w-3.5 ml-1" />
+            </Link>
+          </Button>
+        </CardHeader>
+        <CardContent className="p-0 overflow-x-auto">
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead className="w-12">N°</TableHead>
+                <TableHead>Nom</TableHead>
+                <TableHead className="hidden md:table-cell">Régime fiscal</TableHead>
+                <TableHead className="hidden sm:table-cell">Plan</TableHead>
+                <TableHead>Statut</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {passeports.slice(0, 6).map((p) => (
+                <TableRow key={p.id}>
+                  <TableCell className="font-mono text-sm">{p.numero}</TableCell>
+                  <TableCell className="font-medium text-sm">{p.nom}</TableCell>
+                  <TableCell className="hidden md:table-cell text-sm text-muted-foreground">{p.regime_fiscal}</TableCell>
+                  <TableCell className="hidden sm:table-cell">
+                    <Badge className="bg-primary/10 text-primary capitalize text-xs">{p.plan_minimum}</Badge>
+                  </TableCell>
+                  <TableCell>
+                    <Badge variant={p.is_active ? 'default' : 'secondary'} className="text-xs">
+                      {p.is_active ? 'Actif' : 'Inactif'}
+                    </Badge>
+                  </TableCell>
+                </TableRow>
+              ))}
+              {passeports.length === 0 && (
+                <TableRow>
+                  <TableCell colSpan={5} className="text-center text-muted-foreground py-6">
+                    Aucun passeport fiscal.
+                  </TableCell>
+                </TableRow>
+              )}
+            </TableBody>
+          </Table>
+        </CardContent>
+      </Card>
     </div>
   );
 };
