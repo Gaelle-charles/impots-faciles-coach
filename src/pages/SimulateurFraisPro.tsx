@@ -6,11 +6,17 @@ import { Label } from "@/components/ui/label";
 import { Check } from "lucide-react";
 
 type FormState = {
+  // étape 1
+  nbRepasInf: number;
+  nbRepasSup: number;
+  montantRepasSup: number;
   // étape 4
   surfaceBureau: number;
   surfaceLogement: number;
   chargesAnnuelles: number;
 };
+
+const BAREME_REPAS = 5.35;
 
 type Sections = {
   sectionA: number;
@@ -63,10 +69,15 @@ export default function SimulateurFraisPro() {
   const [showResults, setShowResults] = useState(false);
 
   const [form, setForm] = useState<FormState>({
+    nbRepasInf: 0,
+    nbRepasSup: 0,
+    montantRepasSup: 0,
     surfaceBureau: 0,
     surfaceLogement: 0,
     chargesAnnuelles: 0,
   });
+
+  const [step1Error, setStep1Error] = useState<string | null>(null);
 
   const [sections, setSections] = useState<Sections>({
     sectionA: 0,
@@ -90,7 +101,18 @@ export default function SimulateurFraisPro() {
     setForm((f) => ({ ...f, [key]: val }));
 
   const handleNext = () => {
-    // À la sortie de l'étape 4, on stocke sectionD
+    if (activeStep === 0) {
+      if (!(form.nbRepasInf > 0) || !(form.nbRepasSup > 0)) {
+        setStep1Error("Veuillez renseigner le nombre de repas.");
+        return;
+      }
+      setStep1Error(null);
+      const totalRepasInf = form.nbRepasInf * BAREME_REPAS;
+      const repasTotalStep1 = form.nbRepasSup * BAREME_REPAS;
+      const totalRepasSup = form.montantRepasSup - repasTotalStep1;
+      const totalRepas = totalRepasSup + totalRepasInf;
+      setSections((s) => ({ ...s, sectionA: totalRepas }));
+    }
     if (activeStep === 3) {
       setSections((s) => ({ ...s, sectionD: sectionDLive }));
     }
@@ -98,7 +120,6 @@ export default function SimulateurFraisPro() {
       setActiveStep(activeStep + 1);
       setShowResults(false);
     } else {
-      // Calculer (dernière étape)
       setShowResults(true);
     }
   };
@@ -201,6 +222,33 @@ export default function SimulateurFraisPro() {
                           </span>
                         </p>
                       </div>
+                    </div>
+                  ) : idx === 0 ? (
+                    <div className="space-y-4">
+                      <NumberInput
+                        id="nbRepasInf"
+                        label="Nombre de repas par semaine inférieurs ou égaux à 5,35 €"
+                        value={form.nbRepasInf}
+                        onChange={(v) => setField("nbRepasInf", v)}
+                      />
+                      <NumberInput
+                        id="nbRepasSup"
+                        label="Nombre de repas par semaine supérieurs à 5,35 €"
+                        value={form.nbRepasSup}
+                        onChange={(v) => setField("nbRepasSup", v)}
+                      />
+                      <NumberInput
+                        id="montantRepasSup"
+                        label="Montant moyen par repas supérieur à 5,35 € (en €)"
+                        value={form.montantRepasSup}
+                        onChange={(v) => setField("montantRepasSup", v)}
+                      />
+                      <p className="text-xs text-muted-foreground">
+                        Barème fiscal : 5,35 € par repas
+                      </p>
+                      {step1Error && (
+                        <p className="text-sm text-destructive">{step1Error}</p>
+                      )}
                     </div>
                   ) : (
                     <p className="text-sm text-muted-foreground">
