@@ -3,7 +3,9 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Check } from "lucide-react";
+import { Check, Plus, Trash2 } from "lucide-react";
+
+type Article = { description: string; prix: number };
 
 type FormState = {
   // étape 1
@@ -85,6 +87,14 @@ export default function SimulateurFraisPro() {
 
   const [step1Error, setStep1Error] = useState<string | null>(null);
   const [step2Error, setStep2Error] = useState<string | null>(null);
+  const [articles, setArticles] = useState<Article[]>([]);
+
+  const addArticle = () =>
+    setArticles((a) => [...a, { description: "", prix: 0 }]);
+  const removeArticle = (i: number) =>
+    setArticles((a) => a.filter((_, idx) => idx !== i));
+  const updateArticle = (i: number, patch: Partial<Article>) =>
+    setArticles((a) => a.map((art, idx) => (idx === i ? { ...art, ...patch } : art)));
 
   const [sections, setSections] = useState<Sections>({
     sectionA: 0,
@@ -130,6 +140,10 @@ export default function SimulateurFraisPro() {
         ...s,
         sectionB: form.kgSemaine * form.nbSemaines * BAREME_BLANCHISSEMENT,
       }));
+    }
+    if (activeStep === 2) {
+      const sectionC = articles.reduce((sum, item) => sum + (item.prix || 0), 0);
+      setSections((s) => ({ ...s, sectionC }));
     }
     if (activeStep === 3) {
       setSections((s) => ({ ...s, sectionD: sectionDLive }));
@@ -288,6 +302,63 @@ export default function SimulateurFraisPro() {
                       {step2Error && (
                         <p className="text-sm text-destructive">{step2Error}</p>
                       )}
+                    </div>
+                  ) : idx === 2 ? (
+                    <div className="space-y-4">
+                      <p className="text-sm text-muted-foreground">
+                        Section optionnelle. Ajoutez vos achats de matériel et documentation professionnels.
+                      </p>
+                      {articles.length === 0 && (
+                        <p className="text-sm text-muted-foreground italic">
+                          Aucun article ajouté.
+                        </p>
+                      )}
+                      {articles.map((article, i) => (
+                        <div
+                          key={i}
+                          className="grid gap-3 sm:grid-cols-[1fr_140px_auto] items-end rounded-md border border-border p-3"
+                        >
+                          <div className="space-y-1.5">
+                            <Label htmlFor={`desc-${i}`}>Description du matériel</Label>
+                            <Input
+                              id={`desc-${i}`}
+                              value={article.description}
+                              onChange={(e) =>
+                                updateArticle(i, { description: e.target.value })
+                              }
+                              placeholder="Ex : ordinateur portable"
+                            />
+                          </div>
+                          <div className="space-y-1.5">
+                            <Label htmlFor={`prix-${i}`}>Prix (€)</Label>
+                            <Input
+                              id={`prix-${i}`}
+                              type="number"
+                              step="0.01"
+                              min={0}
+                              inputMode="decimal"
+                              value={article.prix || ""}
+                              onChange={(e) =>
+                                updateArticle(i, { prix: Number(e.target.value) || 0 })
+                              }
+                              placeholder="0"
+                            />
+                          </div>
+                          <Button
+                            type="button"
+                            variant="outline"
+                            size="sm"
+                            onClick={() => removeArticle(i)}
+                          >
+                            <Trash2 className="h-4 w-4" />
+                            Supprimer
+                          </Button>
+                        </div>
+                      ))}
+                      <Button type="button" variant="outline" onClick={addArticle}>
+                        <Plus className="h-4 w-4" />
+                        Ajouter un article
+                      </Button>
                     </div>
                   ) : (
                     <p className="text-sm text-muted-foreground">
