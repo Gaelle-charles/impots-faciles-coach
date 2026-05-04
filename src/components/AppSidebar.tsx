@@ -52,7 +52,7 @@ export function AppSidebar({ collapsed = false }: { collapsed?: boolean }) {
 
   if (collapsed) {
     return (
-      <aside className="fixed left-0 top-0 z-40 h-screen w-[20px] bg-background border-r border-border" />
+      <aside className="fixed left-0 top-0 z-40 h-screen w-[20px] bg-primary" />
     );
   }
 
@@ -64,28 +64,28 @@ export function AppSidebar({ collapsed = false }: { collapsed?: boolean }) {
   };
 
   return (
-    <aside className="fixed left-0 top-0 z-40 flex h-screen w-sidebar flex-col bg-background border-r border-border text-foreground">
+    <aside className="fixed left-0 top-0 z-40 flex h-screen w-sidebar flex-col bg-primary text-primary-foreground">
       {/* Logo */}
       <Link
         to="/"
-        className="flex h-20 items-center gap-2.5 px-6 cursor-pointer transition-opacity hover:opacity-80"
+        className="flex h-16 items-center gap-2 px-6 cursor-pointer transition-opacity hover:opacity-80"
         aria-label="Retour à l'accueil"
       >
-        <img src={logo} alt="Impôts Facile" className="h-9 w-9" />
-        <h1 className="font-display text-2xl text-foreground leading-none">Impôts Facile</h1>
+        <img src={logo} alt="Impôts Facile" className="h-8 w-8" />
+        <h1 className="font-heading text-xl font-bold">Impôts Facile</h1>
       </Link>
 
       {/* User info */}
       {profile && (
-        <div className="mx-4 mb-6 rounded-2xl bg-rose-light/40 p-3 flex items-center gap-3">
-          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-rose-light text-rose-dynamic font-display text-base">
+        <div className="mx-4 mb-4 rounded-lg bg-sidebar-muted p-3 flex items-center gap-3">
+          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-accent text-accent-foreground font-heading font-bold text-sm">
             {(profile.prenom?.[0] ?? '').toUpperCase()}{(profile.nom?.[0] ?? '').toUpperCase()}
           </div>
           <div className="min-w-0">
-            <p className="text-sm font-semibold truncate text-foreground">
+            <p className="text-sm font-semibold truncate">
               {profile.prenom ?? ''} {profile.nom ?? ''}
             </p>
-            <Badge className="mt-0.5 bg-background border border-border text-foreground hover:bg-background text-xs capitalize font-normal">
+            <Badge className="mt-0.5 bg-sidebar-primary text-sidebar-primary-foreground text-xs capitalize">
               {profile.plan === 'nouveau' ? 'Gratuit' : profile.plan}
             </Badge>
           </div>
@@ -100,49 +100,43 @@ export function AppSidebar({ collapsed = false }: { collapsed?: boolean }) {
         ).map((item) => {
           const active = isActive(item.to);
           return (
-            <NavLink
-              key={item.to}
-              to={item.to}
-              className={`group flex items-center gap-3 rounded-2xl px-3 py-2.5 text-sm transition-all ${
-                active
-                  ? 'bg-rose-light/60 text-foreground font-semibold'
-                  : 'text-muted-foreground hover:bg-muted/60 hover:text-foreground'
-              }`}
-            >
-              <span
-                className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-xl transition-colors ${
-                  active ? 'bg-background text-rose-dynamic' : 'text-muted-foreground group-hover:text-foreground'
+            <NavLink key={item.to} to={item.to}>
+              <Button
+                variant="sidebar-item"
+                className={`gap-3 px-3 py-2.5 text-sm ${
+                  active ? 'bg-sidebar-muted font-semibold' : 'opacity-80 hover:opacity-100'
                 }`}
               >
-                <item.icon className="h-4 w-4" />
-              </span>
-              <span className="truncate">{item.label}</span>
+                <item.icon className="h-5 w-5 shrink-0" />
+                <span className="truncate">{item.label}</span>
+                {active && (
+                  <span className="ml-auto h-2 w-2 rounded-full bg-accent" />
+                )}
+              </Button>
             </NavLink>
           );
         })}
       </nav>
 
       {/* Bottom */}
-      <div className="border-t border-border p-3 space-y-1">
-        <button
+      <div className="border-t border-sidebar-border p-3 space-y-2">
+        <Button
+          variant="sidebar-item"
           onClick={() => setSuggestionOpen(true)}
-          className="w-full flex items-center gap-3 rounded-2xl px-3 py-2.5 text-sm text-muted-foreground hover:bg-muted/60 hover:text-foreground transition-all"
+          className="gap-3 px-3 py-2.5 text-sm opacity-80 hover:opacity-100"
         >
-          <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl">
-            <Lightbulb className="h-4 w-4" />
-          </span>
+          <Lightbulb className="h-5 w-5" />
           <span>Suggestion</span>
-        </button>
-        <button
+        </Button>
+        <Button
+          variant="sidebar-item"
           onClick={signOut}
-          className="w-full flex items-center gap-3 rounded-2xl px-3 py-2.5 text-sm text-rose-dynamic hover:bg-rose-light/40 transition-all"
+          className="gap-3 px-3 py-2.5 text-sm text-rose-dynamic hover:text-rose-dynamic"
         >
-          <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl">
-            <LogOut className="h-4 w-4" />
-          </span>
+          <LogOut className="h-5 w-5" />
           <span>Se déconnecter</span>
-        </button>
-        <p className="px-3 pt-1 text-xs text-muted-foreground/60">v1.0</p>
+        </Button>
+        <p className="px-3 text-xs opacity-40">v1.0</p>
       </div>
       <SuggestionDialog open={suggestionOpen} onOpenChange={setSuggestionOpen} />
     </aside>
