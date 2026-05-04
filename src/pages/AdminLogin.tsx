@@ -187,6 +187,15 @@ const AdminLogin = () => {
             <p className="text-sm text-destructive font-medium">{error}</p>
           )}
 
+          <div className="text-right">
+            <Link
+              to="/mot-de-passe-oublie"
+              className="text-xs text-muted-foreground hover:text-foreground transition-colors"
+            >
+              Mot de passe oublié ?
+            </Link>
+          </div>
+
           <Button
             type="submit"
             className="w-full font-heading font-bold"
