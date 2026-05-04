@@ -303,6 +303,63 @@ export default function SimulateurFraisPro() {
                         <p className="text-sm text-destructive">{step2Error}</p>
                       )}
                     </div>
+                  ) : idx === 2 ? (
+                    <div className="space-y-4">
+                      <p className="text-sm text-muted-foreground">
+                        Section optionnelle. Ajoutez vos achats de matériel et documentation professionnels.
+                      </p>
+                      {articles.length === 0 && (
+                        <p className="text-sm text-muted-foreground italic">
+                          Aucun article ajouté.
+                        </p>
+                      )}
+                      {articles.map((article, i) => (
+                        <div
+                          key={i}
+                          className="grid gap-3 sm:grid-cols-[1fr_140px_auto] items-end rounded-md border border-border p-3"
+                        >
+                          <div className="space-y-1.5">
+                            <Label htmlFor={`desc-${i}`}>Description du matériel</Label>
+                            <Input
+                              id={`desc-${i}`}
+                              value={article.description}
+                              onChange={(e) =>
+                                updateArticle(i, { description: e.target.value })
+                              }
+                              placeholder="Ex : ordinateur portable"
+                            />
+                          </div>
+                          <div className="space-y-1.5">
+                            <Label htmlFor={`prix-${i}`}>Prix (€)</Label>
+                            <Input
+                              id={`prix-${i}`}
+                              type="number"
+                              step="0.01"
+                              min={0}
+                              inputMode="decimal"
+                              value={article.prix || ""}
+                              onChange={(e) =>
+                                updateArticle(i, { prix: Number(e.target.value) || 0 })
+                              }
+                              placeholder="0"
+                            />
+                          </div>
+                          <Button
+                            type="button"
+                            variant="outline"
+                            size="sm"
+                            onClick={() => removeArticle(i)}
+                          >
+                            <Trash2 className="h-4 w-4" />
+                            Supprimer
+                          </Button>
+                        </div>
+                      ))}
+                      <Button type="button" variant="outline" onClick={addArticle}>
+                        <Plus className="h-4 w-4" />
+                        Ajouter un article
+                      </Button>
+                    </div>
                   ) : (
                     <p className="text-sm text-muted-foreground">
                       Contenu à compléter pour cette étape.
