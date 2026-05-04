@@ -17,7 +17,7 @@ import {
   Sparkles,
   ArrowRight,
   GraduationCap,
-  Map,
+  Map as MapIcon,
   Wrench,
   Heart,
 } from 'lucide-react';
@@ -226,7 +226,7 @@ const Dashboard = () => {
           className="group relative overflow-hidden rounded-3xl bg-background border border-border p-7 md:p-8 flex flex-col transition-all hover:-translate-y-1 hover:shadow-xl"
         >
           <div className="inline-flex h-11 w-11 items-center justify-center rounded-2xl bg-rose-light text-rose-dynamic mb-4">
-            <Map className="h-5 w-5" />
+            <MapIcon className="h-5 w-5" />
           </div>
           <h2 className="font-display text-2xl md:text-3xl text-foreground leading-tight">
             Mon parcours <AccentText>déclaration</AccentText>
