@@ -107,8 +107,8 @@ export function AppSidebar({ collapsed = false }: { collapsed?: boolean }) {
                   active ? 'bg-sidebar-muted font-semibold' : 'opacity-80 hover:opacity-100'
                 }`}
               >
-                <item.icon className="h-5 w-5" />
-                <span>{item.label}</span>
+                <item.icon className="h-5 w-5 shrink-0" />
+                <span className="truncate">{item.label}</span>
                 {active && (
                   <span className="ml-auto h-2 w-2 rounded-full bg-accent" />
                 )}
