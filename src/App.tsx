@@ -139,6 +139,7 @@ const App = () => (
               <Route path="/profil" element={<Profil />} />
               <Route path="/mon-compte" element={<Profil />} />
               <Route path="/mes-modules" element={<MesModules />} />
+              <Route path="/fiches-personnalisees" element={<FichesPersonnalisees />} />
               <Route path="/recommandations" element={<Recommandations />} />
               <Route path="/passeport-fiscal" element={<PasseportFiscal />} />
             </Route>
