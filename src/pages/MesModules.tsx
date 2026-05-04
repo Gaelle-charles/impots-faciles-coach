@@ -103,7 +103,13 @@ const MesModules = () => {
         </p>
       </div>
 
-      {/* Encart : règle de déblocage séquentiel */}
+      <Tabs defaultValue="modules" className="w-full">
+        <TabsList>
+          <TabsTrigger value="modules">Modules</TabsTrigger>
+          <TabsTrigger value="fiches">Fiches personnalisées</TabsTrigger>
+        </TabsList>
+        <TabsContent value="modules" className="space-y-6 mt-6">
+
       {!bypassSequential && (
         <Card className="border-amber-300 dark:border-amber-900/60 bg-amber-50 dark:bg-amber-950/20">
           <CardContent className="p-4 sm:p-5 flex items-start gap-3">
