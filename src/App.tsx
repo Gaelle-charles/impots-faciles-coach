@@ -33,6 +33,7 @@ import FicheMetier from "./pages/FicheMetier";
 import Fiche from "./pages/Fiche";
 import Profil from "./pages/Profil";
 import MesModules from "./pages/MesModules";
+import FichesPersonnalisees from "./pages/FichesPersonnalisees";
 import Recommandations from "./pages/Recommandations";
 import PasseportFiscal from "./pages/PasseportFiscal";
 import AdminRecommandations from "./pages/AdminRecommandations";
