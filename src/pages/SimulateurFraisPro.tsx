@@ -529,21 +529,31 @@ export default function SimulateurFraisPro() {
                     </p>
                   )}
 
-                  <div className="flex justify-between gap-3 pt-2">
+                  <div className="flex flex-col-reverse sm:flex-row sm:justify-between gap-3 pt-2">
                     {idx > 0 ? (
-                      <Button variant="outline" onClick={handleBack}>
+                      <Button variant="outline" onClick={handleBack} className="w-full sm:w-auto">
                         Retour
                       </Button>
                     ) : (
-                      <span />
+                      <span className="hidden sm:block" />
                     )}
-                    <Button onClick={handleNext}>
-                      {idx === 0
-                        ? "Commencer"
-                        : idx === STEP_TITLES.length - 1
-                        ? "Calculer"
-                        : "Suivant"}
-                    </Button>
+                    {idx === STEP_TITLES.length - 1 ? (
+                      <Button
+                        onClick={handleNext}
+                        className="w-full sm:w-auto bg-[#F9A825] hover:bg-[#F57F17] text-[#2D1B4E] font-bold"
+                      >
+                        <Receipt className="h-4 w-4" />
+                        Calculer
+                      </Button>
+                    ) : (
+                      <Button
+                        onClick={handleNext}
+                        className="w-full sm:w-auto bg-[#2D1B4E] hover:bg-[#3d2466] text-white"
+                      >
+                        {idx === 0 ? "Commencer" : "Suivant"}
+                        <ChevronDown className="h-4 w-4" />
+                      </Button>
+                    )}
                   </div>
                 </CardContent>
               )}
