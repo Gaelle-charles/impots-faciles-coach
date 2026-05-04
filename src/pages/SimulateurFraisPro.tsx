@@ -494,7 +494,7 @@ export default function SimulateurFraisPro() {
                       <div className="space-y-4">
                         <NumberInput
                           id="nbRepasSansJustif"
-                          label="Nombre de repas SANS justificatif (cantine d'entreprise par ex.)"
+                          label="Coût total d'un repas avec justificatif (€)"
                           hint="Repas sans facture conservée."
                           value={form.nbRepasSansJustif}
                           onChange={(v) => setField("nbRepasSansJustif", v)}
