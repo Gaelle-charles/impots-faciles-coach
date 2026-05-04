@@ -120,6 +120,17 @@ export default function SimulateurFraisPro() {
       const totalRepas = totalRepasSup + totalRepasInf;
       setSections((s) => ({ ...s, sectionA: totalRepas }));
     }
+    if (activeStep === 1) {
+      if (!(form.kgSemaine > 0) || !(form.nbSemaines > 0)) {
+        setStep2Error("Veuillez renseigner le linge et les semaines travaillées.");
+        return;
+      }
+      setStep2Error(null);
+      setSections((s) => ({
+        ...s,
+        sectionB: form.kgSemaine * form.nbSemaines * BAREME_BLANCHISSEMENT,
+      }));
+    }
     if (activeStep === 3) {
       setSections((s) => ({ ...s, sectionD: sectionDLive }));
     }
