@@ -12,7 +12,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Check, ChevronDown, Plus, Trash2, RefreshCw, Receipt, Info, Loader2 } from "lucide-react";
+import { Check, ChevronDown, Plus, Trash2, RefreshCw, Receipt, Info, Loader2, Palmtree } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 
 const FISCAL_YEAR = 2025;
@@ -53,6 +53,8 @@ type FormState = {
   puissanceCV: 3 | 4 | 5 | 6 | 7;
   distanceAller: number;
   nbJoursTravailles: number;
+  // étape 7 — spécificités outre-mer
+  fraisInterIles: number;
 };
 
 const STEP5_FIELDS: { name: keyof FormState; label: string; hint?: string }[] = [
@@ -74,6 +76,7 @@ type Sections = {
   sectionD: number;
   sectionE: number;
   sectionF: number;
+  sectionG: number;
 };
 
 const STEP_TITLES = [
@@ -83,6 +86,7 @@ const STEP_TITLES = [
   "Bureau à domicile",
   "Frais divers souvent oubliés",
   "Frais kilométriques",
+  "Spécificités outre-mer",
 ];
 
 type Constants = {
@@ -95,6 +99,8 @@ type Constants = {
   km_voiture_6cv_seuil1: number;
   km_voiture_7cv_seuil1: number;
   km_majoration_electrique: number;
+  refaction_drom_zone1: number;
+  refaction_drom_zone2: number;
 };
 
 const NumberInput = ({
@@ -185,6 +191,7 @@ export default function SimulateurFraisPro() {
     puissanceCV: 5,
     distanceAller: 0,
     nbJoursTravailles: 220,
+    fraisInterIles: 0,
   };
   const initialSections: Sections = {
     sectionA: 0,
@@ -193,6 +200,7 @@ export default function SimulateurFraisPro() {
     sectionD: 0,
     sectionE: 0,
     sectionF: 0,
+    sectionG: 0,
   };
 
   const [form, setForm] = useState<FormState>(initialForm);
@@ -290,6 +298,9 @@ export default function SimulateurFraisPro() {
     if (activeStep === 5) {
       setSections((s) => ({ ...s, sectionF: computeSectionF(constants) }));
     }
+    if (activeStep === 6) {
+      setSections((s) => ({ ...s, sectionG: parseFloat(String(form.fraisInterIles)) || 0 }));
+    }
     if (activeStep < STEP_TITLES.length - 1) {
       setActiveStep(activeStep + 1);
       setShowResults(false);
@@ -357,6 +368,7 @@ export default function SimulateurFraisPro() {
                 { label: "Bureau à domicile", value: Math.round(sections.sectionD) },
                 { label: "Frais divers", value: Math.round(sections.sectionE) },
                 { label: "Frais kilométriques", value: Math.round(sections.sectionF) },
+                { label: "Frais inter-îles / inter-territoires (DROM)", value: Math.round(sections.sectionG) },
               ];
               const nonZero = rows.filter((r) => r.value > 0);
               return (
