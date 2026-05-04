@@ -33,6 +33,11 @@ type FormState = {
   fraisBancaire: number;
   achatLogiciel: number;
   autresFrais: number;
+  // étape 7
+  distance: number;
+  surcout: number;
+  interile: number;
+  internetMobile: number;
 };
 
 const STEP6_FIELDS: { name: keyof FormState; label: string }[] = [
@@ -45,6 +50,13 @@ const STEP6_FIELDS: { name: keyof FormState; label: string }[] = [
   { name: "fraisBancaire", label: "Frais bancaires professionnels (€/an)" },
   { name: "achatLogiciel", label: "Achat de logiciels (€)" },
   { name: "autresFrais", label: "Autres frais (€)" },
+];
+
+const STEP7_FIELDS: { name: keyof FormState; label: string }[] = [
+  { name: "distance", label: "Kilométrage domicile-travail (km/an)" },
+  { name: "surcout", label: "Surcoût de la vie en DOM (€/an)" },
+  { name: "interile", label: "Indemnité d'interîle reçue (€/an)" },
+  { name: "internetMobile", label: "Forfait internet + mobile (€/an)" },
 ];
 
 const BAREME_REPAS = 5.35;
@@ -121,6 +133,10 @@ export default function SimulateurFraisPro() {
     fraisBancaire: 0,
     achatLogiciel: 0,
     autresFrais: 0,
+    distance: 0,
+    surcout: 0,
+    interile: 0,
+    internetMobile: 0,
   });
 
   const [step1Error, setStep1Error] = useState<string | null>(null);
@@ -198,6 +214,13 @@ export default function SimulateurFraisPro() {
       );
       setSections((s) => ({ ...s, sectionF }));
     }
+    if (activeStep === 6) {
+      const sectionG = STEP7_FIELDS.reduce(
+        (sum, f) => sum + (parseFloat(String(form[f.name])) || 0),
+        0,
+      );
+      setSections((s) => ({ ...s, sectionG }));
+    }
     if (activeStep < STEP_TITLES.length - 1) {
       setActiveStep(activeStep + 1);
       setShowResults(false);
@@ -212,6 +235,7 @@ export default function SimulateurFraisPro() {
   };
 
   const total = Object.values(sections).reduce((a, b) => a + b, 0);
+  const totalArrondi = Math.round(total);
 
   return (
     <div className="container mx-auto max-w-3xl py-8 px-4 space-y-8">
@@ -454,6 +478,23 @@ export default function SimulateurFraisPro() {
                         ))}
                       </div>
                     </div>
+                  ) : idx === 6 ? (
+                    <div className="space-y-4">
+                      <p className="text-sm text-muted-foreground">
+                        Cette section concerne les salariés résidant dans les départements et régions d'outre-mer.
+                      </p>
+                      <div className="grid gap-4 sm:grid-cols-2">
+                        {STEP7_FIELDS.map((f) => (
+                          <NumberInput
+                            key={f.name}
+                            id={f.name}
+                            label={f.label}
+                            value={form[f.name] as number}
+                            onChange={(v) => setField(f.name, v as never)}
+                          />
+                        ))}
+                      </div>
+                    </div>
                   ) : (
                     <p className="text-sm text-muted-foreground">
                       Contenu à compléter pour cette étape.
@@ -489,17 +530,27 @@ export default function SimulateurFraisPro() {
             <CardTitle>Résultats</CardTitle>
           </CardHeader>
           <CardContent className="space-y-2 text-sm">
-            <div className="flex justify-between">
-              <span className="text-muted-foreground">
-                Bureau à domicile (section D)
-              </span>
-              <span className="font-medium">
-                {sections.sectionD.toFixed(2)} €
-              </span>
-            </div>
-            <div className="flex justify-between border-t pt-2 mt-2 font-bold">
+            {[
+              ["A — Repas hors domicile", sections.sectionA],
+              ["B — Blanchissement", sections.sectionB],
+              ["C — Matériel & documentation", sections.sectionC],
+              ["D — Bureau à domicile", sections.sectionD],
+              ["E — Frais d'astreinte", sections.sectionE],
+              ["F — Frais divers", sections.sectionF],
+              ["G — Spécificités DOM", sections.sectionG],
+            ].map(([label, val]) => (
+              <div key={label as string} className="flex justify-between">
+                <span className="text-muted-foreground">{label}</span>
+                <span className="font-medium">{(val as number).toFixed(2)} €</span>
+              </div>
+            ))}
+            <div className="flex justify-between border-t pt-2 mt-2 font-bold text-base">
               <span>Total estimé</span>
               <span>{total.toFixed(2)} €</span>
+            </div>
+            <div className="flex justify-between font-bold text-primary">
+              <span>Total arrondi à déclarer</span>
+              <span>{totalArrondi} €</span>
             </div>
           </CardContent>
         </Card>
