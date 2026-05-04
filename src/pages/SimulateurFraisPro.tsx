@@ -112,7 +112,7 @@ export default function SimulateurFraisPro() {
   const [activeStep, setActiveStep] = useState(0);
   const [showResults, setShowResults] = useState(false);
 
-  const [form, setForm] = useState<FormState>({
+  const initialForm: FormState = {
     nbRepasInf: 0,
     nbRepasSup: 0,
     montantRepasSup: 0,
@@ -137,8 +137,18 @@ export default function SimulateurFraisPro() {
     surcout: 0,
     interile: 0,
     internetMobile: 0,
-  });
+  };
+  const initialSections: Sections = {
+    sectionA: 0,
+    sectionB: 0,
+    sectionC: 0,
+    sectionD: 0,
+    sectionE: 0,
+    sectionF: 0,
+    sectionG: 0,
+  };
 
+  const [form, setForm] = useState<FormState>(initialForm);
   const [step1Error, setStep1Error] = useState<string | null>(null);
   const [step2Error, setStep2Error] = useState<string | null>(null);
   const [articles, setArticles] = useState<Article[]>([]);
@@ -150,15 +160,17 @@ export default function SimulateurFraisPro() {
   const updateArticle = (i: number, patch: Partial<Article>) =>
     setArticles((a) => a.map((art, idx) => (idx === i ? { ...art, ...patch } : art)));
 
-  const [sections, setSections] = useState<Sections>({
-    sectionA: 0,
-    sectionB: 0,
-    sectionC: 0,
-    sectionD: 0,
-    sectionE: 0,
-    sectionF: 0,
-    sectionG: 0,
-  });
+  const [sections, setSections] = useState<Sections>(initialSections);
+
+  const handleReset = () => {
+    setForm(initialForm);
+    setSections(initialSections);
+    setArticles([]);
+    setStep1Error(null);
+    setStep2Error(null);
+    setShowResults(false);
+    setActiveStep(0);
+  };
 
   // Calcul temps réel pour l'étape 4
   const { quotePart, sectionDLive } = useMemo(() => {
@@ -524,37 +536,67 @@ export default function SimulateurFraisPro() {
         })}
       </div>
 
-      {showResults && (
-        <Card className="border-primary">
-          <CardHeader>
-            <CardTitle>Résultats</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-2 text-sm">
-            {[
-              ["A — Repas hors domicile", sections.sectionA],
-              ["B — Blanchissement", sections.sectionB],
-              ["C — Matériel & documentation", sections.sectionC],
-              ["D — Bureau à domicile", sections.sectionD],
-              ["E — Frais d'astreinte", sections.sectionE],
-              ["F — Frais divers", sections.sectionF],
-              ["G — Spécificités DOM", sections.sectionG],
-            ].map(([label, val]) => (
-              <div key={label as string} className="flex justify-between">
-                <span className="text-muted-foreground">{label}</span>
-                <span className="font-medium">{(val as number).toFixed(2)} €</span>
+      {showResults && (() => {
+        const rows: { label: string; value: number }[] = [
+          { label: "Frais de repas hors domicile", value: Math.round(sections.sectionA) },
+          { label: "Frais de blanchissement", value: Math.round(sections.sectionB) },
+          { label: "Matériel professionnel", value: Math.round(sections.sectionC) },
+          { label: "Bureau à domicile", value: Math.round(sections.sectionD) },
+          { label: "Frais d'astreinte", value: Math.round(sections.sectionE) },
+          { label: "Frais divers", value: Math.round(sections.sectionF) },
+          { label: "Spécificités DOM", value: Math.round(sections.sectionG) },
+        ].filter((r) => r.value > 0);
+
+        return (
+          <Card className="border-primary">
+            <CardHeader>
+              <CardTitle>Résultat de votre simulation</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              <div className="text-center space-y-3 py-4">
+                <p className="text-sm text-foreground">
+                  Vos frais réels professionnels pour votre déclaration d'impôt s'élèvent à :
+                </p>
+                <p className="font-heading text-5xl font-bold text-primary">
+                  {totalArrondi} €
+                </p>
               </div>
-            ))}
-            <div className="flex justify-between border-t pt-2 mt-2 font-bold text-base">
-              <span>Total estimé</span>
-              <span>{total.toFixed(2)} €</span>
-            </div>
-            <div className="flex justify-between font-bold text-primary">
-              <span>Total arrondi à déclarer</span>
-              <span>{totalArrondi} €</span>
-            </div>
-          </CardContent>
-        </Card>
-      )}
+
+              <div className="space-y-3">
+                <h3 className="font-semibold text-foreground">Détails de votre simulation :</h3>
+                <div className="rounded-md border border-border overflow-hidden">
+                  <table className="w-full text-sm">
+                    <thead className="bg-muted">
+                      <tr>
+                        <th className="text-left px-4 py-2 font-medium">Catégorie</th>
+                        <th className="text-right px-4 py-2 font-medium">Montant</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {rows.map((r) => (
+                        <tr key={r.label} className="border-t border-border">
+                          <td className="px-4 py-2">{r.label}</td>
+                          <td className="px-4 py-2 text-right">{r.value} €</td>
+                        </tr>
+                      ))}
+                      <tr className="border-t border-border bg-muted/50 font-bold">
+                        <td className="px-4 py-2">TOTAL</td>
+                        <td className="px-4 py-2 text-right text-primary">{totalArrondi} €</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+
+              <div className="flex justify-center pt-2">
+                <Button variant="outline" onClick={handleReset}>
+                  Recommencer la simulation
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        );
+      })()}
     </div>
   );
 }
