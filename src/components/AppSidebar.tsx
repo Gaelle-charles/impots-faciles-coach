@@ -16,6 +16,7 @@ import {
   Lightbulb,
   LogOut,
   BookMarked,
+  FileText,
 } from 'lucide-react';
 import { SuggestionDialog } from '@/components/SuggestionDialog';
 
@@ -23,6 +24,7 @@ const baseNavItems = [
   { to: '/', label: 'Accueil', icon: Home },
   { to: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
   { to: '/mes-modules', label: 'Mes modules', icon: BookOpen },
+  { to: '/fiches-personnalisees', label: 'Fiches personnalisées', icon: FileText },
   { to: '/dashboard#resultats', label: 'Mes résultats', icon: BarChart3 },
   { to: '/mes-simulateurs', label: 'Mes simulateurs', icon: Calculator },
   { to: '/recommandations', label: 'Recommandations', icon: Heart },

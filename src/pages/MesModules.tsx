@@ -10,8 +10,6 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { Lock, LockKeyhole, Info, ArrowRight } from 'lucide-react';
 import type { Tables } from '@/integrations/supabase/types';
 import { useAccess } from '@/hooks/useAccess';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import PersonalizedFiches from '@/components/dashboard/PersonalizedFiches';
 
 type ModuleRow = Tables<'modules'> & { nb_steps_total: number };
 type ProgressionRow = Tables<'progressions'>;
@@ -103,12 +101,6 @@ const MesModules = () => {
         </p>
       </div>
 
-      <Tabs defaultValue="modules" className="w-full">
-        <TabsList>
-          <TabsTrigger value="modules">Modules</TabsTrigger>
-          <TabsTrigger value="fiches">Fiches personnalisées</TabsTrigger>
-        </TabsList>
-        <TabsContent value="modules" className="space-y-6 mt-6">
 
       {!bypassSequential && (
         <Card className="border-amber-300 dark:border-amber-900/60 bg-amber-50 dark:bg-amber-950/20">
@@ -307,11 +299,6 @@ const MesModules = () => {
           );
         })}
       </div>
-        </TabsContent>
-        <TabsContent value="fiches" className="mt-6">
-          <PersonalizedFiches />
-        </TabsContent>
-      </Tabs>
     </div>
   );
 };
