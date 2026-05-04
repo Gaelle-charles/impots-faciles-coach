@@ -481,7 +481,7 @@ export default function SimulateurFraisPro() {
                                   />
                                 </div>
                                 <div className="space-y-1.5">
-                                  <Label htmlFor={`tar-${i}`}>Tarif pressing (€)</Label>
+                                  <Label htmlFor={`tar-${i}`}>Tarif pressing de référence (€)</Label>
                                   <Input
                                     id={`tar-${i}`}
                                     type="number"
@@ -492,9 +492,14 @@ export default function SimulateurFraisPro() {
                                       updateLigneLinge(i, { tarifPressing: Number(e.target.value) || 0 })
                                     }
                                   />
+                                  <p className="text-[11px] text-muted-foreground">
+                                    Tarif pressing local utilisé comme base ; une décote de{" "}
+                                    {constants?.blanchissage_decote_domicile ?? 30}% est
+                                    automatiquement appliquée pour le lavage à domicile.
+                                  </p>
                                 </div>
                                 <div className="space-y-1.5">
-                                  <Label htmlFor={`lav-${i}`}>Lavages/an</Label>
+                                  <Label htmlFor={`lav-${i}`}>Lavages à domicile / an</Label>
                                   <Input
                                     id={`lav-${i}`}
                                     type="number"
