@@ -72,7 +72,7 @@ interface ModuleRow {
   total_step: number;
 }
 
-const PLAN_OPTIONS = ['nouveau', 'essentiel', 'pro', 'expert'];
+const PLAN_OPTIONS = ['nouveau', 'starter', 'expert', 'premium'];
 const ROLE_OPTIONS = [
   { value: 'client', label: 'Utilisateur' },
   { value: 'admin', label: 'Administrateur' },
@@ -82,9 +82,9 @@ const PAGE_SIZE = 20;
 
 const planBadgeClass: Record<string, string> = {
   nouveau: 'bg-muted text-muted-foreground',
-  essentiel: 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200',
-  pro: 'bg-primary/10 text-primary',
-  expert: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200',
+  starter: 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200',
+  expert: 'bg-primary/10 text-primary',
+  premium: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200',
 };
 
 function getInitials(prenom: string | null, nom: string | null) {
