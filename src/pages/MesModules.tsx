@@ -307,6 +307,11 @@ const MesModules = () => {
           );
         })}
       </div>
+        </TabsContent>
+        <TabsContent value="fiches" className="mt-6">
+          <PersonalizedFiches />
+        </TabsContent>
+      </Tabs>
     </div>
   );
 };
