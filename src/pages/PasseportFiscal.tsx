@@ -40,14 +40,19 @@ export default function PasseportFiscal() {
   if (profile?.plan !== 'premium') return <Navigate to="/dashboard" replace />;
 
   return (
-    <div className="space-y-6 p-6 max-w-5xl mx-auto">
+    <div className="space-y-6">
       <div>
-        <h1 className="font-heading text-3xl font-bold text-foreground">
-          Votre Passeport Fiscal
+        <h1 className="font-display text-4xl md:text-5xl text-foreground">
+          👑 Votre <em className="accent-serif">Passeport Fiscal</em>
         </h1>
-        <p className="mt-1 text-muted-foreground">
+        <p className="mt-2 text-muted-foreground">
           Votre passeport personnalisé en fonction de votre profil et de votre régime.
         </p>
+      </div>
+
+      <div className="rounded-lg bg-yellow-vivid/15 border border-yellow-vivid/30 p-4 text-sm text-foreground">
+        <span className="font-semibold">⚠️ Estimations pédagogiques.</span>{" "}
+        Non opposables à la DGFIP. Pour votre déclaration officielle, rendez-vous sur impots.gouv.fr.
       </div>
 
       {passeportLoading && (
