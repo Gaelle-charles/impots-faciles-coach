@@ -109,23 +109,28 @@ const NumberInput = ({
   value,
   onChange,
   hint,
+  integer = false,
 }: {
   id: string;
   label: string;
   value: number;
   onChange: (n: number) => void;
   hint?: string;
+  integer?: boolean;
 }) => (
   <div className="space-y-1.5">
     <Label htmlFor={id} className="text-sm">{label}</Label>
     <Input
       id={id}
       type="number"
-      step="0.01"
+      step={integer ? "1" : "0.01"}
       min={0}
-      inputMode="decimal"
+      inputMode={integer ? "numeric" : "decimal"}
       value={value || ""}
-      onChange={(e) => onChange(Number(e.target.value) || 0)}
+      onChange={(e) => {
+        const n = Number(e.target.value) || 0;
+        onChange(integer ? Math.max(0, Math.floor(n)) : n);
+      }}
       placeholder="0"
     />
     {hint ? <p className="text-xs text-muted-foreground">{hint}</p> : null}
@@ -489,17 +494,19 @@ export default function SimulateurFraisPro() {
                       <div className="space-y-4">
                         <NumberInput
                           id="nbRepasSansJustif"
-                          label="Nombre de repas par jour pris à l'extérieur SANS justificatif (cantine d'entreprise par ex.)"
+                          label="Nombre de repas SANS justificatif (cantine d'entreprise par ex.)"
                           hint="Repas sans facture conservée."
                           value={form.nbRepasSansJustif}
                           onChange={(v) => setField("nbRepasSansJustif", v)}
+                          integer
                         />
                         <NumberInput
                           id="nbRepasAvecJustif"
-                          label="Nombre de repas par jour pris à l'extérieur AVEC justificatif (factures conservées)"
+                          label="Nombre de repas AVEC justificatif (factures conservées)"
                           hint="Repas dont vous avez gardé les tickets."
                           value={form.nbRepasAvecJustif}
                           onChange={(v) => setField("nbRepasAvecJustif", v)}
+                          integer
                         />
                         <NumberInput
                           id="coutMoyenRepas"
@@ -513,6 +520,7 @@ export default function SimulateurFraisPro() {
                           hint="En général entre 210 et 230 jours."
                           value={form.nbJoursRepas}
                           onChange={(v) => setField("nbJoursRepas", v)}
+                          integer
                         />
                         {constants && (
                           <p className="text-xs text-muted-foreground">
@@ -573,10 +581,12 @@ export default function SimulateurFraisPro() {
                                   <Input
                                     id={`nbp-${i}`}
                                     type="number"
+                                    step="1"
                                     min={0}
+                                    inputMode="numeric"
                                     value={ligne.nbPieces || ""}
                                     onChange={(e) =>
-                                      updateLigneLinge(i, { nbPieces: Number(e.target.value) || 0 })
+                                      updateLigneLinge(i, { nbPieces: Math.max(0, Math.floor(Number(e.target.value) || 0)) })
                                     }
                                   />
                                 </div>
@@ -603,10 +613,12 @@ export default function SimulateurFraisPro() {
                                   <Input
                                     id={`lav-${i}`}
                                     type="number"
+                                    step="1"
                                     min={0}
+                                    inputMode="numeric"
                                     value={ligne.nbLavages || ""}
                                     onChange={(e) =>
-                                      updateLigneLinge(i, { nbLavages: Number(e.target.value) || 0 })
+                                      updateLigneLinge(i, { nbLavages: Math.max(0, Math.floor(Number(e.target.value) || 0)) })
                                     }
                                   />
                                 </div>
@@ -876,6 +888,7 @@ export default function SimulateurFraisPro() {
                           label="Nombre de jours travaillés dans l'année"
                           value={form.nbJoursTravailles}
                           onChange={(v) => setField("nbJoursTravailles", v)}
+                          integer
                         />
                         <p className="text-xs text-muted-foreground">
                           Barème kilométrique {FISCAL_YEAR} (non revalorisé depuis 2023, simplifié
