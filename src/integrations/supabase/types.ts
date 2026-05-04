@@ -1240,6 +1240,45 @@ export type Database = {
           },
         ]
       }
+      simulator_constants: {
+        Row: {
+          constant_key: string
+          created_at: string
+          fiscal_year: number
+          id: string
+          label: string | null
+          simulator_key: string
+          source: string | null
+          unit: string | null
+          updated_at: string
+          value: number
+        }
+        Insert: {
+          constant_key: string
+          created_at?: string
+          fiscal_year: number
+          id?: string
+          label?: string | null
+          simulator_key: string
+          source?: string | null
+          unit?: string | null
+          updated_at?: string
+          value: number
+        }
+        Update: {
+          constant_key?: string
+          created_at?: string
+          fiscal_year?: number
+          id?: string
+          label?: string | null
+          simulator_key?: string
+          source?: string | null
+          unit?: string | null
+          updated_at?: string
+          value?: number
+        }
+        Relationships: []
+      }
       suggestions: {
         Row: {
           categorie: string
