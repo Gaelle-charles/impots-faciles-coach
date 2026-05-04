@@ -530,17 +530,27 @@ export default function SimulateurFraisPro() {
             <CardTitle>Résultats</CardTitle>
           </CardHeader>
           <CardContent className="space-y-2 text-sm">
-            <div className="flex justify-between">
-              <span className="text-muted-foreground">
-                Bureau à domicile (section D)
-              </span>
-              <span className="font-medium">
-                {sections.sectionD.toFixed(2)} €
-              </span>
-            </div>
-            <div className="flex justify-between border-t pt-2 mt-2 font-bold">
+            {[
+              ["A — Repas hors domicile", sections.sectionA],
+              ["B — Blanchissement", sections.sectionB],
+              ["C — Matériel & documentation", sections.sectionC],
+              ["D — Bureau à domicile", sections.sectionD],
+              ["E — Frais d'astreinte", sections.sectionE],
+              ["F — Frais divers", sections.sectionF],
+              ["G — Spécificités DOM", sections.sectionG],
+            ].map(([label, val]) => (
+              <div key={label as string} className="flex justify-between">
+                <span className="text-muted-foreground">{label}</span>
+                <span className="font-medium">{(val as number).toFixed(2)} €</span>
+              </div>
+            ))}
+            <div className="flex justify-between border-t pt-2 mt-2 font-bold text-base">
               <span>Total estimé</span>
               <span>{total.toFixed(2)} €</span>
+            </div>
+            <div className="flex justify-between font-bold text-primary">
+              <span>Total arrondi à déclarer</span>
+              <span>{totalArrondi} €</span>
             </div>
           </CardContent>
         </Card>
