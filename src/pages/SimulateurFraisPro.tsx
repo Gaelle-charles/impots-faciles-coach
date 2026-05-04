@@ -12,7 +12,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Check, ChevronDown, Plus, Trash2, RefreshCw, Receipt, Info, Loader2 } from "lucide-react";
+import { Check, ChevronDown, Plus, Trash2, RefreshCw, Receipt, Info, Loader2, Palmtree } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 
 const FISCAL_YEAR = 2025;
@@ -53,6 +53,8 @@ type FormState = {
   puissanceCV: 3 | 4 | 5 | 6 | 7;
   distanceAller: number;
   nbJoursTravailles: number;
+  // étape 7 — spécificités outre-mer
+  fraisInterIles: number;
 };
 
 const STEP5_FIELDS: { name: keyof FormState; label: string; hint?: string }[] = [
@@ -74,6 +76,7 @@ type Sections = {
   sectionD: number;
   sectionE: number;
   sectionF: number;
+  sectionG: number;
 };
 
 const STEP_TITLES = [
@@ -83,6 +86,7 @@ const STEP_TITLES = [
   "Bureau à domicile",
   "Frais divers souvent oubliés",
   "Frais kilométriques",
+  "Spécificités outre-mer",
 ];
 
 type Constants = {
@@ -95,6 +99,8 @@ type Constants = {
   km_voiture_6cv_seuil1: number;
   km_voiture_7cv_seuil1: number;
   km_majoration_electrique: number;
+  refaction_drom_zone1: number;
+  refaction_drom_zone2: number;
 };
 
 const NumberInput = ({
@@ -185,6 +191,7 @@ export default function SimulateurFraisPro() {
     puissanceCV: 5,
     distanceAller: 0,
     nbJoursTravailles: 220,
+    fraisInterIles: 0,
   };
   const initialSections: Sections = {
     sectionA: 0,
@@ -193,6 +200,7 @@ export default function SimulateurFraisPro() {
     sectionD: 0,
     sectionE: 0,
     sectionF: 0,
+    sectionG: 0,
   };
 
   const [form, setForm] = useState<FormState>(initialForm);
@@ -290,6 +298,9 @@ export default function SimulateurFraisPro() {
     if (activeStep === 5) {
       setSections((s) => ({ ...s, sectionF: computeSectionF(constants) }));
     }
+    if (activeStep === 6) {
+      setSections((s) => ({ ...s, sectionG: parseFloat(String(form.fraisInterIles)) || 0 }));
+    }
     if (activeStep < STEP_TITLES.length - 1) {
       setActiveStep(activeStep + 1);
       setShowResults(false);
@@ -357,6 +368,7 @@ export default function SimulateurFraisPro() {
                 { label: "Bureau à domicile", value: Math.round(sections.sectionD) },
                 { label: "Frais divers", value: Math.round(sections.sectionE) },
                 { label: "Frais kilométriques", value: Math.round(sections.sectionF) },
+                { label: "Frais inter-îles / inter-territoires (DROM)", value: Math.round(sections.sectionG) },
               ];
               const nonZero = rows.filter((r) => r.value > 0);
               return (
@@ -403,6 +415,24 @@ export default function SimulateurFraisPro() {
                       Cette somme se déduit de votre revenu imposable, pas directement de votre impôt.
                       L'économie réelle dépend de votre TMI.
                     </p>
+
+                    {sections.sectionG > 0 && (
+                      <div className="flex flex-col gap-2 rounded-lg border border-blue-200 bg-blue-50 p-3 text-xs text-blue-900">
+                        <p>
+                          Vous résidez en outre-mer ? Pour estimer votre impôt final tenant compte
+                          de la réfaction DROM ({constants?.refaction_drom_zone1 ?? 30}% ou {constants?.refaction_drom_zone2 ?? 40}%
+                          selon votre territoire), utilisez ensuite le simulateur IR Barème.
+                        </p>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => navigate("/simulateur/ir-bareme")}
+                          className="self-start border-blue-300 text-blue-900 hover:bg-blue-100"
+                        >
+                          → Simulateur IR Barème
+                        </Button>
+                      </div>
+                    )}
 
                     {showResults && (
                       <div className="flex flex-col gap-2 pt-1">
@@ -862,6 +892,42 @@ export default function SimulateurFraisPro() {
                           pour la tranche 0-5 000 km). Pour un calcul précis avec 3 tranches, voir
                           le simulateur officiel sur impots.gouv.fr.
                         </p>
+                      </div>
+                    ) : idx === 6 ? (
+                      <div className="space-y-4">
+                        <p className="text-sm text-muted-foreground flex items-start gap-2">
+                          <Palmtree className="h-4 w-4 mt-0.5 shrink-0" />
+                          <span>
+                            Cette section concerne les contribuables résidant en Guadeloupe, Martinique,
+                            Guyane, La Réunion ou Mayotte. Section optionnelle.
+                          </span>
+                        </p>
+                        <div className="flex gap-3 rounded-lg border border-blue-200 bg-blue-50 p-4 text-sm text-blue-900">
+                          <Info className="h-5 w-5 shrink-0 mt-0.5" />
+                          <div className="space-y-2">
+                            <p>
+                              <strong>Important</strong> — Si vous résidez dans un DROM, votre impôt sur
+                              le revenu bénéficie d'une réfaction appliquée sur l'impôt brut :
+                            </p>
+                            <ul className="list-disc pl-5 space-y-1">
+                              <li>{constants?.refaction_drom_zone1 ?? 30}% en Guadeloupe, Martinique et La Réunion</li>
+                              <li>{constants?.refaction_drom_zone2 ?? 40}% en Guyane et Mayotte</li>
+                            </ul>
+                            <p>
+                              Cette réfaction n'est pas un frais réel. Elle est calculée séparément
+                              sur l'impôt final, pas sur le revenu imposable. Le « surcoût de la vie » en
+                              outre-mer n'est pas déductible en frais réels — la réfaction DROM est
+                              précisément le mécanisme prévu par le législateur pour en tenir compte.
+                            </p>
+                          </div>
+                        </div>
+                        <NumberInput
+                          id="fraisInterIles"
+                          label="Frais de déplacements inter-îles ou inter-territoires engagés à titre professionnel (€/an)"
+                          value={form.fraisInterIles}
+                          onChange={(v) => setField("fraisInterIles", v)}
+                          hint="Total des billets d'avion, de bateau, etc. pour des déplacements liés à votre activité professionnelle (tournées clientèle, missions inter-îles pour libéraux, etc.). Sur justificatifs uniquement. N'inclure ni vos déplacements personnels, ni vos trajets domicile-travail réguliers (déjà déclarés en section 6)."
+                        />
                       </div>
                     ) : null}
 

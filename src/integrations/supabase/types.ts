@@ -1244,37 +1244,46 @@ export type Database = {
         Row: {
           constant_key: string
           created_at: string
+          description: string | null
           fiscal_year: number
           id: string
           label: string | null
           simulator_key: string
           source: string | null
+          source_url: string | null
           unit: string | null
           updated_at: string
+          updated_by: string | null
           value: number
         }
         Insert: {
           constant_key: string
           created_at?: string
+          description?: string | null
           fiscal_year: number
           id?: string
           label?: string | null
           simulator_key: string
           source?: string | null
+          source_url?: string | null
           unit?: string | null
           updated_at?: string
+          updated_by?: string | null
           value: number
         }
         Update: {
           constant_key?: string
           created_at?: string
+          description?: string | null
           fiscal_year?: number
           id?: string
           label?: string | null
           simulator_key?: string
           source?: string | null
+          source_url?: string | null
           unit?: string | null
           updated_at?: string
+          updated_by?: string | null
           value?: number
         }
         Relationships: []
