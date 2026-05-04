@@ -87,14 +87,16 @@ const NumberInput = ({
   label,
   value,
   onChange,
+  hint,
 }: {
   id: string;
   label: string;
   value: number;
   onChange: (n: number) => void;
+  hint?: string;
 }) => (
   <div className="space-y-1.5">
-    <Label htmlFor={id}>{label}</Label>
+    <Label htmlFor={id} className="text-sm">{label}</Label>
     <Input
       id={id}
       type="number"
@@ -105,6 +107,7 @@ const NumberInput = ({
       onChange={(e) => onChange(Number(e.target.value) || 0)}
       placeholder="0"
     />
+    {hint ? <p className="text-xs text-muted-foreground">{hint}</p> : null}
   </div>
 );
 
