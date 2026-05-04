@@ -6,7 +6,34 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
-import { Lock, Sparkles, ArrowRight, Star, Briefcase, Globe, Users, FolderOpen } from 'lucide-react';
+import {
+  Lock, Sparkles, ArrowRight, Star, Briefcase, Globe, Users, FolderOpen,
+  Palette, GraduationCap, Scale, Hammer, Plane, Stethoscope, MoreHorizontal,
+  Mountain, Map as MapIcon, Building2, Sparkle, type LucideIcon,
+} from 'lucide-react';
+
+// Catégories métiers : icône + libellé lisible
+const METIER_CATEGORIES: Record<string, { label: string; icon: LucideIcon }> = {
+  culture_creation: { label: 'Culture & création', icon: Palette },
+  education_asso: { label: 'Éducation & associatif', icon: GraduationCap },
+  liberaux_cadres: { label: 'Libéraux & cadres', icon: Scale },
+  manuels_terrain: { label: 'Manuels & terrain', icon: Hammer },
+  mobilite_specifiques: { label: 'Mobilité & spécifiques', icon: Plane },
+  sante_soin: { label: 'Santé & soin', icon: Stethoscope },
+  Autres: { label: 'Autres', icon: MoreHorizontal },
+};
+
+// Zones pays : icône + libellé
+const PAYS_ZONES: Record<string, { label: string; icon: LucideIcon }> = {
+  Afrique: { label: 'Afrique', icon: Mountain },
+  Amériques: { label: 'Amériques', icon: MapIcon },
+  Asie: { label: 'Asie', icon: Globe },
+  Europe: { label: 'Europe', icon: Building2 },
+  'Moyen-Orient': { label: 'Moyen-Orient', icon: MapIcon },
+  Océanie: { label: 'Océanie', icon: Globe },
+  special: { label: 'Régimes spéciaux', icon: Sparkle },
+  Autres: { label: 'Autres', icon: MoreHorizontal },
+};
 import type { Tables } from '@/integrations/supabase/types';
 import { cn } from '@/lib/utils';
 
@@ -175,7 +202,7 @@ const CategoryGrid = <T extends { id: string; nom: string; icone: string | null 
   onSelect,
   themeKey,
 }: {
-  groups: { key: string; label: string; items: T[] }[];
+  groups: { key: string; label: string; icon: LucideIcon; items: T[] }[];
   selected: string | null;
   onSelect: (key: string | null) => void;
   themeKey: SectionKey;
@@ -185,6 +212,7 @@ const CategoryGrid = <T extends { id: string; nom: string; icone: string | null 
     <div className="grid gap-3 grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
       {groups.map((g) => {
         const active = selected === g.key;
+        const Icon = g.icon;
         return (
           <button
             key={g.key}
@@ -197,7 +225,7 @@ const CategoryGrid = <T extends { id: string; nom: string; icone: string | null 
             style={active ? { boxShadow: `0 0 0 2px hsl(var(--primary) / 0.4)` } : undefined}
           >
             <div className={cn('inline-flex h-9 w-9 items-center justify-center rounded-xl mb-2', t.iconBg)}>
-              <FolderOpen className="h-4 w-4" />
+              <Icon className="h-4 w-4" />
             </div>
             <p className="font-heading font-semibold text-sm text-foreground leading-tight">{g.label}</p>
             <p className="text-xs text-muted-foreground mt-1">
@@ -377,7 +405,10 @@ export const PersonalizedFiches = () => {
       return acc;
     }, new Map<string, typeof metiersItems>()),
   )
-    .map(([key, items]) => ({ key, label: key, items }))
+    .map(([key, items]) => {
+      const meta = METIER_CATEGORIES[key] ?? METIER_CATEGORIES.Autres;
+      return { key, label: meta.label, icon: meta.icon, items };
+    })
     .sort((a, b) => a.label.localeCompare(b.label));
 
   // Zones pays
@@ -389,7 +420,10 @@ export const PersonalizedFiches = () => {
       return acc;
     }, new Map<string, typeof paysItems>()),
   )
-    .map(([key, items]) => ({ key, label: key, items }))
+    .map(([key, items]) => {
+      const meta = PAYS_ZONES[key] ?? PAYS_ZONES.Autres;
+      return { key, label: meta.label, icon: meta.icon, items };
+    })
     .sort((a, b) => a.label.localeCompare(b.label));
 
   const visibleMetiers = selectedMetierCat
