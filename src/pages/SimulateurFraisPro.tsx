@@ -6,11 +6,17 @@ import { Label } from "@/components/ui/label";
 import { Check } from "lucide-react";
 
 type FormState = {
+  // étape 1
+  nbRepasInf: number;
+  nbRepasSup: number;
+  montantRepasSup: number;
   // étape 4
   surfaceBureau: number;
   surfaceLogement: number;
   chargesAnnuelles: number;
 };
+
+const BAREME_REPAS = 5.35;
 
 type Sections = {
   sectionA: number;
