@@ -19,6 +19,10 @@ type FormState = {
   surfaceBureau: number;
   surfaceLogement: number;
   chargesAnnuelles: number;
+  // étape 5
+  fraisAstreinte: number;
+  nbJoursAstreinte: number;
+  indemAstreinte: number;
 };
 
 const BAREME_REPAS = 5.35;
@@ -83,6 +87,9 @@ export default function SimulateurFraisPro() {
     surfaceBureau: 0,
     surfaceLogement: 0,
     chargesAnnuelles: 0,
+    fraisAstreinte: 49,
+    nbJoursAstreinte: 0,
+    indemAstreinte: 0,
   });
 
   const [step1Error, setStep1Error] = useState<string | null>(null);
@@ -147,6 +154,11 @@ export default function SimulateurFraisPro() {
     }
     if (activeStep === 3) {
       setSections((s) => ({ ...s, sectionD: sectionDLive }));
+    }
+    if (activeStep === 4) {
+      const fraisBruts = form.fraisAstreinte * form.nbJoursAstreinte;
+      const sectionE = Math.max(0, fraisBruts - form.indemAstreinte);
+      setSections((s) => ({ ...s, sectionE }));
     }
     if (activeStep < STEP_TITLES.length - 1) {
       setActiveStep(activeStep + 1);
@@ -359,6 +371,33 @@ export default function SimulateurFraisPro() {
                         <Plus className="h-4 w-4" />
                         Ajouter un article
                       </Button>
+                    </div>
+                  ) : idx === 4 ? (
+                    <div className="space-y-4">
+                      <p className="text-sm text-muted-foreground">
+                        Cette section est optionnelle.
+                      </p>
+                      <NumberInput
+                        id="fraisAstreinte"
+                        label="Frais d'astreinte (€ par jour)"
+                        value={form.fraisAstreinte}
+                        onChange={(v) => setField("fraisAstreinte", v)}
+                      />
+                      <NumberInput
+                        id="nbJoursAstreinte"
+                        label="Nombre de jours d'astreinte dans l'année"
+                        value={form.nbJoursAstreinte}
+                        onChange={(v) => setField("nbJoursAstreinte", v)}
+                      />
+                      <NumberInput
+                        id="indemAstreinte"
+                        label="Indemnité d'astreinte reçue de l'employeur (€)"
+                        value={form.indemAstreinte}
+                        onChange={(v) => setField("indemAstreinte", v)}
+                      />
+                      <p className="text-xs text-muted-foreground">
+                        Frais nets déductibles = (frais journalier × nombre de jours) − indemnité reçue
+                      </p>
                     </div>
                   ) : (
                     <p className="text-sm text-muted-foreground">
