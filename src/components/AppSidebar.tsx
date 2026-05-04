@@ -21,7 +21,7 @@ import {
 import { SuggestionDialog } from '@/components/SuggestionDialog';
 
 const baseNavItems = [
-  { to: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
+  { to: '/dashboard', label: 'Accueil', icon: LayoutDashboard },
   { to: '/mes-modules', label: 'Mon parcours déclaration', icon: BookOpen },
   { to: '/fiches-personnalisees', label: 'Fiches personnalisées', icon: FileText },
   { to: '/dashboard#resultats', label: 'Mes résultats', icon: BarChart3 },
