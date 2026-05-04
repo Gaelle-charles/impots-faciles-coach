@@ -109,23 +109,28 @@ const NumberInput = ({
   value,
   onChange,
   hint,
+  integer = false,
 }: {
   id: string;
   label: string;
   value: number;
   onChange: (n: number) => void;
   hint?: string;
+  integer?: boolean;
 }) => (
   <div className="space-y-1.5">
     <Label htmlFor={id} className="text-sm">{label}</Label>
     <Input
       id={id}
       type="number"
-      step="0.01"
+      step={integer ? "1" : "0.01"}
       min={0}
-      inputMode="decimal"
+      inputMode={integer ? "numeric" : "decimal"}
       value={value || ""}
-      onChange={(e) => onChange(Number(e.target.value) || 0)}
+      onChange={(e) => {
+        const n = Number(e.target.value) || 0;
+        onChange(integer ? Math.max(0, Math.floor(n)) : n);
+      }}
       placeholder="0"
     />
     {hint ? <p className="text-xs text-muted-foreground">{hint}</p> : null}
