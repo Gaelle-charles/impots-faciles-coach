@@ -16,10 +16,13 @@ type FormState = {
   kgSemaine: number;
   nbSemaines: number;
   // étape 4
-  // étape 4
   surfaceBureau: number;
   surfaceLogement: number;
   chargesAnnuelles: number;
+  // étape 5
+  fraisAstreinte: number;
+  nbJoursAstreinte: number;
+  indemAstreinte: number;
 };
 
 const BAREME_REPAS = 5.35;
