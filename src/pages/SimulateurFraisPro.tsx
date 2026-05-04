@@ -17,6 +17,26 @@ import { supabase } from "@/integrations/supabase/client";
 
 const FISCAL_YEAR = 2025;
 
+const VETEMENTS_PRO = [
+  "Blouse",
+  "Bleu de travail",
+  "Combinaison",
+  "Tablier",
+  "Veste de cuisine",
+  "Pantalon de cuisine",
+  "Toque",
+  "Uniforme",
+  "Costume / Tailleur",
+  "Chemise professionnelle",
+  "Robe de magistrat",
+  "Tenue médicale (scrub)",
+  "Tenue de chantier",
+  "Chaussures de sécurité",
+  "Gants de travail",
+  "Casque / EPI",
+  "Autre vêtement professionnel",
+] as const;
+
 type Article = { description: string; prix: number };
 type LingeLigne = {
   vetement: string;
