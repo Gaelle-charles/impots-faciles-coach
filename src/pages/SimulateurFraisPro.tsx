@@ -511,6 +511,7 @@ export default function SimulateurFraisPro() {
                             key={f.name}
                             id={f.name}
                             label={f.label}
+                            hint={f.hint}
                             value={form[f.name] as number}
                             onChange={(v) => setField(f.name, v as never)}
                           />
@@ -528,6 +529,7 @@ export default function SimulateurFraisPro() {
                             key={f.name}
                             id={f.name}
                             label={f.label}
+                            hint={f.hint}
                             value={form[f.name] as number}
                             onChange={(v) => setField(f.name, v as never)}
                           />
