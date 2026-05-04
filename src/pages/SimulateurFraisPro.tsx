@@ -324,7 +324,7 @@ export default function SimulateurFraisPro() {
         </div>
       </header>
 
-      <div className="container mx-auto max-w-3xl px-4 py-6 sm:py-8 space-y-6">
+      <div className="container mx-auto max-w-7xl px-4 py-6 sm:py-8 space-y-6">
         <div className="flex gap-3 rounded-lg border border-blue-200 bg-blue-50 p-4 text-sm text-blue-900">
           <Info className="h-5 w-5 shrink-0 mt-0.5" />
           <p>
