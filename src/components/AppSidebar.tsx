@@ -9,7 +9,7 @@ import {
   Home,
   LayoutDashboard,
   BookOpen,
-  BarChart3,
+  
   Calculator,
   Heart,
   User,
@@ -24,7 +24,7 @@ const baseNavItems = [
   { to: '/dashboard', label: 'Accueil', icon: LayoutDashboard },
   { to: '/mes-modules', label: 'Mes formations', icon: BookOpen },
   { to: '/fiches-personnalisees', label: 'Mon parcours déclaration', icon: FileText },
-  { to: '/dashboard#resultats', label: 'Mes résultats', icon: BarChart3 },
+  
   { to: '/mes-simulateurs', label: 'Mes simulateurs', icon: Calculator },
   { to: '/recommandations', label: 'Recommandations', icon: Heart },
   { to: '/profil', label: 'Mon profil', icon: User },
