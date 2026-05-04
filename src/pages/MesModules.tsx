@@ -364,6 +364,7 @@ const MesModules = () => {
           </div>
         </TabsContent>
       </Tabs>
+    </div>
   );
 };
 
