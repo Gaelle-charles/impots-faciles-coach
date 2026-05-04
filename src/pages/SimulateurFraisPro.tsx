@@ -160,15 +160,17 @@ export default function SimulateurFraisPro() {
   const updateArticle = (i: number, patch: Partial<Article>) =>
     setArticles((a) => a.map((art, idx) => (idx === i ? { ...art, ...patch } : art)));
 
-  const [sections, setSections] = useState<Sections>({
-    sectionA: 0,
-    sectionB: 0,
-    sectionC: 0,
-    sectionD: 0,
-    sectionE: 0,
-    sectionF: 0,
-    sectionG: 0,
-  });
+  const [sections, setSections] = useState<Sections>(initialSections);
+
+  const handleReset = () => {
+    setForm(initialForm);
+    setSections(initialSections);
+    setArticles([]);
+    setStep1Error(null);
+    setStep2Error(null);
+    setShowResults(false);
+    setActiveStep(0);
+  };
 
   // Calcul temps réel pour l'étape 4
   const { quotePart, sectionDLive } = useMemo(() => {
