@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
@@ -6,8 +6,9 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
-import { Lock, Sparkles, ArrowRight, Star } from 'lucide-react';
+import { Lock, Sparkles, ArrowRight, Star, Briefcase, Globe, Users, FolderOpen } from 'lucide-react';
 import type { Tables } from '@/integrations/supabase/types';
+import { cn } from '@/lib/utils';
 
 type FicheProfil = Tables<'fiches_profils'>;
 type Metier = Tables<'metiers'>;
@@ -31,11 +32,71 @@ interface FicheCardItem {
   recommended?: boolean;
 }
 
+// Palette de section : 4 ambiances distinctes basées sur les tokens
+const SECTION_THEMES = {
+  recos: {
+    bg: 'bg-yellow-vivid/15',
+    border: 'border-yellow-vivid/40',
+    iconBg: 'bg-yellow-vivid text-violet-deep',
+    title: 'text-foreground',
+  },
+  profils: {
+    bg: 'bg-rose-light',
+    border: 'border-rose-dynamic/30',
+    iconBg: 'bg-rose-dynamic text-white',
+    title: 'text-foreground',
+  },
+  metiers: {
+    bg: 'bg-primary/5',
+    border: 'border-primary/30',
+    iconBg: 'bg-primary text-primary-foreground',
+    title: 'text-foreground',
+  },
+  pays: {
+    bg: 'bg-accent/10',
+    border: 'border-accent/30',
+    iconBg: 'bg-accent text-accent-foreground',
+    title: 'text-foreground',
+  },
+} as const;
+
+type SectionKey = keyof typeof SECTION_THEMES;
+
+const SectionShell = ({
+  themeKey,
+  icon: Icon,
+  title,
+  subtitle,
+  children,
+}: {
+  themeKey: SectionKey;
+  icon: React.ElementType;
+  title: string;
+  subtitle?: string;
+  children: React.ReactNode;
+}) => {
+  const t = SECTION_THEMES[themeKey];
+  return (
+    <section className={cn('rounded-3xl border p-6 md:p-8 space-y-5', t.bg, t.border)}>
+      <header className="flex items-start gap-4">
+        <div className={cn('flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl', t.iconBg)}>
+          <Icon className="h-5 w-5" />
+        </div>
+        <div className="min-w-0">
+          <h3 className={cn('font-display text-2xl leading-tight', t.title)}>{title}</h3>
+          {subtitle && <p className="mt-1 text-sm text-muted-foreground">{subtitle}</p>}
+        </div>
+      </header>
+      {children}
+    </section>
+  );
+};
+
 const FicheCard = ({ item, type }: { item: FicheCardItem; type: 'profil' | 'metier' | 'pays' }) => {
   const navigate = useNavigate();
   return (
     <Card
-      className={`relative border bg-background rounded-3xl shadow-none hover:-translate-y-1 hover:shadow-xl transition-all ${
+      className={`relative border bg-background rounded-2xl shadow-none hover:-translate-y-0.5 hover:shadow-md transition-all ${
         item.recommended ? 'border-primary/40 ring-1 ring-primary/20' : 'border-border'
       }`}
     >
@@ -45,13 +106,13 @@ const FicheCard = ({ item, type }: { item: FicheCardItem; type: 'profil' | 'meti
           Pour vous
         </Badge>
       )}
-      <CardContent className="p-7 space-y-4">
+      <CardContent className="p-5 space-y-3">
         <div className="flex items-start gap-3">
-          <span className="text-3xl shrink-0" aria-hidden>
+          <span className="text-2xl shrink-0" aria-hidden>
             {item.icone || '📄'}
           </span>
           <div className="flex-1 min-w-0">
-            <h4 className="font-display text-xl text-foreground leading-tight">{item.nom}</h4>
+            <h4 className="font-heading font-semibold text-base text-foreground leading-tight">{item.nom}</h4>
             {item.description && (
               <p className="mt-1 text-sm text-muted-foreground line-clamp-2">{item.description}</p>
             )}
@@ -59,10 +120,11 @@ const FicheCard = ({ item, type }: { item: FicheCardItem; type: 'profil' | 'meti
         </div>
         <Button
           variant="outline"
+          size="sm"
           className="w-full"
           onClick={() => navigate(`/fiches/${type}/${item.slug}`)}
         >
-          Consulter la fiche
+          Consulter
           <ArrowRight className="ml-2 h-4 w-4" />
         </Button>
       </CardContent>
@@ -70,38 +132,33 @@ const FicheCard = ({ item, type }: { item: FicheCardItem; type: 'profil' | 'meti
   );
 };
 
-const LockedSection = ({
-  title,
-  count,
+const LockedBlock = ({
   requiredPlan,
   description,
+  count,
 }: {
-  title: string;
-  count: number;
   requiredPlan: string;
   description: string;
+  count: number;
 }) => {
   const navigate = useNavigate();
   const planCap = requiredPlan.charAt(0).toUpperCase() + requiredPlan.slice(1);
   return (
-    <Card className="relative overflow-hidden border-border bg-background rounded-3xl shadow-none">
-      <CardContent className="p-7 space-y-3">
-        <div className="flex items-center gap-2">
-          <Lock className="h-4 w-4 text-muted-foreground" />
-          <h3 className="font-display text-xl text-foreground">{title}</h3>
-        </div>
+    <div className="rounded-2xl border border-border bg-background/70 p-5 space-y-3">
+      <div className="flex items-center gap-2">
+        <Lock className="h-4 w-4 text-muted-foreground" />
         <p className="text-sm text-muted-foreground">
           {count > 0
-            ? `${count} fiche${count > 1 ? 's' : ''} ${count > 1 ? 'ont été identifiées' : 'a été identifiée'} pour votre profil.`
+            ? `${count} fiche${count > 1 ? 's' : ''} identifiée${count > 1 ? 's' : ''} pour votre profil.`
             : description}
         </p>
-        <p className="text-sm text-muted-foreground italic">{description}</p>
-        <Button onClick={() => navigate(`/tarifs?recommended=${requiredPlan}`)} className="gap-2">
-          Débloquer avec {planCap}
-          <ArrowRight className="h-4 w-4" />
-        </Button>
-      </CardContent>
-    </Card>
+      </div>
+      <p className="text-sm text-muted-foreground italic">{description}</p>
+      <Button onClick={() => navigate(`/tarifs?recommended=${requiredPlan}`)} size="sm" className="gap-2">
+        Débloquer avec {planCap}
+        <ArrowRight className="h-4 w-4" />
+      </Button>
+    </div>
   );
 };
 
@@ -111,6 +168,48 @@ const sortRecommendedFirst = <T extends { recommended?: boolean; nom: string }>(
     return a.nom.localeCompare(b.nom);
   });
 
+// Vue par catégories : grille de cartes catégorie cliquables (ouvre la liste filtrée en dessous)
+const CategoryGrid = <T extends { id: string; nom: string; icone: string | null }>({
+  groups,
+  selected,
+  onSelect,
+  themeKey,
+}: {
+  groups: { key: string; label: string; items: T[] }[];
+  selected: string | null;
+  onSelect: (key: string | null) => void;
+  themeKey: SectionKey;
+}) => {
+  const t = SECTION_THEMES[themeKey];
+  return (
+    <div className="grid gap-3 grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+      {groups.map((g) => {
+        const active = selected === g.key;
+        return (
+          <button
+            key={g.key}
+            type="button"
+            onClick={() => onSelect(active ? null : g.key)}
+            className={cn(
+              'group rounded-2xl border bg-background p-4 text-left transition-all hover:-translate-y-0.5 hover:shadow-md',
+              active ? cn('ring-2', t.border, 'border-transparent') : 'border-border',
+            )}
+            style={active ? { boxShadow: `0 0 0 2px hsl(var(--primary) / 0.4)` } : undefined}
+          >
+            <div className={cn('inline-flex h-9 w-9 items-center justify-center rounded-xl mb-2', t.iconBg)}>
+              <FolderOpen className="h-4 w-4" />
+            </div>
+            <p className="font-heading font-semibold text-sm text-foreground leading-tight">{g.label}</p>
+            <p className="text-xs text-muted-foreground mt-1">
+              {g.items.length} fiche{g.items.length > 1 ? 's' : ''}
+            </p>
+          </button>
+        );
+      })}
+    </div>
+  );
+};
+
 export const PersonalizedFiches = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
@@ -119,6 +218,9 @@ export const PersonalizedFiches = () => {
   const [fichesProfils, setFichesProfils] = useState<FicheProfil[]>([]);
   const [metiers, setMetiers] = useState<Metier[]>([]);
   const [pays, setPays] = useState<Pays[]>([]);
+
+  const [selectedMetierCat, setSelectedMetierCat] = useState<string | null>(null);
+  const [selectedPaysZone, setSelectedPaysZone] = useState<string | null>(null);
 
   useEffect(() => {
     const load = async () => {
@@ -142,9 +244,6 @@ export const PersonalizedFiches = () => {
       const metiersIds = prof.metiers_detectes ?? [];
       const paysIds = prof.pays_concernes ?? [];
 
-      // Pour expert/premium : on charge TOUTES les fiches actives
-      // Pour starter : on charge seulement les détectées
-      // Pour nouveau : on charge seulement le compte (via détectées)
       const loadAllProfilsAndMetiers = userPlan === 'expert' || userPlan === 'premium';
       const loadAllPays = userPlan === 'premium';
 
@@ -176,14 +275,11 @@ export const PersonalizedFiches = () => {
 
   if (loading) {
     return (
-      <section>
-        <Skeleton className="h-7 w-64 mb-5" />
-        <div className="grid gap-4 sm:grid-cols-2">
-          {Array.from({ length: 2 }).map((_, i) => (
-            <Skeleton key={i} className="h-44 rounded-lg" />
-          ))}
-        </div>
-      </section>
+      <div className="space-y-6">
+        {Array.from({ length: 4 }).map((_, i) => (
+          <Skeleton key={i} className="h-44 rounded-3xl" />
+        ))}
+      </div>
     );
   }
 
@@ -195,249 +291,230 @@ export const PersonalizedFiches = () => {
   const paysIds = profile.pays_concernes ?? [];
   const totalDetected = profilsSlugs.length + metiersIds.length + paysIds.length;
 
-  // === État vide : onboarding non fait ===
+  // Onboarding non fait
   if (!profile.onboarding_done) {
     return (
-      <section id="fiches">
-        <h2 className="font-display text-2xl text-foreground mb-5">
-          Vos fiches personnalisées
-        </h2>
-        <Card className="border-dashed border-2 border-border bg-background rounded-3xl">
-          <CardContent className="p-8 text-center space-y-4">
-            <Sparkles className="h-10 w-10 text-primary mx-auto" />
-            <p className="text-foreground">
-              Complétez votre profil pour obtenir des fiches personnalisées.
-            </p>
-            <Button onClick={() => navigate('/onboarding')}>
-              Compléter mon profil
-            </Button>
-          </CardContent>
-        </Card>
-      </section>
+      <Card className="border-dashed border-2 border-border bg-background rounded-3xl">
+        <CardContent className="p-8 text-center space-y-4">
+          <Sparkles className="h-10 w-10 text-primary mx-auto" />
+          <p className="text-foreground">Complétez votre profil pour obtenir des fiches personnalisées.</p>
+          <Button onClick={() => navigate('/onboarding')}>Compléter mon profil</Button>
+        </CardContent>
+      </Card>
     );
   }
 
-  // === FREEMIUM (nouveau) : teaser flouté ===
+  // Freemium
   if (plan === 'nouveau') {
     return (
-      <section id="fiches">
-        <h2 className="font-display text-2xl text-foreground mb-5">
-          Vos fiches personnalisées
-        </h2>
-        <div className="relative overflow-hidden rounded-3xl">
-          <div className="grid gap-4 sm:grid-cols-2 blur-sm pointer-events-none select-none">
-            {Array.from({ length: 4 }).map((_, i) => (
-              <Card key={i} className="border-border bg-background rounded-3xl">
-                <CardContent className="p-5 space-y-3">
-                  <div className="h-6 w-3/4 bg-muted rounded" />
-                  <div className="h-4 w-full bg-muted/60 rounded" />
-                  <div className="h-4 w-2/3 bg-muted/60 rounded" />
-                  <div className="h-9 w-full bg-muted rounded" />
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-          <div className="absolute inset-0 flex items-center justify-center bg-background/40 backdrop-blur-[2px]">
-            <Card className="max-w-md border-border bg-background shadow-xl rounded-3xl">
-              <CardContent className="p-6 text-center space-y-4">
-                <Sparkles className="h-10 w-10 text-primary mx-auto" />
-                <h3 className="font-display text-xl text-foreground">
-                  {totalDetected} fiche{totalDetected > 1 ? 's' : ''} ont été identifiées pour votre profil
-                </h3>
-                <p className="text-sm text-muted-foreground">
-                  Passez à Starter pour les débloquer.
-                </p>
-                <Button onClick={() => navigate('/tarifs?recommended=starter')} className="gap-2">
-                  Voir les plans
-                  <ArrowRight className="h-4 w-4" />
-                </Button>
+      <div className="relative overflow-hidden rounded-3xl">
+        <div className="grid gap-4 sm:grid-cols-2 blur-sm pointer-events-none select-none">
+          {Array.from({ length: 4 }).map((_, i) => (
+            <Card key={i} className="border-border bg-background rounded-3xl">
+              <CardContent className="p-5 space-y-3">
+                <div className="h-6 w-3/4 bg-muted rounded" />
+                <div className="h-4 w-full bg-muted/60 rounded" />
+                <div className="h-4 w-2/3 bg-muted/60 rounded" />
+                <div className="h-9 w-full bg-muted rounded" />
               </CardContent>
             </Card>
-          </div>
+          ))}
         </div>
-      </section>
+        <div className="absolute inset-0 flex items-center justify-center bg-background/40 backdrop-blur-[2px]">
+          <Card className="max-w-md border-border bg-background shadow-xl rounded-3xl">
+            <CardContent className="p-6 text-center space-y-4">
+              <Sparkles className="h-10 w-10 text-primary mx-auto" />
+              <h3 className="font-display text-xl text-foreground">
+                {totalDetected} fiche{totalDetected > 1 ? 's' : ''} ont été identifiées pour votre profil
+              </h3>
+              <p className="text-sm text-muted-foreground">Passez à Starter pour les débloquer.</p>
+              <Button onClick={() => navigate('/tarifs?recommended=starter')} className="gap-2">
+                Voir les plans
+                <ArrowRight className="h-4 w-4" />
+              </Button>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
     );
   }
 
-  const showPasseport =
-    profile.situation_principale === 'independant' ||
-    profile.situation_principale === 'dirigeant';
-
-  // Préparer les items avec flag "recommended"
+  // Items
   const profilsItems: FicheCardItem[] = sortRecommendedFirst(
     fichesProfils.map((f) => ({
-      id: f.id,
-      icone: f.icone,
-      nom: f.nom,
-      description: f.description,
-      slug: f.slug,
+      id: f.id, icone: f.icone, nom: f.nom, description: f.description, slug: f.slug,
       recommended: profilsSlugs.includes(f.slug),
-    }))
+    })),
   );
-
-  const metiersItems: FicheCardItem[] = sortRecommendedFirst(
+  const metiersItems: (FicheCardItem & { categorie: string })[] = sortRecommendedFirst(
     metiers.map((m) => ({
-      id: m.id,
-      icone: m.icone,
-      nom: m.nom,
-      description: m.description,
-      slug: m.slug ?? m.id,
-      recommended: metiersIds.includes(m.id),
-    }))
+      id: m.id, icone: m.icone, nom: m.nom, description: m.description,
+      slug: m.slug ?? m.id, recommended: metiersIds.includes(m.id),
+      categorie: m.categorie || 'Autres',
+    })),
   );
-
-  const paysItems: FicheCardItem[] = sortRecommendedFirst(
+  const paysItems: (FicheCardItem & { zone: string })[] = sortRecommendedFirst(
     pays.map((p) => ({
-      id: p.id,
-      icone: p.icone,
-      nom: p.nom,
-      description: null,
-      slug: p.slug ?? p.id,
-      recommended: paysIds.includes(p.id),
-    }))
+      id: p.id, icone: p.icone, nom: p.nom, description: null,
+      slug: p.slug ?? p.id, recommended: paysIds.includes(p.id),
+      zone: p.zone || 'Autres',
+    })),
   );
 
-  const nbRecoProfils = profilsItems.filter((i) => i.recommended).length;
-  const nbRecoMetiers = metiersItems.filter((i) => i.recommended).length;
-  const nbRecoPays = paysItems.filter((i) => i.recommended).length;
+  // Toutes recommandées (Vos fiches)
+  const allRecos: { item: FicheCardItem; type: 'profil' | 'metier' | 'pays' }[] = [
+    ...profilsItems.filter((i) => i.recommended).map((item) => ({ item, type: 'profil' as const })),
+    ...metiersItems.filter((i) => i.recommended).map((item) => ({ item, type: 'metier' as const })),
+    ...paysItems.filter((i) => i.recommended).map((item) => ({ item, type: 'pays' as const })),
+  ];
+
+  // Catégories métiers
+  const metiersCategories = Array.from(
+    metiersItems.reduce((acc, m) => {
+      const arr = acc.get(m.categorie) ?? [];
+      arr.push(m);
+      acc.set(m.categorie, arr);
+      return acc;
+    }, new Map<string, typeof metiersItems>()),
+  )
+    .map(([key, items]) => ({ key, label: key, items }))
+    .sort((a, b) => a.label.localeCompare(b.label));
+
+  // Zones pays
+  const paysZones = Array.from(
+    paysItems.reduce((acc, p) => {
+      const arr = acc.get(p.zone) ?? [];
+      arr.push(p);
+      acc.set(p.zone, arr);
+      return acc;
+    }, new Map<string, typeof paysItems>()),
+  )
+    .map(([key, items]) => ({ key, label: key, items }))
+    .sort((a, b) => a.label.localeCompare(b.label));
+
+  const visibleMetiers = selectedMetierCat
+    ? metiersItems.filter((m) => m.categorie === selectedMetierCat)
+    : [];
+  const visiblePays = selectedPaysZone
+    ? paysItems.filter((p) => p.zone === selectedPaysZone)
+    : [];
 
   return (
-    <section id="fiches" className="space-y-10">
-      <div>
-        <h2 className="font-display text-2xl text-foreground mb-2">
-          Vos fiches
-        </h2>
-        <p className="text-sm text-muted-foreground">
-          Plan {plan.charAt(0).toUpperCase() + plan.slice(1)} —
-          {plan === 'starter' && ' accès aux fiches profils correspondant à votre situation.'}
-          {plan === 'expert' && ' accès complet à toutes les fiches profils et métiers, mises en avant selon votre profil.'}
-          {plan === 'premium' && ' accès complet à toutes les fiches profils, métiers et pays, mises en avant selon votre profil.'}
-        </p>
-      </div>
-
-      {/* === FICHES PROFILS === */}
-      {profilsItems.length > 0 && (
-        <div>
-          <div className="flex items-baseline justify-between mb-4 gap-3 flex-wrap">
-            <h3 className="font-display text-xl text-foreground">
-              Fiches profils contribuable
-            </h3>
-            {(plan === 'expert' || plan === 'premium') && nbRecoProfils > 0 && (
-              <span className="text-xs text-muted-foreground">
-                {nbRecoProfils} recommandée{nbRecoProfils > 1 ? 's' : ''} pour vous
-              </span>
-            )}
+    <div className="space-y-8">
+      {/* === 1. VOS FICHES (recommandations) === */}
+      <SectionShell
+        themeKey="recos"
+        icon={Star}
+        title="Vos fiches"
+        subtitle={
+          allRecos.length > 0
+            ? `${allRecos.length} fiche${allRecos.length > 1 ? 's' : ''} recommandée${allRecos.length > 1 ? 's' : ''} d'après votre profil.`
+            : 'Aucune fiche recommandée pour le moment.'
+        }
+      >
+        {allRecos.length > 0 ? (
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {allRecos.map(({ item, type }) => (
+              <FicheCard key={`${type}-${item.id}`} item={item} type={type} />
+            ))}
           </div>
-          <div className="grid gap-4 sm:grid-cols-2">
+        ) : (
+          <p className="text-sm text-muted-foreground">
+            Mettez à jour votre profil pour obtenir des recommandations ciblées.
+          </p>
+        )}
+      </SectionShell>
+
+      {/* === 2. FICHES PROFILS CONTRIBUABLE === */}
+      <SectionShell
+        themeKey="profils"
+        icon={Users}
+        title="Fiches profils contribuable"
+        subtitle="Profils types selon votre situation fiscale."
+      >
+        {profilsItems.length > 0 ? (
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {profilsItems.map((item) => (
               <FicheCard key={item.id} type="profil" item={item} />
             ))}
           </div>
-        </div>
-      )}
+        ) : (
+          <p className="text-sm text-muted-foreground">Aucune fiche profil disponible pour votre plan.</p>
+        )}
+      </SectionShell>
 
-      {/* === FICHES MÉTIERS (expert + premium) === */}
-      {plan === 'expert' || plan === 'premium' ? (
-        metiersItems.length > 0 && (
-          <div>
-            <div className="flex items-baseline justify-between mb-4 gap-3 flex-wrap">
-              <h3 className="font-display text-xl text-foreground">
-                Fiches métiers
-              </h3>
-              {nbRecoMetiers > 0 && (
-                <span className="text-xs text-muted-foreground">
-                  {nbRecoMetiers} recommandée{nbRecoMetiers > 1 ? 's' : ''} pour vous
-                </span>
-              )}
-            </div>
-            <div className="grid gap-4 sm:grid-cols-2">
-              {metiersItems.map((item) => (
-                <FicheCard key={item.id} type="metier" item={item} />
-              ))}
-            </div>
-          </div>
-        )
-      ) : (
-        <LockedSection
-          title="Fiches métiers"
-          count={metiersIds.length}
-          requiredPlan="expert"
-          description="Accédez à l'ensemble des fiches métiers, avec mise en avant de celles qui correspondent à votre profil, avec le plan Expert."
-        />
-      )}
-
-      {/* === FICHES PAYS (premium seulement) === */}
-      {plan === 'premium' ? (
-        paysItems.length > 0 && (
-          <div>
-            <div className="flex items-baseline justify-between mb-4 gap-3 flex-wrap">
-              <h3 className="font-display text-xl text-foreground">
-                Fiches pays
-              </h3>
-              {nbRecoPays > 0 && (
-                <span className="text-xs text-muted-foreground">
-                  {nbRecoPays} recommandée{nbRecoPays > 1 ? 's' : ''} pour vous
-                </span>
-              )}
-            </div>
-            <div className="grid gap-4 sm:grid-cols-2">
-              {paysItems.map((item) => (
-                <FicheCard key={item.id} type="pays" item={item} />
-              ))}
-            </div>
-          </div>
-        )
-      ) : (
-        <LockedSection
-          title="Fiches pays"
-          count={paysIds.length}
-          requiredPlan="premium"
-          description="Accédez à l'ensemble des fiches pays, avec mise en avant de celles qui correspondent à votre profil, avec le plan Premium."
-        />
-      )}
-
-      {/* === PREMIUM : passeport personnalisé === */}
-      {plan === 'premium' && showPasseport && (
-        <div>
-          <h3 className="font-display text-xl text-foreground mb-4">
-            Votre passeport personnalisé
-          </h3>
-          <button
-            type="button"
-            onClick={() => navigate('/passeport-fiscal')}
-            className="block w-full text-left group rounded-3xl focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
-            aria-label="Consulter votre passeport fiscal personnalisé"
-          >
-            <Card className="border-border bg-gradient-to-br from-primary/5 to-primary/10 rounded-3xl shadow-none transition-all group-hover:shadow-md group-hover:border-primary/40 cursor-pointer">
-              <CardContent className="p-6 space-y-3">
-                <div className="flex items-center gap-3">
-                  <span className="text-3xl">🛂</span>
-                  <div className="flex-1">
-                    <h4 className="font-display text-lg text-foreground">
-                      Régime détecté : {profile.situation_principale === 'independant' ? 'Indépendant' : 'Dirigeant'}
-                    </h4>
-                    <p className="text-sm text-muted-foreground">
-                      Cliquez ici pour consulter votre passeport fiscal personnalisé.
-                    </p>
-                  </div>
-                  <ArrowRight className="h-5 w-5 text-primary transition-transform group-hover:translate-x-1" aria-hidden="true" />
+      {/* === 3. FICHES MÉTIERS — par catégorie === */}
+      <SectionShell
+        themeKey="metiers"
+        icon={Briefcase}
+        title="Fiches métiers"
+        subtitle="Choisissez une catégorie pour afficher les fiches correspondantes."
+      >
+        {plan === 'expert' || plan === 'premium' ? (
+          metiersCategories.length > 0 ? (
+            <>
+              <CategoryGrid
+                groups={metiersCategories}
+                selected={selectedMetierCat}
+                onSelect={setSelectedMetierCat}
+                themeKey="metiers"
+              />
+              {selectedMetierCat && (
+                <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 pt-2">
+                  {visibleMetiers.map((item) => (
+                    <FicheCard key={item.id} type="metier" item={item} />
+                  ))}
                 </div>
-              </CardContent>
-            </Card>
-          </button>
-        </div>
-      )}
+              )}
+            </>
+          ) : (
+            <p className="text-sm text-muted-foreground">Aucun métier disponible.</p>
+          )
+        ) : (
+          <LockedBlock
+            requiredPlan="expert"
+            count={metiersIds.length}
+            description="Accédez à l'ensemble des fiches métiers, organisées par catégorie, avec le plan Expert."
+          />
+        )}
+      </SectionShell>
 
-      {/* === EXPERT : teaser passeport personnalisé === */}
-      {plan === 'expert' && showPasseport && (
-        <LockedSection
-          title="Votre passeport personnalisé"
-          count={1}
-          requiredPlan="premium"
-          description="Débloquez votre passeport personnalisé avec le plan Premium."
-        />
-      )}
-    </section>
+      {/* === 4. FICHES PAYS — par zone === */}
+      <SectionShell
+        themeKey="pays"
+        icon={Globe}
+        title="Fiches pays"
+        subtitle="Choisissez une zone pour afficher les fiches pays correspondantes."
+      >
+        {plan === 'premium' ? (
+          paysZones.length > 0 ? (
+            <>
+              <CategoryGrid
+                groups={paysZones}
+                selected={selectedPaysZone}
+                onSelect={setSelectedPaysZone}
+                themeKey="pays"
+              />
+              {selectedPaysZone && (
+                <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 pt-2">
+                  {visiblePays.map((item) => (
+                    <FicheCard key={item.id} type="pays" item={item} />
+                  ))}
+                </div>
+              )}
+            </>
+          ) : (
+            <p className="text-sm text-muted-foreground">Aucun pays disponible.</p>
+          )
+        ) : (
+          <LockedBlock
+            requiredPlan="premium"
+            count={paysIds.length}
+            description="Accédez à l'ensemble des fiches pays, organisées par zone, avec le plan Premium."
+          />
+        )}
+      </SectionShell>
+    </div>
   );
 };
 
