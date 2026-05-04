@@ -9,7 +9,7 @@ import {
   Home,
   LayoutDashboard,
   BookOpen,
-  BarChart3,
+  
   Calculator,
   Heart,
   User,
