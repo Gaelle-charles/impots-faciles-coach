@@ -20,6 +20,7 @@ import {
   ArrowLeft,
   Briefcase,
   UserSquare2,
+  BookMarked,
   Globe2,
   Heart,
   MessageSquareWarning,
@@ -57,6 +58,7 @@ const navGroups = [
       { to: '/admin/fiches-profils', label: 'Fiches profils', icon: UserSquare2 },
       { to: '/admin/pays', label: 'Fiches pays', icon: Globe2 },
       { to: '/admin/recommandations', label: 'Recommandations', icon: Heart },
+      { to: '/admin/passeports-fiscaux', label: 'Passeports fiscaux', icon: BookMarked },
     ],
   },
   {
