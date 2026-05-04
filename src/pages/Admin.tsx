@@ -23,7 +23,9 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from 'recharts';
-import { Users, BookOpen, Target, Activity } from 'lucide-react';
+import { Users, BookOpen, Target, Activity, BookMarked, ArrowRight } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { Button } from '@/components/ui/button';
 import { toast } from '@/hooks/use-toast';
 import { useAccess } from '@/hooks/useAccess';
 import { RevenueStats } from '@/components/admin/RevenueStats';
