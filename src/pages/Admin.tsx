@@ -70,6 +70,7 @@ const Admin = () => {
   const [progressions, setProgressions] = useState<ProgressionRow[]>([]);
   const [modules, setModules] = useState<ModuleRow[]>([]);
   const [avgScore, setAvgScore] = useState(0);
+  const [passeports, setPasseports] = useState<Array<{ id: string; numero: number; nom: string; regime_fiscal: string; plan_minimum: string; is_active: boolean; ordre: number }>>([]);
 
   // Access guard
   useEffect(() => {
