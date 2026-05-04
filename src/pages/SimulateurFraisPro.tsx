@@ -318,32 +318,22 @@ export default function SimulateurFraisPro() {
   const totalArrondi = Math.round(total);
 
   return (
-    <div className="min-h-screen bg-muted/30">
-      <header className="bg-[#2D1B4E] text-white">
-        <div className="container mx-auto max-w-3xl px-4 py-8 sm:py-10">
-          <div className="flex items-center gap-3">
-            <span className="text-3xl sm:text-4xl" aria-hidden>🧾</span>
-            <div>
-              <h1 className="font-heading text-2xl sm:text-3xl font-bold text-white">
-                Simulateur de frais
-              </h1>
-              <p className="text-sm sm:text-base text-white/80 mt-1">
-                Estimez vos frais réels professionnels — outil pédagogique
-              </p>
-            </div>
-          </div>
-        </div>
-      </header>
+    <div className="space-y-6">
+      <div>
+        <h1 className="font-display text-4xl md:text-5xl text-foreground">
+          Simulateur de <em className="accent-serif">frais réels pro</em>
+        </h1>
+        <p className="mt-2 text-muted-foreground">
+          Estimez vos frais réels professionnels — outil pédagogique. Barèmes applicables aux revenus {FISCAL_YEAR}.
+        </p>
+      </div>
 
-      <div className="container mx-auto max-w-7xl px-4 py-6 sm:py-8 space-y-6">
-        <div className="flex gap-3 rounded-lg border border-blue-200 bg-blue-50 p-4 text-sm text-blue-900">
-          <Info className="h-5 w-5 shrink-0 mt-0.5" />
-          <p>
-            Cet outil estime à titre pédagogique le montant de vos frais réels. Il ne se substitue
-            pas à votre déclaration officielle sur impots.gouv.fr ni à l'avis d'un professionnel
-            du chiffre. Les barèmes utilisés sont ceux applicables aux revenus {FISCAL_YEAR}.
-          </p>
-        </div>
+      <div className="rounded-lg bg-yellow-vivid/15 border border-yellow-vivid/30 p-4 text-sm text-foreground">
+        <span className="font-semibold">⚠️ Estimation pédagogique.</span>{" "}
+        Non opposable à la DGFIP. Pour votre déclaration officielle, rendez-vous sur impots.gouv.fr ou consultez un professionnel du chiffre.
+      </div>
+
+      <div className="space-y-6">
 
 
         {constantsLoading && (
