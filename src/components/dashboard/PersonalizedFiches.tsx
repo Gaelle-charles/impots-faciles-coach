@@ -12,27 +12,27 @@ import {
   Mountain, Map as MapIcon, Building2, Sparkle, type LucideIcon,
 } from 'lucide-react';
 
-// Catégories métiers : icône + libellé lisible
-const METIER_CATEGORIES: Record<string, { label: string; icon: LucideIcon }> = {
-  culture_creation: { label: 'Culture & création', icon: Palette },
-  education_asso: { label: 'Éducation & associatif', icon: GraduationCap },
-  liberaux_cadres: { label: 'Libéraux & cadres', icon: Scale },
-  manuels_terrain: { label: 'Manuels & terrain', icon: Hammer },
-  mobilite_specifiques: { label: 'Mobilité & spécifiques', icon: Plane },
-  sante_soin: { label: 'Santé & soin', icon: Stethoscope },
-  Autres: { label: 'Autres', icon: MoreHorizontal },
+// Catégories métiers : icône + libellé lisible + description (tooltip)
+const METIER_CATEGORIES: Record<string, { label: string; icon: LucideIcon; description: string }> = {
+  culture_creation: { label: 'Culture & création', icon: Palette, description: "Métiers artistiques et créatifs : artistes-auteurs, artisans d'art, designers, journalistes, photographes." },
+  education_asso: { label: 'Éducation & associatif', icon: GraduationCap, description: "Enseignement, formation, recherche et secteur associatif ou de l'économie sociale et solidaire." },
+  liberaux_cadres: { label: 'Libéraux & cadres', icon: Scale, description: "Professions libérales (avocats, experts-comptables, consultants) et cadres salariés du tertiaire." },
+  manuels_terrain: { label: 'Manuels & terrain', icon: Hammer, description: "Métiers du bâtiment, de l'artisanat, de l'industrie et des services techniques sur le terrain." },
+  mobilite_specifiques: { label: 'Mobilité & spécifiques', icon: Plane, description: "Métiers liés à la mobilité (transport, voyage) et situations professionnelles particulières." },
+  sante_soin: { label: 'Santé & soin', icon: Stethoscope, description: "Professionnels de santé, paramédicaux et métiers du soin à la personne." },
+  Autres: { label: 'Autres', icon: MoreHorizontal, description: 'Autres métiers non classés dans les catégories ci-dessus.' },
 };
 
-// Zones pays : icône + libellé
-const PAYS_ZONES: Record<string, { label: string; icon: LucideIcon }> = {
-  Afrique: { label: 'Afrique', icon: Mountain },
-  Amériques: { label: 'Amériques', icon: MapIcon },
-  Asie: { label: 'Asie', icon: Globe },
-  Europe: { label: 'Europe', icon: Building2 },
-  'Moyen-Orient': { label: 'Moyen-Orient', icon: MapIcon },
-  Océanie: { label: 'Océanie', icon: Globe },
-  special: { label: 'Régimes spéciaux', icon: Sparkle },
-  Autres: { label: 'Autres', icon: MoreHorizontal },
+// Zones pays : icône + libellé + description (tooltip)
+const PAYS_ZONES: Record<string, { label: string; icon: LucideIcon; description: string }> = {
+  Afrique: { label: 'Afrique', icon: Mountain, description: 'Pays du continent africain et du Maghreb.' },
+  Amériques: { label: 'Amériques', icon: MapIcon, description: "Amérique du Nord, Amérique latine et Caraïbes." },
+  Asie: { label: 'Asie', icon: Globe, description: "Pays d'Asie de l'Est, du Sud-Est et d'Asie centrale." },
+  Europe: { label: 'Europe', icon: Building2, description: "Pays de l'Union européenne et du reste du continent européen." },
+  'Moyen-Orient': { label: 'Moyen-Orient', icon: MapIcon, description: "Pays du Moyen-Orient et du Golfe." },
+  Océanie: { label: 'Océanie', icon: Globe, description: 'Australie, Nouvelle-Zélande et îles du Pacifique.' },
+  special: { label: 'Régimes spéciaux', icon: Sparkle, description: 'Régimes fiscaux particuliers et situations internationales spécifiques.' },
+  Autres: { label: 'Autres', icon: MoreHorizontal, description: 'Autres zones non classées.' },
 };
 import type { Tables } from '@/integrations/supabase/types';
 import { cn } from '@/lib/utils';
