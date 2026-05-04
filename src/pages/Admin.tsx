@@ -90,12 +90,14 @@ const Admin = () => {
 
     const init = async () => {
       setLoading(true);
-      const [profRes, progRes, modRes, resRes] = await Promise.all([
+      const [profRes, progRes, modRes, resRes, passRes] = await Promise.all([
         supabase.from('profiles').select('prenom, nom, email, plan, created_at, role, is_active, date_paiement'),
         supabase.from('progressions').select('module_id, completion_date, user_id, created_at'),
         supabase.from('modules').select('id, titre, order').order('order', { ascending: true }),
         supabase.from('resultat_quiz').select('pourcentage'),
+        (supabase as any).from('passeports_fiscaux').select('id, numero, nom, regime_fiscal, plan_minimum, is_active, ordre').order('ordre', { ascending: true }),
       ]);
+      setPasseports(passRes.data ?? []);
 
       setProfiles(profRes.data ?? []);
       setProgressions(progRes.data ?? []);
