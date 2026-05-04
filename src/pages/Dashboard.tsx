@@ -245,8 +245,7 @@ const Dashboard = () => {
         </Link>
 
         {/* Mes simulateurs */}
-        <Link
-          to="/mes-simulateurs"
+        <div
           className="group relative overflow-hidden rounded-3xl p-7 md:p-8 flex flex-col transition-all hover:-translate-y-1 hover:shadow-xl"
           style={{ background: 'hsl(var(--rose-light))' }}
         >
@@ -259,12 +258,19 @@ const Dashboard = () => {
           <p className="mt-2 text-sm text-muted-foreground leading-relaxed flex-1">
             12 outils interactifs pour estimer votre impôt, comparer plusieurs scénarios et anticiper vos choix fiscaux sans formules à connaître.
           </p>
-          <div className="mt-5 flex items-center justify-end text-sm">
-            <span className="inline-flex items-center gap-1 font-semibold text-primary group-hover:gap-2 transition-all">
+          <div className="mt-5 flex flex-wrap gap-3">
+            <Button onClick={() => navigate('/mes-simulateurs')} className="gap-2">
               Lancer un simulateur <ArrowRight className="h-4 w-4" />
-            </span>
+            </Button>
+            <Button
+              variant="outline"
+              onClick={() => navigate('/simulateur-frais-pro')}
+              className="gap-2 bg-background/60"
+            >
+              Simulateur de frais complet
+            </Button>
           </div>
-        </Link>
+        </div>
 
         {/* Mes recommandations — don sur impôt */}
         <Link
