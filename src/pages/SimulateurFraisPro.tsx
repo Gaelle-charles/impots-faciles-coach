@@ -524,6 +524,71 @@ export default function SimulateurFraisPro() {
                               <Plus className="h-4 w-4" />
                               Ajouter une ligne
                             </Button>
+
+                            {constants && lingeLignes.some((l) => l.nbPieces > 0 && l.tarifPressing > 0 && l.nbLavages > 0) && (
+                              <div className="rounded-md border border-border bg-muted/30 p-3 space-y-2">
+                                <p className="text-sm font-medium">Récapitulatif détaillé</p>
+                                <div className="overflow-x-auto">
+                                  <table className="w-full text-xs">
+                                    <thead>
+                                      <tr className="border-b text-left text-muted-foreground">
+                                        <th className="py-2 pr-2 font-medium">Vêtement</th>
+                                        <th className="py-2 px-2 font-medium text-right">Base pressing</th>
+                                        <th className="py-2 px-2 font-medium text-right">Décote</th>
+                                        <th className="py-2 pl-2 font-medium text-right">Lavage à domicile</th>
+                                      </tr>
+                                    </thead>
+                                    <tbody>
+                                      {lingeLignes.map((l, i) => {
+                                        if (!l.nbPieces || !l.tarifPressing || !l.nbLavages) return null;
+                                        const base = l.nbPieces * l.tarifPressing * l.nbLavages;
+                                        const decotePct = constants.blanchissage_decote_domicile;
+                                        const decoteMontant = base * (decotePct / 100);
+                                        const final = base - decoteMontant;
+                                        return (
+                                          <tr key={i} className="border-b last:border-0">
+                                            <td className="py-2 pr-2">
+                                              {l.vetement || `Ligne ${i + 1}`}
+                                              <span className="block text-[10px] text-muted-foreground">
+                                                {l.nbPieces} × {l.tarifPressing.toFixed(2)} € × {l.nbLavages} lavages
+                                              </span>
+                                            </td>
+                                            <td className="py-2 px-2 text-right tabular-nums">{base.toFixed(2)} €</td>
+                                            <td className="py-2 px-2 text-right tabular-nums text-muted-foreground">
+                                              −{decotePct}% (−{decoteMontant.toFixed(2)} €)
+                                            </td>
+                                            <td className="py-2 pl-2 text-right tabular-nums font-medium">
+                                              {final.toFixed(2)} €
+                                            </td>
+                                          </tr>
+                                        );
+                                      })}
+                                    </tbody>
+                                    <tfoot>
+                                      <tr>
+                                        <td colSpan={3} className="py-2 pr-2 text-right font-medium">
+                                          Total déductible
+                                        </td>
+                                        <td className="py-2 pl-2 text-right tabular-nums font-semibold">
+                                          {lingeLignes
+                                            .reduce(
+                                              (s, l) =>
+                                                s +
+                                                l.nbPieces *
+                                                  l.tarifPressing *
+                                                  l.nbLavages *
+                                                  (1 - constants.blanchissage_decote_domicile / 100),
+                                              0,
+                                            )
+                                            .toFixed(2)}{" "}
+                                          €
+                                        </td>
+                                      </tr>
+                                    </tfoot>
+                                  </table>
+                                </div>
+                              </div>
+                            )}
                           </div>
                         )}
                         {constants && (
