@@ -172,7 +172,7 @@ export default function SimulateurFraisPro() {
     nbRepasSansJustif: 0,
     nbRepasAvecJustif: 0,
     coutMoyenRepas: 0,
-    nbSemainesRepas: 47,
+    nbJoursRepas: 220,
     modeBlanchissement: "factures",
     totalFacturesPressing: 0,
     surfaceBureau: 0,
@@ -242,12 +242,12 @@ export default function SimulateurFraisPro() {
     const valeurFoyer = c.repas_valeur_foyer;
     const plafond = c.repas_plafond_jour;
     const deductionMax = plafond - valeurFoyer;
-    const dedSansJustif = form.nbRepasSansJustif * form.nbSemainesRepas * valeurFoyer;
+    const dedSansJustif = form.nbRepasSansJustif * form.nbJoursRepas * valeurFoyer;
     const dedParRepasAvecJustif = Math.max(
       0,
       Math.min(form.coutMoyenRepas - valeurFoyer, deductionMax),
     );
-    const dedAvecJustif = dedParRepasAvecJustif * form.nbRepasAvecJustif * form.nbSemainesRepas;
+    const dedAvecJustif = dedParRepasAvecJustif * form.nbRepasAvecJustif * form.nbJoursRepas;
     return dedSansJustif + dedAvecJustif;
   };
 
@@ -489,14 +489,14 @@ export default function SimulateurFraisPro() {
                       <div className="space-y-4">
                         <NumberInput
                           id="nbRepasSansJustif"
-                          label="Nombre de repas par semaine pris à l'extérieur SANS justificatif (cantine d'entreprise par ex.)"
+                          label="Nombre de repas par jour pris à l'extérieur SANS justificatif (cantine d'entreprise par ex.)"
                           hint="Repas sans facture conservée."
                           value={form.nbRepasSansJustif}
                           onChange={(v) => setField("nbRepasSansJustif", v)}
                         />
                         <NumberInput
                           id="nbRepasAvecJustif"
-                          label="Nombre de repas par semaine pris à l'extérieur AVEC justificatif (factures conservées)"
+                          label="Nombre de repas par jour pris à l'extérieur AVEC justificatif (factures conservées)"
                           hint="Repas dont vous avez gardé les tickets."
                           value={form.nbRepasAvecJustif}
                           onChange={(v) => setField("nbRepasAvecJustif", v)}
@@ -508,11 +508,11 @@ export default function SimulateurFraisPro() {
                           onChange={(v) => setField("coutMoyenRepas", v)}
                         />
                         <NumberInput
-                          id="nbSemainesRepas"
-                          label="Nombre de semaines travaillées dans l'année"
-                          hint="En général entre 44 et 47 semaines."
-                          value={form.nbSemainesRepas}
-                          onChange={(v) => setField("nbSemainesRepas", v)}
+                          id="nbJoursRepas"
+                          label="Nombre de jours travaillés dans l'année"
+                          hint="En général entre 210 et 230 jours."
+                          value={form.nbJoursRepas}
+                          onChange={(v) => setField("nbJoursRepas", v)}
                         />
                         {constants && (
                           <p className="text-xs text-muted-foreground">
