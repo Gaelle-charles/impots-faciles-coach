@@ -32,14 +32,14 @@ interface FicheCardItem {
 const FicheCard = ({ item, type }: { item: FicheCardItem; type: 'profil' | 'metier' | 'pays' }) => {
   const navigate = useNavigate();
   return (
-    <Card className="border-border bg-background shadow-sm">
-      <CardContent className="p-5 space-y-3">
+    <Card className="border border-border bg-background rounded-3xl shadow-none hover:-translate-y-1 hover:shadow-xl transition-all">
+      <CardContent className="p-7 space-y-4">
         <div className="flex items-start gap-3">
           <span className="text-3xl shrink-0" aria-hidden>
             {item.icone || '📄'}
           </span>
           <div className="flex-1 min-w-0">
-            <h4 className="font-heading text-base font-semibold text-foreground">{item.nom}</h4>
+            <h4 className="font-display text-xl text-foreground leading-tight">{item.nom}</h4>
             {item.description && (
               <p className="mt-1 text-sm text-muted-foreground line-clamp-2">{item.description}</p>
             )}
