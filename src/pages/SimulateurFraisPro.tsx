@@ -322,18 +322,21 @@ export default function SimulateurFraisPro() {
                       <NumberInput
                         id="surfaceBureau"
                         label="Surface du bureau professionnel (m²)"
+                        hint="Surface du local utilisé exclusivement comme bureau."
                         value={form.surfaceBureau}
                         onChange={(v) => setField("surfaceBureau", v)}
                       />
                       <NumberInput
                         id="surfaceLogement"
                         label="Surface totale du logement (m²)"
+                        hint="Surface totale habitable de votre logement."
                         value={form.surfaceLogement}
                         onChange={(v) => setField("surfaceLogement", v)}
                       />
                       <NumberInput
                         id="chargesAnnuelles"
                         label="Charges annuelles du logement — loyer + charges (€)"
+                        hint="Loyer annuel + charges (eau, électricité, chauffage…)."
                         value={form.chargesAnnuelles}
                         onChange={(v) => setField("chargesAnnuelles", v)}
                       />
@@ -362,18 +365,21 @@ export default function SimulateurFraisPro() {
                       <NumberInput
                         id="nbRepasInf"
                         label="Nombre de repas par semaine inférieurs ou égaux à 5,35 €"
+                        hint="Repas dont vous estimez le coût ≤ au barème fiscal."
                         value={form.nbRepasInf}
                         onChange={(v) => setField("nbRepasInf", v)}
                       />
                       <NumberInput
                         id="nbRepasSup"
                         label="Nombre de repas par semaine supérieurs à 5,35 €"
+                        hint="Repas dont le coût dépasse le barème."
                         value={form.nbRepasSup}
                         onChange={(v) => setField("nbRepasSup", v)}
                       />
                       <NumberInput
                         id="montantRepasSup"
                         label="Montant moyen par repas supérieur à 5,35 € (en €)"
+                        hint="Coût moyen total payé pour ces repas plus chers."
                         value={form.montantRepasSup}
                         onChange={(v) => setField("montantRepasSup", v)}
                       />
@@ -389,12 +395,14 @@ export default function SimulateurFraisPro() {
                       <NumberInput
                         id="kgSemaine"
                         label="Nombre de kg de linge professionnel par semaine"
+                        hint="Poids hebdomadaire de votre linge de travail nettoyé."
                         value={form.kgSemaine}
                         onChange={(v) => setField("kgSemaine", v)}
                       />
                       <NumberInput
                         id="nbSemaines"
                         label="Nombre de semaines travaillées dans l'année"
+                        hint="Hors congés payés. En général entre 44 et 47 semaines."
                         value={form.nbSemaines}
                         onChange={(v) => setField("nbSemaines", v)}
                       />
@@ -470,18 +478,21 @@ export default function SimulateurFraisPro() {
                       <NumberInput
                         id="fraisAstreinte"
                         label="Frais d'astreinte (€ par jour)"
+                        hint="Forfait journalier admis par l'administration (par défaut 49 €)."
                         value={form.fraisAstreinte}
                         onChange={(v) => setField("fraisAstreinte", v)}
                       />
                       <NumberInput
                         id="nbJoursAstreinte"
                         label="Nombre de jours d'astreinte dans l'année"
+                        hint="Total de jours d'astreinte effectués sur l'année."
                         value={form.nbJoursAstreinte}
                         onChange={(v) => setField("nbJoursAstreinte", v)}
                       />
                       <NumberInput
                         id="indemAstreinte"
                         label="Indemnité d'astreinte reçue de l'employeur (€)"
+                        hint="Montant total versé par l'employeur pour ces astreintes."
                         value={form.indemAstreinte}
                         onChange={(v) => setField("indemAstreinte", v)}
                       />
