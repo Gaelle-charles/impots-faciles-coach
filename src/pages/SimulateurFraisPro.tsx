@@ -581,10 +581,12 @@ export default function SimulateurFraisPro() {
                                   <Input
                                     id={`nbp-${i}`}
                                     type="number"
+                                    step="1"
                                     min={0}
+                                    inputMode="numeric"
                                     value={ligne.nbPieces || ""}
                                     onChange={(e) =>
-                                      updateLigneLinge(i, { nbPieces: Number(e.target.value) || 0 })
+                                      updateLigneLinge(i, { nbPieces: Math.max(0, Math.floor(Number(e.target.value) || 0)) })
                                     }
                                   />
                                 </div>
@@ -611,10 +613,12 @@ export default function SimulateurFraisPro() {
                                   <Input
                                     id={`lav-${i}`}
                                     type="number"
+                                    step="1"
                                     min={0}
+                                    inputMode="numeric"
                                     value={ligne.nbLavages || ""}
                                     onChange={(e) =>
-                                      updateLigneLinge(i, { nbLavages: Number(e.target.value) || 0 })
+                                      updateLigneLinge(i, { nbLavages: Math.max(0, Math.floor(Number(e.target.value) || 0)) })
                                     }
                                   />
                                 </div>
