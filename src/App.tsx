@@ -47,6 +47,7 @@ import AdminStats from "./pages/AdminStats";
 import AdminQuiz from "./pages/AdminQuiz";
 import AdminMetiers from "./pages/AdminMetiers";
 import AdminFichesProfils from "./pages/AdminFichesProfils";
+import AdminPasseportsFiscaux from "./pages/AdminPasseportsFiscaux";
 import AdminPays from "./pages/AdminPays";
 import AdminContenus from "./pages/AdminContenus";
 import AdminModuleContenus from "./pages/AdminModuleContenus";
