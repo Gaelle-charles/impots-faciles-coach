@@ -155,6 +155,11 @@ export default function SimulateurFraisPro() {
     if (activeStep === 3) {
       setSections((s) => ({ ...s, sectionD: sectionDLive }));
     }
+    if (activeStep === 4) {
+      const fraisBruts = form.fraisAstreinte * form.nbJoursAstreinte;
+      const sectionE = Math.max(0, fraisBruts - form.indemAstreinte);
+      setSections((s) => ({ ...s, sectionE }));
+    }
     if (activeStep < STEP_TITLES.length - 1) {
       setActiveStep(activeStep + 1);
       setShowResults(false);
