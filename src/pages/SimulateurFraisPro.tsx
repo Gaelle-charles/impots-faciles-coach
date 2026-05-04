@@ -214,6 +214,13 @@ export default function SimulateurFraisPro() {
       );
       setSections((s) => ({ ...s, sectionF }));
     }
+    if (activeStep === 6) {
+      const sectionG = STEP7_FIELDS.reduce(
+        (sum, f) => sum + (parseFloat(String(form[f.name])) || 0),
+        0,
+      );
+      setSections((s) => ({ ...s, sectionG }));
+    }
     if (activeStep < STEP_TITLES.length - 1) {
       setActiveStep(activeStep + 1);
       setShowResults(false);
