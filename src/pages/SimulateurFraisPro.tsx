@@ -816,7 +816,7 @@ export default function SimulateurFraisPro() {
                 <div className="flex flex-col sm:flex-row justify-center gap-3 pt-2">
                   <Button
                     variant="outline"
-                    onClick={() => navigate("/simulateurs/ir-bareme")}
+                    onClick={() => navigate("/simulateur/ir-bareme")}
                     className="border-[#2D1B4E] text-[#2D1B4E] hover:bg-[#2D1B4E] hover:text-white"
                   >
                     → Estimer mon impôt avec le simulateur IR Barème
