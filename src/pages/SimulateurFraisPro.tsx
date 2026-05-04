@@ -3,7 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Check, Plus, Trash2 } from "lucide-react";
+import { Check, ChevronDown, Plus, Trash2, RefreshCw, Receipt } from "lucide-react";
 
 type Article = { description: string; prix: number };
 
@@ -40,23 +40,23 @@ type FormState = {
   internetMobile: number;
 };
 
-const STEP6_FIELDS: { name: keyof FormState; label: string }[] = [
-  { name: "tel", label: "Frais de téléphone professionnel (€/an)" },
-  { name: "doubleResidence", label: "Double résidence (€/an)" },
-  { name: "demenagementPro", label: "Déménagement professionnel (€)" },
-  { name: "interetsEmprunt", label: "Intérêts d'emprunt professionnels (€/an)" },
-  { name: "cotisations", label: "Cotisations professionnelles (€/an)" },
-  { name: "forfaitInternet", label: "Forfait internet (€/an)" },
-  { name: "fraisBancaire", label: "Frais bancaires professionnels (€/an)" },
-  { name: "achatLogiciel", label: "Achat de logiciels (€)" },
-  { name: "autresFrais", label: "Autres frais (€)" },
+const STEP6_FIELDS: { name: keyof FormState; label: string; hint?: string }[] = [
+  { name: "tel", label: "Frais de téléphone professionnel (€/an)", hint: "Part professionnelle de votre forfait mobile." },
+  { name: "doubleResidence", label: "Double résidence (€/an)", hint: "Loyer + charges d'un second logement pour raison professionnelle." },
+  { name: "demenagementPro", label: "Déménagement professionnel (€)", hint: "Frais réels engagés lors d'un déménagement imposé par l'employeur." },
+  { name: "interetsEmprunt", label: "Intérêts d'emprunt professionnels (€/an)", hint: "Intérêts payés sur un prêt servant à acquérir un bien professionnel." },
+  { name: "cotisations", label: "Cotisations professionnelles (€/an)", hint: "Cotisations syndicales, ordres professionnels, etc." },
+  { name: "forfaitInternet", label: "Forfait internet (€/an)", hint: "Quote-part d'usage professionnel de votre abonnement internet." },
+  { name: "fraisBancaire", label: "Frais bancaires professionnels (€/an)", hint: "Frais d'un compte dédié à l'activité professionnelle." },
+  { name: "achatLogiciel", label: "Achat de logiciels (€)", hint: "Logiciels nécessaires à l'exercice de votre activité." },
+  { name: "autresFrais", label: "Autres frais (€)", hint: "Tout autre frais professionnel justifiable." },
 ];
 
-const STEP7_FIELDS: { name: keyof FormState; label: string }[] = [
-  { name: "distance", label: "Kilométrage domicile-travail (km/an)" },
-  { name: "surcout", label: "Surcoût de la vie en DOM (€/an)" },
-  { name: "interile", label: "Indemnité d'interîle reçue (€/an)" },
-  { name: "internetMobile", label: "Forfait internet + mobile (€/an)" },
+const STEP7_FIELDS: { name: keyof FormState; label: string; hint?: string }[] = [
+  { name: "distance", label: "Kilométrage domicile-travail (km/an)", hint: "Distance annuelle parcourue entre votre domicile et votre lieu de travail." },
+  { name: "surcout", label: "Surcoût de la vie en DOM (€/an)", hint: "Différentiel de coût de la vie estimé en outre-mer." },
+  { name: "interile", label: "Indemnité d'interîle reçue (€/an)", hint: "Indemnité versée pour vos déplacements entre îles." },
+  { name: "internetMobile", label: "Forfait internet + mobile (€/an)", hint: "Coût annuel de vos forfaits télécoms professionnels." },
 ];
 
 const BAREME_REPAS = 5.35;
@@ -87,14 +87,16 @@ const NumberInput = ({
   label,
   value,
   onChange,
+  hint,
 }: {
   id: string;
   label: string;
   value: number;
   onChange: (n: number) => void;
+  hint?: string;
 }) => (
   <div className="space-y-1.5">
-    <Label htmlFor={id}>{label}</Label>
+    <Label htmlFor={id} className="text-sm">{label}</Label>
     <Input
       id={id}
       type="number"
@@ -105,6 +107,7 @@ const NumberInput = ({
       onChange={(e) => onChange(Number(e.target.value) || 0)}
       placeholder="0"
     />
+    {hint ? <p className="text-xs text-muted-foreground">{hint}</p> : null}
   </div>
 );
 
@@ -250,21 +253,29 @@ export default function SimulateurFraisPro() {
   const totalArrondi = Math.round(total);
 
   return (
-    <div className="container mx-auto max-w-3xl py-8 px-4 space-y-8">
-      <header className="space-y-2">
-        <h1 className="font-heading text-3xl font-bold text-foreground">
-          Simulateur de frais
-        </h1>
-        <p className="text-muted-foreground">
-          Estimez facilement vos frais professionnels déductibles des impôts
-        </p>
+    <div className="min-h-screen bg-muted/30">
+      <header className="bg-[#2D1B4E] text-white">
+        <div className="container mx-auto max-w-3xl px-4 py-8 sm:py-10">
+          <div className="flex items-center gap-3">
+            <span className="text-3xl sm:text-4xl" aria-hidden>🧾</span>
+            <div>
+              <h1 className="font-heading text-2xl sm:text-3xl font-bold text-white">
+                Simulateur de frais
+              </h1>
+              <p className="text-sm sm:text-base text-white/80 mt-1">
+                Estimez facilement vos frais professionnels déductibles des impôts
+              </p>
+            </div>
+          </div>
+        </div>
       </header>
 
-      <p className="text-sm text-foreground/80">
-        Cet outil vous permet de calculer vos frais réels professionnels pour
-        votre déclaration d'impôts. Remplissez les informations ci-dessous pour
-        obtenir une estimation de vos frais déductibles.
-      </p>
+      <div className="container mx-auto max-w-3xl px-4 py-6 sm:py-8 space-y-6">
+        <p className="text-sm text-foreground/80">
+          Cet outil vous permet de calculer vos frais réels professionnels pour
+          votre déclaration d'impôts. Remplissez les informations ci-dessous pour
+          obtenir une estimation de vos frais déductibles.
+        </p>
 
       <div className="space-y-3">
         {STEP_TITLES.map((title, idx) => {
@@ -273,24 +284,29 @@ export default function SimulateurFraisPro() {
           return (
             <Card
               key={idx}
-              className={isActive ? "border-primary" : "border-border"}
+              className={`transition-shadow ${
+                isActive
+                  ? "border-[#2D1B4E] shadow-md"
+                  : "border-border hover:shadow-sm"
+              }`}
             >
               <CardHeader
                 className="cursor-pointer flex-row items-center gap-3 space-y-0 py-4"
                 onClick={() => setActiveStep(idx)}
               >
                 <div
-                  className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-sm font-bold ${
+                  className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-sm font-bold transition-colors ${
                     isDone
-                      ? "bg-primary text-primary-foreground"
+                      ? "bg-green-500 text-white"
                       : isActive
-                      ? "bg-primary text-primary-foreground"
+                      ? "bg-[#2D1B4E] text-white"
                       : "bg-muted text-muted-foreground"
                   }`}
+                  aria-label={`Étape ${idx + 1}`}
                 >
-                  {isDone ? <Check className="h-4 w-4" /> : idx + 1}
+                  {isDone ? <Check className="h-5 w-5" /> : idx + 1}
                 </div>
-                <CardTitle className="text-base font-semibold">
+                <CardTitle className="text-sm sm:text-base font-semibold flex-1">
                   {title}
                 </CardTitle>
               </CardHeader>
@@ -306,18 +322,21 @@ export default function SimulateurFraisPro() {
                       <NumberInput
                         id="surfaceBureau"
                         label="Surface du bureau professionnel (m²)"
+                        hint="Surface du local utilisé exclusivement comme bureau."
                         value={form.surfaceBureau}
                         onChange={(v) => setField("surfaceBureau", v)}
                       />
                       <NumberInput
                         id="surfaceLogement"
                         label="Surface totale du logement (m²)"
+                        hint="Surface totale habitable de votre logement."
                         value={form.surfaceLogement}
                         onChange={(v) => setField("surfaceLogement", v)}
                       />
                       <NumberInput
                         id="chargesAnnuelles"
                         label="Charges annuelles du logement — loyer + charges (€)"
+                        hint="Loyer annuel + charges (eau, électricité, chauffage…)."
                         value={form.chargesAnnuelles}
                         onChange={(v) => setField("chargesAnnuelles", v)}
                       />
@@ -346,18 +365,21 @@ export default function SimulateurFraisPro() {
                       <NumberInput
                         id="nbRepasInf"
                         label="Nombre de repas par semaine inférieurs ou égaux à 5,35 €"
+                        hint="Repas dont vous estimez le coût ≤ au barème fiscal."
                         value={form.nbRepasInf}
                         onChange={(v) => setField("nbRepasInf", v)}
                       />
                       <NumberInput
                         id="nbRepasSup"
                         label="Nombre de repas par semaine supérieurs à 5,35 €"
+                        hint="Repas dont le coût dépasse le barème."
                         value={form.nbRepasSup}
                         onChange={(v) => setField("nbRepasSup", v)}
                       />
                       <NumberInput
                         id="montantRepasSup"
                         label="Montant moyen par repas supérieur à 5,35 € (en €)"
+                        hint="Coût moyen total payé pour ces repas plus chers."
                         value={form.montantRepasSup}
                         onChange={(v) => setField("montantRepasSup", v)}
                       />
@@ -373,12 +395,14 @@ export default function SimulateurFraisPro() {
                       <NumberInput
                         id="kgSemaine"
                         label="Nombre de kg de linge professionnel par semaine"
+                        hint="Poids hebdomadaire de votre linge de travail nettoyé."
                         value={form.kgSemaine}
                         onChange={(v) => setField("kgSemaine", v)}
                       />
                       <NumberInput
                         id="nbSemaines"
                         label="Nombre de semaines travaillées dans l'année"
+                        hint="Hors congés payés. En général entre 44 et 47 semaines."
                         value={form.nbSemaines}
                         onChange={(v) => setField("nbSemaines", v)}
                       />
@@ -454,18 +478,21 @@ export default function SimulateurFraisPro() {
                       <NumberInput
                         id="fraisAstreinte"
                         label="Frais d'astreinte (€ par jour)"
+                        hint="Forfait journalier admis par l'administration (par défaut 49 €)."
                         value={form.fraisAstreinte}
                         onChange={(v) => setField("fraisAstreinte", v)}
                       />
                       <NumberInput
                         id="nbJoursAstreinte"
                         label="Nombre de jours d'astreinte dans l'année"
+                        hint="Total de jours d'astreinte effectués sur l'année."
                         value={form.nbJoursAstreinte}
                         onChange={(v) => setField("nbJoursAstreinte", v)}
                       />
                       <NumberInput
                         id="indemAstreinte"
                         label="Indemnité d'astreinte reçue de l'employeur (€)"
+                        hint="Montant total versé par l'employeur pour ces astreintes."
                         value={form.indemAstreinte}
                         onChange={(v) => setField("indemAstreinte", v)}
                       />
@@ -484,6 +511,7 @@ export default function SimulateurFraisPro() {
                             key={f.name}
                             id={f.name}
                             label={f.label}
+                            hint={f.hint}
                             value={form[f.name] as number}
                             onChange={(v) => setField(f.name, v as never)}
                           />
@@ -501,6 +529,7 @@ export default function SimulateurFraisPro() {
                             key={f.name}
                             id={f.name}
                             label={f.label}
+                            hint={f.hint}
                             value={form[f.name] as number}
                             onChange={(v) => setField(f.name, v as never)}
                           />
@@ -513,21 +542,31 @@ export default function SimulateurFraisPro() {
                     </p>
                   )}
 
-                  <div className="flex justify-between gap-3 pt-2">
+                  <div className="flex flex-col-reverse sm:flex-row sm:justify-between gap-3 pt-2">
                     {idx > 0 ? (
-                      <Button variant="outline" onClick={handleBack}>
+                      <Button variant="outline" onClick={handleBack} className="w-full sm:w-auto">
                         Retour
                       </Button>
                     ) : (
-                      <span />
+                      <span className="hidden sm:block" />
                     )}
-                    <Button onClick={handleNext}>
-                      {idx === 0
-                        ? "Commencer"
-                        : idx === STEP_TITLES.length - 1
-                        ? "Calculer"
-                        : "Suivant"}
-                    </Button>
+                    {idx === STEP_TITLES.length - 1 ? (
+                      <Button
+                        onClick={handleNext}
+                        className="w-full sm:w-auto bg-[#F9A825] hover:bg-[#F57F17] text-[#2D1B4E] font-bold"
+                      >
+                        <Receipt className="h-4 w-4" />
+                        Calculer
+                      </Button>
+                    ) : (
+                      <Button
+                        onClick={handleNext}
+                        className="w-full sm:w-auto bg-[#2D1B4E] hover:bg-[#3d2466] text-white"
+                      >
+                        {idx === 0 ? "Commencer" : "Suivant"}
+                        <ChevronDown className="h-4 w-4" />
+                      </Button>
+                    )}
                   </div>
                 </CardContent>
               )}
@@ -548,40 +587,44 @@ export default function SimulateurFraisPro() {
         ].filter((r) => r.value > 0);
 
         return (
-          <Card className="border-primary">
+          <Card className="border-2 border-[#2D1B4E]/30 bg-[#FFF8E7] rounded-2xl shadow-lg">
             <CardHeader>
-              <CardTitle>Résultat de votre simulation</CardTitle>
+              <CardTitle className="text-xl sm:text-2xl text-[#2D1B4E]">
+                Résultat de votre simulation
+              </CardTitle>
             </CardHeader>
             <CardContent className="space-y-6">
-              <div className="text-center space-y-3 py-4">
-                <p className="text-sm text-foreground">
+              <div className="rounded-xl bg-[#2D1B4E] text-white text-center px-4 py-8 shadow-inner">
+                <p className="text-sm sm:text-base text-white/80">
                   Vos frais réels professionnels pour votre déclaration d'impôt s'élèvent à :
                 </p>
-                <p className="font-heading text-5xl font-bold text-primary">
+                <p className="font-heading text-4xl sm:text-6xl font-extrabold text-[#F9E900] mt-3">
                   {totalArrondi} €
                 </p>
               </div>
 
               <div className="space-y-3">
-                <h3 className="font-semibold text-foreground">Détails de votre simulation :</h3>
-                <div className="rounded-md border border-border overflow-hidden">
+                <h3 className="font-semibold text-[#2D1B4E]">
+                  Détails de votre simulation :
+                </h3>
+                <div className="rounded-lg border border-[#2D1B4E]/20 overflow-hidden bg-white">
                   <table className="w-full text-sm">
-                    <thead className="bg-muted">
+                    <thead className="bg-[#2D1B4E]/10">
                       <tr>
-                        <th className="text-left px-4 py-2 font-medium">Catégorie</th>
-                        <th className="text-right px-4 py-2 font-medium">Montant</th>
+                        <th className="text-left px-4 py-2 font-semibold text-[#2D1B4E]">Catégorie</th>
+                        <th className="text-right px-4 py-2 font-semibold text-[#2D1B4E]">Montant</th>
                       </tr>
                     </thead>
                     <tbody>
                       {rows.map((r) => (
                         <tr key={r.label} className="border-t border-border">
                           <td className="px-4 py-2">{r.label}</td>
-                          <td className="px-4 py-2 text-right">{r.value} €</td>
+                          <td className="px-4 py-2 text-right font-medium">{r.value} €</td>
                         </tr>
                       ))}
-                      <tr className="border-t border-border bg-muted/50 font-bold">
-                        <td className="px-4 py-2">TOTAL</td>
-                        <td className="px-4 py-2 text-right text-primary">{totalArrondi} €</td>
+                      <tr className="border-t-2 border-[#2D1B4E] bg-[#F9E900]/30 font-bold">
+                        <td className="px-4 py-3 text-[#2D1B4E]">TOTAL</td>
+                        <td className="px-4 py-3 text-right text-[#2D1B4E]">{totalArrondi} €</td>
                       </tr>
                     </tbody>
                   </table>
@@ -589,7 +632,12 @@ export default function SimulateurFraisPro() {
               </div>
 
               <div className="flex justify-center pt-2">
-                <Button variant="outline" onClick={handleReset}>
+                <Button
+                  variant="outline"
+                  onClick={handleReset}
+                  className="border-[#2D1B4E] text-[#2D1B4E] hover:bg-[#2D1B4E] hover:text-white"
+                >
+                  <RefreshCw className="h-4 w-4" />
                   Recommencer la simulation
                 </Button>
               </div>
@@ -597,6 +645,7 @@ export default function SimulateurFraisPro() {
           </Card>
         );
       })()}
+      </div>
     </div>
   );
 }
