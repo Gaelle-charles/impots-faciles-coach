@@ -6,6 +6,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import {
   Lock, Sparkles, ArrowRight, Star, Briefcase, Globe, Users, FolderOpen,
   Palette, GraduationCap, Scale, Hammer, Plane, Stethoscope, MoreHorizontal,
