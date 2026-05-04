@@ -40,23 +40,23 @@ type FormState = {
   internetMobile: number;
 };
 
-const STEP6_FIELDS: { name: keyof FormState; label: string }[] = [
-  { name: "tel", label: "Frais de téléphone professionnel (€/an)" },
-  { name: "doubleResidence", label: "Double résidence (€/an)" },
-  { name: "demenagementPro", label: "Déménagement professionnel (€)" },
-  { name: "interetsEmprunt", label: "Intérêts d'emprunt professionnels (€/an)" },
-  { name: "cotisations", label: "Cotisations professionnelles (€/an)" },
-  { name: "forfaitInternet", label: "Forfait internet (€/an)" },
-  { name: "fraisBancaire", label: "Frais bancaires professionnels (€/an)" },
-  { name: "achatLogiciel", label: "Achat de logiciels (€)" },
-  { name: "autresFrais", label: "Autres frais (€)" },
+const STEP6_FIELDS: { name: keyof FormState; label: string; hint?: string }[] = [
+  { name: "tel", label: "Frais de téléphone professionnel (€/an)", hint: "Part professionnelle de votre forfait mobile." },
+  { name: "doubleResidence", label: "Double résidence (€/an)", hint: "Loyer + charges d'un second logement pour raison professionnelle." },
+  { name: "demenagementPro", label: "Déménagement professionnel (€)", hint: "Frais réels engagés lors d'un déménagement imposé par l'employeur." },
+  { name: "interetsEmprunt", label: "Intérêts d'emprunt professionnels (€/an)", hint: "Intérêts payés sur un prêt servant à acquérir un bien professionnel." },
+  { name: "cotisations", label: "Cotisations professionnelles (€/an)", hint: "Cotisations syndicales, ordres professionnels, etc." },
+  { name: "forfaitInternet", label: "Forfait internet (€/an)", hint: "Quote-part d'usage professionnel de votre abonnement internet." },
+  { name: "fraisBancaire", label: "Frais bancaires professionnels (€/an)", hint: "Frais d'un compte dédié à l'activité professionnelle." },
+  { name: "achatLogiciel", label: "Achat de logiciels (€)", hint: "Logiciels nécessaires à l'exercice de votre activité." },
+  { name: "autresFrais", label: "Autres frais (€)", hint: "Tout autre frais professionnel justifiable." },
 ];
 
-const STEP7_FIELDS: { name: keyof FormState; label: string }[] = [
-  { name: "distance", label: "Kilométrage domicile-travail (km/an)" },
-  { name: "surcout", label: "Surcoût de la vie en DOM (€/an)" },
-  { name: "interile", label: "Indemnité d'interîle reçue (€/an)" },
-  { name: "internetMobile", label: "Forfait internet + mobile (€/an)" },
+const STEP7_FIELDS: { name: keyof FormState; label: string; hint?: string }[] = [
+  { name: "distance", label: "Kilométrage domicile-travail (km/an)", hint: "Distance annuelle parcourue entre votre domicile et votre lieu de travail." },
+  { name: "surcout", label: "Surcoût de la vie en DOM (€/an)", hint: "Différentiel de coût de la vie estimé en outre-mer." },
+  { name: "interile", label: "Indemnité d'interîle reçue (€/an)", hint: "Indemnité versée pour vos déplacements entre îles." },
+  { name: "internetMobile", label: "Forfait internet + mobile (€/an)", hint: "Coût annuel de vos forfaits télécoms professionnels." },
 ];
 
 const BAREME_REPAS = 5.35;
