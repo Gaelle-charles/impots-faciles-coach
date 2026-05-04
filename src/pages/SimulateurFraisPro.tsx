@@ -30,7 +30,7 @@ type FormState = {
   nbRepasSansJustif: number;
   nbRepasAvecJustif: number;
   coutMoyenRepas: number;
-  nbSemainesRepas: number;
+  nbJoursRepas: number;
   // étape 2 — blanchissement (refonte)
   modeBlanchissement: "factures" | "domicile";
   totalFacturesPressing: number;
