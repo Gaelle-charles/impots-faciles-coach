@@ -321,10 +321,10 @@ export default function SimulateurFraisPro() {
     <div className="space-y-6">
       <div>
         <h1 className="font-display text-4xl md:text-5xl text-foreground">
-          Simulateur de <em className="accent-serif">frais réels pro</em>
+          Simulateur de <em className="accent-serif">frais réels</em>
         </h1>
         <p className="mt-2 text-muted-foreground">
-          Estimez vos frais réels professionnels — outil pédagogique. Barèmes applicables aux revenus {FISCAL_YEAR}.
+          Estimez vos frais réels — outil pédagogique. Barèmes applicables aux revenus {FISCAL_YEAR}.
         </p>
       </div>
 
