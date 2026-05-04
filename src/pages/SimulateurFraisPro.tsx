@@ -324,7 +324,7 @@ export default function SimulateurFraisPro() {
         </div>
       </header>
 
-      <div className="container mx-auto max-w-3xl px-4 py-6 sm:py-8 space-y-6">
+      <div className="container mx-auto max-w-7xl px-4 py-6 sm:py-8 space-y-6">
         <div className="flex gap-3 rounded-lg border border-blue-200 bg-blue-50 p-4 text-sm text-blue-900">
           <Info className="h-5 w-5 shrink-0 mt-0.5" />
           <p>
@@ -334,10 +334,6 @@ export default function SimulateurFraisPro() {
           </p>
         </div>
 
-        <p className="text-sm text-foreground/80">
-          Cet outil vous permet d'estimer le montant de vos frais réels à titre pédagogique.
-          Cet outil ne remplace pas votre déclaration officielle ni l'avis d'un professionnel.
-        </p>
 
         {constantsLoading && (
           <div className="flex items-center gap-2 text-sm text-muted-foreground">
@@ -351,7 +347,91 @@ export default function SimulateurFraisPro() {
           </div>
         )}
 
-        <div className="space-y-3">
+        <div className="grid gap-6 lg:grid-cols-[360px_1fr]">
+          <aside className="lg:sticky lg:top-6 self-start space-y-4">
+            {(() => {
+              const rows: { label: string; value: number }[] = [
+                { label: "Frais de repas hors domicile", value: Math.round(sections.sectionA) },
+                { label: "Frais de blanchissement", value: Math.round(sections.sectionB) },
+                { label: "Matériel professionnel", value: Math.round(sections.sectionC) },
+                { label: "Bureau à domicile", value: Math.round(sections.sectionD) },
+                { label: "Frais divers", value: Math.round(sections.sectionE) },
+                { label: "Frais kilométriques", value: Math.round(sections.sectionF) },
+              ];
+              const nonZero = rows.filter((r) => r.value > 0);
+              return (
+                <Card className="border-2 border-[#2D1B4E]/30 bg-[#FFF8E7] rounded-2xl shadow-lg">
+                  <CardHeader className="pb-3">
+                    <CardTitle className="text-base sm:text-lg text-[#2D1B4E]">
+                      {showResults ? "Résultat de votre simulation" : "Estimation en cours"}
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <div className="rounded-xl bg-[#2D1B4E] text-white text-center px-4 py-6 shadow-inner">
+                      <p className="text-xs sm:text-sm text-white/80">
+                        Total estimé de vos frais réels :
+                      </p>
+                      <p className="font-heading text-3xl sm:text-4xl font-extrabold text-[#F9E900] mt-2">
+                        {totalArrondi} €
+                      </p>
+                    </div>
+
+                    {nonZero.length > 0 ? (
+                      <div className="rounded-lg border border-[#2D1B4E]/20 overflow-hidden bg-white">
+                        <table className="w-full text-xs sm:text-sm">
+                          <tbody>
+                            {nonZero.map((r) => (
+                              <tr key={r.label} className="border-t border-border first:border-t-0">
+                                <td className="px-3 py-2 text-foreground/80">{r.label}</td>
+                                <td className="px-3 py-2 text-right font-medium tabular-nums">{r.value} €</td>
+                              </tr>
+                            ))}
+                            <tr className="border-t-2 border-[#2D1B4E] bg-[#F9E900]/30 font-bold">
+                              <td className="px-3 py-2 text-[#2D1B4E]">TOTAL</td>
+                              <td className="px-3 py-2 text-right text-[#2D1B4E] tabular-nums">{totalArrondi} €</td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    ) : (
+                      <p className="text-xs text-muted-foreground text-center italic">
+                        Remplissez les étapes à droite pour voir le détail apparaître ici.
+                      </p>
+                    )}
+
+                    <p className="text-xs text-foreground/70">
+                      Cette somme se déduit de votre revenu imposable, pas directement de votre impôt.
+                      L'économie réelle dépend de votre TMI.
+                    </p>
+
+                    {showResults && (
+                      <div className="flex flex-col gap-2 pt-1">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => navigate("/simulateur/ir-bareme")}
+                          className="border-[#2D1B4E] text-[#2D1B4E] hover:bg-[#2D1B4E] hover:text-white"
+                        >
+                          → Estimer mon impôt (IR Barème)
+                        </Button>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={handleReset}
+                          className="border-[#2D1B4E] text-[#2D1B4E] hover:bg-[#2D1B4E] hover:text-white"
+                        >
+                          <RefreshCw className="h-4 w-4" />
+                          Recommencer
+                        </Button>
+                      </div>
+                    )}
+                  </CardContent>
+                </Card>
+              );
+            })()}
+          </aside>
+
+          <div className="space-y-3 min-w-0">
           {STEP_TITLES.map((title, idx) => {
             const isActive = idx === activeStep;
             const isDone = idx < activeStep;
@@ -818,92 +898,8 @@ export default function SimulateurFraisPro() {
               </Card>
             );
           })}
+          </div>
         </div>
-
-        {showResults && (() => {
-          const rows: { label: string; value: number }[] = [
-            { label: "Frais de repas hors domicile", value: Math.round(sections.sectionA) },
-            { label: "Frais de blanchissement", value: Math.round(sections.sectionB) },
-            { label: "Matériel professionnel", value: Math.round(sections.sectionC) },
-            { label: "Bureau à domicile", value: Math.round(sections.sectionD) },
-            { label: "Frais divers", value: Math.round(sections.sectionE) },
-            { label: "Frais kilométriques", value: Math.round(sections.sectionF) },
-          ].filter((r) => r.value > 0);
-
-          return (
-            <Card className="border-2 border-[#2D1B4E]/30 bg-[#FFF8E7] rounded-2xl shadow-lg">
-              <CardHeader>
-                <CardTitle className="text-xl sm:text-2xl text-[#2D1B4E]">
-                  Résultat de votre simulation
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-6">
-                <div className="rounded-xl bg-[#2D1B4E] text-white text-center px-4 py-8 shadow-inner">
-                  <p className="text-sm sm:text-base text-white/80">
-                    Vos frais réels professionnels pour votre déclaration s'élèvent à :
-                  </p>
-                  <p className="font-heading text-4xl sm:text-6xl font-extrabold text-[#F9E900] mt-3">
-                    {totalArrondi} €
-                  </p>
-                </div>
-
-                <p className="text-sm text-foreground/80">
-                  Cette somme se déduit de votre revenu imposable, pas directement de votre impôt.
-                  L'économie réelle d'impôt dépend de votre tranche marginale d'imposition (TMI).
-                  Pour la calculer, utilisez le simulateur IR Barème.
-                </p>
-
-                <div className="space-y-3">
-                  <h3 className="font-semibold text-[#2D1B4E]">Détails de votre simulation :</h3>
-                  <div className="rounded-lg border border-[#2D1B4E]/20 overflow-hidden bg-white">
-                    <table className="w-full text-sm">
-                      <thead className="bg-[#2D1B4E]/10">
-                        <tr>
-                          <th className="text-left px-4 py-2 font-semibold text-[#2D1B4E]">
-                            Catégorie
-                          </th>
-                          <th className="text-right px-4 py-2 font-semibold text-[#2D1B4E]">
-                            Montant
-                          </th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {rows.map((r) => (
-                          <tr key={r.label} className="border-t border-border">
-                            <td className="px-4 py-2">{r.label}</td>
-                            <td className="px-4 py-2 text-right font-medium">{r.value} €</td>
-                          </tr>
-                        ))}
-                        <tr className="border-t-2 border-[#2D1B4E] bg-[#F9E900]/30 font-bold">
-                          <td className="px-4 py-3 text-[#2D1B4E]">TOTAL</td>
-                          <td className="px-4 py-3 text-right text-[#2D1B4E]">{totalArrondi} €</td>
-                        </tr>
-                      </tbody>
-                    </table>
-                  </div>
-                </div>
-
-                <div className="flex flex-col sm:flex-row justify-center gap-3 pt-2">
-                  <Button
-                    variant="outline"
-                    onClick={() => navigate("/simulateur/ir-bareme")}
-                    className="border-[#2D1B4E] text-[#2D1B4E] hover:bg-[#2D1B4E] hover:text-white"
-                  >
-                    → Estimer mon impôt avec le simulateur IR Barème
-                  </Button>
-                  <Button
-                    variant="outline"
-                    onClick={handleReset}
-                    className="border-[#2D1B4E] text-[#2D1B4E] hover:bg-[#2D1B4E] hover:text-white"
-                  >
-                    <RefreshCw className="h-4 w-4" />
-                    Recommencer la simulation
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
-          );
-        })()}
       </div>
     </div>
   );
