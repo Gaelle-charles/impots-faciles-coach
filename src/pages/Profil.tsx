@@ -330,7 +330,7 @@ const Profil = () => {
       </div>
 
       {/* ── Informations personnelles ── */}
-      <Card className="border-border bg-background shadow-sm">
+      <Card className="border-border bg-background rounded-3xl shadow-sm">
         <CardHeader className="pb-3">
           <CardTitle className="font-heading text-lg">Informations personnelles</CardTitle>
         </CardHeader>
@@ -377,7 +377,7 @@ const Profil = () => {
       </Card>
 
       {/* ── Mon abonnement ── */}
-      <Card className="border-border bg-background shadow-sm">
+      <Card className="border-border bg-background rounded-3xl shadow-sm">
         <CardHeader className="pb-3">
           <CardTitle className="font-heading text-lg flex items-center gap-2">
             <CreditCard className="h-4 w-4" />
@@ -499,7 +499,7 @@ const Profil = () => {
       </Dialog>
 
       {/* ── Sécurité ── */}
-      <Card className="border-border bg-background shadow-sm">
+      <Card className="border-border bg-background rounded-3xl shadow-sm">
         <CardHeader className="pb-3">
           <CardTitle className="font-heading text-lg flex items-center gap-2">
             <Lock className="h-4 w-4" />
@@ -518,7 +518,7 @@ const Profil = () => {
       </Card>
 
       {/* ── Mes statistiques ── */}
-      <Card className="border-border bg-background shadow-sm">
+      <Card className="border-border bg-background rounded-3xl shadow-sm">
         <CardHeader className="pb-3">
           <CardTitle className="font-heading text-lg">Mes statistiques</CardTitle>
         </CardHeader>
