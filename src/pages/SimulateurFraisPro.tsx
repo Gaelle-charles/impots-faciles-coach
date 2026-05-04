@@ -478,6 +478,23 @@ export default function SimulateurFraisPro() {
                         ))}
                       </div>
                     </div>
+                  ) : idx === 6 ? (
+                    <div className="space-y-4">
+                      <p className="text-sm text-muted-foreground">
+                        Cette section concerne les salariés résidant dans les départements et régions d'outre-mer.
+                      </p>
+                      <div className="grid gap-4 sm:grid-cols-2">
+                        {STEP7_FIELDS.map((f) => (
+                          <NumberInput
+                            key={f.name}
+                            id={f.name}
+                            label={f.label}
+                            value={form[f.name] as number}
+                            onChange={(v) => setField(f.name, v as never)}
+                          />
+                        ))}
+                      </div>
+                    </div>
                   ) : (
                     <p className="text-sm text-muted-foreground">
                       Contenu à compléter pour cette étape.
