@@ -133,6 +133,10 @@ export default function SimulateurFraisPro() {
     fraisBancaire: 0,
     achatLogiciel: 0,
     autresFrais: 0,
+    distance: 0,
+    surcout: 0,
+    interile: 0,
+    internetMobile: 0,
   });
 
   const [step1Error, setStep1Error] = useState<string | null>(null);
