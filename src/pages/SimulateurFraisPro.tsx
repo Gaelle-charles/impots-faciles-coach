@@ -608,6 +608,7 @@ export default function SimulateurFraisPro() {
           </Card>
         );
       })()}
+      </div>
     </div>
   );
 }
