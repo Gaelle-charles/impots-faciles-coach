@@ -23,7 +23,29 @@ type FormState = {
   fraisAstreinte: number;
   nbJoursAstreinte: number;
   indemAstreinte: number;
+  // étape 6
+  tel: number;
+  doubleResidence: number;
+  demenagementPro: number;
+  interetsEmprunt: number;
+  cotisations: number;
+  forfaitInternet: number;
+  fraisBancaire: number;
+  achatLogiciel: number;
+  autresFrais: number;
 };
+
+const STEP6_FIELDS: { name: keyof FormState; label: string }[] = [
+  { name: "tel", label: "Frais de téléphone professionnel (€/an)" },
+  { name: "doubleResidence", label: "Double résidence (€/an)" },
+  { name: "demenagementPro", label: "Déménagement professionnel (€)" },
+  { name: "interetsEmprunt", label: "Intérêts d'emprunt professionnels (€/an)" },
+  { name: "cotisations", label: "Cotisations professionnelles (€/an)" },
+  { name: "forfaitInternet", label: "Forfait internet (€/an)" },
+  { name: "fraisBancaire", label: "Frais bancaires professionnels (€/an)" },
+  { name: "achatLogiciel", label: "Achat de logiciels (€)" },
+  { name: "autresFrais", label: "Autres frais (€)" },
+];
 
 const BAREME_REPAS = 5.35;
 const BAREME_BLANCHISSEMENT = 0.65;
@@ -90,6 +112,15 @@ export default function SimulateurFraisPro() {
     fraisAstreinte: 49,
     nbJoursAstreinte: 0,
     indemAstreinte: 0,
+    tel: 0,
+    doubleResidence: 0,
+    demenagementPro: 0,
+    interetsEmprunt: 0,
+    cotisations: 0,
+    forfaitInternet: 0,
+    fraisBancaire: 0,
+    achatLogiciel: 0,
+    autresFrais: 0,
   });
 
   const [step1Error, setStep1Error] = useState<string | null>(null);
@@ -159,6 +190,13 @@ export default function SimulateurFraisPro() {
       const fraisBruts = form.fraisAstreinte * form.nbJoursAstreinte;
       const sectionE = Math.max(0, fraisBruts - form.indemAstreinte);
       setSections((s) => ({ ...s, sectionE }));
+    }
+    if (activeStep === 5) {
+      const sectionF = STEP6_FIELDS.reduce(
+        (sum, f) => sum + (parseFloat(String(form[f.name])) || 0),
+        0,
+      );
+      setSections((s) => ({ ...s, sectionF }));
     }
     if (activeStep < STEP_TITLES.length - 1) {
       setActiveStep(activeStep + 1);
@@ -398,6 +436,23 @@ export default function SimulateurFraisPro() {
                       <p className="text-xs text-muted-foreground">
                         Frais nets déductibles = (frais journalier × nombre de jours) − indemnité reçue
                       </p>
+                    </div>
+                  ) : idx === 5 ? (
+                    <div className="space-y-4">
+                      <p className="text-sm text-muted-foreground">
+                        Cette section est optionnelle. Tous les champs sont facultatifs.
+                      </p>
+                      <div className="grid gap-4 sm:grid-cols-2">
+                        {STEP6_FIELDS.map((f) => (
+                          <NumberInput
+                            key={f.name}
+                            id={f.name}
+                            label={f.label}
+                            value={form[f.name] as number}
+                            onChange={(v) => setField(f.name, v as never)}
+                          />
+                        ))}
+                      </div>
                     </div>
                   ) : (
                     <p className="text-sm text-muted-foreground">
