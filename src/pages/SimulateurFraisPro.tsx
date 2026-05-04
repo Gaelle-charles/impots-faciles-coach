@@ -87,6 +87,14 @@ export default function SimulateurFraisPro() {
 
   const [step1Error, setStep1Error] = useState<string | null>(null);
   const [step2Error, setStep2Error] = useState<string | null>(null);
+  const [articles, setArticles] = useState<Article[]>([]);
+
+  const addArticle = () =>
+    setArticles((a) => [...a, { description: "", prix: 0 }]);
+  const removeArticle = (i: number) =>
+    setArticles((a) => a.filter((_, idx) => idx !== i));
+  const updateArticle = (i: number, patch: Partial<Article>) =>
+    setArticles((a) => a.map((art, idx) => (idx === i ? { ...art, ...patch } : art)));
 
   const [sections, setSections] = useState<Sections>({
     sectionA: 0,
