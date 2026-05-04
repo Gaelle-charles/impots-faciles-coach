@@ -6,33 +6,34 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import {
   Lock, Sparkles, ArrowRight, Star, Briefcase, Globe, Users, FolderOpen,
   Palette, GraduationCap, Scale, Hammer, Plane, Stethoscope, MoreHorizontal,
   Mountain, Map as MapIcon, Building2, Sparkle, type LucideIcon,
 } from 'lucide-react';
 
-// Catégories métiers : icône + libellé lisible
-const METIER_CATEGORIES: Record<string, { label: string; icon: LucideIcon }> = {
-  culture_creation: { label: 'Culture & création', icon: Palette },
-  education_asso: { label: 'Éducation & associatif', icon: GraduationCap },
-  liberaux_cadres: { label: 'Libéraux & cadres', icon: Scale },
-  manuels_terrain: { label: 'Manuels & terrain', icon: Hammer },
-  mobilite_specifiques: { label: 'Mobilité & spécifiques', icon: Plane },
-  sante_soin: { label: 'Santé & soin', icon: Stethoscope },
-  Autres: { label: 'Autres', icon: MoreHorizontal },
+// Catégories métiers : icône + libellé lisible + description (tooltip)
+const METIER_CATEGORIES: Record<string, { label: string; icon: LucideIcon; description: string }> = {
+  culture_creation: { label: 'Culture & création', icon: Palette, description: "Métiers artistiques et créatifs : artistes-auteurs, artisans d'art, designers, journalistes, photographes." },
+  education_asso: { label: 'Éducation & associatif', icon: GraduationCap, description: "Enseignement, formation, recherche et secteur associatif ou de l'économie sociale et solidaire." },
+  liberaux_cadres: { label: 'Libéraux & cadres', icon: Scale, description: "Professions libérales (avocats, experts-comptables, consultants) et cadres salariés du tertiaire." },
+  manuels_terrain: { label: 'Manuels & terrain', icon: Hammer, description: "Métiers du bâtiment, de l'artisanat, de l'industrie et des services techniques sur le terrain." },
+  mobilite_specifiques: { label: 'Mobilité & spécifiques', icon: Plane, description: "Métiers liés à la mobilité (transport, voyage) et situations professionnelles particulières." },
+  sante_soin: { label: 'Santé & soin', icon: Stethoscope, description: "Professionnels de santé, paramédicaux et métiers du soin à la personne." },
+  Autres: { label: 'Autres', icon: MoreHorizontal, description: 'Autres métiers non classés dans les catégories ci-dessus.' },
 };
 
-// Zones pays : icône + libellé
-const PAYS_ZONES: Record<string, { label: string; icon: LucideIcon }> = {
-  Afrique: { label: 'Afrique', icon: Mountain },
-  Amériques: { label: 'Amériques', icon: MapIcon },
-  Asie: { label: 'Asie', icon: Globe },
-  Europe: { label: 'Europe', icon: Building2 },
-  'Moyen-Orient': { label: 'Moyen-Orient', icon: MapIcon },
-  Océanie: { label: 'Océanie', icon: Globe },
-  special: { label: 'Régimes spéciaux', icon: Sparkle },
-  Autres: { label: 'Autres', icon: MoreHorizontal },
+// Zones pays : icône + libellé + description (tooltip)
+const PAYS_ZONES: Record<string, { label: string; icon: LucideIcon; description: string }> = {
+  Afrique: { label: 'Afrique', icon: Mountain, description: 'Pays du continent africain et du Maghreb.' },
+  Amériques: { label: 'Amériques', icon: MapIcon, description: "Amérique du Nord, Amérique latine et Caraïbes." },
+  Asie: { label: 'Asie', icon: Globe, description: "Pays d'Asie de l'Est, du Sud-Est et d'Asie centrale." },
+  Europe: { label: 'Europe', icon: Building2, description: "Pays de l'Union européenne et du reste du continent européen." },
+  'Moyen-Orient': { label: 'Moyen-Orient', icon: MapIcon, description: "Pays du Moyen-Orient et du Golfe." },
+  Océanie: { label: 'Océanie', icon: Globe, description: 'Australie, Nouvelle-Zélande et îles du Pacifique.' },
+  special: { label: 'Régimes spéciaux', icon: Sparkle, description: 'Régimes fiscaux particuliers et situations internationales spécifiques.' },
+  Autres: { label: 'Autres', icon: MoreHorizontal, description: 'Autres zones non classées.' },
 };
 import type { Tables } from '@/integrations/supabase/types';
 import { cn } from '@/lib/utils';
@@ -202,39 +203,50 @@ const CategoryGrid = <T extends { id: string; nom: string; icone: string | null 
   onSelect,
   themeKey,
 }: {
-  groups: { key: string; label: string; icon: LucideIcon; items: T[] }[];
+  groups: { key: string; label: string; icon: LucideIcon; description?: string; items: T[] }[];
   selected: string | null;
   onSelect: (key: string | null) => void;
   themeKey: SectionKey;
 }) => {
   const t = SECTION_THEMES[themeKey];
   return (
-    <div className="grid gap-3 grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-      {groups.map((g) => {
-        const active = selected === g.key;
-        const Icon = g.icon;
-        return (
-          <button
-            key={g.key}
-            type="button"
-            onClick={() => onSelect(active ? null : g.key)}
-            className={cn(
-              'group rounded-2xl border bg-background p-4 text-left transition-all hover:-translate-y-0.5 hover:shadow-md',
-              active ? cn('ring-2', t.border, 'border-transparent') : 'border-border',
-            )}
-            style={active ? { boxShadow: `0 0 0 2px hsl(var(--primary) / 0.4)` } : undefined}
-          >
-            <div className={cn('inline-flex h-9 w-9 items-center justify-center rounded-xl mb-2', t.iconBg)}>
-              <Icon className="h-4 w-4" />
-            </div>
-            <p className="font-heading font-semibold text-sm text-foreground leading-tight">{g.label}</p>
-            <p className="text-xs text-muted-foreground mt-1">
-              {g.items.length} fiche{g.items.length > 1 ? 's' : ''}
-            </p>
-          </button>
-        );
-      })}
-    </div>
+    <TooltipProvider delayDuration={200}>
+      <div className="grid gap-3 grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+        {groups.map((g) => {
+          const active = selected === g.key;
+          const Icon = g.icon;
+          const button = (
+            <button
+              type="button"
+              onClick={() => onSelect(active ? null : g.key)}
+              className={cn(
+                'group w-full rounded-2xl border bg-background p-4 text-left transition-all hover:-translate-y-0.5 hover:shadow-md',
+                active ? cn('ring-2', t.border, 'border-transparent') : 'border-border',
+              )}
+              style={active ? { boxShadow: `0 0 0 2px hsl(var(--primary) / 0.4)` } : undefined}
+            >
+              <div className={cn('inline-flex h-9 w-9 items-center justify-center rounded-xl mb-2', t.iconBg)}>
+                <Icon className="h-4 w-4" />
+              </div>
+              <p className="font-heading font-semibold text-sm text-foreground leading-tight">{g.label}</p>
+              <p className="text-xs text-muted-foreground mt-1">
+                {g.items.length} fiche{g.items.length > 1 ? 's' : ''}
+              </p>
+            </button>
+          );
+          return g.description ? (
+            <Tooltip key={g.key}>
+              <TooltipTrigger asChild>{button}</TooltipTrigger>
+              <TooltipContent side="top" className="max-w-xs text-sm">
+                {g.description}
+              </TooltipContent>
+            </Tooltip>
+          ) : (
+            <div key={g.key}>{button}</div>
+          );
+        })}
+      </div>
+    </TooltipProvider>
   );
 };
 
@@ -407,7 +419,7 @@ export const PersonalizedFiches = () => {
   )
     .map(([key, items]) => {
       const meta = METIER_CATEGORIES[key] ?? METIER_CATEGORIES.Autres;
-      return { key, label: meta.label, icon: meta.icon, items };
+      return { key, label: meta.label, icon: meta.icon, description: meta.description, items };
     })
     .sort((a, b) => a.label.localeCompare(b.label));
 
@@ -422,7 +434,7 @@ export const PersonalizedFiches = () => {
   )
     .map(([key, items]) => {
       const meta = PAYS_ZONES[key] ?? PAYS_ZONES.Autres;
-      return { key, label: meta.label, icon: meta.icon, items };
+      return { key, label: meta.label, icon: meta.icon, description: meta.description, items };
     })
     .sort((a, b) => a.label.localeCompare(b.label));
 
