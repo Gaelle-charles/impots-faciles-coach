@@ -437,6 +437,23 @@ export default function SimulateurFraisPro() {
                         Frais nets déductibles = (frais journalier × nombre de jours) − indemnité reçue
                       </p>
                     </div>
+                  ) : idx === 5 ? (
+                    <div className="space-y-4">
+                      <p className="text-sm text-muted-foreground">
+                        Cette section est optionnelle. Tous les champs sont facultatifs.
+                      </p>
+                      <div className="grid gap-4 sm:grid-cols-2">
+                        {STEP6_FIELDS.map((f) => (
+                          <NumberInput
+                            key={f.name}
+                            id={f.name}
+                            label={f.label}
+                            value={form[f.name] as number}
+                            onChange={(v) => setField(f.name, v as never)}
+                          />
+                        ))}
+                      </div>
+                    </div>
                   ) : (
                     <p className="text-sm text-muted-foreground">
                       Contenu à compléter pour cette étape.
