@@ -191,6 +191,13 @@ export default function SimulateurFraisPro() {
       const sectionE = Math.max(0, fraisBruts - form.indemAstreinte);
       setSections((s) => ({ ...s, sectionE }));
     }
+    if (activeStep === 5) {
+      const sectionF = STEP6_FIELDS.reduce(
+        (sum, f) => sum + (parseFloat(String(form[f.name])) || 0),
+        0,
+      );
+      setSections((s) => ({ ...s, sectionF }));
+    }
     if (activeStep < STEP_TITLES.length - 1) {
       setActiveStep(activeStep + 1);
       setShowResults(false);
