@@ -24,6 +24,7 @@ import Module from "./pages/Module";
 import Quizz from "./pages/Quizz";
 import Simulateur from "./pages/Simulateur";
 import SimulateurFrais from "./pages/SimulateurFrais";
+import SimulateurFraisPro from "./pages/SimulateurFraisPro";
 import MesSimulateurs from "./pages/MesSimulateurs";
 import SimulateurPAS from "./pages/SimulateurPAS";
 import SimulateurIRBareme from "./pages/SimulateurIRBareme";
@@ -130,6 +131,7 @@ const App = () => (
               <Route path="/mes-simulateurs" element={<MesSimulateurs />} />
               <Route path="/simulateur" element={<AccessGuard requires="expert"><Simulateur /></AccessGuard>} />
               <Route path="/simulateur-de-frais" element={<SimulateurFrais />} />
+              <Route path="/simulateur-frais-pro" element={<SimulateurFraisPro />} />
               <Route path="/simulateur/frais-reels" element={<AccessGuard requires="starter"><SimulateurFrais /></AccessGuard>} />
               <Route path="/simulateur/ir-bareme" element={<AccessGuard requires="expert"><SimulateurIRBareme /></AccessGuard>} />
               <Route path="/simulateur/quotient-familial" element={<AccessGuard requires="expert"><SimulateurQuotientFamilial /></AccessGuard>} />
