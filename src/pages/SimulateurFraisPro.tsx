@@ -16,6 +16,7 @@ type FormState = {
   kgSemaine: number;
   nbSemaines: number;
   // étape 4
+  // étape 4
   surfaceBureau: number;
   surfaceLogement: number;
   chargesAnnuelles: number;
