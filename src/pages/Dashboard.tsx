@@ -182,11 +182,15 @@ const Dashboard = () => {
             <h2 className="font-display text-2xl md:text-3xl leading-tight">
               Mes <span className="accent-yellow">formations</span>
             </h2>
-            <p className="mt-2 text-sm text-primary-foreground/80 leading-relaxed">
+            <ExpandableText
+              className="mt-2 text-sm text-primary-foreground/80 leading-relaxed"
+              clampClassName="line-clamp-2"
+              breakpoint="lg"
+            >
               {currentModule
-                ? <>Reprenez là où vous vous êtes arrêté. Quelques minutes suffisent pour avancer.</>
-                : <>Découvrez votre parcours pédagogique adapté à votre situation.</>}
-            </p>
+                ? <>Reprenez là où vous vous êtes arrêté. Quelques minutes suffisent pour avancer pas à pas dans votre parcours pédagogique adapté.</>
+                : <>Découvrez votre parcours pédagogique adapté à votre situation, conçu pour vous guider pas à pas dans la compréhension de la fiscalité.</>}
+            </ExpandableText>
 
             {currentModule && (
               <div className="mt-5 rounded-2xl bg-background/10 backdrop-blur-sm p-4 space-y-2 border border-white/10">
