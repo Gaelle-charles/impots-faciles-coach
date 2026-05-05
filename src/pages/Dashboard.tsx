@@ -232,9 +232,9 @@ const Dashboard = () => {
           <h2 className="font-display text-2xl md:text-3xl text-foreground leading-tight">
             Mon parcours <AccentText>déclaration</AccentText>
           </h2>
-          <p className="mt-2 text-sm text-muted-foreground leading-relaxed flex-1">
+          <ExpandableText className="mt-2 text-sm text-muted-foreground leading-relaxed flex-1">
             Retrouvez ici les fiches pratiques recommandées en fonction de votre profil avec des fiches contribuable, fiches métiers et fiches pays pour vous accompagner pas à pas dans votre déclaration de revenus : cases à cocher, justificatifs à préparer, abattements et déductions à ne pas oublier.
-          </p>
+          </ExpandableText>
           <div className="mt-5 flex items-center justify-between text-sm">
             <span className="text-muted-foreground">
               {completedCount}/{modules.length} modules complétés
