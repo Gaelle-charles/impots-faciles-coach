@@ -3,14 +3,19 @@ import { useState, type ReactNode, type MouseEvent } from 'react';
 interface ExpandableTextProps {
   children: ReactNode;
   className?: string;
-  /** Number of lines to clamp to on mobile. Defaults to 2. */
-  clampLines?: number;
+  /** Tailwind line-clamp class for mobile. Defaults to line-clamp-2. */
+  clampClassName?: string;
 }
 
 /**
  * Affiche le texte clampé sur mobile (avec "Voir plus") et entièrement sur ≥sm.
+ * Le clamp est désactivé automatiquement sur ≥sm via sm:line-clamp-none.
  */
-export const ExpandableText = ({ children, className = '', clampLines = 2 }: ExpandableTextProps) => {
+export const ExpandableText = ({
+  children,
+  className = '',
+  clampClassName = 'line-clamp-2',
+}: ExpandableTextProps) => {
   const [expanded, setExpanded] = useState(false);
 
   const handleToggle = (e: MouseEvent<HTMLButtonElement>) => {
@@ -21,21 +26,7 @@ export const ExpandableText = ({ children, className = '', clampLines = 2 }: Exp
 
   return (
     <div className={className}>
-      <p
-        className={expanded ? '' : 'sm:[display:block]'}
-        style={
-          expanded
-            ? undefined
-            : {
-                display: '-webkit-box',
-                WebkitLineClamp: clampLines,
-                WebkitBoxOrient: 'vertical',
-                overflow: 'hidden',
-              }
-        }
-      >
-        {children}
-      </p>
+      <p className={expanded ? '' : `${clampClassName} sm:line-clamp-none`}>{children}</p>
       <button
         type="button"
         onClick={handleToggle}
