@@ -322,11 +322,11 @@ const Profil = () => {
   return (
     <div className="space-y-8 max-w-3xl">
       <div>
-        <h1 className="font-display text-4xl md:text-5xl text-foreground leading-tight">
+        <h1 className="font-display text-3xl sm:text-4xl lg:text-5xl text-foreground leading-tight">
           Mon <em className="accent-serif">profil</em>
         </h1>
-        <p className="mt-3 text-sm sm:text-lg text-muted-foreground">
-          <span className="lg:hidden">Vos infos, abonnement et sécurité.</span>
+        <p className="mt-2 lg:mt-3 text-xs sm:text-sm lg:text-lg text-muted-foreground">
+          <span className="lg:hidden">Infos, abonnement, sécurité.</span>
           <span className="hidden lg:inline">Gérez vos informations personnelles, votre abonnement et la sécurité de votre compte.</span>
         </p>
       </div>
@@ -515,8 +515,8 @@ const Profil = () => {
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-3">
-            <p className="text-sm text-muted-foreground">
-              <span className="lg:hidden">Modifiez vos réponses d'onboarding. Recommandations recalculées.</span>
+            <p className="text-xs sm:text-sm text-muted-foreground">
+              <span className="lg:hidden">Modifier vos réponses.</span>
               <span className="hidden lg:inline">Modifiez les réponses que vous avez données lors de votre onboarding (situation, métier, revenus complémentaires…). Vos recommandations et votre passeport fiscal seront recalculés automatiquement.</span>
             </p>
             <Button
@@ -544,7 +544,7 @@ const Profil = () => {
               {sendingReset ? 'Envoi…' : 'Changer mon mot de passe'}
             </Button>
             <p className="mt-2 text-xs text-muted-foreground">
-              <span className="lg:hidden">Email de réinitialisation envoyé.</span>
+              <span className="lg:hidden">Email envoyé.</span>
               <span className="hidden lg:inline">Un email de réinitialisation sera envoyé à ton adresse.</span>
             </p>
           </CardContent>
@@ -598,8 +598,8 @@ const Profil = () => {
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <p className="text-sm text-muted-foreground mb-4">
-            <span className="lg:hidden">Suppression définitive et irréversible.</span>
+          <p className="text-xs sm:text-sm text-muted-foreground mb-4">
+            <span className="lg:hidden">Suppression définitive.</span>
             <span className="hidden lg:inline">La suppression de ton compte est définitive. Toutes tes données seront perdues.</span>
           </p>
           <Button variant="outline" className="border-destructive text-destructive hover:bg-destructive/10 gap-2" disabled={checkingSub} onClick={handleStartDelete}>
