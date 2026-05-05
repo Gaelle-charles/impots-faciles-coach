@@ -773,7 +773,16 @@ const Onboarding = () => {
       <header className="border-b border-border bg-background">
         <div className="mx-auto flex max-w-[840px] items-center justify-between px-6 py-4">
           <div className="font-heading text-lg font-bold text-foreground">Impôts Facile</div>
-          <div className="text-sm text-muted-foreground">Personnalisons votre expérience</div>
+          <div className="flex items-center gap-4">
+            <div className="text-sm text-muted-foreground">
+              {editMode ? 'Modification de votre profil' : 'Personnalisons votre expérience'}
+            </div>
+            {editMode && (
+              <Button variant="ghost" size="sm" onClick={() => navigate('/profil')}>
+                Annuler
+              </Button>
+            )}
+          </div>
         </div>
       </header>
 
