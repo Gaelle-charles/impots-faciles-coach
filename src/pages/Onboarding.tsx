@@ -251,10 +251,12 @@ function getProfilLabel(p: FormData, metierNom?: string, paysNoms?: string[]): s
 const Onboarding = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const editMode = searchParams.get('edit') === '1';
   const { org, isOrgAdmin, hasLicense, loading: orgLoading } = useOrgRole();
   const [loading, setLoading] = useState(true);
   const [prenom, setPrenom] = useState('');
-  const [currentStep, setCurrentStep] = useState(0);
+  const [currentStep, setCurrentStep] = useState(editMode ? 1 : 0);
   const [saving, setSaving] = useState(false);
   const [metiers, setMetiers] = useState<MetierRow[]>([]);
   const [metiersLoading, setMetiersLoading] = useState(false);
