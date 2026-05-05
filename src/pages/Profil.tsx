@@ -515,8 +515,8 @@ const Profil = () => {
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-3">
-            <p className="text-sm text-muted-foreground">
-              <span className="lg:hidden">Modifiez vos réponses d'onboarding. Recommandations recalculées.</span>
+            <p className="text-xs sm:text-sm text-muted-foreground">
+              <span className="lg:hidden">Modifier vos réponses.</span>
               <span className="hidden lg:inline">Modifiez les réponses que vous avez données lors de votre onboarding (situation, métier, revenus complémentaires…). Vos recommandations et votre passeport fiscal seront recalculés automatiquement.</span>
             </p>
             <Button
