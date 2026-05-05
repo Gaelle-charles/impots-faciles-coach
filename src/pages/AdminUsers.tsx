@@ -638,7 +638,7 @@ const AdminUsers = () => {
                             </Badge>
                           </TooltipTrigger>
                           <TooltipContent>
-                            Supprimé le {new Date(u.deleted_at!).toLocaleDateString('fr-FR')}
+                            Supprimé le {new Date(u.deleted_at!).toLocaleString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' })}
                             {u.deleted_by === 'user' ? ' — par l\'utilisateur lui-même' : u.deleted_by === 'admin' ? ` — par ${u.deleted_by_admin_name ?? 'un administrateur'}` : ''}
                           </TooltipContent>
                         </Tooltip>
