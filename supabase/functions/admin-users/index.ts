@@ -318,7 +318,7 @@ Deno.serve(async (req) => {
         // Effacer deleted_at + réactiver. On remet plan='nouveau' (pas de résurrection abonnement).
         const { error: profErr } = await adminClient
           .from("profiles")
-          .update({ deleted_at: null, deleted_by: null, is_active: true, plan: "nouveau" } as any)
+          .update({ deleted_at: null, deleted_by: null, deleted_by_admin_id: null, deleted_email: null, deleted_prenom: null, deleted_nom: null, is_active: true, plan: "nouveau" } as any)
           .eq("id", userId);
         if (profErr) {
           console.error("[restore_user] profile update failed:", profErr);
