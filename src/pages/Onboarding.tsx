@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
@@ -251,10 +251,12 @@ function getProfilLabel(p: FormData, metierNom?: string, paysNoms?: string[]): s
 const Onboarding = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const editMode = searchParams.get('edit') === '1';
   const { org, isOrgAdmin, hasLicense, loading: orgLoading } = useOrgRole();
   const [loading, setLoading] = useState(true);
   const [prenom, setPrenom] = useState('');
-  const [currentStep, setCurrentStep] = useState(0);
+  const [currentStep, setCurrentStep] = useState(editMode ? 1 : 0);
   const [saving, setSaving] = useState(false);
   const [metiers, setMetiers] = useState<MetierRow[]>([]);
   const [metiersLoading, setMetiersLoading] = useState(false);
@@ -321,7 +323,7 @@ const Onboarding = () => {
         return;
       }
 
-      if (data?.onboarding_done) {
+      if (data?.onboarding_done && !editMode) {
         navigate('/dashboard', { replace: true });
         return;
       }
@@ -620,6 +622,18 @@ const Onboarding = () => {
     // Step 7 → finalisation
     if (currentStep === 7) {
       setSaving(true);
+      if (editMode) {
+        // En mode édition : on sauvegarde + recalcule le matching, sans checkout
+        await supabase
+          .from('profiles')
+          .update({ tranche_revenus: formData.tranche_revenus })
+          .eq('id', user!.id);
+        await recalculerMatching(user!.id);
+        toast.success('Profil mis à jour ✓');
+        setSaving(false);
+        navigate('/profil');
+        return;
+      }
       await finalizeAndShowResult();
       setSaving(false);
       return;
@@ -759,7 +773,16 @@ const Onboarding = () => {
       <header className="border-b border-border bg-background">
         <div className="mx-auto flex max-w-[840px] items-center justify-between px-6 py-4">
           <div className="font-heading text-lg font-bold text-foreground">Impôts Facile</div>
-          <div className="text-sm text-muted-foreground">Personnalisons votre expérience</div>
+          <div className="flex items-center gap-4">
+            <div className="text-sm text-muted-foreground">
+              {editMode ? 'Modification de votre profil' : 'Personnalisons votre expérience'}
+            </div>
+            {editMode && (
+              <Button variant="ghost" size="sm" onClick={() => navigate('/profil')}>
+                Annuler
+              </Button>
+            )}
+          </div>
         </div>
       </header>
 
@@ -890,7 +913,7 @@ const Onboarding = () => {
               {saving
                 ? 'Enregistrement...'
                 : currentStep === 7
-                ? 'Voir ma recommandation →'
+                ? (editMode ? 'Enregistrer mes modifications' : 'Voir ma recommandation →')
                 : 'Suivant →'}
             </Button>
           </div>

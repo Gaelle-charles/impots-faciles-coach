@@ -29,6 +29,7 @@ import {
   CreditCard,
   ArrowRight,
   Trash2,
+  ClipboardList,
 } from 'lucide-react';
 
 interface ProfileData {
@@ -497,6 +498,29 @@ const Profil = () => {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      {/* ── Mes réponses au questionnaire ── */}
+      <Card className="border-border bg-background rounded-3xl shadow-sm">
+        <CardHeader className="pb-3">
+          <CardTitle className="font-heading text-lg flex items-center gap-2">
+            <ClipboardList className="h-4 w-4" />
+            Mes réponses au questionnaire
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-3">
+          <p className="text-sm text-muted-foreground">
+            Modifiez les réponses que vous avez données lors de votre onboarding (situation, métier, revenus complémentaires…). Vos recommandations et votre passeport fiscal seront recalculés automatiquement.
+          </p>
+          <Button
+            variant="outline"
+            className="gap-2"
+            onClick={() => navigate('/onboarding?edit=1')}
+          >
+            <ClipboardList className="h-4 w-4" />
+            Modifier mes réponses
+          </Button>
+        </CardContent>
+      </Card>
 
       {/* ── Sécurité ── */}
       <Card className="border-border bg-background rounded-3xl shadow-sm">
