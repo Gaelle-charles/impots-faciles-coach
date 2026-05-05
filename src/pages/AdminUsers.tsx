@@ -607,12 +607,15 @@ const AdminUsers = () => {
                 <TableRow key={u.id} className={isDeleted ? 'opacity-60 bg-muted/30' : (!u.is_active ? 'opacity-50' : '')}>
                   <TableCell>
                     <div className={`flex h-8 w-8 items-center justify-center rounded-full text-xs font-bold ${initialsColor(u.id)}`}>
-                      {getInitials(u.prenom, u.nom)}
+                      {getInitials(isDeleted ? u.deleted_prenom : u.prenom, isDeleted ? u.deleted_nom : u.nom)}
                     </div>
                   </TableCell>
                   <TableCell className="font-medium text-sm">
                     <div className="flex items-center gap-1.5 flex-nowrap">
-                      <span className="whitespace-nowrap">{u.prenom ?? ''} {u.nom ?? ''}</span>
+                      <span className={`whitespace-nowrap ${isDeleted ? 'italic line-through text-muted-foreground' : ''}`}>
+                        {(isDeleted ? u.deleted_prenom : u.prenom) ?? ''} {(isDeleted ? u.deleted_nom : u.nom) ?? ''}
+                        {isDeleted && !u.deleted_prenom && !u.deleted_nom && <span className="not-italic no-underline">— compte anonymisé</span>}
+                      </span>
                       {isDeleted && (
                         <Tooltip>
                           <TooltipTrigger asChild>
