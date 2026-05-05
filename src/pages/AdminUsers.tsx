@@ -664,7 +664,13 @@ const AdminUsers = () => {
                       )}
                     </div>
                   </TableCell>
-                  <TableCell className="hidden md:table-cell text-sm text-muted-foreground truncate max-w-[200px]">{u.email ?? '—'}</TableCell>
+                  <TableCell className="hidden md:table-cell text-sm text-muted-foreground truncate max-w-[200px]">
+                    {isDeleted
+                      ? (u.deleted_email
+                          ? <span className="italic line-through">{u.deleted_email}</span>
+                          : '—')
+                      : (u.email ?? '—')}
+                  </TableCell>
                   <TableCell>
                     <Badge className={`text-xs ${planBadgeClass[u.plan] ?? planBadgeClass.nouveau}`}>{planLabel(u.plan)}</Badge>
                   </TableCell>
