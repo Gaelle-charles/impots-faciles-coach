@@ -105,7 +105,7 @@ const Dashboard = () => {
     : 0;
 
   const stats = [
-    { label: 'Modules complétés', value: `${completedCount}/${modules.length || '—'}`, icon: BookOpen },
+    { label: 'Modules', value: `${completedCount}/${modules.length || '—'}`, icon: BookOpen },
     { label: 'Score moyen', value: results.length > 0 ? `${avgScore}%` : '—', icon: Target },
     { label: 'Niveau', value: results.length > 0 ? getLevel(avgScore) : 'Débutant', icon: Trophy },
   ];
