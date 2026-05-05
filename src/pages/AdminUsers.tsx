@@ -613,16 +613,19 @@ const AdminUsers = () => {
               const isDeleted = !!u.deleted_at;
               const isPending = !u.email_confirmed_at && !isDeleted;
               const rowBg = isDeleted ? 'bg-muted/30' : 'bg-background';
+              const displayPrenom = isDeleted ? (u.deleted_prenom ?? u.prenom) : u.prenom;
+              const displayNom = isDeleted ? (u.deleted_nom ?? u.nom) : u.nom;
+              const displayEmail = isDeleted ? (u.deleted_email ?? u.email) : u.email;
               return (
                 <TableRow key={u.id} className={isDeleted ? 'opacity-60 bg-muted/30' : (!u.is_active ? 'opacity-50' : '')}>
                   <TableCell>
                     <div className={`flex h-8 w-8 items-center justify-center rounded-full text-xs font-bold ${initialsColor(u.id)}`}>
-                      {getInitials(u.prenom, u.nom)}
+                      {getInitials(displayPrenom, displayNom)}
                     </div>
                   </TableCell>
                   <TableCell className="font-medium text-sm">
                     <div className="flex items-center gap-1.5 flex-nowrap">
-                      <span className="whitespace-nowrap">{u.prenom ?? ''} {u.nom ?? ''}</span>
+                      <span className="whitespace-nowrap">{displayPrenom ?? ''} {displayNom ?? ''}</span>
                       {isDeleted && (
                         <Tooltip>
                           <TooltipTrigger asChild>
