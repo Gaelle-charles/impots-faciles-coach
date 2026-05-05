@@ -105,7 +105,7 @@ const Dashboard = () => {
     : 0;
 
   const stats = [
-    { label: 'Modules complétés', value: `${completedCount}/${modules.length || '—'}`, icon: BookOpen },
+    { label: 'Modules', value: `${completedCount}/${modules.length || '—'}`, icon: BookOpen },
     { label: 'Score moyen', value: results.length > 0 ? `${avgScore}%` : '—', icon: Target },
     { label: 'Niveau', value: results.length > 0 ? getLevel(avgScore) : 'Débutant', icon: Trophy },
   ];
@@ -237,7 +237,7 @@ const Dashboard = () => {
           </ExpandableText>
           <div className="mt-5 flex items-center justify-between text-sm">
             <span className="text-muted-foreground">
-              {completedCount}/{modules.length} modules complétés
+              {completedCount}/{modules.length} modules
             </span>
             <span className="inline-flex items-center gap-1 font-semibold text-primary group-hover:gap-2 transition-all">
               Voir le parcours <ArrowRight className="h-4 w-4" />
