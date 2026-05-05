@@ -291,11 +291,7 @@ const Dashboard = () => {
           <h2 className="font-display text-2xl md:text-3xl leading-tight">
             Mes recommandations
           </h2>
-          <ExpandableText
-            className="mt-2 text-sm opacity-80 leading-relaxed flex-1"
-            clampClassName="line-clamp-3"
-            breakpoint="lg"
-          >
+          <ExpandableText className="mt-2 text-sm opacity-80 leading-relaxed flex-1">
             Saviez-vous qu'un don à une association ouvre droit à une <span className="font-bold">réduction d'impôt jusqu'à 66 %</span> (et 75 % pour l'aide aux personnes en difficulté) ? Soutenez une cause qui vous tient à cœur tout en allégeant votre impôt.
           </ExpandableText>
           <div className="mt-5 flex items-center justify-end text-sm">
