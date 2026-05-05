@@ -222,11 +222,19 @@ const AdminUsers = () => {
       }));
     }
 
-    const enriched = (uRes.data as UserRow[] ?? []).map((u) => ({
+    const rawUsers = (uRes.data as UserRow[] ?? []);
+    const adminNameMap = new Map<string, string>();
+    rawUsers.forEach((u) => {
+      const fullName = [u.prenom, u.nom].filter(Boolean).join(' ').trim();
+      adminNameMap.set(u.id, fullName || u.email || 'Admin');
+    });
+
+    const enriched = rawUsers.map((u) => ({
       ...u,
       email_confirmed_at: metaMap.get(u.id)?.email_confirmed_at ?? null,
       last_sign_in_at: metaMap.get(u.id)?.last_sign_in_at ?? null,
       team: teamMap.get(u.id) ?? null,
+      deleted_by_admin_name: u.deleted_by_admin_id ? (adminNameMap.get(u.deleted_by_admin_id) ?? null) : null,
     }));
 
     setUsers(enriched);
