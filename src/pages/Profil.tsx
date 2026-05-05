@@ -322,11 +322,11 @@ const Profil = () => {
   return (
     <div className="space-y-8 max-w-3xl">
       <div>
-        <h1 className="font-display text-4xl md:text-5xl text-foreground leading-tight">
+        <h1 className="font-display text-3xl sm:text-4xl lg:text-5xl text-foreground leading-tight">
           Mon <em className="accent-serif">profil</em>
         </h1>
-        <p className="mt-3 text-sm sm:text-lg text-muted-foreground">
-          <span className="lg:hidden">Vos infos, abonnement et sécurité.</span>
+        <p className="mt-2 lg:mt-3 text-xs sm:text-sm lg:text-lg text-muted-foreground">
+          <span className="lg:hidden">Infos, abonnement, sécurité.</span>
           <span className="hidden lg:inline">Gérez vos informations personnelles, votre abonnement et la sécurité de votre compte.</span>
         </p>
       </div>
