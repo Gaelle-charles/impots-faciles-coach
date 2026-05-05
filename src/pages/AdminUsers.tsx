@@ -44,6 +44,9 @@ interface UserRow {
   metier_id: string | null;
   deleted_at: string | null;
   deleted_by: 'admin' | 'user' | null;
+  deleted_email: string | null;
+  deleted_prenom: string | null;
+  deleted_nom: string | null;
   email_confirmed_at?: string | null;
   last_sign_in_at?: string | null;
   team?: { raison_sociale: string; role: 'admin' | 'member' } | null;
@@ -185,7 +188,7 @@ const AdminUsers = () => {
     if (!user) return;
     setLoading(true);
     const [uRes, pRes, rRes, mRes, metaRes, orgMembersRes, orgsRes] = await Promise.all([
-      supabase.from('profiles').select('id, prenom, nom, email, plan, role, created_at, is_active, date_paiement, metier_id, deleted_at, deleted_by').order('created_at', { ascending: false }),
+      supabase.from('profiles').select('id, prenom, nom, email, plan, role, created_at, is_active, date_paiement, metier_id, deleted_at, deleted_by, deleted_email, deleted_prenom, deleted_nom').order('created_at', { ascending: false }),
       supabase.from('progressions').select('id, user_id, module_id, step, completion_date'),
       supabase.from('resultat_quiz').select('id, user_id, module_id, pourcentage, score, score_max, date_quiz'),
       supabase.from('modules').select('id, titre, total_step').order('order', { ascending: true }),
@@ -604,12 +607,15 @@ const AdminUsers = () => {
                 <TableRow key={u.id} className={isDeleted ? 'opacity-60 bg-muted/30' : (!u.is_active ? 'opacity-50' : '')}>
                   <TableCell>
                     <div className={`flex h-8 w-8 items-center justify-center rounded-full text-xs font-bold ${initialsColor(u.id)}`}>
-                      {getInitials(u.prenom, u.nom)}
+                      {getInitials(isDeleted ? u.deleted_prenom : u.prenom, isDeleted ? u.deleted_nom : u.nom)}
                     </div>
                   </TableCell>
                   <TableCell className="font-medium text-sm">
                     <div className="flex items-center gap-1.5 flex-nowrap">
-                      <span className="whitespace-nowrap">{u.prenom ?? ''} {u.nom ?? ''}</span>
+                      <span className={`whitespace-nowrap ${isDeleted ? 'italic line-through text-muted-foreground' : ''}`}>
+                        {(isDeleted ? u.deleted_prenom : u.prenom) ?? ''} {(isDeleted ? u.deleted_nom : u.nom) ?? ''}
+                        {isDeleted && !u.deleted_prenom && !u.deleted_nom && <span className="not-italic no-underline">— compte anonymisé</span>}
+                      </span>
                       {isDeleted && (
                         <Tooltip>
                           <TooltipTrigger asChild>
@@ -658,7 +664,13 @@ const AdminUsers = () => {
                       )}
                     </div>
                   </TableCell>
-                  <TableCell className="hidden md:table-cell text-sm text-muted-foreground truncate max-w-[200px]">{u.email ?? '—'}</TableCell>
+                  <TableCell className="hidden md:table-cell text-sm text-muted-foreground truncate max-w-[200px]">
+                    {isDeleted
+                      ? (u.deleted_email
+                          ? <span className="italic line-through">{u.deleted_email}</span>
+                          : '—')
+                      : (u.email ?? '—')}
+                  </TableCell>
                   <TableCell>
                     <Badge className={`text-xs ${planBadgeClass[u.plan] ?? planBadgeClass.nouveau}`}>{planLabel(u.plan)}</Badge>
                   </TableCell>

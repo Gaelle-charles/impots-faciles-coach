@@ -162,7 +162,7 @@ Deno.serve(async (req) => {
         // 1. Récupérer profil pour info Stripe + organization
         const { data: profile } = await adminClient
           .from("profiles")
-          .select("id, email, prenom, plan, stripe_subscription_id, organization_id")
+          .select("id, email, prenom, nom, plan, stripe_subscription_id, organization_id")
           .eq("id", userId)
           .maybeSingle();
 
@@ -245,6 +245,9 @@ Deno.serve(async (req) => {
           .update({
             deleted_at: new Date().toISOString(),
             deleted_by: 'admin',
+            deleted_email: profile.email ?? null,
+            deleted_prenom: profile.prenom ?? null,
+            deleted_nom: (profile as any).nom ?? null,
             is_active: false,
             email: `deleted_${userId}@deleted.local`,
             nom: null,
@@ -314,7 +317,7 @@ Deno.serve(async (req) => {
         // Effacer deleted_at + réactiver. On remet plan='nouveau' (pas de résurrection abonnement).
         const { error: profErr } = await adminClient
           .from("profiles")
-          .update({ deleted_at: null, deleted_by: null, is_active: true, plan: "nouveau" } as any)
+          .update({ deleted_at: null, deleted_by: null, deleted_email: null, deleted_prenom: null, deleted_nom: null, is_active: true, plan: "nouveau" } as any)
           .eq("id", userId);
         if (profErr) {
           console.error("[restore_user] profile update failed:", profErr);
