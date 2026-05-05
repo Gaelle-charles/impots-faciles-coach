@@ -752,6 +752,60 @@ export type Database = {
         }
         Relationships: []
       }
+      passeports_fiscaux_backup_20260505: {
+        Row: {
+          conditions_matching: Json | null
+          contenu_sections: Json | null
+          created_at: string | null
+          description: string | null
+          id: string | null
+          is_active: boolean | null
+          nom: string | null
+          numero: number | null
+          ordre: number | null
+          passeport_card_md: string | null
+          plan_minimum: string | null
+          regime_fiscal: string | null
+          regime_social: string | null
+          slug: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          conditions_matching?: Json | null
+          contenu_sections?: Json | null
+          created_at?: string | null
+          description?: string | null
+          id?: string | null
+          is_active?: boolean | null
+          nom?: string | null
+          numero?: number | null
+          ordre?: number | null
+          passeport_card_md?: string | null
+          plan_minimum?: string | null
+          regime_fiscal?: string | null
+          regime_social?: string | null
+          slug?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          conditions_matching?: Json | null
+          contenu_sections?: Json | null
+          created_at?: string | null
+          description?: string | null
+          id?: string | null
+          is_active?: boolean | null
+          nom?: string | null
+          numero?: number | null
+          ordre?: number | null
+          passeport_card_md?: string | null
+          plan_minimum?: string | null
+          regime_fiscal?: string | null
+          regime_social?: string | null
+          slug?: string | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       pays: {
         Row: {
           code_iso: string | null
