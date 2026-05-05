@@ -148,18 +148,18 @@ const Dashboard = () => {
       </div>
 
       {/* Stats compactes */}
-      <div className="grid gap-4 grid-cols-1 sm:grid-cols-3">
+      <div className="grid gap-2 sm:gap-4 grid-cols-3">
         {stats.map((s) => (
           <div
             key={s.label}
-            className="rounded-2xl border border-border bg-background p-5 flex items-center gap-4 shadow-sm"
+            className="rounded-2xl border border-border bg-background p-3 sm:p-5 flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-4 shadow-sm"
           >
-            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-rose-light text-rose-dynamic">
-              <s.icon className="h-5 w-5" />
+            <div className="flex h-8 w-8 sm:h-11 sm:w-11 shrink-0 items-center justify-center rounded-lg sm:rounded-xl bg-rose-light text-rose-dynamic">
+              <s.icon className="h-4 w-4 sm:h-5 sm:w-5" />
             </div>
-            <div>
-              <p className="text-xs uppercase tracking-wide text-muted-foreground">{s.label}</p>
-              <p className="font-display text-2xl text-foreground">{s.value}</p>
+            <div className="min-w-0">
+              <p className="text-[10px] sm:text-xs uppercase tracking-wide text-muted-foreground leading-tight">{s.label}</p>
+              <p className="font-display text-lg sm:text-2xl text-foreground leading-tight">{s.value}</p>
             </div>
           </div>
         ))}
