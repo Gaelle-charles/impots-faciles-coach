@@ -308,9 +308,7 @@ const Admin = () => {
                     {u.email ?? '—'}
                   </TableCell>
                   <TableCell>
-                    <Badge className="bg-primary/10 text-primary capitalize text-xs">
-                      {u.plan}
-                    </Badge>
+                    {renderPlanBadge(u.plan)}
                   </TableCell>
                   <TableCell className="hidden sm:table-cell text-sm text-muted-foreground">
                     {new Date(u.created_at).toLocaleDateString('fr-FR')}
