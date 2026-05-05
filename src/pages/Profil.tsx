@@ -325,8 +325,9 @@ const Profil = () => {
         <h1 className="font-display text-4xl md:text-5xl text-foreground leading-tight">
           Mon <em className="accent-serif">profil</em>
         </h1>
-        <p className="mt-3 text-lg text-muted-foreground">
-          Gérez vos informations personnelles, votre abonnement et la sécurité de votre compte.
+        <p className="mt-3 text-sm sm:text-lg text-muted-foreground">
+          <span className="lg:hidden">Vos infos, abonnement et sécurité.</span>
+          <span className="hidden lg:inline">Gérez vos informations personnelles, votre abonnement et la sécurité de votre compte.</span>
         </p>
       </div>
 
