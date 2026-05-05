@@ -461,6 +461,7 @@ const Profil = () => {
           )}
         </CardContent>
       </Card>
+      </div>
 
       {/* ── Modal redirection Stripe Portal ── */}
       <Dialog open={portalOpen} onOpenChange={(open) => {
