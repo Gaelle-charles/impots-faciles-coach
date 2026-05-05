@@ -28,6 +28,22 @@ import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { toast } from '@/hooks/use-toast';
 import { useAccess } from '@/hooks/useAccess';
+
+const PLAN_BADGE: Record<string, { label: string; className: string }> = {
+  nouveau: { label: 'Freemium', className: 'bg-slate-200 text-slate-700 dark:bg-slate-700 dark:text-slate-100' },
+  freemium: { label: 'Freemium', className: 'bg-slate-200 text-slate-700 dark:bg-slate-700 dark:text-slate-100' },
+  starter: { label: 'Starter', className: 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200' },
+  essentiel: { label: 'Essentiel', className: 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200' },
+  pro: { label: 'Pro', className: 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900 dark:text-emerald-200' },
+  expert: { label: 'Expert', className: 'bg-amber-100 text-amber-800 dark:bg-amber-900 dark:text-amber-200' },
+  premium: { label: 'Premium', className: 'bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200' },
+};
+
+const renderPlanBadge = (plan: string | null | undefined) => {
+  const key = (plan ?? 'nouveau').toLowerCase();
+  const cfg = PLAN_BADGE[key] ?? { label: plan ?? '—', className: 'bg-muted text-muted-foreground' };
+  return <Badge className={`text-xs ${cfg.className}`}>{cfg.label}</Badge>;
+};
 import { RevenueStats } from '@/components/admin/RevenueStats';
 import { StripeRevenueStats } from '@/components/admin/StripeRevenueStats';
 
@@ -292,9 +308,7 @@ const Admin = () => {
                     {u.email ?? '—'}
                   </TableCell>
                   <TableCell>
-                    <Badge className="bg-primary/10 text-primary capitalize text-xs">
-                      {u.plan}
-                    </Badge>
+                    {renderPlanBadge(u.plan)}
                   </TableCell>
                   <TableCell className="hidden sm:table-cell text-sm text-muted-foreground">
                     {new Date(u.created_at).toLocaleDateString('fr-FR')}
@@ -352,7 +366,7 @@ const Admin = () => {
                   <TableCell className="font-medium text-sm">{p.nom}</TableCell>
                   <TableCell className="hidden md:table-cell text-sm text-muted-foreground">{p.regime_fiscal}</TableCell>
                   <TableCell className="hidden sm:table-cell">
-                    <Badge className="bg-primary/10 text-primary capitalize text-xs">{p.plan_minimum}</Badge>
+                    {renderPlanBadge(p.plan_minimum)}
                   </TableCell>
                   <TableCell>
                     <Badge variant={p.is_active ? 'default' : 'secondary'} className="text-xs">
