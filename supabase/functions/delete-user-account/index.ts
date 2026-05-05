@@ -42,7 +42,7 @@ Deno.serve(async (req) => {
     // Fetch profile (including email/name for the confirmation email)
     const { data: profile } = await admin
       .from("profiles")
-      .select("email, prenom, plan, stripe_subscription_id, stripe_customer_id")
+      .select("email, prenom, nom, plan, stripe_subscription_id, stripe_customer_id")
       .eq("id", userId)
       .maybeSingle();
 
