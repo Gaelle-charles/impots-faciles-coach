@@ -256,9 +256,9 @@ const Dashboard = () => {
           <h2 className="font-display text-2xl md:text-3xl text-foreground leading-tight">
             Mes <AccentText>simulateurs</AccentText>
           </h2>
-          <p className="mt-2 text-sm text-muted-foreground leading-relaxed flex-1">
+          <ExpandableText className="mt-2 text-sm text-muted-foreground leading-relaxed flex-1">
             12 outils interactifs pour estimer votre impôt, comparer plusieurs scénarios et anticiper vos choix fiscaux sans formules à connaître.
-          </p>
+          </ExpandableText>
           <div className="mt-5 flex flex-col sm:flex-row flex-wrap gap-3">
             <Button
               onClick={() => navigate('/simulateur-frais-pro')}
