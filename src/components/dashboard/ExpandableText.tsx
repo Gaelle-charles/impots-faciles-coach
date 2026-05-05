@@ -14,7 +14,7 @@ interface ExpandableTextProps {
 export const ExpandableText = ({
   children,
   className = '',
-  clampClassName = 'line-clamp-2',
+  clampClassName = 'line-clamp-3',
 }: ExpandableTextProps) => {
   const [expanded, setExpanded] = useState(false);
 
@@ -26,11 +26,11 @@ export const ExpandableText = ({
 
   return (
     <div className={className}>
-      <p className={expanded ? '' : `${clampClassName} sm:line-clamp-none`}>{children}</p>
+      <p className={expanded ? '' : `${clampClassName} lg:line-clamp-none`}>{children}</p>
       <button
         type="button"
         onClick={handleToggle}
-        className="sm:hidden mt-1 text-xs font-semibold underline underline-offset-2 opacity-80 hover:opacity-100"
+        className="lg:hidden mt-1 text-xs font-semibold underline underline-offset-2 opacity-80 hover:opacity-100"
       >
         {expanded ? 'Voir moins' : 'Voir plus'}
       </button>
