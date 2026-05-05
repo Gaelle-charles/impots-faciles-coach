@@ -320,7 +320,7 @@ const Profil = () => {
   }
 
   return (
-    <div className="space-y-8 max-w-3xl">
+    <div className="space-y-8 max-w-5xl">
       <div>
         <h1 className="font-display text-3xl sm:text-4xl lg:text-5xl text-foreground leading-tight">
           Mon <em className="accent-serif">profil</em>
@@ -331,6 +331,7 @@ const Profil = () => {
         </p>
       </div>
 
+      <div className="grid gap-6 md:grid-cols-2 md:items-start">
       {/* ── Informations personnelles ── */}
       <Card className="border-border bg-background rounded-3xl shadow-sm">
         <CardHeader className="pb-3">
@@ -460,6 +461,7 @@ const Profil = () => {
           )}
         </CardContent>
       </Card>
+      </div>
 
       {/* ── Modal redirection Stripe Portal ── */}
       <Dialog open={portalOpen} onOpenChange={(open) => {
