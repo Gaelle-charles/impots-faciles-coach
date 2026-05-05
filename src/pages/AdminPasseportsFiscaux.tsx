@@ -609,6 +609,18 @@ const AdminPasseportsFiscaux = () => {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      <Dialog open={!!rowPreview} onOpenChange={(v) => !v && setRowPreview(null)}>
+        <DialogContent className="max-w-4xl w-[95vw] max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="font-heading flex items-center gap-2">
+              <Eye className="h-5 w-5 text-primary" />
+              Aperçu — {rowPreview?.nom}
+            </DialogTitle>
+          </DialogHeader>
+          {rowPreviewPasseport && <PasseportFiscalCard passeport={rowPreviewPasseport as any} />}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
