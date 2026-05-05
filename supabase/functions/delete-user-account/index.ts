@@ -105,6 +105,9 @@ Deno.serve(async (req) => {
         is_active: false,
         deleted_at: new Date().toISOString(),
         deleted_by: 'user',
+        deleted_email: profile?.email ?? userData.user.email ?? null,
+        deleted_prenom: profile?.prenom ?? null,
+        deleted_nom: (profile as any)?.nom ?? null,
       })
       .eq("id", userId);
 
