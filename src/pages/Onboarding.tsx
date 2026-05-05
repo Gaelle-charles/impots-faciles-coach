@@ -622,6 +622,18 @@ const Onboarding = () => {
     // Step 7 → finalisation
     if (currentStep === 7) {
       setSaving(true);
+      if (editMode) {
+        // En mode édition : on sauvegarde + recalcule le matching, sans checkout
+        await supabase
+          .from('profiles')
+          .update({ tranche_revenus: formData.tranche_revenus })
+          .eq('id', user!.id);
+        await recalculerMatching(user!.id);
+        toast.success('Profil mis à jour ✓');
+        setSaving(false);
+        navigate('/profil');
+        return;
+      }
       await finalizeAndShowResult();
       setSaving(false);
       return;
