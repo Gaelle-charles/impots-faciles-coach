@@ -882,7 +882,7 @@ const AdminUsers = () => {
                     <SelectTrigger><SelectValue /></SelectTrigger>
                     <SelectContent>
                       {PLAN_OPTIONS.map((p) => (
-                        <SelectItem key={p} value={p}>{p.charAt(0).toUpperCase() + p.slice(1)}</SelectItem>
+                        <SelectItem key={p} value={p}>{planLabel(p)}</SelectItem>
                       ))}
                     </SelectContent>
                   </Select>
