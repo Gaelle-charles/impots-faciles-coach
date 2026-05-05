@@ -43,6 +43,7 @@ interface UserRow {
   date_paiement: string | null;
   metier_id: string | null;
   deleted_at: string | null;
+  deleted_by: 'admin' | 'user' | null;
   email_confirmed_at?: string | null;
   last_sign_in_at?: string | null;
   team?: { raison_sociale: string; role: 'admin' | 'member' } | null;
@@ -184,7 +185,7 @@ const AdminUsers = () => {
     if (!user) return;
     setLoading(true);
     const [uRes, pRes, rRes, mRes, metaRes, orgMembersRes, orgsRes] = await Promise.all([
-      supabase.from('profiles').select('id, prenom, nom, email, plan, role, created_at, is_active, date_paiement, metier_id, deleted_at').order('created_at', { ascending: false }),
+      supabase.from('profiles').select('id, prenom, nom, email, plan, role, created_at, is_active, date_paiement, metier_id, deleted_at, deleted_by').order('created_at', { ascending: false }),
       supabase.from('progressions').select('id, user_id, module_id, step, completion_date'),
       supabase.from('resultat_quiz').select('id, user_id, module_id, pourcentage, score, score_max, date_quiz'),
       supabase.from('modules').select('id, titre, total_step').order('order', { ascending: true }),
@@ -614,10 +615,15 @@ const AdminUsers = () => {
                           <TooltipTrigger asChild>
                             <Badge variant="outline" className="bg-red-50 text-red-700 border-red-200 dark:bg-red-950/30 dark:text-red-300 dark:border-red-900 text-[10px] h-5 px-1.5 gap-1 font-normal whitespace-nowrap inline-flex items-center">
                               <Trash2 className="h-3 w-3 shrink-0" />
-                              <span className="hidden lg:inline">Supprimé</span>
+                              <span className="hidden lg:inline">
+                                Supprimé{u.deleted_by === 'user' ? ' (par user)' : u.deleted_by === 'admin' ? ' (par admin)' : ''}
+                              </span>
                             </Badge>
                           </TooltipTrigger>
-                          <TooltipContent>Supprimé le {new Date(u.deleted_at!).toLocaleDateString('fr-FR')}</TooltipContent>
+                          <TooltipContent>
+                            Supprimé le {new Date(u.deleted_at!).toLocaleDateString('fr-FR')}
+                            {u.deleted_by ? ` — ${u.deleted_by === 'user' ? 'par l\'utilisateur' : 'par un administrateur'}` : ''}
+                          </TooltipContent>
                         </Tooltip>
                       )}
                       {isPending && (

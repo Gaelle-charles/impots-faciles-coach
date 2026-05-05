@@ -103,6 +103,8 @@ Deno.serve(async (req) => {
         stripe_customer_id: null,
         stripe_subscription_id: null,
         is_active: false,
+        deleted_at: new Date().toISOString(),
+        deleted_by: 'user',
       })
       .eq("id", userId);
 

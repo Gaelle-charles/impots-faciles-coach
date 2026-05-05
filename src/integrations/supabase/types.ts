@@ -861,6 +861,7 @@ export type Database = {
           created_at: string
           date_paiement: string | null
           deleted_at: string | null
+          deleted_by: string | null
           email: string | null
           forme_juridique: string | null
           id: string
@@ -906,6 +907,7 @@ export type Database = {
           created_at?: string
           date_paiement?: string | null
           deleted_at?: string | null
+          deleted_by?: string | null
           email?: string | null
           forme_juridique?: string | null
           id: string
@@ -951,6 +953,7 @@ export type Database = {
           created_at?: string
           date_paiement?: string | null
           deleted_at?: string | null
+          deleted_by?: string | null
           email?: string | null
           forme_juridique?: string | null
           id?: string
