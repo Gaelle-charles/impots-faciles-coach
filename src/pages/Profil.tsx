@@ -382,9 +382,9 @@ const Profil = () => {
         </CardContent>
       </Card>
 
-      <div className="space-y-6">
+      <div className="flex flex-col gap-6">
       {/* ── Mon abonnement ── */}
-      <Card className="border-border bg-background rounded-3xl shadow-sm">
+      <Card className="flex-1 border-border bg-background rounded-3xl shadow-sm">
         <CardHeader className="pb-3">
           <CardTitle className="font-heading text-lg flex items-center gap-2">
             <CreditCard className="h-4 w-4" />
