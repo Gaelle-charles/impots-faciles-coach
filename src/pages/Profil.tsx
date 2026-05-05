@@ -320,7 +320,7 @@ const Profil = () => {
   }
 
   return (
-    <div className="space-y-8 max-w-3xl">
+    <div className="space-y-8 max-w-5xl">
       <div>
         <h1 className="font-display text-3xl sm:text-4xl lg:text-5xl text-foreground leading-tight">
           Mon <em className="accent-serif">profil</em>
