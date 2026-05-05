@@ -60,6 +60,7 @@ interface RichTextEditorProps {
   onChange: (value: string) => void;
   placeholder?: string;
   minHeight?: number;
+  onImageRequest?: (insert: (url: string, alt?: string) => void) => void;
 }
 
 export function RichTextEditor({
@@ -67,6 +68,7 @@ export function RichTextEditor({
   onChange,
   placeholder = 'Commencez à écrire…',
   minHeight = 300,
+  onImageRequest,
 }: RichTextEditorProps) {
   const editor = useEditor({
     extensions: [
@@ -122,11 +124,17 @@ export function RichTextEditor({
 
   const addImage = useCallback(() => {
     if (!editor) return;
+    if (onImageRequest) {
+      onImageRequest((url, alt) => {
+        editor.chain().focus().setImage({ src: url, alt: alt || '' }).run();
+      });
+      return;
+    }
     const url = window.prompt("URL de l'image :");
     if (url) {
       editor.chain().focus().setImage({ src: url }).run();
     }
-  }, [editor]);
+  }, [editor, onImageRequest]);
 
   const insertSeparator = useCallback(() => {
     if (!editor) return;

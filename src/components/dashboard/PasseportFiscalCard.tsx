@@ -1,8 +1,8 @@
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Crown } from "lucide-react";
-import ReactMarkdown from "react-markdown";
 import type { Passeport } from "@/hooks/usePasseportFiscal";
+import { renderSectionContent } from "@/lib/sanitizeHtml";
 
 interface Props {
   passeport: Passeport;
@@ -56,9 +56,10 @@ export function PasseportFiscalCard({ passeport }: Props) {
                 <h3 className="font-heading text-base font-semibold text-foreground">
                   {section.title}
                 </h3>
-                <div className="prose prose-sm dark:prose-invert max-w-none text-sm">
-                  <ReactMarkdown>{section.content_md}</ReactMarkdown>
-                </div>
+                <div
+                  className="prose prose-sm dark:prose-invert max-w-none text-sm"
+                  dangerouslySetInnerHTML={{ __html: renderSectionContent(section) }}
+                />
               </div>
             ))}
           {sections.length === 0 && (

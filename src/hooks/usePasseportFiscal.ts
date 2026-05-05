@@ -21,7 +21,9 @@ export interface MatchingConditions {
 export interface PasseportSection {
   key: string;
   title: string;
-  content_md: string;
+  content_html?: string;
+  /** @deprecated legacy markdown — converted to HTML on read */
+  content_md?: string;
 }
 
 export interface Passeport {
