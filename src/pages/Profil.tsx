@@ -533,7 +533,7 @@ const Profil = () => {
         <CardHeader className="pb-3">
           <CardTitle className="font-heading text-lg flex items-center gap-2">
             <ClipboardList className="h-4 w-4" />
-            Mes réponses
+            Mon formulaire d'onboarding
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-3">
