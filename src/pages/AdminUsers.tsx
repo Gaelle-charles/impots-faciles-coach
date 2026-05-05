@@ -674,7 +674,7 @@ const AdminUsers = () => {
                       )}
                     </div>
                   </TableCell>
-                  <TableCell className="hidden md:table-cell text-sm text-muted-foreground truncate max-w-[200px]">{u.email ?? '—'}</TableCell>
+                  <TableCell className="hidden md:table-cell text-sm text-muted-foreground truncate max-w-[200px]">{displayEmail ?? '—'}</TableCell>
                   <TableCell>
                     <Badge className={`text-xs ${planBadgeClass[u.plan] ?? planBadgeClass.nouveau}`}>{planLabel(u.plan)}</Badge>
                   </TableCell>
