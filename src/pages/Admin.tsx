@@ -366,7 +366,7 @@ const Admin = () => {
                   <TableCell className="font-medium text-sm">{p.nom}</TableCell>
                   <TableCell className="hidden md:table-cell text-sm text-muted-foreground">{p.regime_fiscal}</TableCell>
                   <TableCell className="hidden sm:table-cell">
-                    <Badge className="bg-primary/10 text-primary capitalize text-xs">{p.plan_minimum}</Badge>
+                    {renderPlanBadge(p.plan_minimum)}
                   </TableCell>
                   <TableCell>
                     <Badge variant={p.is_active ? 'default' : 'secondary'} className="text-xs">
