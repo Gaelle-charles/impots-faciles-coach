@@ -44,6 +44,11 @@ interface UserRow {
   metier_id: string | null;
   deleted_at: string | null;
   deleted_by: 'admin' | 'user' | null;
+  deleted_by_admin_id?: string | null;
+  deleted_email?: string | null;
+  deleted_prenom?: string | null;
+  deleted_nom?: string | null;
+  deleted_by_admin_name?: string | null;
   email_confirmed_at?: string | null;
   last_sign_in_at?: string | null;
   team?: { raison_sociale: string; role: 'admin' | 'member' } | null;
