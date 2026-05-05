@@ -598,8 +598,8 @@ const Profil = () => {
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <p className="text-sm text-muted-foreground mb-4">
-            <span className="lg:hidden">Suppression définitive et irréversible.</span>
+          <p className="text-xs sm:text-sm text-muted-foreground mb-4">
+            <span className="lg:hidden">Suppression définitive.</span>
             <span className="hidden lg:inline">La suppression de ton compte est définitive. Toutes tes données seront perdues.</span>
           </p>
           <Button variant="outline" className="border-destructive text-destructive hover:bg-destructive/10 gap-2" disabled={checkingSub} onClick={handleStartDelete}>
