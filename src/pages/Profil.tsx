@@ -333,7 +333,6 @@ const Profil = () => {
 
       <div className="grid gap-6 md:grid-cols-2 md:items-start">
       {/* ── Informations personnelles ── */}
-      <div className="space-y-6">
       <Card className="border-border bg-background rounded-3xl shadow-sm">
         <CardHeader className="pb-3">
           <CardTitle className="font-heading text-lg">Informations personnelles</CardTitle>
