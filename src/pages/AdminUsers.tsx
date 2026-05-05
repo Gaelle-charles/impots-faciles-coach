@@ -80,6 +80,8 @@ const ROLE_OPTIONS = [
 const PLANS_FILTER = ['Tous', ...PLAN_OPTIONS];
 const PAGE_SIZE = 20;
 
+const planLabel = (p: string) => (p === 'nouveau' ? 'Freemium' : p.charAt(0).toUpperCase() + p.slice(1));
+
 const planBadgeClass: Record<string, string> = {
   nouveau: 'bg-muted text-muted-foreground',
   starter: 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200',
@@ -567,7 +569,7 @@ const AdminUsers = () => {
           </SelectTrigger>
           <SelectContent>
             {PLANS_FILTER.map((p) => (
-              <SelectItem key={p} value={p}>{p === 'Tous' ? 'Tous les plans' : p.charAt(0).toUpperCase() + p.slice(1)}</SelectItem>
+              <SelectItem key={p} value={p}>{p === 'Tous' ? 'Tous les plans' : planLabel(p)}</SelectItem>
             ))}
           </SelectContent>
         </Select>
@@ -652,7 +654,7 @@ const AdminUsers = () => {
                   </TableCell>
                   <TableCell className="hidden md:table-cell text-sm text-muted-foreground truncate max-w-[200px]">{u.email ?? '—'}</TableCell>
                   <TableCell>
-                    <Badge className={`text-xs capitalize ${planBadgeClass[u.plan] ?? planBadgeClass.nouveau}`}>{u.plan}</Badge>
+                    <Badge className={`text-xs ${planBadgeClass[u.plan] ?? planBadgeClass.nouveau}`}>{planLabel(u.plan)}</Badge>
                   </TableCell>
                   <TableCell className="hidden lg:table-cell text-sm text-muted-foreground">
                     {new Date(u.created_at).toLocaleDateString('fr-FR')}
@@ -798,7 +800,7 @@ const AdminUsers = () => {
                   <SelectTrigger><SelectValue /></SelectTrigger>
                   <SelectContent>
                     {PLAN_OPTIONS.map((p) => (
-                      <SelectItem key={p} value={p}>{p.charAt(0).toUpperCase() + p.slice(1)}</SelectItem>
+                      <SelectItem key={p} value={p}>{planLabel(p)}</SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
@@ -880,7 +882,7 @@ const AdminUsers = () => {
                     <SelectTrigger><SelectValue /></SelectTrigger>
                     <SelectContent>
                       {PLAN_OPTIONS.map((p) => (
-                        <SelectItem key={p} value={p}>{p.charAt(0).toUpperCase() + p.slice(1)}</SelectItem>
+                        <SelectItem key={p} value={p}>{planLabel(p)}</SelectItem>
                       ))}
                     </SelectContent>
                   </Select>
