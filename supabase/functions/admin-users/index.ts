@@ -245,6 +245,10 @@ Deno.serve(async (req) => {
           .update({
             deleted_at: new Date().toISOString(),
             deleted_by: 'admin',
+            deleted_by_admin_id: caller.id,
+            deleted_email: profile.email,
+            deleted_prenom: profile.prenom,
+            deleted_nom: profile.nom,
             is_active: false,
             email: `deleted_${userId}@deleted.local`,
             nom: null,
