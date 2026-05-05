@@ -862,6 +862,7 @@ export type Database = {
           date_paiement: string | null
           deleted_at: string | null
           deleted_by: string | null
+          deleted_by_admin_id: string | null
           deleted_email: string | null
           deleted_nom: string | null
           deleted_prenom: string | null
@@ -911,6 +912,7 @@ export type Database = {
           date_paiement?: string | null
           deleted_at?: string | null
           deleted_by?: string | null
+          deleted_by_admin_id?: string | null
           deleted_email?: string | null
           deleted_nom?: string | null
           deleted_prenom?: string | null
@@ -960,6 +962,7 @@ export type Database = {
           date_paiement?: string | null
           deleted_at?: string | null
           deleted_by?: string | null
+          deleted_by_admin_id?: string | null
           deleted_email?: string | null
           deleted_nom?: string | null
           deleted_prenom?: string | null
@@ -997,6 +1000,13 @@ export type Database = {
           welcome_email_sent_at?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "profiles_deleted_by_admin_id_fkey"
+            columns: ["deleted_by_admin_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "profiles_metier_id_fkey"
             columns: ["metier_id"]
