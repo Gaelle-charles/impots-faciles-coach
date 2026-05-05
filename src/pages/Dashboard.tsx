@@ -21,6 +21,7 @@ import {
   Wrench,
   Heart,
 } from 'lucide-react';
+import { ExpandableText } from '@/components/dashboard/ExpandableText';
 import type { Tables } from '@/integrations/supabase/types';
 import { useAccess } from '@/hooks/useAccess';
 import { downloadCertificatPdf, type CertificatData } from '@/lib/certificat-pdf';
