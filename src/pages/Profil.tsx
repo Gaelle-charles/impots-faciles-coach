@@ -377,7 +377,7 @@ const Profil = () => {
 
           <Button onClick={handleSave} disabled={saving} className="gap-2">
             <Save className="h-4 w-4" />
-            {saving ? 'Enregistrement...' : '💾 Enregistrer les modifications'}
+            {saving ? 'Enregistrement...' : 'Enregistrer les modifications'}
           </Button>
         </CardContent>
       </Card>
