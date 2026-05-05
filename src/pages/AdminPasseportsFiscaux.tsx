@@ -116,6 +116,25 @@ const AdminPasseportsFiscaux = () => {
   const [toDelete, setToDelete] = useState<PasseportRow | null>(null);
   const [deleting, setDeleting] = useState(false);
 
+  const [rowPreview, setRowPreview] = useState<PasseportRow | null>(null);
+
+  const rowPreviewPasseport = useMemo(() => {
+    if (!rowPreview) return null;
+    return {
+      id: rowPreview.id,
+      slug: rowPreview.slug,
+      numero: rowPreview.numero,
+      nom: rowPreview.nom,
+      description: rowPreview.description ?? '',
+      regime_fiscal: rowPreview.regime_fiscal,
+      regime_social: rowPreview.regime_social,
+      plan_minimum: rowPreview.plan_minimum,
+      passeport_card_md: rowPreview.passeport_card_md ?? '',
+      contenu_sections: rowPreview.contenu_sections ?? { sections: [] },
+      conditions_matching: rowPreview.conditions_matching ?? { match_all: [], match_any: [] },
+    };
+  }, [rowPreview]);
+
   const fetchData = useCallback(async () => {
     if (!user) return;
     setLoading(true);
@@ -377,6 +396,9 @@ const AdminPasseportsFiscaux = () => {
                   <TableCell className="text-center text-sm text-muted-foreground">{r.ordre ?? '—'}</TableCell>
                   <TableCell>
                     <div className="flex gap-1">
+                      <Button variant="outline" size="icon" className="h-7 w-7" onClick={() => setRowPreview(r)} title="Aperçu">
+                        <Eye className="h-3.5 w-3.5" />
+                      </Button>
                       <Button variant="outline" size="icon" className="h-7 w-7" onClick={() => openEdit(r)} title="Modifier">
                         <Pencil className="h-3.5 w-3.5" />
                       </Button>
@@ -587,6 +609,18 @@ const AdminPasseportsFiscaux = () => {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      <Dialog open={!!rowPreview} onOpenChange={(v) => !v && setRowPreview(null)}>
+        <DialogContent className="max-w-4xl w-[95vw] max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="font-heading flex items-center gap-2">
+              <Eye className="h-5 w-5 text-primary" />
+              Aperçu — {rowPreview?.nom}
+            </DialogTitle>
+          </DialogHeader>
+          {rowPreviewPasseport && <PasseportFiscalCard passeport={rowPreviewPasseport as any} />}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
