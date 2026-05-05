@@ -368,7 +368,10 @@ const Profil = () => {
           <div className="space-y-2">
             <Label htmlFor="email">Email</Label>
             <Input id="email" value={profile?.email ?? user?.email ?? ''} disabled className="bg-muted" />
-            <p className="text-xs text-muted-foreground">Pour changer ton email, contacte le support.</p>
+            <p className="text-xs text-muted-foreground">
+              <span className="lg:hidden">Email non modifiable.</span>
+              <span className="hidden lg:inline">Pour changer ton email, contacte le support.</span>
+            </p>
           </div>
 
           <Button onClick={handleSave} disabled={saving} className="gap-2">
