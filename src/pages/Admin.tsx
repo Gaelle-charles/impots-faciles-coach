@@ -377,6 +377,7 @@ const Admin = () => {
                 <TableHead className="hidden md:table-cell">Régime fiscal</TableHead>
                 <TableHead className="hidden sm:table-cell">Plan</TableHead>
                 <TableHead>Statut</TableHead>
+                <TableHead className="w-20 text-right">Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -393,11 +394,23 @@ const Admin = () => {
                       {p.is_active ? 'Actif' : 'Inactif'}
                     </Badge>
                   </TableCell>
+                  <TableCell className="text-right">
+                    <Button
+                      variant="outline"
+                      size="icon"
+                      className="h-7 w-7"
+                      onClick={() => handlePreviewPasseport(p.id)}
+                      disabled={previewLoading}
+                      title="Aperçu"
+                    >
+                      <Eye className="h-3.5 w-3.5" />
+                    </Button>
+                  </TableCell>
                 </TableRow>
               ))}
               {passeports.length === 0 && (
                 <TableRow>
-                  <TableCell colSpan={5} className="text-center text-muted-foreground py-6">
+                  <TableCell colSpan={6} className="text-center text-muted-foreground py-6">
                     Aucun passeport fiscal.
                   </TableCell>
                 </TableRow>
