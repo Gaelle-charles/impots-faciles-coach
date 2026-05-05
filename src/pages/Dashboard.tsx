@@ -143,7 +143,7 @@ const Dashboard = () => {
         <h1 className="font-display text-4xl md:text-5xl text-foreground leading-tight">
           {profile?.prenom ? <>Bonjour <AccentText>{profile.prenom}</AccentText></> : <>Bonjour</>}
         </h1>
-        <p className="mt-3 text-lg text-muted-foreground">
+        <p className="mt-2 text-sm sm:text-base md:text-lg text-muted-foreground">
           Voici votre espace personnel. Avancez à votre rythme, on vous guide.
         </p>
       </div>
