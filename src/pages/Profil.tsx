@@ -544,7 +544,7 @@ const Profil = () => {
               {sendingReset ? 'Envoi…' : 'Changer mon mot de passe'}
             </Button>
             <p className="mt-2 text-xs text-muted-foreground">
-              <span className="lg:hidden">Email de réinitialisation envoyé.</span>
+              <span className="lg:hidden">Email envoyé.</span>
               <span className="hidden lg:inline">Un email de réinitialisation sera envoyé à ton adresse.</span>
             </p>
           </CardContent>
