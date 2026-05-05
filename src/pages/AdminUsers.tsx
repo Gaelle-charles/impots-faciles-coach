@@ -44,6 +44,11 @@ interface UserRow {
   metier_id: string | null;
   deleted_at: string | null;
   deleted_by: 'admin' | 'user' | null;
+  deleted_by_admin_id?: string | null;
+  deleted_email?: string | null;
+  deleted_prenom?: string | null;
+  deleted_nom?: string | null;
+  deleted_by_admin_name?: string | null;
   email_confirmed_at?: string | null;
   last_sign_in_at?: string | null;
   team?: { raison_sociale: string; role: 'admin' | 'member' } | null;
@@ -185,7 +190,7 @@ const AdminUsers = () => {
     if (!user) return;
     setLoading(true);
     const [uRes, pRes, rRes, mRes, metaRes, orgMembersRes, orgsRes] = await Promise.all([
-      supabase.from('profiles').select('id, prenom, nom, email, plan, role, created_at, is_active, date_paiement, metier_id, deleted_at, deleted_by').order('created_at', { ascending: false }),
+      supabase.from('profiles').select('id, prenom, nom, email, plan, role, created_at, is_active, date_paiement, metier_id, deleted_at, deleted_by, deleted_by_admin_id, deleted_email, deleted_prenom, deleted_nom').order('created_at', { ascending: false }),
       supabase.from('progressions').select('id, user_id, module_id, step, completion_date'),
       supabase.from('resultat_quiz').select('id, user_id, module_id, pourcentage, score, score_max, date_quiz'),
       supabase.from('modules').select('id, titre, total_step').order('order', { ascending: true }),
@@ -217,11 +222,19 @@ const AdminUsers = () => {
       }));
     }
 
-    const enriched = (uRes.data as UserRow[] ?? []).map((u) => ({
+    const rawUsers = (uRes.data as UserRow[] ?? []);
+    const adminNameMap = new Map<string, string>();
+    rawUsers.forEach((u) => {
+      const fullName = [u.prenom, u.nom].filter(Boolean).join(' ').trim();
+      adminNameMap.set(u.id, fullName || u.email || 'Admin');
+    });
+
+    const enriched = rawUsers.map((u) => ({
       ...u,
       email_confirmed_at: metaMap.get(u.id)?.email_confirmed_at ?? null,
       last_sign_in_at: metaMap.get(u.id)?.last_sign_in_at ?? null,
       team: teamMap.get(u.id) ?? null,
+      deleted_by_admin_name: u.deleted_by_admin_id ? (adminNameMap.get(u.deleted_by_admin_id) ?? null) : null,
     }));
 
     setUsers(enriched);
@@ -296,8 +309,9 @@ const AdminUsers = () => {
     if (search.trim()) {
       const q = search.trim().toLowerCase();
       list = list.filter((u) =>
-        `${u.prenom ?? ''} ${u.nom ?? ''}`.toLowerCase().includes(q) ||
-        (u.email ?? '').toLowerCase().includes(q)
+        `${u.prenom ?? ''} ${u.nom ?? ''} ${u.deleted_prenom ?? ''} ${u.deleted_nom ?? ''}`.toLowerCase().includes(q) ||
+        (u.email ?? '').toLowerCase().includes(q) ||
+        (u.deleted_email ?? '').toLowerCase().includes(q)
       );
     }
     return list;
@@ -600,29 +614,32 @@ const AdminUsers = () => {
               const isDeleted = !!u.deleted_at;
               const isPending = !u.email_confirmed_at && !isDeleted;
               const rowBg = isDeleted ? 'bg-muted/30' : 'bg-background';
+              const displayPrenom = isDeleted ? (u.deleted_prenom ?? u.prenom) : u.prenom;
+              const displayNom = isDeleted ? (u.deleted_nom ?? u.nom) : u.nom;
+              const displayEmail = isDeleted ? (u.deleted_email ?? u.email) : u.email;
               return (
                 <TableRow key={u.id} className={isDeleted ? 'opacity-60 bg-muted/30' : (!u.is_active ? 'opacity-50' : '')}>
                   <TableCell>
                     <div className={`flex h-8 w-8 items-center justify-center rounded-full text-xs font-bold ${initialsColor(u.id)}`}>
-                      {getInitials(u.prenom, u.nom)}
+                      {getInitials(displayPrenom, displayNom)}
                     </div>
                   </TableCell>
                   <TableCell className="font-medium text-sm">
                     <div className="flex items-center gap-1.5 flex-nowrap">
-                      <span className="whitespace-nowrap">{u.prenom ?? ''} {u.nom ?? ''}</span>
+                      <span className="whitespace-nowrap">{displayPrenom ?? ''} {displayNom ?? ''}</span>
                       {isDeleted && (
                         <Tooltip>
                           <TooltipTrigger asChild>
                             <Badge variant="outline" className="bg-red-50 text-red-700 border-red-200 dark:bg-red-950/30 dark:text-red-300 dark:border-red-900 text-[10px] h-5 px-1.5 gap-1 font-normal whitespace-nowrap inline-flex items-center">
                               <Trash2 className="h-3 w-3 shrink-0" />
                               <span className="hidden lg:inline">
-                                Supprimé{u.deleted_by === 'user' ? ' (par user)' : u.deleted_by === 'admin' ? ' (par admin)' : ''}
+                                Supprimé{u.deleted_by === 'user' ? ' (par user)' : u.deleted_by === 'admin' ? `${u.deleted_by_admin_name ? ` (par ${u.deleted_by_admin_name})` : ' (par admin)'}` : ''}
                               </span>
                             </Badge>
                           </TooltipTrigger>
                           <TooltipContent>
                             Supprimé le {new Date(u.deleted_at!).toLocaleDateString('fr-FR')}
-                            {u.deleted_by ? ` — ${u.deleted_by === 'user' ? 'par l\'utilisateur' : 'par un administrateur'}` : ''}
+                            {u.deleted_by === 'user' ? ' — par l\'utilisateur lui-même' : u.deleted_by === 'admin' ? ` — par ${u.deleted_by_admin_name ?? 'un administrateur'}` : ''}
                           </TooltipContent>
                         </Tooltip>
                       )}
@@ -658,7 +675,7 @@ const AdminUsers = () => {
                       )}
                     </div>
                   </TableCell>
-                  <TableCell className="hidden md:table-cell text-sm text-muted-foreground truncate max-w-[200px]">{u.email ?? '—'}</TableCell>
+                  <TableCell className="hidden md:table-cell text-sm text-muted-foreground truncate max-w-[200px]">{displayEmail ?? '—'}</TableCell>
                   <TableCell>
                     <Badge className={`text-xs ${planBadgeClass[u.plan] ?? planBadgeClass.nouveau}`}>{planLabel(u.plan)}</Badge>
                   </TableCell>

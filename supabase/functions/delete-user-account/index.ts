@@ -42,7 +42,7 @@ Deno.serve(async (req) => {
     // Fetch profile (including email/name for the confirmation email)
     const { data: profile } = await admin
       .from("profiles")
-      .select("email, prenom, plan, stripe_subscription_id, stripe_customer_id")
+      .select("email, prenom, nom, plan, stripe_subscription_id, stripe_customer_id")
       .eq("id", userId)
       .maybeSingle();
 
@@ -92,6 +92,9 @@ Deno.serve(async (req) => {
     const { error: updErr } = await admin
       .from("profiles")
       .update({
+        deleted_email: profile?.email ?? userEmail,
+        deleted_prenom: profile?.prenom ?? null,
+        deleted_nom: (profile as any)?.nom ?? null,
         email: `deleted_${userId}@deleted.local`,
         nom: null,
         prenom: null,
