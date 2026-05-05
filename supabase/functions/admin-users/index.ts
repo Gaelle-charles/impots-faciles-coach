@@ -162,7 +162,7 @@ Deno.serve(async (req) => {
         // 1. Récupérer profil pour info Stripe + organization
         const { data: profile } = await adminClient
           .from("profiles")
-          .select("id, email, prenom, plan, stripe_subscription_id, organization_id")
+          .select("id, email, prenom, nom, plan, stripe_subscription_id, organization_id")
           .eq("id", userId)
           .maybeSingle();
 
