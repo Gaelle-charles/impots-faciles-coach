@@ -309,8 +309,9 @@ const AdminUsers = () => {
     if (search.trim()) {
       const q = search.trim().toLowerCase();
       list = list.filter((u) =>
-        `${u.prenom ?? ''} ${u.nom ?? ''}`.toLowerCase().includes(q) ||
-        (u.email ?? '').toLowerCase().includes(q)
+        `${u.prenom ?? ''} ${u.nom ?? ''} ${u.deleted_prenom ?? ''} ${u.deleted_nom ?? ''}`.toLowerCase().includes(q) ||
+        (u.email ?? '').toLowerCase().includes(q) ||
+        (u.deleted_email ?? '').toLowerCase().includes(q)
       );
     }
     return list;
