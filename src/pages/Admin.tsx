@@ -23,7 +23,10 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from 'recharts';
-import { Users, BookOpen, Target, Activity, BookMarked, ArrowRight } from 'lucide-react';
+import { Users, BookOpen, Target, Activity, BookMarked, ArrowRight, Eye } from 'lucide-react';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { PasseportFiscalCard } from '@/components/dashboard/PasseportFiscalCard';
+import type { Passeport } from '@/hooks/usePasseportFiscal';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { toast } from '@/hooks/use-toast';
@@ -87,6 +90,23 @@ const Admin = () => {
   const [modules, setModules] = useState<ModuleRow[]>([]);
   const [avgScore, setAvgScore] = useState(0);
   const [passeports, setPasseports] = useState<Array<{ id: string; numero: number; nom: string; regime_fiscal: string; plan_minimum: string; is_active: boolean; ordre: number }>>([]);
+  const [previewPasseport, setPreviewPasseport] = useState<Passeport | null>(null);
+  const [previewLoading, setPreviewLoading] = useState(false);
+
+  const handlePreviewPasseport = async (id: string) => {
+    setPreviewLoading(true);
+    const { data, error } = await (supabase as any)
+      .from('passeports_fiscaux')
+      .select('*')
+      .eq('id', id)
+      .maybeSingle();
+    setPreviewLoading(false);
+    if (error || !data) {
+      toast({ title: 'Erreur', description: 'Impossible de charger le passeport.', variant: 'destructive' });
+      return;
+    }
+    setPreviewPasseport(data as Passeport);
+  };
 
   // Access guard
   useEffect(() => {
@@ -357,6 +377,7 @@ const Admin = () => {
                 <TableHead className="hidden md:table-cell">Régime fiscal</TableHead>
                 <TableHead className="hidden sm:table-cell">Plan</TableHead>
                 <TableHead>Statut</TableHead>
+                <TableHead className="w-20 text-right">Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -373,11 +394,23 @@ const Admin = () => {
                       {p.is_active ? 'Actif' : 'Inactif'}
                     </Badge>
                   </TableCell>
+                  <TableCell className="text-right">
+                    <Button
+                      variant="outline"
+                      size="icon"
+                      className="h-7 w-7"
+                      onClick={() => handlePreviewPasseport(p.id)}
+                      disabled={previewLoading}
+                      title="Aperçu"
+                    >
+                      <Eye className="h-3.5 w-3.5" />
+                    </Button>
+                  </TableCell>
                 </TableRow>
               ))}
               {passeports.length === 0 && (
                 <TableRow>
-                  <TableCell colSpan={5} className="text-center text-muted-foreground py-6">
+                  <TableCell colSpan={6} className="text-center text-muted-foreground py-6">
                     Aucun passeport fiscal.
                   </TableCell>
                 </TableRow>
@@ -386,6 +419,18 @@ const Admin = () => {
           </Table>
         </CardContent>
       </Card>
+
+      <Dialog open={!!previewPasseport} onOpenChange={(v) => !v && setPreviewPasseport(null)}>
+        <DialogContent className="max-w-4xl w-[95vw] max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="font-heading flex items-center gap-2">
+              <Eye className="h-5 w-5 text-primary" />
+              Aperçu — {previewPasseport?.nom}
+            </DialogTitle>
+          </DialogHeader>
+          {previewPasseport && <PasseportFiscalCard passeport={previewPasseport} />}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
