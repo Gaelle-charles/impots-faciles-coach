@@ -188,7 +188,7 @@ const AdminUsers = () => {
     if (!user) return;
     setLoading(true);
     const [uRes, pRes, rRes, mRes, metaRes, orgMembersRes, orgsRes] = await Promise.all([
-      supabase.from('profiles').select('id, prenom, nom, email, plan, role, created_at, is_active, date_paiement, metier_id, deleted_at, deleted_by').order('created_at', { ascending: false }),
+      supabase.from('profiles').select('id, prenom, nom, email, plan, role, created_at, is_active, date_paiement, metier_id, deleted_at, deleted_by, deleted_email, deleted_prenom, deleted_nom').order('created_at', { ascending: false }),
       supabase.from('progressions').select('id, user_id, module_id, step, completion_date'),
       supabase.from('resultat_quiz').select('id, user_id, module_id, pourcentage, score, score_max, date_quiz'),
       supabase.from('modules').select('id, titre, total_step').order('order', { ascending: true }),
