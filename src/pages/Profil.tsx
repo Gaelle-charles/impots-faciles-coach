@@ -331,7 +331,7 @@ const Profil = () => {
         </p>
       </div>
 
-      <div className="grid gap-6 md:grid-cols-2 md:items-start">
+      <div className="grid gap-6 md:grid-cols-2 md:items-stretch">
       {/* ── Informations personnelles ── */}
       <Card className="border-border bg-background rounded-3xl shadow-sm">
         <CardHeader className="pb-3">
