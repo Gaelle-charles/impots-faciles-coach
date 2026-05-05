@@ -258,17 +258,17 @@ const Dashboard = () => {
           <p className="mt-2 text-sm text-muted-foreground leading-relaxed flex-1">
             12 outils interactifs pour estimer votre impôt, comparer plusieurs scénarios et anticiper vos choix fiscaux sans formules à connaître.
           </p>
-          <div className="mt-5 flex flex-nowrap gap-3">
+          <div className="mt-5 flex flex-col sm:flex-row flex-wrap gap-3">
             <Button
               onClick={() => navigate('/simulateur-frais-pro')}
-              className="gap-2 bg-violet-deep text-yellow-vivid hover:bg-violet-deep/90 shrink"
+              className="gap-2 bg-violet-deep text-yellow-vivid hover:bg-violet-deep/90 w-full sm:w-auto justify-center"
             >
               Simulateur de frais complet <ArrowRight className="h-4 w-4" />
             </Button>
             <Button
               variant="outline"
               onClick={() => navigate('/mes-simulateurs')}
-              className="gap-2 bg-background/60 shrink"
+              className="gap-2 bg-background/60 w-full sm:w-auto justify-center"
             >
               Voir les simulateurs
             </Button>
