@@ -396,6 +396,9 @@ const AdminPasseportsFiscaux = () => {
                   <TableCell className="text-center text-sm text-muted-foreground">{r.ordre ?? '—'}</TableCell>
                   <TableCell>
                     <div className="flex gap-1">
+                      <Button variant="outline" size="icon" className="h-7 w-7" onClick={() => setRowPreview(r)} title="Aperçu">
+                        <Eye className="h-3.5 w-3.5" />
+                      </Button>
                       <Button variant="outline" size="icon" className="h-7 w-7" onClick={() => openEdit(r)} title="Modifier">
                         <Pencil className="h-3.5 w-3.5" />
                       </Button>
