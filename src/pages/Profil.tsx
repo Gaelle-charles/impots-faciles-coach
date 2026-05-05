@@ -29,6 +29,7 @@ import {
   CreditCard,
   ArrowRight,
   Trash2,
+  ClipboardList,
 } from 'lucide-react';
 
 interface ProfileData {
