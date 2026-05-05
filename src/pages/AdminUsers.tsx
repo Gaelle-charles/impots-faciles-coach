@@ -80,6 +80,8 @@ const ROLE_OPTIONS = [
 const PLANS_FILTER = ['Tous', ...PLAN_OPTIONS];
 const PAGE_SIZE = 20;
 
+const planLabel = (p: string) => (p === 'nouveau' ? 'Freemium' : p.charAt(0).toUpperCase() + p.slice(1));
+
 const planBadgeClass: Record<string, string> = {
   nouveau: 'bg-muted text-muted-foreground',
   starter: 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200',
