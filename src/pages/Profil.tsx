@@ -464,7 +464,7 @@ const Profil = () => {
       </Card>
 
       {/* ── Sécurité ── */}
-      <Card className="border-border bg-background rounded-3xl shadow-sm">
+      <Card className="flex-1 border-border bg-background rounded-3xl shadow-sm">
         <CardHeader className="pb-3">
           <CardTitle className="font-heading text-lg flex items-center gap-2">
             <Lock className="h-4 w-4" />
