@@ -323,7 +323,7 @@ const Onboarding = () => {
         return;
       }
 
-      if (data?.onboarding_done) {
+      if (data?.onboarding_done && !editMode) {
         navigate('/dashboard', { replace: true });
         return;
       }
