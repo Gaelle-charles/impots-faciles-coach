@@ -43,6 +43,7 @@ interface UserRow {
   date_paiement: string | null;
   metier_id: string | null;
   deleted_at: string | null;
+  deleted_by: 'admin' | 'user' | null;
   email_confirmed_at?: string | null;
   last_sign_in_at?: string | null;
   team?: { raison_sociale: string; role: 'admin' | 'member' } | null;
