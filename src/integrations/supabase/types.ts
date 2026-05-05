@@ -862,9 +862,6 @@ export type Database = {
           date_paiement: string | null
           deleted_at: string | null
           deleted_by: string | null
-          deleted_email: string | null
-          deleted_nom: string | null
-          deleted_prenom: string | null
           email: string | null
           forme_juridique: string | null
           id: string
@@ -911,9 +908,6 @@ export type Database = {
           date_paiement?: string | null
           deleted_at?: string | null
           deleted_by?: string | null
-          deleted_email?: string | null
-          deleted_nom?: string | null
-          deleted_prenom?: string | null
           email?: string | null
           forme_juridique?: string | null
           id: string
@@ -960,9 +954,6 @@ export type Database = {
           date_paiement?: string | null
           deleted_at?: string | null
           deleted_by?: string | null
-          deleted_email?: string | null
-          deleted_nom?: string | null
-          deleted_prenom?: string | null
           email?: string | null
           forme_juridique?: string | null
           id?: string
