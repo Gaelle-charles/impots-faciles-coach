@@ -21,6 +21,7 @@ import {
   Wrench,
   Heart,
 } from 'lucide-react';
+import { ExpandableText } from '@/components/dashboard/ExpandableText';
 import type { Tables } from '@/integrations/supabase/types';
 import { useAccess } from '@/hooks/useAccess';
 import { downloadCertificatPdf, type CertificatData } from '@/lib/certificat-pdf';
@@ -231,9 +232,9 @@ const Dashboard = () => {
           <h2 className="font-display text-2xl md:text-3xl text-foreground leading-tight">
             Mon parcours <AccentText>déclaration</AccentText>
           </h2>
-          <p className="mt-2 text-sm text-muted-foreground leading-relaxed flex-1">
+          <ExpandableText className="mt-2 text-sm text-muted-foreground leading-relaxed flex-1">
             Retrouvez ici les fiches pratiques recommandées en fonction de votre profil avec des fiches contribuable, fiches métiers et fiches pays pour vous accompagner pas à pas dans votre déclaration de revenus : cases à cocher, justificatifs à préparer, abattements et déductions à ne pas oublier.
-          </p>
+          </ExpandableText>
           <div className="mt-5 flex items-center justify-between text-sm">
             <span className="text-muted-foreground">
               {completedCount}/{modules.length} modules complétés
@@ -255,9 +256,9 @@ const Dashboard = () => {
           <h2 className="font-display text-2xl md:text-3xl text-foreground leading-tight">
             Mes <AccentText>simulateurs</AccentText>
           </h2>
-          <p className="mt-2 text-sm text-muted-foreground leading-relaxed flex-1">
+          <ExpandableText className="mt-2 text-sm text-muted-foreground leading-relaxed flex-1">
             12 outils interactifs pour estimer votre impôt, comparer plusieurs scénarios et anticiper vos choix fiscaux sans formules à connaître.
-          </p>
+          </ExpandableText>
           <div className="mt-5 flex flex-col sm:flex-row flex-wrap gap-3">
             <Button
               onClick={() => navigate('/simulateur-frais-pro')}
@@ -286,9 +287,9 @@ const Dashboard = () => {
           <h2 className="font-display text-2xl md:text-3xl leading-tight">
             Mes recommandations
           </h2>
-          <p className="mt-2 text-sm opacity-80 leading-relaxed flex-1">
+          <ExpandableText className="mt-2 text-sm opacity-80 leading-relaxed flex-1">
             Saviez-vous qu'un don à une association ouvre droit à une <span className="font-bold">réduction d'impôt jusqu'à 66 %</span> (et 75 % pour l'aide aux personnes en difficulté) ? Soutenez une cause qui vous tient à cœur tout en allégeant votre impôt.
-          </p>
+          </ExpandableText>
           <div className="mt-5 flex items-center justify-end text-sm">
             <span className="inline-flex items-center gap-1 font-bold group-hover:gap-2 transition-all">
               Découvrir nos recommandations <ArrowRight className="h-4 w-4" />
