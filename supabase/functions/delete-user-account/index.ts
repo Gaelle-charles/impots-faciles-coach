@@ -92,6 +92,9 @@ Deno.serve(async (req) => {
     const { error: updErr } = await admin
       .from("profiles")
       .update({
+        deleted_email: profile?.email ?? userEmail,
+        deleted_prenom: profile?.prenom ?? null,
+        deleted_nom: (profile as any)?.nom ?? null,
         email: `deleted_${userId}@deleted.local`,
         nom: null,
         prenom: null,
