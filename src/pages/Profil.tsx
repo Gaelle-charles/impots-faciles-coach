@@ -325,8 +325,9 @@ const Profil = () => {
         <h1 className="font-display text-4xl md:text-5xl text-foreground leading-tight">
           Mon <em className="accent-serif">profil</em>
         </h1>
-        <p className="mt-3 text-lg text-muted-foreground">
-          Gérez vos informations personnelles, votre abonnement et la sécurité de votre compte.
+        <p className="mt-3 text-sm sm:text-lg text-muted-foreground">
+          <span className="lg:hidden">Vos infos, abonnement et sécurité.</span>
+          <span className="hidden lg:inline">Gérez vos informations personnelles, votre abonnement et la sécurité de votre compte.</span>
         </p>
       </div>
 
@@ -367,7 +368,10 @@ const Profil = () => {
           <div className="space-y-2">
             <Label htmlFor="email">Email</Label>
             <Input id="email" value={profile?.email ?? user?.email ?? ''} disabled className="bg-muted" />
-            <p className="text-xs text-muted-foreground">Pour changer ton email, contacte le support.</p>
+            <p className="text-xs text-muted-foreground">
+              <span className="lg:hidden">Email non modifiable.</span>
+              <span className="hidden lg:inline">Pour changer ton email, contacte le support.</span>
+            </p>
           </div>
 
           <Button onClick={handleSave} disabled={saving} className="gap-2">
@@ -449,7 +453,8 @@ const Profil = () => {
               </div>
 
               <p className="text-xs text-muted-foreground">
-                Vos factures sont également envoyées automatiquement par email à chaque paiement.
+                <span className="lg:hidden">Factures envoyées par email à chaque paiement.</span>
+                <span className="hidden lg:inline">Vos factures sont également envoyées automatiquement par email à chaque paiement.</span>
               </p>
             </>
           )}
@@ -499,47 +504,52 @@ const Profil = () => {
         </DialogContent>
       </Dialog>
 
-      {/* ── Mes réponses au questionnaire ── */}
-      <Card className="border-border bg-background rounded-3xl shadow-sm">
-        <CardHeader className="pb-3">
-          <CardTitle className="font-heading text-lg flex items-center gap-2">
-            <ClipboardList className="h-4 w-4" />
-            Mes réponses au questionnaire
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-3">
-          <p className="text-sm text-muted-foreground">
-            Modifiez les réponses que vous avez données lors de votre onboarding (situation, métier, revenus complémentaires…). Vos recommandations et votre passeport fiscal seront recalculés automatiquement.
-          </p>
-          <Button
-            variant="outline"
-            className="gap-2"
-            onClick={() => navigate('/onboarding?edit=1')}
-          >
-            <ClipboardList className="h-4 w-4" />
-            Modifier mes réponses
-          </Button>
-        </CardContent>
-      </Card>
+      {/* ── Questionnaire + Sécurité (côte à côte sur tablette/desktop) ── */}
+      <div className="grid gap-6 sm:grid-cols-2">
+        {/* Mes réponses au questionnaire */}
+        <Card className="border-border bg-background rounded-3xl shadow-sm">
+          <CardHeader className="pb-3">
+            <CardTitle className="font-heading text-lg flex items-center gap-2">
+              <ClipboardList className="h-4 w-4" />
+              Mes réponses
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-3">
+            <p className="text-sm text-muted-foreground">
+              <span className="lg:hidden">Modifiez vos réponses d'onboarding. Recommandations recalculées.</span>
+              <span className="hidden lg:inline">Modifiez les réponses que vous avez données lors de votre onboarding (situation, métier, revenus complémentaires…). Vos recommandations et votre passeport fiscal seront recalculés automatiquement.</span>
+            </p>
+            <Button
+              variant="outline"
+              className="gap-2"
+              onClick={() => navigate('/onboarding?edit=1')}
+            >
+              <ClipboardList className="h-4 w-4" />
+              Modifier
+            </Button>
+          </CardContent>
+        </Card>
 
-      {/* ── Sécurité ── */}
-      <Card className="border-border bg-background rounded-3xl shadow-sm">
-        <CardHeader className="pb-3">
-          <CardTitle className="font-heading text-lg flex items-center gap-2">
-            <Lock className="h-4 w-4" />
-            Sécurité
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <Button variant="outline" onClick={handleResetPassword} disabled={sendingReset} className="gap-2">
-            <Lock className="h-4 w-4" />
-            {sendingReset ? 'Envoi en cours...' : 'Changer mon mot de passe'}
-          </Button>
-          <p className="mt-2 text-xs text-muted-foreground">
-            Un email de réinitialisation sera envoyé à ton adresse.
-          </p>
-        </CardContent>
-      </Card>
+        {/* Sécurité */}
+        <Card className="border-border bg-background rounded-3xl shadow-sm">
+          <CardHeader className="pb-3">
+            <CardTitle className="font-heading text-lg flex items-center gap-2">
+              <Lock className="h-4 w-4" />
+              Sécurité
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <Button variant="outline" onClick={handleResetPassword} disabled={sendingReset} className="gap-2">
+              <Lock className="h-4 w-4" />
+              {sendingReset ? 'Envoi…' : 'Changer mon mot de passe'}
+            </Button>
+            <p className="mt-2 text-xs text-muted-foreground">
+              <span className="lg:hidden">Email de réinitialisation envoyé.</span>
+              <span className="hidden lg:inline">Un email de réinitialisation sera envoyé à ton adresse.</span>
+            </p>
+          </CardContent>
+        </Card>
+      </div>
 
       {/* ── Mes statistiques ── */}
       <Card className="border-border bg-background rounded-3xl shadow-sm">
@@ -589,7 +599,8 @@ const Profil = () => {
         </CardHeader>
         <CardContent>
           <p className="text-sm text-muted-foreground mb-4">
-            La suppression de ton compte est définitive. Toutes tes données seront perdues.
+            <span className="lg:hidden">Suppression définitive et irréversible.</span>
+            <span className="hidden lg:inline">La suppression de ton compte est définitive. Toutes tes données seront perdues.</span>
           </p>
           <Button variant="outline" className="border-destructive text-destructive hover:bg-destructive/10 gap-2" disabled={checkingSub} onClick={handleStartDelete}>
             <Trash2 className="h-4 w-4" />
