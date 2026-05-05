@@ -124,11 +124,17 @@ export function RichTextEditor({
 
   const addImage = useCallback(() => {
     if (!editor) return;
+    if (onImageRequest) {
+      onImageRequest((url, alt) => {
+        editor.chain().focus().setImage({ src: url, alt: alt || '' }).run();
+      });
+      return;
+    }
     const url = window.prompt("URL de l'image :");
     if (url) {
       editor.chain().focus().setImage({ src: url }).run();
     }
-  }, [editor]);
+  }, [editor, onImageRequest]);
 
   const insertSeparator = useCallback(() => {
     if (!editor) return;
