@@ -453,7 +453,8 @@ const Profil = () => {
               </div>
 
               <p className="text-xs text-muted-foreground">
-                Vos factures sont également envoyées automatiquement par email à chaque paiement.
+                <span className="lg:hidden">Factures envoyées par email à chaque paiement.</span>
+                <span className="hidden lg:inline">Vos factures sont également envoyées automatiquement par email à chaque paiement.</span>
               </p>
             </>
           )}
