@@ -913,7 +913,7 @@ const Onboarding = () => {
               {saving
                 ? 'Enregistrement...'
                 : currentStep === 7
-                ? 'Voir ma recommandation →'
+                ? (editMode ? 'Enregistrer mes modifications' : 'Voir ma recommandation →')
                 : 'Suivant →'}
             </Button>
           </div>
