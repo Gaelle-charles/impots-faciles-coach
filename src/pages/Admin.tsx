@@ -90,6 +90,23 @@ const Admin = () => {
   const [modules, setModules] = useState<ModuleRow[]>([]);
   const [avgScore, setAvgScore] = useState(0);
   const [passeports, setPasseports] = useState<Array<{ id: string; numero: number; nom: string; regime_fiscal: string; plan_minimum: string; is_active: boolean; ordre: number }>>([]);
+  const [previewPasseport, setPreviewPasseport] = useState<Passeport | null>(null);
+  const [previewLoading, setPreviewLoading] = useState(false);
+
+  const handlePreviewPasseport = async (id: string) => {
+    setPreviewLoading(true);
+    const { data, error } = await (supabase as any)
+      .from('passeports_fiscaux')
+      .select('*')
+      .eq('id', id)
+      .maybeSingle();
+    setPreviewLoading(false);
+    if (error || !data) {
+      toast({ title: 'Erreur', description: 'Impossible de charger le passeport.', variant: 'destructive' });
+      return;
+    }
+    setPreviewPasseport(data as Passeport);
+  };
 
   // Access guard
   useEffect(() => {
