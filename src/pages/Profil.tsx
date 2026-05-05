@@ -382,6 +382,7 @@ const Profil = () => {
         </CardContent>
       </Card>
 
+      <div className="space-y-6">
       {/* ── Mon abonnement ── */}
       <Card className="border-border bg-background rounded-3xl shadow-sm">
         <CardHeader className="pb-3">
