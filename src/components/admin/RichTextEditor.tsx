@@ -60,6 +60,7 @@ interface RichTextEditorProps {
   onChange: (value: string) => void;
   placeholder?: string;
   minHeight?: number;
+  onImageRequest?: (insert: (url: string, alt?: string) => void) => void;
 }
 
 export function RichTextEditor({
@@ -67,6 +68,7 @@ export function RichTextEditor({
   onChange,
   placeholder = 'Commencez à écrire…',
   minHeight = 300,
+  onImageRequest,
 }: RichTextEditorProps) {
   const editor = useEditor({
     extensions: [
