@@ -569,7 +569,7 @@ const AdminUsers = () => {
           </SelectTrigger>
           <SelectContent>
             {PLANS_FILTER.map((p) => (
-              <SelectItem key={p} value={p}>{p === 'Tous' ? 'Tous les plans' : p.charAt(0).toUpperCase() + p.slice(1)}</SelectItem>
+              <SelectItem key={p} value={p}>{p === 'Tous' ? 'Tous les plans' : planLabel(p)}</SelectItem>
             ))}
           </SelectContent>
         </Select>
