@@ -528,52 +528,29 @@ const Profil = () => {
         </DialogContent>
       </Dialog>
 
-      {/* ── Questionnaire + Sécurité (côte à côte sur tablette/desktop) ── */}
-      <div className="grid gap-6 sm:grid-cols-2">
-        {/* Mes réponses au questionnaire */}
-        <Card className="border-border bg-background rounded-3xl shadow-sm">
-          <CardHeader className="pb-3">
-            <CardTitle className="font-heading text-lg flex items-center gap-2">
-              <ClipboardList className="h-4 w-4" />
-              Mes réponses
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-3">
-            <p className="text-xs sm:text-sm text-muted-foreground">
-              <span className="lg:hidden">Modifier vos réponses.</span>
-              <span className="hidden lg:inline">Modifiez les réponses que vous avez données lors de votre onboarding (situation, métier, revenus complémentaires…). Vos recommandations et votre passeport fiscal seront recalculés automatiquement.</span>
-            </p>
-            <Button
-              variant="outline"
-              className="gap-2"
-              onClick={() => navigate('/onboarding?edit=1')}
-            >
-              <ClipboardList className="h-4 w-4" />
-              Modifier
-            </Button>
-          </CardContent>
-        </Card>
-
-        {/* Sécurité */}
-        <Card className="border-border bg-background rounded-3xl shadow-sm">
-          <CardHeader className="pb-3">
-            <CardTitle className="font-heading text-lg flex items-center gap-2">
-              <Lock className="h-4 w-4" />
-              Sécurité
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <Button variant="outline" onClick={handleResetPassword} disabled={sendingReset} className="gap-2">
-              <Lock className="h-4 w-4" />
-              {sendingReset ? 'Envoi…' : 'Changer mon mot de passe'}
-            </Button>
-            <p className="mt-2 text-xs text-muted-foreground">
-              <span className="lg:hidden">Email envoyé.</span>
-              <span className="hidden lg:inline">Un email de réinitialisation sera envoyé à ton adresse.</span>
-            </p>
-          </CardContent>
-        </Card>
-      </div>
+      {/* Mes réponses au questionnaire */}
+      <Card className="border-border bg-background rounded-3xl shadow-sm">
+        <CardHeader className="pb-3">
+          <CardTitle className="font-heading text-lg flex items-center gap-2">
+            <ClipboardList className="h-4 w-4" />
+            Mes réponses
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-3">
+          <p className="text-xs sm:text-sm text-muted-foreground">
+            <span className="lg:hidden">Modifier vos réponses.</span>
+            <span className="hidden lg:inline">Modifiez les réponses que vous avez données lors de votre onboarding (situation, métier, revenus complémentaires…). Vos recommandations et votre passeport fiscal seront recalculés automatiquement.</span>
+          </p>
+          <Button
+            variant="outline"
+            className="gap-2"
+            onClick={() => navigate('/onboarding?edit=1')}
+          >
+            <ClipboardList className="h-4 w-4" />
+            Modifier
+          </Button>
+        </CardContent>
+      </Card>
 
       {/* ── Mes statistiques ── */}
       <Card className="border-border bg-background rounded-3xl shadow-sm">
