@@ -448,7 +448,7 @@ const Quizz = () => {
           <div className="space-y-3">
             {(question.options ?? []).map((opt, i) => {
               const letter = LETTERS[i] ?? '?';
-              const isCorrect = opt === question.bonne_reponse;
+              const isCorrect = normalizeAnswer(opt) === normalizeAnswer(question.bonne_reponse);
               const isSelected = selectedOption === opt;
 
               let optClasses =
