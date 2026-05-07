@@ -112,9 +112,14 @@ const Quizz = () => {
   const noMoreAttempts = attemptsUsed >= MAX_ATTEMPTS && !hasPassed;
   const currentAttemptNumber = attemptsUsed + 1; // si on lance une nouvelle tentative
 
+  // Normalisation défensive : on ignore espaces multiples / casse pour éviter
+  // qu'un espace en trop dans la BDD invalide une bonne réponse.
+  const normalizeAnswer = (s: string | null | undefined) =>
+    (s ?? '').replace(/\s+/g, ' ').trim().toLowerCase();
+
   const handleValidate = () => {
     if (!selectedOption || !question) return;
-    const correct = selectedOption === question.bonne_reponse;
+    const correct = normalizeAnswer(selectedOption) === normalizeAnswer(question.bonne_reponse);
     setValidated(true);
     if (correct) setScore((s) => s + 1);
   };
@@ -443,7 +448,7 @@ const Quizz = () => {
           <div className="space-y-3">
             {(question.options ?? []).map((opt, i) => {
               const letter = LETTERS[i] ?? '?';
-              const isCorrect = opt === question.bonne_reponse;
+              const isCorrect = normalizeAnswer(opt) === normalizeAnswer(question.bonne_reponse);
               const isSelected = selectedOption === opt;
 
               let optClasses =
