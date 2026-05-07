@@ -215,32 +215,7 @@ const Module = () => {
       return;
     }
 
-    // === Verrouillage séquentiel : module N>1 nécessite la complétion du module N-1 ===
-    if (!isAdmin && !isOrgAdminPreview && (module.order ?? 0) > 1) {
-      (async () => {
-        const { data: prevMod } = await supabase
-          .from('modules')
-          .select('id, titre, order')
-          .eq('order', (module.order ?? 0) - 1)
-          .eq('is_published', true)
-          .maybeSingle();
-        if (!prevMod) return;
-        const { data: prevProg } = await supabase
-          .from('progressions')
-          .select('completion_date')
-          .eq('user_id', user!.id)
-          .eq('module_id', prevMod.id)
-          .maybeSingle();
-        if (!prevProg?.completion_date) {
-          toast({
-            title: 'Module verrouillé',
-            description: `Termine d'abord le module ${prevMod.order} pour accéder à celui-ci.`,
-            variant: 'destructive',
-          });
-          navigate('/mes-modules', { replace: true });
-        }
-      })();
-    }
+    // Verrouillage séquentiel : effectué dans fetchData() AVANT toute création de progression.
   }, [loading, accessLoading, module, hasModuleAccess, navigate, isAdmin, isOrgAdminPreview, user]);
 
   const updateStep = useCallback(
