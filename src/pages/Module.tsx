@@ -110,6 +110,44 @@ const Module = () => {
       return;
     }
 
+    // === Verrouillage séquentiel STRICT : tous les modules d'order < N doivent être terminés ===
+    // (Admin applicatif passe au travers — vérifié par la query `role`.)
+    if (role !== 'admin' && (mod.order ?? 0) > 1) {
+      const { data: prevMods } = await supabase
+        .from('modules')
+        .select('id, order, titre')
+        .lt('order', mod.order ?? 0)
+        .eq('is_published', true);
+
+      const prevIds = (prevMods ?? []).map((m: any) => m.id);
+      if (prevIds.length > 0) {
+        const { data: prevProgs } = await supabase
+          .from('progressions')
+          .select('module_id, completion_date')
+          .eq('user_id', user.id)
+          .in('module_id', prevIds);
+
+        const completedIds = new Set(
+          (prevProgs ?? [])
+            .filter((p: any) => !!p.completion_date)
+            .map((p: any) => p.module_id),
+        );
+        const firstMissing = (prevMods ?? [])
+          .filter((m: any) => !completedIds.has(m.id))
+          .sort((a: any, b: any) => (a.order ?? 0) - (b.order ?? 0))[0];
+
+        if (firstMissing) {
+          toast({
+            title: 'Module verrouillé',
+            description: `Termine d'abord le module ${firstMissing.order} pour accéder à celui-ci.`,
+            variant: 'destructive',
+          });
+          navigate('/mes-modules', { replace: true });
+          return;
+        }
+      }
+    }
+
     const progRes = await supabase
       .from('progressions')
       .select('*')
@@ -156,7 +194,7 @@ const Module = () => {
     }
 
     setLoading(false);
-  }, [slug, user, navigate, isOrgAdminPreview]);
+  }, [slug, user, navigate, isOrgAdminPreview, role]);
 
   useEffect(() => {
     fetchData();
