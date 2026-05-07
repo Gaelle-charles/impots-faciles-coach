@@ -89,15 +89,15 @@ const Dashboard = () => {
     return m;
   }, [progressions]);
 
-  // Module en cours = premier module accessible non terminé avec progression existante (ou le 1er à commencer)
+  // Module en cours = premier module accessible non terminé EN ORDRE CROISSANT (M1 → M2 → ... → M8)
+  // `modules` est déjà trié par order asc. On prend donc strictement le 1er non terminé.
   const currentModule = useMemo(() => {
-    const inProgress = progressions
-      .filter((p) => !p.completion_date)
-      .map((p) => modules.find((m) => m.id === p.module_id))
-      .find((m) => m && hasModuleAccess(m));
-    if (inProgress) return inProgress;
-    return modules.find((m) => hasModuleAccess(m) && !progMap.get(m.id)?.completion_date) ?? null;
-  }, [modules, progressions, progMap, hasModuleAccess]);
+    return (
+      modules.find(
+        (m) => hasModuleAccess(m) && !progMap.get(m.id)?.completion_date,
+      ) ?? null
+    );
+  }, [modules, progMap, hasModuleAccess]);
 
   const completedCount = progressions.filter((p) => !!p.completion_date).length;
   const avgScore = results.length > 0
