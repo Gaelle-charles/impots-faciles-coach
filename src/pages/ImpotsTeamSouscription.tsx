@@ -190,7 +190,19 @@ export default function ImpotsTeamSouscription() {
         }
       }
 
-      window.location.href = data.url;
+      // Stripe Checkout refuse d'être chargé dans une iframe (X-Frame-Options).
+      // En preview Lovable / embed, on doit casser l'iframe ou ouvrir un nouvel onglet,
+      // sinon la page de paiement s'affiche en blanc.
+      try {
+        if (window.top && window.top !== window.self) {
+          window.top.location.href = data.url;
+        } else {
+          window.location.href = data.url;
+        }
+      } catch {
+        // top inaccessible (cross-origin) → fallback nouvel onglet
+        window.open(data.url, '_blank', 'noopener,noreferrer');
+      }
     } catch (err) {
       console.error(err);
       toast({ title: 'Erreur', description: (err as Error).message, variant: 'destructive' });
