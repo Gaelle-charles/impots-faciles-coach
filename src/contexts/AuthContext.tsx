@@ -47,12 +47,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
       // Welcome email — déclenché à chaque SIGNED_IN, l'edge function gère l'idempotence
       // (ne renvoie pas si welcome_email_sent_at est déjà rempli)
-      if (event === 'SIGNED_IN' && session) {
+      if (event === 'SIGNED_IN' && session?.access_token) {
+        const token = session.access_token;
         // setTimeout pour ne pas bloquer le callback auth (anti-deadlock Supabase)
         setTimeout(() => {
-          supabase.functions.invoke('send-welcome-email').catch((e) => {
-            console.warn('[welcome-email] invoke failed:', e);
-          });
+          supabase.functions
+            .invoke('send-welcome-email', {
+              headers: { Authorization: `Bearer ${token}` },
+            })
+            .catch((e) => {
+              console.warn('[welcome-email] invoke failed:', e);
+            });
         }, 0);
       }
 
