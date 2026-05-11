@@ -19,6 +19,7 @@ import {
   AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle,
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
+import type { B2BPlan } from '@/lib/plans';
 
 const PRICE_PER_LIC: Record<B2BPlan, number> = { premium: 143 };
 
