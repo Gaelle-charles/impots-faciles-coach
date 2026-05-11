@@ -140,11 +140,35 @@ export default function ImpotsTeamSouscription() {
       });
 
       if (error || !data?.url) {
-        toast({
-          title: 'Paiement indisponible',
-          description: (error as any)?.message || data?.error || 'Erreur lors de la création du paiement',
-          variant: 'destructive',
-        });
+        // Tente d'extraire le message d'erreur réel renvoyé par l'edge function
+        // (supabase.functions.invoke n'expose pas le body sur les non-2xx via `error.message`).
+        let backendMsg: string | null = data?.error ?? null;
+        const ctx = (error as any)?.context;
+        if (!backendMsg && ctx?.response && typeof ctx.response.json === 'function') {
+          try {
+            const j = await ctx.response.clone().json();
+            backendMsg = j?.error ?? null;
+          } catch { /* ignore */ }
+        }
+
+        const isSiretConflict =
+          typeof backendMsg === 'string' && /SIRET/i.test(backendMsg);
+
+        if (isSiretConflict) {
+          toast({
+            title: 'SIRET déjà utilisé',
+            description:
+              "Ce SIRET est déjà rattaché à une organisation existante. Si c'est la vôtre, connectez-vous avec le compte administrateur initial. Sinon, contactez-nous à support@impotsfacile.com.",
+            variant: 'destructive',
+          });
+        } else {
+          toast({
+            title: 'Paiement indisponible',
+            description:
+              backendMsg || (error as any)?.message || 'Erreur lors de la création du paiement',
+            variant: 'destructive',
+          });
+        }
         setSubmitting(false);
         return;
       }
