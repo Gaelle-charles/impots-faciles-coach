@@ -220,7 +220,7 @@ Deno.serve(async (req) => {
       apiVersion: "2024-11-20.acacia",
     });
 
-    const origin = req.headers.get("origin") ?? req.headers.get("referer")?.replace(/\/$/, "") ?? "";
+    const appUrl = Deno.env.get("PUBLIC_APP_URL") ?? "https://impotsfacile.com";
 
     const teamCoupon = Deno.env.get("STRIPE_COUPON_TEAM_10");
 
