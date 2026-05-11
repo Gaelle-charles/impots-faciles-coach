@@ -77,7 +77,7 @@ Deno.serve(async (req) => {
       apiVersion: "2024-11-20.acacia",
     });
 
-    const origin = req.headers.get("origin") ?? req.headers.get("referer")?.replace(/\/$/, "") ?? "";
+    const appUrl = Deno.env.get("PUBLIC_APP_URL") ?? "https://impotsfacile.com";
 
     // Optional coupon — re-validated server-side ici aussi pour défense en profondeur
     const couponCode = (body?.coupon_code as string | undefined)?.toString().trim().toUpperCase();
