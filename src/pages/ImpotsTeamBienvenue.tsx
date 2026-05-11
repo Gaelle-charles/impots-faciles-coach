@@ -1,11 +1,17 @@
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { Header } from '@/components/Header';
 import { Footer } from '@/components/Footer';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { CheckCircle2 } from 'lucide-react';
+import { useAuth } from '@/contexts/AuthContext';
 
 export default function ImpotsTeamBienvenue() {
+  const { user, loading } = useAuth();
+  const location = useLocation();
+  const redirectTarget = `/impots-team/dashboard`;
+  const loginHref = `/connexion?redirect=${encodeURIComponent(redirectTarget)}`;
+
   return (
     <div className="flex min-h-screen flex-col">
       <Header />
@@ -18,17 +24,32 @@ export default function ImpotsTeamBienvenue() {
                 🎉 Bienvenue dans Impôts Team !
               </h1>
               <p className="mt-4 text-muted-foreground">
-                Votre abonnement est en cours d'activation. Vous recevrez votre
-                facture par email dans quelques instants.
+                Votre paiement a bien été reçu et votre abonnement est activé.
+                Vous recevrez votre facture par email dans quelques instants.
               </p>
-              <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:justify-center">
-                <Link to="/impots-team/dashboard?tab=membres">
-                  <Button size="lg">Inviter mes collaborateurs</Button>
-                </Link>
-                <Link to="/impots-team/dashboard?tab=branding">
-                  <Button size="lg" variant="outline">Personnaliser notre espace</Button>
-                </Link>
-              </div>
+
+              {loading ? (
+                <p className="mt-8 text-sm text-muted-foreground">Chargement…</p>
+              ) : user ? (
+                <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:justify-center">
+                  <Link to="/impots-team/dashboard?tab=membres">
+                    <Button size="lg">Inviter mes collaborateurs</Button>
+                  </Link>
+                  <Link to="/impots-team/dashboard?tab=branding">
+                    <Button size="lg" variant="outline">Personnaliser notre espace</Button>
+                  </Link>
+                </div>
+              ) : (
+                <div className="mt-8 space-y-4">
+                  <p className="text-sm text-muted-foreground">
+                    Pour accéder à votre espace d'administration, reconnectez-vous
+                    avec l'email utilisé lors du paiement.
+                  </p>
+                  <Link to={loginHref}>
+                    <Button size="lg">Accéder à mon espace</Button>
+                  </Link>
+                </div>
+              )}
             </CardContent>
           </Card>
         </div>
