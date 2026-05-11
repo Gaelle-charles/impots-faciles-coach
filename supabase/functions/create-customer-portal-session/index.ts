@@ -48,7 +48,8 @@ Deno.serve(async (req) => {
     }
 
     // Always return to production custom domain to avoid lovable.app auth-bridge.
-    const returnUrl = "https://impotsfacile.com/mon-compte";
+    const appUrl = Deno.env.get("PUBLIC_APP_URL") ?? "https://impotsfacile.com";
+    const returnUrl = `${appUrl}/mon-compte`;
 
     const stripe = new Stripe(Deno.env.get("STRIPE_SECRET_KEY")!, {
       apiVersion: "2024-11-20.acacia",
