@@ -196,6 +196,10 @@ Deno.serve(async (req) => {
       .maybeSingle();
 
     if (existing && existing.statut !== "pending_payment") {
+      console.warn("[team-checkout] 400 — SIRET déjà utilisé", {
+        siret: cleanSiret,
+        existing_status: existing.statut,
+      });
       return new Response(
         JSON.stringify({ error: "Une organisation avec ce SIRET existe déjà." }),
         { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } },
