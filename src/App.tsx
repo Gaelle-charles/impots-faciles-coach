@@ -105,7 +105,10 @@ const App = () => (
             {/* Impôts Team (B2B) */}
             <Route path="/impots-team" element={<ImpotsTeam />} />
             <Route path="/impots-team/souscription" element={<ImpotsTeamSouscription />} />
-            <Route path="/impots-team/bienvenue" element={<ProtectedRoute><ImpotsTeamBienvenue /></ProtectedRoute>} />
+            {/* Bienvenue post-paiement : publique car la session peut être perdue
+                au retour de Stripe (token expiré, ITP, storage partitioning…).
+                La page propose un CTA "Se connecter" qui ramène ici après login. */}
+            <Route path="/impots-team/bienvenue" element={<ImpotsTeamBienvenue />} />
             <Route path="/impots-team/dashboard" element={<ProtectedRoute><ImpotsTeamDashboard /></ProtectedRoute>} />
             <Route path="/impots-team/invitation/:token" element={<InvitationAccept />} />
             {/* Alias rétro-compatible pour les anciens emails */}
