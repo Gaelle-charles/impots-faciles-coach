@@ -33,6 +33,7 @@ Deno.serve(async (req) => {
     } = body ?? {};
 
     if (!cgv_accepted_at || !cgu_accepted_at) {
+      console.warn("[team-checkout] 400 — CGV/CGU manquantes", { cgv_accepted_at, cgu_accepted_at });
       return new Response(
         JSON.stringify({ error: "Acceptation des CGV et CGU requise" }),
         { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } },
@@ -41,18 +42,21 @@ Deno.serve(async (req) => {
 
     // --- Validations ---
     if (!raison_sociale || typeof raison_sociale !== "string" || raison_sociale.trim().length < 2) {
+      console.warn("[team-checkout] 400 — raison_sociale invalide", { raison_sociale });
       return new Response(JSON.stringify({ error: "Raison sociale invalide" }), {
         status: 400,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
     if (!siret || !/^\d{14}$/.test(String(siret).replace(/\s/g, ""))) {
+      console.warn("[team-checkout] 400 — SIRET invalide", { siret });
       return new Response(JSON.stringify({ error: "SIRET invalide (14 chiffres requis)" }), {
         status: 400,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
     if (plan !== "premium") {
+      console.warn("[team-checkout] 400 — plan invalide", { plan });
       return new Response(JSON.stringify({ error: "Plan invalide (premium uniquement)" }), {
         status: 400,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
@@ -60,6 +64,7 @@ Deno.serve(async (req) => {
     }
     const nbLic = Number(nb_licences);
     if (!Number.isInteger(nbLic) || nbLic < 2 || nbLic > 500) {
+      console.warn("[team-checkout] 400 — nb_licences invalide", { nb_licences });
       return new Response(JSON.stringify({ error: "Nombre de licences invalide (2-500)" }), {
         status: 400,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
@@ -75,8 +80,17 @@ Deno.serve(async (req) => {
       (value) => typeof value === "string" && value.trim().length > 0,
     );
 
+    console.log("[team-checkout] auth state", {
+      has_auth_header: Boolean(authHeader),
+      has_user_jwt: hasUserJwt,
+      has_inline_admin_payload: hasInlineAdminPayload,
+      plan,
+      nb_licences: nbLic,
+    });
+
     const priceId = TEAM_PRICE_IDS[plan];
     if (!priceId) {
+      console.error("[team-checkout] 500 — STRIPE_PRICE_ID_TEAM_PREMIUM manquant");
       return new Response(
         JSON.stringify({ error: `Price ID Team manquant pour le plan ${plan}` }),
         { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } },
@@ -95,16 +109,31 @@ Deno.serve(async (req) => {
       });
       const { data: userData, error: userErr } = await userClient.auth.getUser();
       if (userErr || !userData?.user?.email) {
-        // Si on a aussi un payload inline, on bascule en création serveur.
-        if (!hasInlineAdminPayload) {
-          return new Response(JSON.stringify({ error: "Token invalide" }), {
-            status: 401,
-            headers: { ...corsHeaders, "Content-Type": "application/json" },
-          });
-        }
-      } else {
-        user = { id: userData.user.id, email: userData.user.email };
+        // JWT présent mais invalide : on REJETTE explicitement.
+        // On ne tombe PAS en fallback inline (sinon doublon de compte + 400 trompeur).
+        console.warn("[team-checkout] 401 — JWT présent mais invalide", {
+          err: userErr?.message,
+          has_inline: hasInlineAdminPayload,
+        });
+        return new Response(
+          JSON.stringify({ error: "Session expirée. Reconnectez-vous pour continuer." }),
+          { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } },
+        );
       }
+      // Email non confirmé → bloquer proprement, ne pas tenter le flow inline.
+      const confirmedAt = userData.user.email_confirmed_at ?? userData.user.confirmed_at;
+      if (!confirmedAt) {
+        console.warn("[team-checkout] 403 — email non confirmé", { user_id: userData.user.id });
+        return new Response(
+          JSON.stringify({
+            error:
+              "Veuillez confirmer votre email avant de souscrire à un abonnement Team.",
+          }),
+          { status: 403, headers: { ...corsHeaders, "Content-Type": "application/json" } },
+        );
+      }
+      user = { id: userData.user.id, email: userData.user.email };
+      console.log("[team-checkout] user authenticated via JWT", { user_id: user.id });
     }
 
     if (!user) {
