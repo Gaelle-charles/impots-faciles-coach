@@ -97,6 +97,28 @@ export default function ImpotsTeamSouscription() {
     }
     setSubmitting(true);
     try {
+      // Récupère la session JWT au moment du clic (et pas seulement l'état React `user`,
+      // qui peut être encore vide juste après un signup).
+      const { data: sessionData } = await supabase.auth.getSession();
+      const session = sessionData?.session ?? null;
+      const sessionUser = session?.user ?? null;
+
+      // Bloque si email non confirmé : on ne tombe PAS en fallback inline (sinon
+      // doublon de compte + 400 "user already registered").
+      if (sessionUser && !sessionUser.email_confirmed_at && !sessionUser.confirmed_at) {
+        toast({
+          title: 'Confirmez votre email avant de souscrire',
+          description:
+            "Cliquez sur le lien de confirmation reçu par email (vérifiez vos spams), puis revenez sur cette page.",
+          variant: 'destructive',
+        });
+        setSubmitting(false);
+        return;
+      }
+
+      // Si un user est connecté → on envoie SON JWT, jamais le payload inline.
+      const isAuthenticated = Boolean(sessionUser);
+
       const nowIso = new Date().toISOString();
       const { data, error } = await supabase.functions.invoke('create-team-checkout-session', {
         body: {
@@ -108,7 +130,7 @@ export default function ImpotsTeamSouscription() {
           nb_licences: nbLicences,
           cgv_accepted_at: nowIso,
           cgu_accepted_at: nowIso,
-          ...(!user ? {
+          ...(!isAuthenticated ? {
             admin_email: email.trim().toLowerCase(),
             admin_password: password,
             admin_prenom: prenom.trim(),
@@ -127,7 +149,7 @@ export default function ImpotsTeamSouscription() {
         return;
       }
 
-      if (!user) {
+      if (!isAuthenticated) {
         const { error: signInErr } = await supabase.auth.signInWithPassword({
           email: email.trim().toLowerCase(),
           password,
