@@ -191,19 +191,40 @@ Deno.serve(async (req) => {
     // SIRET unique check
     const { data: existing } = await admin
       .from("organizations")
-      .select("id, statut")
+      .select("id, statut, admin_user_id")
       .eq("siret", cleanSiret)
       .maybeSingle();
 
-    if (existing && existing.statut !== "pending_payment") {
-      console.warn("[team-checkout] 400 — SIRET déjà utilisé", {
-        siret: cleanSiret,
-        existing_status: existing.statut,
+    if (existing) {
+      // SIRET appartient à un autre admin → blocage strict
+      if (existing.admin_user_id && existing.admin_user_id !== user.id) {
+        console.warn("[team-checkout] 400 — SIRET utilisé par une autre orga", {
+          siret: cleanSiret,
+          existing_status: existing.statut,
+        });
+        return new Response(
+          JSON.stringify({ error: "Une organisation avec ce SIRET existe déjà." }),
+          { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } },
+        );
+      }
+      // Même admin avec abonnement actif → rediriger vers le portail de gestion
+      if (existing.statut === "active") {
+        console.warn("[team-checkout] 409 — admin déjà abonné, redirection portail", {
+          org_id: existing.id,
+        });
+        return new Response(
+          JSON.stringify({
+            error:
+              "Vous avez déjà un abonnement Team actif. Gérez-le depuis votre tableau de bord.",
+          }),
+          { status: 409, headers: { ...corsHeaders, "Content-Type": "application/json" } },
+        );
+      }
+      // Sinon (pending_payment, cancelled, past_due...) → on réutilise l'orga existante
+      console.log("[team-checkout] reuse existing org for same admin", {
+        org_id: existing.id,
+        statut: existing.statut,
       });
-      return new Response(
-        JSON.stringify({ error: "Une organisation avec ce SIRET existe déjà." }),
-        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } },
-      );
     }
 
     let orgId = existing?.id ?? null;
