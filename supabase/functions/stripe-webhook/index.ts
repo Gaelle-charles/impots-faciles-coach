@@ -301,14 +301,75 @@ Deno.serve(async (req) => {
       console.log(`[webhook] customer.subscription.deleted → sub ${subscription.id} (B2B=${isB2B})`);
 
       if (isB2B) {
-        const { error } = await supabase
+        // 1. Récupérer l'org concernée (pour avoir son id)
+        const { data: org, error: orgFetchErr } = await supabase
           .from("organizations")
-          .update({ statut: "cancelled" })
-          .eq("stripe_subscription_id", subscription.id);
-        if (error) {
-          console.error("[webhook][B2B] Failed cancel org", error);
-          return new Response(JSON.stringify({ error: error.message }), { status: 500 });
+          .select("id")
+          .eq("stripe_subscription_id", subscription.id)
+          .maybeSingle();
+
+        if (orgFetchErr || !org) {
+          console.error("[webhook][B2B] Org not found for sub", subscription.id, orgFetchErr);
+          return new Response(JSON.stringify({ received: true }), { status: 200 });
         }
+
+        // 2. Marquer l'organisation comme annulée + nettoyer stripe_subscription_id
+        const { error: orgUpdErr } = await supabase
+          .from("organizations")
+          .update({ statut: "cancelled", stripe_subscription_id: null })
+          .eq("id", org.id);
+
+        if (orgUpdErr) {
+          console.error("[webhook][B2B] Failed cancel org", orgUpdErr);
+          return new Response(JSON.stringify({ error: orgUpdErr.message }), { status: 500 });
+        }
+
+        // 3. Dégrader tous les membres actifs (best-effort, n'interrompt pas la boucle)
+        const { data: members, error: membersErr } = await supabase
+          .from("organization_members")
+          .select("id, user_id")
+          .eq("organization_id", org.id)
+          .is("removed_at", null);
+
+        if (membersErr) {
+          console.error("[webhook][B2B] Failed to list active members", membersErr);
+        } else {
+          const now = new Date().toISOString();
+          let downgraded = 0;
+          let failed = 0;
+          for (const m of members ?? []) {
+            try {
+              const { error: memErr } = await supabase
+                .from("organization_members")
+                .update({ removed_at: now })
+                .eq("id", m.id);
+              if (memErr) {
+                failed++;
+                console.error(`[webhook][B2B] member ${m.id} soft-delete failed`, memErr);
+                continue;
+              }
+              if (m.user_id) {
+                const { error: profErr } = await supabase
+                  .from("profiles")
+                  .update({ plan: "nouveau" })
+                  .eq("id", m.user_id);
+                if (profErr) {
+                  failed++;
+                  console.error(`[webhook][B2B] profile ${m.user_id} reset plan failed`, profErr);
+                  continue;
+                }
+              }
+              downgraded++;
+            } catch (e) {
+              failed++;
+              console.error(`[webhook][B2B] unexpected error downgrading member ${m.id}`, e);
+            }
+          }
+          console.log(
+            `[webhook][B2B] org ${org.id} cancelled → ${downgraded} member(s) downgraded, ${failed} failed`,
+          );
+        }
+
         return new Response(JSON.stringify({ received: true }), { status: 200 });
       }
 
