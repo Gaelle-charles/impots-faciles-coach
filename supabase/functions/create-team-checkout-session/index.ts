@@ -288,22 +288,43 @@ Deno.serve(async (req) => {
 
     const teamCoupon = Deno.env.get("STRIPE_COUPON_TEAM_10");
 
-    const session = await stripe.checkout.sessions.create({
-      mode: "subscription",
-      locale: "fr",
+    const baseSessionParams = {
+      mode: "subscription" as const,
+      locale: "fr" as const,
       line_items: [{ price: priceId, quantity: nbLic }],
-      payment_method_types: ["card"],
+      payment_method_types: ["card" as const],
       customer_email: user.email,
       client_reference_id: orgId!,
-      billing_address_collection: "required",
-      ...(teamCoupon ? { discounts: [{ coupon: teamCoupon }] } : {}),
+      billing_address_collection: "required" as const,
       metadata: { organization_id: orgId!, type: "b2b", plan },
       subscription_data: {
         metadata: { organization_id: orgId!, type: "b2b", plan },
       },
       success_url: `${appUrl}/impots-team/bienvenue?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${appUrl}/impots-team`,
-    });
+    };
+
+    let session;
+    try {
+      session = await stripe.checkout.sessions.create({
+        ...baseSessionParams,
+        ...(teamCoupon ? { discounts: [{ coupon: teamCoupon }] } : {}),
+      });
+    } catch (stripeErr) {
+      const msg = (stripeErr as Error)?.message ?? "";
+      // Le coupon configuré ne s'applique pas à ce price (ex: coupon LIVE en
+      // mode TEST, ou restreint à un autre produit). On retombe sans coupon
+      // plutôt que de bloquer le checkout entier.
+      if (teamCoupon && /coupon/i.test(msg)) {
+        console.warn("[team-checkout] coupon non applicable, retry sans coupon", {
+          coupon: teamCoupon,
+          err: msg,
+        });
+        session = await stripe.checkout.sessions.create(baseSessionParams);
+      } else {
+        throw stripeErr;
+      }
+    }
 
     // Journalisation des acceptations légales B2B (preuve juridique immuable)
     try {
