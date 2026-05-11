@@ -203,7 +203,10 @@ Deno.serve(async (req) => {
           existing_status: existing.statut,
         });
         return new Response(
-          JSON.stringify({ error: "Une organisation avec ce SIRET existe déjà." }),
+          JSON.stringify({
+            error:
+              "Ce SIRET est déjà rattaché à une autre organisation. Connectez-vous avec le compte administrateur initial, ou contactez support@impotsfacile.com.",
+          }),
           { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } },
         );
       }
