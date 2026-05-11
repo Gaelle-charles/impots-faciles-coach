@@ -13,12 +13,13 @@ import {
   Accordion, AccordionContent, AccordionItem, AccordionTrigger,
 } from '@/components/ui/accordion';
 import { Users, GraduationCap, Sparkles, Lightbulb, AlertTriangle } from 'lucide-react';
+import type { B2BPlan } from '@/lib/plans';
 
-const TEAM_PLANS = {
+const TEAM_PLANS: Record<B2BPlan, { label: string; individuel: number; team: number; desc: string }> = {
   premium: { label: 'Premium', individuel: 159, team: 143, desc: 'Tout Expert + accompagnement complet' },
-} as const;
+};
 
-type TeamPlan = keyof typeof TEAM_PLANS;
+type TeamPlan = B2BPlan;
 
 export default function ImpotsTeam() {
   const navigate = useNavigate();

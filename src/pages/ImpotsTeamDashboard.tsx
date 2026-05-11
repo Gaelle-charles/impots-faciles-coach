@@ -19,14 +19,15 @@ import {
   AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle,
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
+import type { B2BPlan } from '@/lib/plans';
 
-const PRICE_PER_LIC: Record<string, number> = { premium: 143 };
+const PRICE_PER_LIC: Record<B2BPlan, number> = { premium: 143 };
 
 interface Org {
   id: string;
   raison_sociale: string;
   siret: string;
-  plan: 'starter' | 'expert' | 'premium';
+  plan: B2BPlan;
   nb_licences: number;
   statut: string;
   date_paiement: string | null;

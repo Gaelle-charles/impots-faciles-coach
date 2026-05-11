@@ -12,11 +12,12 @@ import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { Loader2, ExternalLink } from 'lucide-react';
 import { Checkbox } from '@/components/ui/checkbox';
+import type { B2BPlan } from '@/lib/plans';
 
-const PRICES = {
+const PRICES: Record<B2BPlan, { individuel: number; team: number; label: string }> = {
   premium: { individuel: 159, team: 143, label: 'Premium' },
-} as const;
-type Plan = keyof typeof PRICES;
+};
+type Plan = B2BPlan;
 
 export default function ImpotsTeamSouscription() {
   const navigate = useNavigate();
