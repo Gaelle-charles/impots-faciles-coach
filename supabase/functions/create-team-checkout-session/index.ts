@@ -237,8 +237,8 @@ Deno.serve(async (req) => {
       subscription_data: {
         metadata: { organization_id: orgId!, type: "b2b", plan },
       },
-      success_url: `${origin}/impots-team/bienvenue?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${origin}/impots-team`,
+      success_url: `${appUrl}/impots-team/bienvenue?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${appUrl}/impots-team`,
     });
 
     // Journalisation des acceptations légales B2B (preuve juridique immuable)
