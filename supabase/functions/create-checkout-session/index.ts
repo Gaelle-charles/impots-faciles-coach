@@ -123,8 +123,8 @@ Deno.serve(async (req) => {
       customer_email: profile?.stripe_customer_id ? undefined : email,
       customer: profile?.stripe_customer_id ?? undefined,
       client_reference_id: user.id,
-      success_url: `${origin}/paiement-succes?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${origin}/tarifs`,
+      success_url: `${appUrl}/paiement-succes?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${appUrl}/tarifs`,
       metadata: {
         plan,
         user_id: user.id,
