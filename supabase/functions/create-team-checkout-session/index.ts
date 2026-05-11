@@ -138,6 +138,7 @@ Deno.serve(async (req) => {
 
     if (!user) {
       if (!hasInlineAdminPayload) {
+        console.warn("[team-checkout] 401 — non authentifié, pas de payload inline");
         return new Response(JSON.stringify({ error: "Non authentifié" }), {
           status: 401,
           headers: { ...corsHeaders, "Content-Type": "application/json" },
@@ -152,6 +153,7 @@ Deno.serve(async (req) => {
         .maybeSingle();
 
       if (existingProfile?.id) {
+        console.warn("[team-checkout] 409 — profil existe déjà", { email: normalizedEmail });
         return new Response(
           JSON.stringify({ error: "Un compte existe déjà pour cet email. Connectez-vous pour continuer." }),
           { status: 409, headers: { ...corsHeaders, "Content-Type": "application/json" } },
@@ -170,6 +172,10 @@ Deno.serve(async (req) => {
       });
 
       if (createUserErr || !createdUser.user?.email) {
+        console.error("[team-checkout] 400 — createUser a échoué", {
+          email: normalizedEmail,
+          err: createUserErr?.message,
+        });
         return new Response(
           JSON.stringify({ error: createUserErr?.message ?? "Création du compte admin impossible" }),
           { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } },
@@ -177,6 +183,7 @@ Deno.serve(async (req) => {
       }
 
       user = { id: createdUser.user.id, email: createdUser.user.email };
+      console.log("[team-checkout] inline admin account created", { user_id: user.id });
     }
 
     const cleanSiret = String(siret).replace(/\s/g, "");
