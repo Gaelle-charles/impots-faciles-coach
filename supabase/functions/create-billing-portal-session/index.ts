@@ -48,7 +48,7 @@ Deno.serve(async (req) => {
       });
     }
 
-    const origin = req.headers.get("origin") ?? req.headers.get("referer") ?? "";
+    const appUrl = Deno.env.get("PUBLIC_APP_URL") ?? "https://impotsfacile.com";
     const stripe = new Stripe(Deno.env.get("STRIPE_SECRET_KEY")!, {
       apiVersion: "2024-11-20.acacia",
     });
@@ -56,7 +56,7 @@ Deno.serve(async (req) => {
     const session = await stripe.billingPortal.sessions.create({
       customer: profile.stripe_customer_id,
       locale: "fr",
-      return_url: `${origin || "https://impots-faciles-coach.lovable.app"}/profil`,
+      return_url: `${appUrl}/mon-compte`,
     });
 
     return new Response(JSON.stringify({ url: session.url }), {
