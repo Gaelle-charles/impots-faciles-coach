@@ -23,8 +23,8 @@ Deno.serve(async (req) => {
 
     const authHeader = req.headers.get("Authorization");
     if (!authHeader) {
-      return new Response(JSON.stringify({ error: "Non authentifié" }), {
-        status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" },
+      return new Response(JSON.stringify({ skipped: true, reason: "no_auth_header" }), {
+        status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
 
@@ -33,8 +33,9 @@ Deno.serve(async (req) => {
     });
     const { data: u, error: uErr } = await userClient.auth.getUser();
     if (uErr || !u?.user) {
-      return new Response(JSON.stringify({ error: "Token invalide" }), {
-        status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" },
+      console.warn("[send-welcome-email] invalid token, skipping:", uErr?.message);
+      return new Response(JSON.stringify({ skipped: true, reason: "invalid_token" }), {
+        status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
 
