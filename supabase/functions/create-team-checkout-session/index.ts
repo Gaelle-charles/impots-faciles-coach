@@ -220,7 +220,7 @@ Deno.serve(async (req) => {
       apiVersion: "2024-11-20.acacia",
     });
 
-    const origin = req.headers.get("origin") ?? req.headers.get("referer")?.replace(/\/$/, "") ?? "";
+    const appUrl = Deno.env.get("PUBLIC_APP_URL") ?? "https://impotsfacile.com";
 
     const teamCoupon = Deno.env.get("STRIPE_COUPON_TEAM_10");
 
@@ -237,8 +237,8 @@ Deno.serve(async (req) => {
       subscription_data: {
         metadata: { organization_id: orgId!, type: "b2b", plan },
       },
-      success_url: `${origin}/impots-team/bienvenue?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${origin}/impots-team`,
+      success_url: `${appUrl}/impots-team/bienvenue?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${appUrl}/impots-team`,
     });
 
     // Journalisation des acceptations légales B2B (preuve juridique immuable)

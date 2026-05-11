@@ -77,7 +77,7 @@ Deno.serve(async (req) => {
       apiVersion: "2024-11-20.acacia",
     });
 
-    const origin = req.headers.get("origin") ?? req.headers.get("referer")?.replace(/\/$/, "") ?? "";
+    const appUrl = Deno.env.get("PUBLIC_APP_URL") ?? "https://impotsfacile.com";
 
     // Optional coupon — re-validated server-side ici aussi pour défense en profondeur
     const couponCode = (body?.coupon_code as string | undefined)?.toString().trim().toUpperCase();
@@ -123,8 +123,8 @@ Deno.serve(async (req) => {
       customer_email: profile?.stripe_customer_id ? undefined : email,
       customer: profile?.stripe_customer_id ?? undefined,
       client_reference_id: user.id,
-      success_url: `${origin}/paiement-succes?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${origin}/tarifs`,
+      success_url: `${appUrl}/paiement-succes?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${appUrl}/tarifs`,
       metadata: {
         plan,
         user_id: user.id,
