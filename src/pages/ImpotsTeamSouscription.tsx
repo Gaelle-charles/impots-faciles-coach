@@ -149,7 +149,7 @@ export default function ImpotsTeamSouscription() {
         return;
       }
 
-      if (!user) {
+      if (!isAuthenticated) {
         const { error: signInErr } = await supabase.auth.signInWithPassword({
           email: email.trim().toLowerCase(),
           password,
