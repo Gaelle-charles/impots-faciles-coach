@@ -97,6 +97,9 @@ export function AppSidebar({ collapsed = false }: { collapsed?: boolean }) {
         </div>
       )}
 
+      {/* Switcher Espace équipe / Mon espace perso (admin org avec accès B2C) */}
+      {showSwitcher && <SpaceSwitcher />}
+
       {/* Navigation */}
       <nav className="flex-1 space-y-1 px-3 overflow-y-auto">
         {(profile?.plan === 'premium'
