@@ -32,8 +32,13 @@ const PROSE_LIGHT =
 
 const PROSE_DARK =
   PROSE_BASE +
-  ' text-white/85 prose-headings:text-white prose-strong:text-white ' +
-  'prose-a:text-[hsl(56_100%_70%)] prose-li:marker:text-[hsl(56_100%_70%)]';
+  ' text-white/90 prose-headings:text-white prose-strong:text-white prose-em:text-white ' +
+  'prose-p:text-white/90 prose-li:text-white/90 ' +
+  'prose-a:text-[hsl(56_100%_70%)] prose-li:marker:text-[hsl(56_100%_70%)] ' +
+  'prose-blockquote:text-white prose-blockquote:border-l-[hsl(56_100%_60%)] ' +
+  'prose-code:text-white prose-code:bg-white/10 ' +
+  'prose-th:text-white prose-td:text-white/90 ' +
+  'prose-hr:border-white/20';
 
 type Palette = {
   bg: string;
