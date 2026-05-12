@@ -29,16 +29,27 @@ export function Header({ variant = 'light' }: HeaderProps) {
   const { hasAdminAccess } = useAccess();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [accountHref, setAccountHref] = useState('/dashboard');
+  const [isAdminOrgWithB2C, setIsAdminOrgWithB2C] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
-    if (!user) { setAccountHref('/dashboard'); return; }
+    if (!user) {
+      setAccountHref('/dashboard');
+      setIsAdminOrgWithB2C(false);
+      return;
+    }
     (async () => {
-      const { data } = await supabase.rpc('get_user_organization', { p_user_id: user.id });
-      const org = Array.isArray(data) ? data[0] : data;
+      const [{ data: orgData }, { data: profile }] = await Promise.all([
+        supabase.rpc('get_user_organization', { p_user_id: user.id }),
+        supabase.from('profiles').select('plan').eq('id', user.id).maybeSingle(),
+      ]);
+      const org = Array.isArray(orgData) ? orgData[0] : orgData;
       if (cancelled) return;
-      // Admin d'orga → dashboard B2B. Membre simple ou pas d'orga → dashboard B2C.
-      setAccountHref(org?.org_id && org?.role === 'admin' ? '/impots-team/dashboard' : '/dashboard');
+      const isAdminOrg = !!(org?.org_id && (org?.role === 'admin' || org?.role === 'admin_with_license'));
+      const hasB2C = !!profile?.plan && profile.plan !== 'nouveau';
+      setIsAdminOrgWithB2C(isAdminOrg && hasB2C);
+      // Admin d'orga → dashboard B2B par défaut. Membre simple ou pas d'orga → dashboard B2C.
+      setAccountHref(isAdminOrg ? '/impots-team/dashboard' : '/dashboard');
     })();
     return () => { cancelled = true; };
   }, [user]);
