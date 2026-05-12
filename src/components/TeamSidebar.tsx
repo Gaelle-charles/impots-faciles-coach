@@ -20,12 +20,15 @@ import {
   LogOut,
 } from 'lucide-react';
 import { SuggestionDialog } from '@/components/SuggestionDialog';
+import { SpaceSwitcher } from '@/components/SpaceSwitcher';
 
 interface TeamSidebarProps {
   orgName: string;
   orgLogoUrl: string | null;
   adminInitials: string;
   hasLicense: boolean;
+  /** L'admin a-t-il un plan B2C actif (Starter/Expert/Premium) ? */
+  hasB2CPlan?: boolean;
   /** Active tab du dashboard de gestion (abonnement / membres / branding). */
   activeTeamTab?: 'abonnement' | 'membres' | 'branding';
   onTeamTabChange?: (tab: 'abonnement' | 'membres' | 'branding') => void;
