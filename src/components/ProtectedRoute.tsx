@@ -90,7 +90,10 @@ export function ProtectedRoute({ children, adminOnly = false }: { children: Reac
     || location.pathname.startsWith('/fiche-metier/')
     || location.pathname.startsWith('/fiches/')
     || location.pathname.startsWith('/quizz/');
-  if (!adminOnly && isOrgAdmin && !isB2BRoute && !previewAllowed) {
+  // Ne pas rediriger si l'admin org a aussi un plan B2C actif
+  // (il doit pouvoir consulter son espace personnel via le switcher)
+  const hasB2CPlan = !!userPlan && userPlan !== 'nouveau';
+  if (!adminOnly && isOrgAdmin && !isB2BRoute && !previewAllowed && !hasB2CPlan) {
     return <Navigate to="/impots-team/dashboard" replace />;
   }
 
