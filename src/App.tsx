@@ -33,6 +33,7 @@ import SimulateurCreditsReductions from "./pages/SimulateurCreditsReductions";
 import FicheMetier from "./pages/FicheMetier";
 import Fiche from "./pages/Fiche";
 import Profil from "./pages/Profil";
+import OnboardingResultats from "./pages/OnboardingResultats";
 import MesModules from "./pages/MesModules";
 import FichesPersonnalisees from "./pages/FichesPersonnalisees";
 import Recommandations from "./pages/Recommandations";
@@ -145,6 +146,8 @@ const App = () => (
               <Route path="/fiches/:type/:slug" element={<Fiche />} />
               <Route path="/profil" element={<Profil />} />
               <Route path="/mon-compte" element={<Profil />} />
+              <Route path="/profil/onboarding-resultats" element={<OnboardingResultats />} />
+              <Route path="/mon-profil/onboarding-resultats" element={<OnboardingResultats />} />
               <Route path="/mes-modules" element={<MesModules />} />
               <Route path="/fiches-personnalisees" element={<FichesPersonnalisees />} />
               <Route path="/recommandations" element={<Recommandations />} />
