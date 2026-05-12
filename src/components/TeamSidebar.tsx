@@ -1,6 +1,7 @@
 import { Link, NavLink, useLocation } from 'react-router-dom';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
+import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import logo from '@/assets/logo.png';
@@ -43,10 +44,21 @@ export function TeamSidebar({
   activeTeamTab,
   onTeamTabChange,
 }: TeamSidebarProps) {
-  const { signOut } = useAuth();
+  const { user, signOut } = useAuth();
   const location = useLocation();
   const isOnDashboard = location.pathname === '/impots-team/dashboard';
-  const showSwitcher = hasLicense || hasB2CPlan;
+  const [b2cPlan, setB2cPlan] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!user?.id) { setB2cPlan(null); return; }
+    let cancelled = false;
+    supabase.from('profiles').select('plan').eq('id', user.id).maybeSingle()
+      .then(({ data }) => { if (!cancelled) setB2cPlan(data?.plan ?? null); });
+    return () => { cancelled = true; };
+  }, [user?.id]);
+
+  const hasB2CPlanResolved = hasB2CPlan || (!!b2cPlan && b2cPlan !== 'nouveau');
+  const showSwitcher = hasLicense || hasB2CPlanResolved;
   const [suggestionOpen, setSuggestionOpen] = useState(false);
 
   const teamTabs: Array<{ key: 'abonnement' | 'membres' | 'branding'; label: string; icon: typeof CreditCard }> = [
