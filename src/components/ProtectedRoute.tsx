@@ -12,6 +12,7 @@ export function ProtectedRoute({ children, adminOnly = false }: { children: Reac
   const [roleLoading, setRoleLoading] = useState(adminOnly);
   const [onboardingDone, setOnboardingDone] = useState<boolean | null>(null);
   const [onboardingLoading, setOnboardingLoading] = useState(true);
+  const [userPlan, setUserPlan] = useState<string | null>(null);
   const [isOrgAdmin, setIsOrgAdmin] = useState<boolean | null>(null);
   const [orgLoading, setOrgLoading] = useState(true);
   const [profileMissing, setProfileMissing] = useState(false);
@@ -27,7 +28,7 @@ export function ProtectedRoute({ children, adminOnly = false }: { children: Reac
       const [{ data: profile }, { data: orgData }] = await Promise.all([
         supabase
           .from('profiles')
-          .select('role, onboarding_done')
+          .select('role, onboarding_done, plan')
           .eq('id', user.id)
           .maybeSingle(),
         supabase.rpc('get_user_organization', { p_user_id: user.id }),
@@ -47,6 +48,7 @@ export function ProtectedRoute({ children, adminOnly = false }: { children: Reac
         setRoleLoading(false);
       }
       setOnboardingDone(profile?.onboarding_done ?? false);
+      setUserPlan((profile as { plan?: string } | null)?.plan ?? null);
       setOnboardingLoading(false);
 
       const org = Array.isArray(orgData) ? orgData[0] : orgData;
@@ -88,7 +90,10 @@ export function ProtectedRoute({ children, adminOnly = false }: { children: Reac
     || location.pathname.startsWith('/fiche-metier/')
     || location.pathname.startsWith('/fiches/')
     || location.pathname.startsWith('/quizz/');
-  if (!adminOnly && isOrgAdmin && !isB2BRoute && !previewAllowed) {
+  // Ne pas rediriger si l'admin org a aussi un plan B2C actif
+  // (il doit pouvoir consulter son espace personnel via le switcher)
+  const hasB2CPlan = !!userPlan && userPlan !== 'nouveau';
+  if (!adminOnly && isOrgAdmin && !isB2BRoute && !previewAllowed && !hasB2CPlan) {
     return <Navigate to="/impots-team/dashboard" replace />;
   }
 

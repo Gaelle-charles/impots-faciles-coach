@@ -20,12 +20,15 @@ import {
   LogOut,
 } from 'lucide-react';
 import { SuggestionDialog } from '@/components/SuggestionDialog';
+import { SpaceSwitcher } from '@/components/SpaceSwitcher';
 
 interface TeamSidebarProps {
   orgName: string;
   orgLogoUrl: string | null;
   adminInitials: string;
   hasLicense: boolean;
+  /** L'admin a-t-il un plan B2C actif (Starter/Expert/Premium) ? */
+  hasB2CPlan?: boolean;
   /** Active tab du dashboard de gestion (abonnement / membres / branding). */
   activeTeamTab?: 'abonnement' | 'membres' | 'branding';
   onTeamTabChange?: (tab: 'abonnement' | 'membres' | 'branding') => void;
@@ -36,12 +39,14 @@ export function TeamSidebar({
   orgLogoUrl,
   adminInitials,
   hasLicense,
+  hasB2CPlan = false,
   activeTeamTab,
   onTeamTabChange,
 }: TeamSidebarProps) {
   const { signOut } = useAuth();
   const location = useLocation();
   const isOnDashboard = location.pathname === '/impots-team/dashboard';
+  const showSwitcher = hasLicense || hasB2CPlan;
   const [suggestionOpen, setSuggestionOpen] = useState(false);
 
   const teamTabs: Array<{ key: 'abonnement' | 'membres' | 'branding'; label: string; icon: typeof CreditCard }> = [
@@ -88,6 +93,9 @@ export function TeamSidebar({
           </Badge>
         </div>
       </div>
+
+      {/* Switcher Espace équipe / Mon espace perso (si licence ou plan B2C) */}
+      {showSwitcher && <SpaceSwitcher />}
 
       <nav className="flex-1 space-y-5 px-3 overflow-y-auto pb-4">
         {/* Accueil */}

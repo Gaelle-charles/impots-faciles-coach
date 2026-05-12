@@ -2,8 +2,10 @@ import { Link, NavLink, useLocation } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { useEffect, useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
+import { useOrgRole } from '@/hooks/useOrgRole';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { SpaceSwitcher } from '@/components/SpaceSwitcher';
 import logo from '@/assets/logo.png';
 import {
   Home,
@@ -37,6 +39,9 @@ export function AppSidebar({ collapsed = false }: { collapsed?: boolean }) {
   const location = useLocation();
   const [profile, setProfile] = useState<{ prenom: string | null; nom: string | null; plan: string } | null>(null);
   const [suggestionOpen, setSuggestionOpen] = useState(false);
+  const { isOrgAdmin, hasLicense } = useOrgRole();
+  const hasB2CPlan = !!profile?.plan && profile.plan !== 'nouveau';
+  const showSwitcher = isOrgAdmin && (hasLicense || hasB2CPlan);
 
   useEffect(() => {
     if (!user) return;
@@ -91,6 +96,9 @@ export function AppSidebar({ collapsed = false }: { collapsed?: boolean }) {
           </div>
         </div>
       )}
+
+      {/* Switcher Espace équipe / Mon espace perso (admin org avec accès B2C) */}
+      {showSwitcher && <SpaceSwitcher />}
 
       {/* Navigation */}
       <nav className="flex-1 space-y-1 px-3 overflow-y-auto">

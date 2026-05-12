@@ -16,6 +16,7 @@ export function AppLayout() {
   const { org, isOrgAdmin, hasLicense, loading } = useOrgRole();
   const [orgLogoUrl, setOrgLogoUrl] = useState<string | null>(null);
   const [orgName, setOrgName] = useState<string>('');
+  const [hasB2CPlan, setHasB2CPlan] = useState(false);
 
   // Charger logo + nom de l'orga (seulement pour admin orga)
   useEffect(() => {
@@ -23,6 +24,17 @@ export function AppLayout() {
     setOrgName(org.raison_sociale ?? '');
     setOrgLogoUrl(org.logo_url ?? null);
   }, [isOrgAdmin, org?.org_id, org?.raison_sociale, org?.logo_url]);
+
+  // Charger le plan B2C de l'admin pour décider d'afficher le switcher d'espace
+  useEffect(() => {
+    if (!isOrgAdmin || !user?.id) { setHasB2CPlan(false); return; }
+    let cancelled = false;
+    supabase.from('profiles').select('plan').eq('id', user.id).maybeSingle()
+      .then(({ data }) => {
+        if (!cancelled) setHasB2CPlan(!!data?.plan && data.plan !== 'nouveau');
+      });
+    return () => { cancelled = true; };
+  }, [isOrgAdmin, user?.id]);
 
   const adminInitials = (
     (user?.email?.[0] ?? '') + (user?.email?.[1] ?? '')
@@ -38,6 +50,7 @@ export function AppLayout() {
             orgLogoUrl={orgLogoUrl}
             adminInitials={adminInitials}
             hasLicense={hasLicense}
+            hasB2CPlan={hasB2CPlan}
           />
         )}
         {isMobile && <Header />}

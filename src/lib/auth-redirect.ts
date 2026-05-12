@@ -41,7 +41,11 @@ export async function getPostLoginRedirect(userId: string): Promise<string> {
   const org = Array.isArray(orgData) ? orgData[0] : orgData;
 
   if (profile?.role === 'admin') return '/admin';
-  if (org?.org_id && org?.role === 'admin') return '/impots-team/dashboard';
+  // Admin org : redirection par défaut vers l'espace équipe.
+  // Si l'admin a aussi un plan B2C, il pourra basculer via le switcher de la sidebar.
+  if (org?.org_id && (org?.role === 'admin' || org?.role === 'admin_with_license')) {
+    return '/impots-team/dashboard';
+  }
   if (profile?.onboarding_done === false) return '/onboarding';
   return '/dashboard';
 }
