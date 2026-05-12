@@ -39,6 +39,9 @@ export function AppSidebar({ collapsed = false }: { collapsed?: boolean }) {
   const location = useLocation();
   const [profile, setProfile] = useState<{ prenom: string | null; nom: string | null; plan: string } | null>(null);
   const [suggestionOpen, setSuggestionOpen] = useState(false);
+  const { isOrgAdmin, hasLicense } = useOrgRole();
+  const hasB2CPlan = !!profile?.plan && profile.plan !== 'nouveau';
+  const showSwitcher = isOrgAdmin && (hasLicense || hasB2CPlan);
 
   useEffect(() => {
     if (!user) return;
