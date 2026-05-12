@@ -12,6 +12,7 @@ export function ProtectedRoute({ children, adminOnly = false }: { children: Reac
   const [roleLoading, setRoleLoading] = useState(adminOnly);
   const [onboardingDone, setOnboardingDone] = useState<boolean | null>(null);
   const [onboardingLoading, setOnboardingLoading] = useState(true);
+  const [userPlan, setUserPlan] = useState<string | null>(null);
   const [isOrgAdmin, setIsOrgAdmin] = useState<boolean | null>(null);
   const [orgLoading, setOrgLoading] = useState(true);
   const [profileMissing, setProfileMissing] = useState(false);
