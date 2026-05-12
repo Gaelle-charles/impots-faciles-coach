@@ -94,6 +94,9 @@ export function TeamSidebar({
         </div>
       </div>
 
+      {/* Switcher Espace équipe / Mon espace perso (si licence ou plan B2C) */}
+      {showSwitcher && <SpaceSwitcher />}
+
       <nav className="flex-1 space-y-5 px-3 overflow-y-auto pb-4">
         {/* Accueil */}
         <div>
