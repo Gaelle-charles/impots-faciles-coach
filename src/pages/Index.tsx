@@ -183,9 +183,6 @@ const Index = () => {
               <li className="inline-flex items-center gap-1.5">
                 <Check className="h-4 w-4 text-rose-dynamic" /> Module 1 offert
               </li>
-              <li className="inline-flex items-center gap-1.5">
-                <Check className="h-4 w-4 text-rose-dynamic" /> 14 jours pour changer d'avis
-              </li>
             </ul>
           </div>
 
