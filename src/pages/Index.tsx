@@ -115,14 +115,26 @@ const Index = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  const faqJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: faqItems.map((f) => ({
+      "@type": "Question",
+      name: f.question,
+      acceptedAnswer: { "@type": "Answer", text: f.answer },
+    })),
+  };
+
   return (
     <div className="min-h-screen bg-background">
       <Seo
         title="Impôts Facile — Apprenez la fiscalité française simplement"
         description="Modules pédagogiques, quiz et simulateurs pour comprendre vos impôts et optimiser votre déclaration. Commencez gratuitement."
         path="/"
+        jsonLd={faqJsonLd}
       />
       <Header />
+      <main>
 
       {/* ============ HERO ============ */}
       <section className="relative overflow-hidden bg-background">
@@ -517,6 +529,7 @@ const Index = () => {
           </Link>
         </div>
       </section>
+      </main>
 
       <Footer />
     </div>

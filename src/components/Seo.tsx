@@ -6,13 +6,13 @@ interface SeoProps {
   path: string;
   ogImage?: string;
   noindex?: boolean;
+  jsonLd?: Record<string, unknown> | Record<string, unknown>[];
 }
 
 const SITE_URL = "https://impotsfacile.com";
 
-export function Seo({ title, description, path, ogImage, noindex }: SeoProps) {
+export function Seo({ title, description, path, ogImage, noindex, jsonLd }: SeoProps) {
   const url = `${SITE_URL}${path}`;
-  const image = ogImage ?? "https://lovable.dev/opengraph-image-p98pqg.png";
   return (
     <Helmet>
       <title>{title}</title>
@@ -23,11 +23,15 @@ export function Seo({ title, description, path, ogImage, noindex }: SeoProps) {
       <meta property="og:description" content={description} />
       <meta property="og:url" content={url} />
       <meta property="og:type" content="website" />
-      <meta property="og:image" content={image} />
-      <meta name="twitter:card" content="summary_large_image" />
+      <meta property="og:site_name" content="Impôts Facile" />
+      {ogImage && <meta property="og:image" content={ogImage} />}
+      <meta name="twitter:card" content={ogImage ? "summary_large_image" : "summary"} />
       <meta name="twitter:title" content={title} />
       <meta name="twitter:description" content={description} />
-      <meta name="twitter:image" content={image} />
+      {ogImage && <meta name="twitter:image" content={ogImage} />}
+      {jsonLd && (
+        <script type="application/ld+json">{JSON.stringify(jsonLd)}</script>
+      )}
     </Helmet>
   );
 }
