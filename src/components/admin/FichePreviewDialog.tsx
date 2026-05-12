@@ -90,7 +90,7 @@ export function FichePreviewDialog({
           </DialogTitle>
         </DialogHeader>
 
-        <div className="flex-1 overflow-y-auto px-6 py-5 space-y-4">
+        <div className="flex-1 overflow-y-auto px-6 py-6 space-y-6" style={{ background: 'hsl(285 30% 97%)' }}>
           <div className="rounded-md border border-blue-200 bg-blue-50 px-3 py-2 text-xs text-blue-900 dark:border-blue-900/40 dark:bg-blue-950/30 dark:text-blue-200">
             Vous prévisualisez cette fiche en mode admin. Voici le rendu tel que vu par les utilisateurs.
           </div>
@@ -102,22 +102,48 @@ export function FichePreviewDialog({
           )}
 
           {hasContent ? (
-            <div>
-              <div className="mb-4 flex items-center gap-3">
-                {ficheData.icone && <span className="text-3xl">{ficheData.icone}</span>}
-                <h1 className="font-heading text-2xl font-bold text-foreground">
-                  {ficheData.nom}
-                </h1>
-              </div>
+            <>
+              <header className="relative overflow-hidden rounded-3xl border border-border bg-background p-6 md:p-8 shadow-sm">
+                <div
+                  className="blob-decor"
+                  style={{
+                    background: 'hsl(var(--rose-light))',
+                    width: 240,
+                    height: 240,
+                    top: -100,
+                    right: -100,
+                    opacity: 0.7,
+                  }}
+                  aria-hidden
+                />
+                <div className="relative space-y-4">
+                  <span className="eyebrow">{TYPE_LABEL[ficheType]}</span>
+                  <div className="flex items-start gap-3">
+                    {ficheData.icone && (
+                      <span className="text-4xl shrink-0 leading-none" aria-hidden>
+                        {ficheData.icone}
+                      </span>
+                    )}
+                    <h1 className="font-display text-3xl md:text-4xl text-primary leading-tight">
+                      {ficheData.nom}
+                    </h1>
+                  </div>
+                  {ficheData.description && (
+                    <p className="text-sm md:text-base text-muted-foreground leading-relaxed">
+                      {ficheData.description}
+                    </p>
+                  )}
+                </div>
+              </header>
               <FicheSections
                 content={ficheData.contenu_sections as FicheSectionsContent | null | undefined}
                 fallbackMarkdown={ficheData.description}
               />
-            </div>
+            </>
           ) : (
-            <div className="flex flex-col items-center justify-center py-12 text-center space-y-3 rounded-lg border border-dashed border-border bg-muted/20">
+            <div className="flex flex-col items-center justify-center py-12 text-center space-y-3 rounded-3xl border border-dashed border-border bg-background">
               <FileWarning className="h-16 w-16 text-muted-foreground/60" />
-              <h3 className="font-heading text-lg font-semibold text-foreground">
+              <h3 className="font-display text-xl text-primary">
                 Contenu en attente
               </h3>
               <p className="text-sm text-muted-foreground max-w-md">
