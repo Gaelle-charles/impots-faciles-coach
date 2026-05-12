@@ -99,7 +99,7 @@ export default function Recommandations() {
       </header>
 
       {loading ? (
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="flex flex-col gap-3">
           {[0, 1, 2].map((i) => (
             <Skeleton key={i} className="h-64 w-full" />
           ))}
@@ -119,7 +119,7 @@ export default function Recommandations() {
             {associations.length === 0 ? (
               <p className="text-sm text-muted-foreground italic">Aucune association pour le moment.</p>
             ) : (
-              <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              <div className="flex flex-col gap-3">
                 {associations.map((r) => (
                   <RecoCard key={r.id} reco={r} />
                 ))}
@@ -134,7 +134,7 @@ export default function Recommandations() {
             {partenaires.length === 0 ? (
               <p className="text-sm text-muted-foreground italic">Aucun partenaire pour le moment.</p>
             ) : (
-              <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              <div className="flex flex-col gap-3">
                 {partenaires.map((r) => (
                   <RecoCard key={r.id} reco={r} />
                 ))}
