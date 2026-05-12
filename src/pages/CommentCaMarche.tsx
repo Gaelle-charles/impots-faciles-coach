@@ -31,6 +31,7 @@ import {
 } from 'lucide-react';
 import { Header } from '@/components/Header';
 import { Footer } from '@/components/Footer';
+import { Seo } from '@/components/Seo';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import heroBg from '@/assets/comment-ca-marche-hero.jpg';
@@ -159,6 +160,11 @@ const CommentCaMarche = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      <Seo
+        title="Comment ça marche — Impôts Facile"
+        description="Découvrez la méthode Impôts Facile : modules pédagogiques, parcours personnalisé et simulateurs pour maîtriser vos impôts en 7 étapes."
+        path="/comment-ca-marche"
+      />
       <Header />
 
       {/* ── SECTION 1 — HERO ── */}
