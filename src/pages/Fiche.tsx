@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button';
 import { ArrowLeft } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
 import { FicheSections, type FicheSectionsContent } from '@/components/fiches/FicheSections';
+import { Eyebrow } from '@/components/ui/eyebrow';
 
 type FicheType = 'profil' | 'metier' | 'pays';
 
@@ -139,7 +140,7 @@ const Fiche = () => {
   }
 
   return (
-    <div className="space-y-6 max-w-4xl">
+    <div className="max-w-4xl space-y-10 pb-8">
       <Button variant="ghost" size="sm" asChild className="-ml-2">
         <Link to="/dashboard">
           <ArrowLeft className="h-4 w-4" />
@@ -147,21 +148,37 @@ const Fiche = () => {
         </Link>
       </Button>
 
-      <header className="space-y-2">
-        <p className="text-sm font-medium text-muted-foreground uppercase tracking-wide">
-          {LABEL_BY_TYPE[validType]}
-        </p>
-        <div className="flex items-start gap-3">
-          {data.icone && (
-            <span className="text-4xl shrink-0" aria-hidden>
-              {data.icone}
-            </span>
+      <header className="relative overflow-hidden rounded-3xl border border-border bg-background p-8 md:p-12 shadow-sm">
+        <div
+          className="blob-decor"
+          style={{
+            background: 'hsl(var(--rose-light))',
+            width: 320,
+            height: 320,
+            top: -120,
+            right: -120,
+            opacity: 0.7,
+          }}
+          aria-hidden
+        />
+        <div className="relative space-y-5">
+          <Eyebrow>{LABEL_BY_TYPE[validType]}</Eyebrow>
+          <div className="flex items-start gap-4">
+            {data.icone && (
+              <span className="text-5xl md:text-6xl shrink-0 leading-none" aria-hidden>
+                {data.icone}
+              </span>
+            )}
+            <h1 className="font-display text-4xl md:text-5xl text-primary leading-tight">
+              {data.nom}
+            </h1>
+          </div>
+          {data.description && (
+            <p className="text-base md:text-lg text-muted-foreground leading-relaxed max-w-2xl">
+              {data.description}
+            </p>
           )}
-          <h1 className="font-heading text-3xl font-bold text-foreground">{data.nom}</h1>
         </div>
-        {data.description && (
-          <p className="text-base text-muted-foreground">{data.description}</p>
-        )}
       </header>
 
       <FicheSections content={data.contenu_sections} fallbackMarkdown={data.description} />

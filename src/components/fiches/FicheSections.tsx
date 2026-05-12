@@ -1,6 +1,5 @@
 import { useMemo } from 'react';
 import { marked } from 'marked';
-import { Card, CardContent } from '@/components/ui/card';
 
 export interface FicheSection {
   key: string;
@@ -19,9 +18,22 @@ interface FicheSectionsProps {
   fallbackMarkdown?: string | null;
 }
 
+const PROSE_CLASS =
+  'prose prose-sm md:prose-base max-w-none text-foreground ' +
+  'prose-headings:font-display prose-headings:text-primary prose-headings:font-normal ' +
+  'prose-h2:text-2xl prose-h3:text-xl ' +
+  'prose-a:text-rose-dynamic prose-a:no-underline hover:prose-a:underline ' +
+  'prose-strong:text-foreground prose-strong:font-semibold ' +
+  'prose-li:marker:text-rose-dynamic';
+
 /**
  * Renders enriched fiche content from the `contenu_sections` JSONB column.
  * Falls back to a single Markdown block (legacy `description`) when no sections are available.
+ *
+ * Style aligned with the homepage "épuré" design language:
+ *  - rounded-3xl soft cards
+ *  - Eyebrow-like section numbers in display serif
+ *  - font-display headings, generous spacing
  */
 export function FicheSections({ content, fallbackMarkdown }: FicheSectionsProps) {
   const sections = Array.isArray(content?.sections) ? content!.sections! : [];
@@ -46,41 +58,44 @@ export function FicheSections({ content, fallbackMarkdown }: FicheSectionsProps)
 
   if (renderedSections.length === 0 && !fallbackHtml) {
     return (
-      <Card className="border-dashed border-border bg-background">
-        <CardContent className="p-6">
-          <p className="text-sm text-muted-foreground italic">
-            Le contenu détaillé de cette fiche sera bientôt disponible.
-          </p>
-        </CardContent>
-      </Card>
+      <div
+        className="rounded-3xl border border-dashed border-border p-8 md:p-10 text-center"
+        style={{ background: 'hsl(285 30% 97%)' }}
+      >
+        <p className="text-sm text-muted-foreground italic">
+          Le contenu détaillé de cette fiche sera bientôt disponible.
+        </p>
+      </div>
     );
   }
 
   if (fallbackHtml) {
     return (
-      <Card className="border-border bg-background shadow-sm">
-        <CardContent className="p-6">
-          <div
-            className="prose prose-sm max-w-none text-foreground prose-headings:font-heading prose-headings:text-foreground prose-a:text-primary"
-            dangerouslySetInnerHTML={{ __html: fallbackHtml }}
-          />
-        </CardContent>
-      </Card>
+      <article className="rounded-3xl border border-border bg-background p-8 md:p-10 shadow-sm">
+        <div className={PROSE_CLASS} dangerouslySetInnerHTML={{ __html: fallbackHtml }} />
+      </article>
     );
   }
 
   return (
     <div className="space-y-6">
-      {renderedSections.map((s) => (
-        <Card key={s.key} className="border-border bg-background shadow-sm">
-          <CardContent className="p-6 space-y-3">
-            <h2 className="font-heading text-xl font-bold text-foreground">{s.title}</h2>
-            <div
-              className="prose prose-sm max-w-none text-foreground prose-headings:font-heading prose-headings:text-foreground prose-a:text-primary"
-              dangerouslySetInnerHTML={{ __html: s.html }}
-            />
-          </CardContent>
-        </Card>
+      {renderedSections.map((s, idx) => (
+        <article
+          key={s.key}
+          className="relative rounded-3xl border border-border bg-background p-8 md:p-10 shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md"
+        >
+          <p
+            className="font-display text-6xl md:text-7xl leading-none select-none"
+            style={{ color: 'hsl(var(--rose-light))', marginBottom: '-0.35em' }}
+            aria-hidden
+          >
+            {String(idx + 1).padStart(2, '0')}
+          </p>
+          <h2 className="font-display text-2xl md:text-3xl text-primary mt-2 mb-5">
+            {s.title}
+          </h2>
+          <div className={PROSE_CLASS} dangerouslySetInnerHTML={{ __html: s.html }} />
+        </article>
       ))}
     </div>
   );
