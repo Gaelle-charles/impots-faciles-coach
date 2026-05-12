@@ -90,7 +90,7 @@ export function FichePreviewDialog({
           </DialogTitle>
         </DialogHeader>
 
-        <div className="flex-1 overflow-y-auto px-6 py-6 space-y-6" style={{ background: 'hsl(285 30% 97%)' }}>
+        <div className="flex-1 overflow-y-auto px-6 py-6 space-y-6 bg-background">
           <div className="rounded-md border border-blue-200 bg-blue-50 px-3 py-2 text-xs text-blue-900 dark:border-blue-900/40 dark:bg-blue-950/30 dark:text-blue-200">
             Vous prévisualisez cette fiche en mode admin. Voici le rendu tel que vu par les utilisateurs.
           </div>
