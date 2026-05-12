@@ -60,7 +60,7 @@ export function FicheSections({ content, fallbackMarkdown }: FicheSectionsProps)
     return (
       <div
         className="rounded-3xl border border-dashed border-border p-8 md:p-10 text-center"
-        style={{ background: 'hsl(285 30% 97%)' }}
+        style={{ background: 'hsl(var(--rose-light))' }}
       >
         <p className="text-sm text-muted-foreground italic">
           Le contenu détaillé de cette fiche sera bientôt disponible.
@@ -71,7 +71,10 @@ export function FicheSections({ content, fallbackMarkdown }: FicheSectionsProps)
 
   if (fallbackHtml) {
     return (
-      <article className="rounded-3xl border border-border bg-background p-8 md:p-10 shadow-sm">
+      <article
+        className="rounded-3xl border border-border p-8 md:p-10 shadow-sm"
+        style={{ background: 'hsl(var(--rose-light))' }}
+      >
         <div className={PROSE_CLASS} dangerouslySetInnerHTML={{ __html: fallbackHtml }} />
       </article>
     );
@@ -82,16 +85,17 @@ export function FicheSections({ content, fallbackMarkdown }: FicheSectionsProps)
       {renderedSections.map((s, idx) => (
         <article
           key={s.key}
-          className="relative rounded-3xl border border-border bg-background p-8 md:p-10 shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md"
+          className="relative rounded-3xl border border-border p-8 md:p-10 shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md"
+          style={{ background: 'hsl(var(--rose-light))' }}
         >
           <p
             className="font-display text-6xl md:text-7xl leading-none select-none"
-            style={{ color: 'hsl(var(--rose-light))', marginBottom: '-0.35em' }}
+            style={{ color: 'hsl(285 30% 92%)', marginBottom: '-0.35em' }}
             aria-hidden
           >
             {String(idx + 1).padStart(2, '0')}
           </p>
-          <h2 className="font-display text-2xl md:text-3xl text-primary mt-2 mb-5">
+          <h2 className="font-display text-xl md:text-2xl text-primary mt-2 mb-5">
             {s.title}
           </h2>
           <div className={PROSE_CLASS} dangerouslySetInnerHTML={{ __html: s.html }} />
