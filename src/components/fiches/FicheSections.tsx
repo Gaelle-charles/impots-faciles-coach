@@ -18,23 +18,64 @@ interface FicheSectionsProps {
   fallbackMarkdown?: string | null;
 }
 
-const PROSE_CLASS =
-  'prose prose-sm md:prose-base max-w-none text-foreground ' +
-  'prose-headings:font-display prose-headings:text-primary prose-headings:font-normal ' +
+const PROSE_BASE =
+  'prose prose-sm md:prose-base max-w-none ' +
+  'prose-headings:font-display prose-headings:font-normal ' +
   'prose-h2:text-2xl prose-h3:text-xl ' +
-  'prose-a:text-rose-dynamic prose-a:no-underline hover:prose-a:underline ' +
-  'prose-strong:text-foreground prose-strong:font-semibold ' +
-  'prose-li:marker:text-rose-dynamic';
+  'prose-a:no-underline hover:prose-a:underline ' +
+  'prose-strong:font-semibold';
 
-/**
- * Renders enriched fiche content from the `contenu_sections` JSONB column.
- * Falls back to a single Markdown block (legacy `description`) when no sections are available.
- *
- * Style aligned with the homepage "épuré" design language:
- *  - rounded-3xl soft cards
- *  - Eyebrow-like section numbers in display serif
- *  - font-display headings, generous spacing
- */
+const PROSE_LIGHT =
+  PROSE_BASE +
+  ' text-foreground prose-headings:text-primary prose-strong:text-foreground ' +
+  'prose-a:text-rose-dynamic prose-li:marker:text-rose-dynamic';
+
+const PROSE_DARK =
+  PROSE_BASE +
+  ' text-white/85 prose-headings:text-white prose-strong:text-white ' +
+  'prose-a:text-[hsl(56_100%_70%)] prose-li:marker:text-[hsl(56_100%_70%)]';
+
+type Palette = {
+  bg: string;
+  title: string;
+  number: string;
+  prose: string;
+  border: string;
+};
+
+// Palette inspired by homepage cards: violet-deep, yellow, white, rose-light.
+// Sections alternate by pairs of 2.
+const PALETTE: Palette[] = [
+  {
+    bg: 'hsl(var(--violet-deep))',
+    title: 'text-white',
+    number: 'hsl(0 0% 100% / 0.12)',
+    prose: PROSE_DARK,
+    border: 'border-transparent',
+  },
+  {
+    bg: 'hsl(56 100% 49%)',
+    title: 'text-primary',
+    number: 'hsl(285 52% 15% / 0.12)',
+    prose: PROSE_LIGHT,
+    border: 'border-transparent',
+  },
+  {
+    bg: 'hsl(0 0% 100%)',
+    title: 'text-primary',
+    number: 'hsl(285 52% 15% / 0.12)',
+    prose: PROSE_LIGHT,
+    border: 'border-border',
+  },
+  {
+    bg: 'hsl(var(--rose-light))',
+    title: 'text-primary',
+    number: 'hsl(336 70% 50% / 0.18)',
+    prose: PROSE_LIGHT,
+    border: 'border-transparent',
+  },
+];
+
 export function FicheSections({ content, fallbackMarkdown }: FicheSectionsProps) {
   const sections = Array.isArray(content?.sections) ? content!.sections! : [];
 
@@ -75,17 +116,10 @@ export function FicheSections({ content, fallbackMarkdown }: FicheSectionsProps)
         className="rounded-3xl border border-border p-8 md:p-10 shadow-sm"
         style={{ background: 'hsl(var(--rose-light))' }}
       >
-        <div className={PROSE_CLASS} dangerouslySetInnerHTML={{ __html: fallbackHtml }} />
+        <div className={PROSE_LIGHT} dangerouslySetInnerHTML={{ __html: fallbackHtml }} />
       </article>
     );
   }
-
-  // Alternate backgrounds by pairs of sections: 2 white, 2 rose, 2 violet, repeat.
-  const PALETTE: { bg: string; number: string }[] = [
-    { bg: 'hsl(0 0% 100%)', number: 'hsl(285 52% 85%)' },
-    { bg: 'hsl(var(--rose-light))', number: 'hsl(336 70% 78%)' },
-    { bg: 'hsl(285 45% 93%)', number: 'hsl(285 52% 72%)' },
-  ];
 
   return (
     <div className="space-y-6">
@@ -94,7 +128,7 @@ export function FicheSections({ content, fallbackMarkdown }: FicheSectionsProps)
         return (
           <article
             key={s.key}
-            className="relative rounded-3xl border border-border p-8 md:p-10 shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md"
+            className={`relative rounded-3xl border ${palette.border} p-8 md:p-10 shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md`}
             style={{ background: palette.bg }}
           >
             <p
@@ -104,15 +138,16 @@ export function FicheSections({ content, fallbackMarkdown }: FicheSectionsProps)
             >
               {String(idx + 1).padStart(2, '0')}
             </p>
-            <h2 className="font-display text-xl md:text-2xl text-primary mt-2 mb-5">
+            <h2 className={`font-display text-xl md:text-2xl mt-2 mb-5 ${palette.title}`}>
               {s.title}
             </h2>
-            <div className={PROSE_CLASS} dangerouslySetInnerHTML={{ __html: s.html }} />
+            <div className={palette.prose} dangerouslySetInnerHTML={{ __html: s.html }} />
           </article>
         );
       })}
     </div>
   );
+
 }
 
 export default FicheSections;
