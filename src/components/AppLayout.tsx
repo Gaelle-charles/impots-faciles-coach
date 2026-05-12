@@ -50,6 +50,7 @@ export function AppLayout() {
             orgLogoUrl={orgLogoUrl}
             adminInitials={adminInitials}
             hasLicense={hasLicense}
+            hasB2CPlan={hasB2CPlan}
           />
         )}
         {isMobile && <Header />}
