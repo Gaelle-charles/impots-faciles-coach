@@ -48,6 +48,7 @@ export function ProtectedRoute({ children, adminOnly = false }: { children: Reac
         setRoleLoading(false);
       }
       setOnboardingDone(profile?.onboarding_done ?? false);
+      setUserPlan((profile as { plan?: string } | null)?.plan ?? null);
       setOnboardingLoading(false);
 
       const org = Array.isArray(orgData) ? orgData[0] : orgData;
