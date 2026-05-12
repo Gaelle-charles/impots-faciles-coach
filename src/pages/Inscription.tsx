@@ -7,6 +7,7 @@ import { Input } from '@/components/ui/input';
 import { useNavigate, Link } from 'react-router-dom';
 import { Eye, EyeOff } from 'lucide-react';
 import { AuthLayout } from '@/components/auth/AuthLayout';
+import { Seo } from '@/components/Seo';
 
 interface FieldErrors {
   prenom?: string;
@@ -73,6 +74,12 @@ const Inscription = () => {
   };
 
   return (
+    <>
+      <Seo
+        title="Inscription — Impôts Facile"
+        description="Créez votre compte Impôts Facile en quelques secondes et commencez à maîtriser vos impôts."
+        path="/inscription"
+      />
     <AuthLayout
       title="Créer votre compte"
       subtitle="Rejoignez la communauté Impôts Facile en quelques secondes."
@@ -213,6 +220,7 @@ const Inscription = () => {
         </Link>
       </p>
     </AuthLayout>
+    </>
   );
 };
 

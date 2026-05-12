@@ -14,6 +14,7 @@ import {
 } from '@/components/ui/accordion';
 import { Users, GraduationCap, Sparkles, Lightbulb, AlertTriangle } from 'lucide-react';
 import type { B2BPlan } from '@/lib/plans';
+import { Seo } from '@/components/Seo';
 
 const TEAM_PLANS: Record<B2BPlan, { label: string; individuel: number; team: number; desc: string }> = {
   premium: { label: 'Premium', individuel: 159, team: 143, desc: 'Tout Expert + accompagnement complet' },
@@ -40,6 +41,11 @@ export default function ImpotsTeam() {
 
   return (
     <div className="flex min-h-screen flex-col">
+      <Seo
+        title="Impôts Team — Formation fiscale pour entreprises"
+        description="Offrez à vos collaborateurs une formation complète à la fiscalité française. Tarifs dégressifs dès 10 licences."
+        path="/impots-team"
+      />
       <Header />
 
       {/* HERO */}

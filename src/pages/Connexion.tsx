@@ -7,6 +7,7 @@ import { Input } from '@/components/ui/input';
 import { useNavigate, Link } from 'react-router-dom';
 import { Eye, EyeOff } from 'lucide-react';
 import { AuthLayout } from '@/components/auth/AuthLayout';
+import { Seo } from '@/components/Seo';
 
 const Connexion = () => {
   const [email, setEmail] = useState('');
@@ -35,6 +36,12 @@ const Connexion = () => {
   };
 
   return (
+    <>
+      <Seo
+        title="Connexion — Impôts Facile"
+        description="Connectez-vous à votre espace Impôts Facile pour reprendre votre parcours fiscal."
+        path="/connexion"
+      />
     <AuthLayout
       title="Bon retour 👋"
       subtitle="Connectez-vous pour reprendre votre parcours fiscal."
@@ -139,6 +146,7 @@ const Connexion = () => {
         </Link>
       </p>
     </AuthLayout>
+    </>
   );
 };
 
