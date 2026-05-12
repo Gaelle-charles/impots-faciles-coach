@@ -80,27 +80,37 @@ export function FicheSections({ content, fallbackMarkdown }: FicheSectionsProps)
     );
   }
 
+  // Alternate backgrounds by pairs of sections: 2 white, 2 rose, 2 violet, repeat.
+  const PALETTE: { bg: string; number: string }[] = [
+    { bg: 'hsl(0 0% 100%)', number: 'hsl(285 52% 85%)' },
+    { bg: 'hsl(var(--rose-light))', number: 'hsl(336 70% 78%)' },
+    { bg: 'hsl(285 45% 93%)', number: 'hsl(285 52% 72%)' },
+  ];
+
   return (
     <div className="space-y-6">
-      {renderedSections.map((s, idx) => (
-        <article
-          key={s.key}
-          className="relative rounded-3xl border border-border p-8 md:p-10 shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md"
-          style={{ background: 'hsl(var(--rose-light))' }}
-        >
-          <p
-            className="font-display text-6xl md:text-7xl leading-none select-none"
-            style={{ color: 'hsl(285 30% 92%)', marginBottom: '-0.35em' }}
-            aria-hidden
+      {renderedSections.map((s, idx) => {
+        const palette = PALETTE[Math.floor(idx / 2) % PALETTE.length];
+        return (
+          <article
+            key={s.key}
+            className="relative rounded-3xl border border-border p-8 md:p-10 shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md"
+            style={{ background: palette.bg }}
           >
-            {String(idx + 1).padStart(2, '0')}
-          </p>
-          <h2 className="font-display text-xl md:text-2xl text-primary mt-2 mb-5">
-            {s.title}
-          </h2>
-          <div className={PROSE_CLASS} dangerouslySetInnerHTML={{ __html: s.html }} />
-        </article>
-      ))}
+            <p
+              className="font-display text-5xl md:text-6xl leading-none select-none"
+              style={{ color: palette.number, marginBottom: '-0.25em' }}
+              aria-hidden
+            >
+              {String(idx + 1).padStart(2, '0')}
+            </p>
+            <h2 className="font-display text-xl md:text-2xl text-primary mt-2 mb-5">
+              {s.title}
+            </h2>
+            <div className={PROSE_CLASS} dangerouslySetInnerHTML={{ __html: s.html }} />
+          </article>
+        );
+      })}
     </div>
   );
 }
