@@ -12,6 +12,7 @@ import { toast } from 'sonner';
 import { CheckoutAcceptanceDialog } from '@/components/CheckoutAcceptanceDialog';
 import { Eyebrow } from '@/components/ui/eyebrow';
 import { AccentText } from '@/components/ui/accent-text';
+import { Seo } from '@/components/Seo';
 
 const plans = [
   {
@@ -160,6 +161,11 @@ const Tarifs = () => {
 
   return (
     <div className="flex min-h-screen flex-col bg-background">
+      <Seo
+        title="Tarifs — Impôts Facile"
+        description="Découvrez nos formules Starter, Expert et Premium pour maîtriser vos impôts. À partir de 49€, sans abonnement caché."
+        path="/tarifs"
+      />
       <Header />
 
       <main className="mx-auto w-full max-w-6xl flex-1 px-6 py-16 sm:py-20">

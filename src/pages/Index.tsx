@@ -20,6 +20,7 @@ import { useEffect, useRef } from 'react';
 import heroBg from '@/assets/hero-bg.jpg';
 import ctaBg from '@/assets/cta-bg.jpg';
 import { Footer } from '@/components/Footer';
+import { Seo } from '@/components/Seo';
 import { Eyebrow } from '@/components/ui/eyebrow';
 import { AccentText } from '@/components/ui/accent-text';
 import {
@@ -116,6 +117,11 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      <Seo
+        title="Impôts Facile — Apprenez la fiscalité française simplement"
+        description="Modules pédagogiques, quiz et simulateurs pour comprendre vos impôts et optimiser votre déclaration. Commencez gratuitement."
+        path="/"
+      />
       <Header />
 
       {/* ============ HERO ============ */}
