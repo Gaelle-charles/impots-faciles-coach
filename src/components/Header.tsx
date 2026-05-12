@@ -108,11 +108,30 @@ export function Header({ variant = 'light' }: HeaderProps) {
         <div className="hidden items-center gap-2 lg:flex">
           {user ? (
             <>
-              <Link to={accountHref}>
-                <Button variant={isDark ? 'cta-pill' : 'cta-pill'} size="sm" className="rounded-full px-5">
-                  Mon compte
-                </Button>
-              </Link>
+              {isAdminOrgWithB2C ? (
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="cta-pill" size="sm" className="rounded-full px-5 gap-1">
+                      Mon compte
+                      <ChevronDown className="h-4 w-4" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end">
+                    <DropdownMenuItem asChild>
+                      <Link to="/impots-team/dashboard">Espace équipe</Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem asChild>
+                      <Link to="/dashboard">Espace personnel</Link>
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              ) : (
+                <Link to={accountHref}>
+                  <Button variant={isDark ? 'cta-pill' : 'cta-pill'} size="sm" className="rounded-full px-5">
+                    Mon compte
+                  </Button>
+                </Link>
+              )}
               <Button
                 variant="ghost"
                 size="sm"
