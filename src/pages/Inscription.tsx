@@ -220,6 +220,7 @@ const Inscription = () => {
         </Link>
       </p>
     </AuthLayout>
+    </>
   );
 };
 

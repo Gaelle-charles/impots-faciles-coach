@@ -146,6 +146,7 @@ const Connexion = () => {
         </Link>
       </p>
     </AuthLayout>
+    </>
   );
 };
 
