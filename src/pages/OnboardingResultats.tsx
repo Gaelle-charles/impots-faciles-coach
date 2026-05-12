@@ -111,7 +111,7 @@ const OnboardingResultats = () => {
       setProfile(prof as ProfileRow);
 
       // Lookups en parallèle
-      const tasks: Promise<unknown>[] = [];
+      const tasks: PromiseLike<unknown>[] = [];
 
       if (prof.metier_id) {
         tasks.push(
