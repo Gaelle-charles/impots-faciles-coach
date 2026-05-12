@@ -280,11 +280,21 @@ Deno.serve(async (req) => {
         // 7. Suppression définitive dans auth.users → libère l'email pour réinscription
         const { error: authDelErr } = await adminClient.auth.admin.deleteUser(userId);
         if (authDelErr) {
-          console.error("[hard_delete] auth delete failed:", authDelErr);
-          return new Response(JSON.stringify({ error: `Auth: ${authDelErr.message}` }), {
-            status: 500,
-            headers: { ...corsHeaders, "Content-Type": "application/json" },
-          });
+          // Idempotence : si l'utilisateur auth a déjà été supprimé lors d'une
+          // tentative précédente (profil anonymisé mais auth delete a échoué),
+          // on considère la suppression comme réussie.
+          const isNotFound =
+            (authDelErr as any)?.status === 404 ||
+            (authDelErr as any)?.code === "user_not_found" ||
+            /not found/i.test(authDelErr.message ?? "");
+          if (!isNotFound) {
+            console.error("[hard_delete] auth delete failed:", authDelErr);
+            return new Response(JSON.stringify({ error: `Auth: ${authDelErr.message}` }), {
+              status: 500,
+              headers: { ...corsHeaders, "Content-Type": "application/json" },
+            });
+          }
+          console.warn(`[hard_delete] auth user ${userId} déjà absent, on continue.`);
         }
 
         console.log(`[hard_delete] user ${userId} supprimé (auth + profil anonymisé). Stripe:`, stripeResult);
