@@ -2,8 +2,10 @@ import { Link, NavLink, useLocation } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { useEffect, useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
+import { useOrgRole } from '@/hooks/useOrgRole';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { SpaceSwitcher } from '@/components/SpaceSwitcher';
 import logo from '@/assets/logo.png';
 import {
   Home,
