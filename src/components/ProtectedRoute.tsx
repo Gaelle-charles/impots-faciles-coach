@@ -28,7 +28,7 @@ export function ProtectedRoute({ children, adminOnly = false }: { children: Reac
       const [{ data: profile }, { data: orgData }] = await Promise.all([
         supabase
           .from('profiles')
-          .select('role, onboarding_done')
+          .select('role, onboarding_done, plan')
           .eq('id', user.id)
           .maybeSingle(),
         supabase.rpc('get_user_organization', { p_user_id: user.id }),
