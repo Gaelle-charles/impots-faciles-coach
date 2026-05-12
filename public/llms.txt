@@ -1,0 +1,17 @@
+# Impôts Facile
+
+> Plateforme pédagogique française pour comprendre la fiscalité des particuliers : modules de formation, quiz, simulateurs (frais réels, IR, quotient familial, prélèvement à la source). Ne se substitue pas à un conseil fiscal professionnel.
+
+## Pages
+
+- [Accueil](/): présentation, méthode et FAQ.
+- [Tarifs](/tarifs): formules Starter, Expert, Premium et offre équipe.
+- [Comment ça marche](/comment-ca-marche): méthode d'apprentissage en 7 étapes.
+- [Impôts Team](/impots-team): formation fiscale pour entreprises et tarifs licences.
+- [Inscription](/inscription): création de compte gratuite.
+- [Connexion](/connexion): accès à l'espace personnel.
+
+## Mentions
+
+- Plateforme éditée par ANNUL IMPOTS, basée en France.
+- Contenu éducatif, non opposable à la DGFIP. Pour conseil personnalisé, consulter un expert-comptable ou un avocat fiscaliste.
