@@ -28,7 +28,10 @@ const PROSE_BASE =
 const PROSE_LIGHT =
   PROSE_BASE +
   ' text-foreground prose-headings:text-primary prose-strong:text-foreground ' +
-  'prose-a:text-rose-dynamic prose-li:marker:text-rose-dynamic';
+  'prose-a:text-rose-dynamic prose-li:marker:text-rose-dynamic ' +
+  '[&_thead]:border-b-2 [&_thead]:border-primary/40 ' +
+  '[&_tbody_tr]:border-b [&_tbody_tr]:border-primary/20 ' +
+  '[&_th]:text-primary [&_td]:border-0';
 
 const PROSE_DARK =
   PROSE_BASE +
@@ -38,7 +41,10 @@ const PROSE_DARK =
   'prose-blockquote:text-white prose-blockquote:border-l-[hsl(56_100%_60%)] ' +
   'prose-code:text-white prose-code:bg-white/10 ' +
   'prose-th:text-white prose-td:text-white/90 ' +
-  'prose-hr:border-white/20';
+  'prose-hr:border-white/20 ' +
+  '[&_thead]:border-b-2 [&_thead]:border-white/40 ' +
+  '[&_tbody_tr]:border-b [&_tbody_tr]:border-white/25 ' +
+  '[&_td]:border-0';
 
 type Palette = {
   bg: string;
@@ -54,28 +60,28 @@ const PALETTE: Palette[] = [
   {
     bg: 'hsl(var(--violet-deep))',
     title: 'text-white',
-    number: 'hsl(0 0% 100% / 0.28)',
+    number: 'hsl(0 0% 100% / 0.32)',
     prose: PROSE_DARK,
     border: 'border-transparent',
   },
   {
     bg: 'hsl(56 100% 49%)',
     title: 'text-primary',
-    number: 'hsl(285 52% 15% / 0.12)',
+    number: 'hsl(285 52% 15% / 0.32)',
     prose: PROSE_LIGHT,
     border: 'border-transparent',
   },
   {
     bg: 'hsl(0 0% 100%)',
     title: 'text-primary',
-    number: 'hsl(285 52% 15% / 0.12)',
+    number: 'hsl(285 52% 15% / 0.22)',
     prose: PROSE_LIGHT,
     border: 'border-border',
   },
   {
     bg: 'hsl(var(--rose-light))',
     title: 'text-primary',
-    number: 'hsl(336 70% 50% / 0.18)',
+    number: 'hsl(336 70% 45% / 0.35)',
     prose: PROSE_LIGHT,
     border: 'border-transparent',
   },
