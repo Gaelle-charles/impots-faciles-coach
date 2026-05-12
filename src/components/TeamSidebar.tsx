@@ -186,24 +186,6 @@ export function TeamSidebar({
             })}
           </div>
         )}
-
-        {/* Aperçu plateforme (si pas de licence) */}
-        {!hasLicense && (
-          <div>
-            <p className="px-3 mb-1 text-[11px] font-semibold uppercase tracking-wide opacity-50">
-              Découvrir
-            </p>
-            <NavLink to="/mes-modules">
-              <Button
-                variant="sidebar-item"
-                className="gap-3 px-3 py-2.5 text-sm w-full justify-start opacity-80 hover:opacity-100"
-              >
-                <Eye className="h-5 w-5" />
-                <span>Aperçu plateforme</span>
-              </Button>
-            </NavLink>
-          </div>
-        )}
       </nav>
 
       {/* Bottom */}
