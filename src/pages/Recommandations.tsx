@@ -29,7 +29,7 @@ function getInitials(nom: string) {
 function RecoCard({ reco }: { reco: Reco }) {
   return (
     <Card className="border border-border bg-background rounded-3xl shadow-none hover:shadow-lg transition-all overflow-hidden">
-      <CardContent className="p-5 flex flex-col md:flex-row md:items-center gap-5">
+      <CardContent className="p-5 flex flex-col lg:flex-row lg:items-center gap-5">
         {/* Logo */}
         {reco.logo_url ? (
           <img
@@ -50,7 +50,7 @@ function RecoCard({ reco }: { reco: Reco }) {
         </div>
 
         {/* Bénéfice */}
-        <div className="md:w-72 shrink-0 rounded-2xl p-3 text-sm bg-rose-light text-foreground">
+        <div className="lg:w-72 shrink-0 rounded-2xl p-3 text-sm bg-rose-light text-foreground">
           <p className="font-semibold text-[11px] uppercase tracking-wide mb-0.5 text-rose-dynamic">
             Ce que ça vous apporte
           </p>
@@ -59,7 +59,7 @@ function RecoCard({ reco }: { reco: Reco }) {
 
         {/* CTA */}
         <a href={reco.url} target="_blank" rel="noopener noreferrer" className="shrink-0">
-          <Button className="gap-2 bg-primary text-primary-foreground hover:bg-primary/90 w-full md:w-auto">
+          <Button className="gap-2 bg-primary text-primary-foreground hover:bg-primary/90 w-full lg:w-auto">
             Découvrir <ExternalLink className="h-4 w-4" />
           </Button>
         </a>
