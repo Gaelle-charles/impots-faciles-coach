@@ -39,12 +39,14 @@ export function TeamSidebar({
   orgLogoUrl,
   adminInitials,
   hasLicense,
+  hasB2CPlan = false,
   activeTeamTab,
   onTeamTabChange,
 }: TeamSidebarProps) {
   const { signOut } = useAuth();
   const location = useLocation();
   const isOnDashboard = location.pathname === '/impots-team/dashboard';
+  const showSwitcher = hasLicense || hasB2CPlan;
   const [suggestionOpen, setSuggestionOpen] = useState(false);
 
   const teamTabs: Array<{ key: 'abonnement' | 'membres' | 'branding'; label: string; icon: typeof CreditCard }> = [
