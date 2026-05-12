@@ -49,7 +49,7 @@ const PALETTE: Palette[] = [
   {
     bg: 'hsl(var(--violet-deep))',
     title: 'text-white',
-    number: 'hsl(0 0% 100% / 0.12)',
+    number: 'hsl(0 0% 100% / 0.28)',
     prose: PROSE_DARK,
     border: 'border-transparent',
   },
