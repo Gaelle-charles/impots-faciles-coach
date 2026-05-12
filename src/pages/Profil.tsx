@@ -541,14 +541,24 @@ const Profil = () => {
             <span className="lg:hidden">Modifier vos réponses.</span>
             <span className="hidden lg:inline">Modifiez les réponses que vous avez données lors de votre onboarding (situation, métier, revenus complémentaires…). Vos recommandations et votre passeport fiscal seront recalculés automatiquement.</span>
           </p>
-          <Button
-            variant="outline"
-            className="gap-2"
-            onClick={() => navigate('/onboarding?edit=1')}
-          >
-            <ClipboardList className="h-4 w-4" />
-            Modifier
-          </Button>
+          <div className="flex flex-wrap gap-2">
+            <Button
+              variant="outline"
+              className="gap-2"
+              onClick={() => navigate('/profil/onboarding-resultats')}
+            >
+              <ClipboardList className="h-4 w-4" />
+              Voir mes réponses
+            </Button>
+            <Button
+              variant="outline"
+              className="gap-2"
+              onClick={() => navigate('/onboarding?edit=1')}
+            >
+              <ClipboardList className="h-4 w-4" />
+              Modifier
+            </Button>
+          </div>
         </CardContent>
       </Card>
 
