@@ -23,7 +23,7 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from 'recharts';
-import { Users, BookOpen, Target, Activity, BookMarked, ArrowRight, Eye } from 'lucide-react';
+import { Users, Euro, TrendingUp, Activity, BookMarked, ArrowRight, Eye } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { PasseportFiscalCard } from '@/components/dashboard/PasseportFiscalCard';
 import type { Passeport } from '@/hooks/usePasseportFiscal';
