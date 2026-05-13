@@ -166,7 +166,8 @@ const Index = () => {
         <div className="relative mx-auto grid max-w-6xl items-center gap-12 px-6 py-16 md:py-24 lg:grid-cols-[1.2fr_1fr] lg:gap-16">
           {/* Texte */}
           <div className="relative z-10">
-            <h1 className="font-display text-[clamp(2.75rem,6vw,5rem)] leading-[1.05] text-foreground">
+            <Eyebrow><Sparkles className="mr-1.5 inline h-3.5 w-3.5" />Récupérez votre argent</Eyebrow>
+            <h1 className="mt-5 font-display text-[clamp(2.75rem,6vw,5rem)] leading-[1.05] text-foreground">
               Comprenez vos impôts.
               <br />
               <AccentText>Sans jargon.</AccentText>
