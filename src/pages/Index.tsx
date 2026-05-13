@@ -166,12 +166,14 @@ const Index = () => {
         <div className="relative mx-auto grid max-w-6xl items-center gap-12 px-6 py-16 md:py-24 lg:grid-cols-[1.2fr_1fr] lg:gap-16">
           {/* Texte */}
           <div className="relative z-10">
-            <Eyebrow><Sparkles className="mr-1.5 inline h-3.5 w-3.5" />Récupérez votre argent</Eyebrow>
-            <h1 className="mt-5 font-display text-[clamp(2.75rem,6vw,5rem)] leading-[1.05] text-foreground">
+            <h1 className="font-display text-[clamp(2.75rem,6vw,5rem)] leading-[1.05] text-foreground">
               Comprenez vos impôts.
               <br />
               <AccentText>Sans jargon.</AccentText>
             </h1>
+            <p className="mt-4 font-display text-2xl md:text-3xl text-rose-dynamic">
+              Récupérez votre argent
+            </p>
             <p className="mt-6 max-w-xl text-lg text-muted-foreground leading-relaxed">
               Une formation en ligne claire et progressive pour vous aider à
               mieux déclarer de revenus, étape par étape.
