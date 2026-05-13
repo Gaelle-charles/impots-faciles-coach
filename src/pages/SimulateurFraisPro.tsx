@@ -1,10 +1,13 @@
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Slider } from "@/components/ui/slider";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 import {
   Select,
   SelectContent,
@@ -12,8 +15,34 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Check, ChevronDown, Plus, Trash2, RefreshCw, Receipt, Info, Loader2, Palmtree } from "lucide-react";
-import { supabase } from "@/integrations/supabase/client";
+import {
+  Check,
+  ChevronDown,
+  Plus,
+  Trash2,
+  RefreshCw,
+  Receipt,
+  Info,
+  Loader2,
+  Palmtree,
+  AlertTriangle,
+  Zap,
+} from "lucide-react";
+import { useFraisReelsConstants } from "@/hooks/useFraisReelsConstants";
+import {
+  calculerTotal,
+  type TypeVehicule,
+  type Motorisation,
+  type TypeMateriel,
+  type InputsKm,
+  type InputsRepas,
+  type InputsBureau,
+  type InputsBlanchissage,
+  type InputsAutresFrais,
+  type InputsOutreMer,
+  type ArticleMateriel,
+  type LignePressing,
+} from "@/lib/calculs-frais-reels";
 
 const FISCAL_YEAR = 2025;
 
@@ -26,103 +55,26 @@ const VETEMENTS_PRO = [
   "Pantalon de cuisine",
   "Toque",
   "Uniforme",
-  "Costume / Tailleur",
-  "Chemise professionnelle",
   "Robe de magistrat",
   "Tenue médicale (scrub)",
   "Tenue de chantier",
   "Chaussures de sécurité",
   "Gants de travail",
   "Casque / EPI",
-  "Autre vêtement professionnel",
+  "Autre vêtement professionnel obligatoire",
 ] as const;
 
-type Article = { description: string; prix: number };
-type LingeLigne = {
-  vetement: string;
-  nbPieces: number;
-  tarifPressing: number;
-  nbLavages: number;
-};
-
-type FormState = {
-  // étape 1 — repas (refonte)
-  nbRepasSansJustif: number;
-  nbRepasAvecJustif: number;
-  coutMoyenRepas: number;
-  nbJoursRepas: number;
-  // étape 2 — blanchissement (refonte)
-  modeBlanchissement: "factures" | "domicile";
-  totalFacturesPressing: number;
-  // étape 4 — bureau
-  surfaceBureau: number;
-  surfaceLogement: number;
-  chargesAnnuelles: number;
-  // étape 5 — frais divers (ex-6)
-  tel: number;
-  doubleResidence: number;
-  demenagementPro: number;
-  interetsEmprunt: number;
-  cotisations: number;
-  forfaitInternet: number;
-  fraisBancaire: number;
-  achatLogiciel: number;
-  autresFrais: number;
-  // étape 6 — frais kilométriques (ex-7, refonte)
-  typeVehicule: "thermique" | "electrique";
-  puissanceCV: 3 | 4 | 5 | 6 | 7;
-  distanceAller: number;
-  nbJoursTravailles: number;
-  // étape 7 — spécificités outre-mer
-  fraisInterIles: number;
-};
-
-const STEP5_FIELDS: { name: keyof FormState; label: string; hint?: string }[] = [
-  { name: "tel", label: "Frais de téléphone professionnel (€/an)", hint: "Quote-part professionnelle de votre forfait mobile." },
-  { name: "doubleResidence", label: "Double résidence (€/an)", hint: "Loyer + charges d'un second logement pour raison professionnelle." },
-  { name: "demenagementPro", label: "Déménagement professionnel (€)", hint: "Frais réels engagés lors d'un déménagement imposé par l'employeur." },
-  { name: "interetsEmprunt", label: "Intérêts d'emprunt professionnels (€/an)", hint: "Intérêts payés sur un prêt servant à acquérir un bien professionnel." },
-  { name: "cotisations", label: "Cotisations professionnelles (€/an)", hint: "Cotisations syndicales, ordres professionnels, etc." },
-  { name: "forfaitInternet", label: "Forfait internet (€/an)", hint: "Quote-part professionnelle de votre abonnement internet." },
-  { name: "fraisBancaire", label: "Frais bancaires professionnels (€/an)", hint: "Frais d'un compte dédié à l'activité professionnelle." },
-  { name: "achatLogiciel", label: "Achat de logiciels (€)", hint: "Logiciels nécessaires à l'exercice de votre activité." },
-  { name: "autresFrais", label: "Autres frais (€)", hint: "Tout autre frais professionnel justifiable." },
-];
-
-type Sections = {
-  sectionA: number;
-  sectionB: number;
-  sectionC: number;
-  sectionD: number;
-  sectionE: number;
-  sectionF: number;
-  sectionG: number;
-};
-
 const STEP_TITLES = [
-  "Frais de repas hors domicile",
-  "Frais de blanchissement",
-  "Matériel professionnel & documentation",
-  "Bureau à domicile",
-  "Frais divers souvent oubliés",
   "Frais kilométriques",
+  "Frais de repas hors domicile",
+  "Bureau à domicile / télétravail",
+  "Vêtements professionnels & blanchissage",
+  "Matériel, documentation & logiciels",
+  "Autres frais professionnels",
   "Spécificités outre-mer",
 ];
 
-type Constants = {
-  repas_valeur_foyer: number;
-  repas_plafond_jour: number;
-  blanchissage_decote_domicile: number;
-  km_voiture_3cv_seuil1: number;
-  km_voiture_4cv_seuil1: number;
-  km_voiture_5cv_seuil1: number;
-  km_voiture_6cv_seuil1: number;
-  km_voiture_7cv_seuil1: number;
-  km_majoration_electrique: number;
-  refaction_drom_zone1: number;
-  refaction_drom_zone2: number;
-};
-
+// ---------- helpers ----------
 const NumberInput = ({
   id,
   label,
@@ -131,6 +83,8 @@ const NumberInput = ({
   hint,
   integer = false,
   max,
+  min = 0,
+  disabled = false,
 }: {
   id: string;
   label: string;
@@ -139,6 +93,8 @@ const NumberInput = ({
   hint?: string;
   integer?: boolean;
   max?: number;
+  min?: number;
+  disabled?: boolean;
 }) => (
   <div className="space-y-1.5">
     <Label htmlFor={id} className="text-sm">{label}</Label>
@@ -146,16 +102,16 @@ const NumberInput = ({
       id={id}
       type="number"
       step={integer ? "1" : "0.01"}
-      min={0}
+      min={min}
       max={max}
+      disabled={disabled}
       inputMode={integer ? "numeric" : "decimal"}
       value={value || ""}
       onChange={(e) => {
         let n = Number(e.target.value) || 0;
-        if (integer) {
-          n = Math.max(0, Math.floor(n));
-          if (max !== undefined) n = Math.min(n, max);
-        }
+        if (integer) n = Math.floor(n);
+        if (max !== undefined) n = Math.min(n, max);
+        if (n < min) n = min;
         onChange(n);
       }}
       placeholder="0"
@@ -164,190 +120,246 @@ const NumberInput = ({
   </div>
 );
 
+const DateInput = ({
+  id,
+  label,
+  value,
+  onChange,
+}: {
+  id: string;
+  label: string;
+  value: string;
+  onChange: (v: string) => void;
+}) => (
+  <div className="space-y-1.5">
+    <Label htmlFor={id} className="text-sm">{label}</Label>
+    <Input id={id} type="date" value={value} onChange={(e) => onChange(e.target.value)} />
+  </div>
+);
+
+const PctSlider = ({
+  label,
+  value,
+  onChange,
+  min = 0,
+  max = 100,
+  step = 1,
+}: {
+  label: string;
+  value: number;
+  onChange: (n: number) => void;
+  min?: number;
+  max?: number;
+  step?: number;
+}) => (
+  <div className="space-y-1.5">
+    <div className="flex items-center justify-between">
+      <Label className="text-sm">{label}</Label>
+      <span className="text-sm font-medium tabular-nums">{value}%</span>
+    </div>
+    <Slider value={[value]} min={min} max={max} step={step} onValueChange={(v) => onChange(v[0])} />
+  </div>
+);
+
+// ---------- main component ----------
 export default function SimulateurFraisPro() {
   const navigate = useNavigate();
   const [activeStep, setActiveStep] = useState(0);
-  const [showResults, setShowResults] = useState(false);
+  const { constants, loading: constantsLoading, error: constantsError } = useFraisReelsConstants(FISCAL_YEAR);
 
-  const [constants, setConstants] = useState<Constants | null>(null);
-  const [constantsLoading, setConstantsLoading] = useState(true);
-  const [constantsError, setConstantsError] = useState<string | null>(null);
+  // ----- state -----
+  const [inputsKm, setInputsKm] = useState<InputsKm>({
+    typeVehicule: "voiture",
+    cv: 5,
+    motorisation: "thermique",
+    distanceAllerSimple: 0,
+    justificationEloignement: false,
+    nbAllerRetourParJour: 1,
+    nbJoursTravailles: 218,
+    kmMissionPro: 0,
+    peagesAnnuel: 0,
+    parkingAnnuel: 0,
+    indemnitesKmEmployeur: 0,
+  });
 
-  useEffect(() => {
-    let cancelled = false;
-    (async () => {
-      setConstantsLoading(true);
-      const { data, error } = await (supabase as any)
-        .from("simulator_constants")
-        .select("constant_key, value, unit")
-        .eq("simulator_key", "frais_reels")
-        .eq("fiscal_year", FISCAL_YEAR);
-      if (cancelled) return;
-      if (error || !data) {
-        setConstantsError("Impossible de charger les barèmes officiels. Veuillez réessayer plus tard.");
-        setConstantsLoading(false);
-        return;
-      }
-      const obj: Record<string, number> = {};
-      for (const row of data as Array<{ constant_key: string; value: number | string }>) {
-        obj[row.constant_key] = Number(row.value);
-      }
-      setConstants(obj as unknown as Constants);
-      setConstantsLoading(false);
-    })();
-    return () => {
-      cancelled = true;
-    };
-  }, []);
+  const [inputsRepas, setInputsRepas] = useState<InputsRepas>({
+    nbRepasSansJustifParJour: 0,
+    nbRepasAvecJustifParJour: 0,
+    coutMoyenRepasJustifie: 0,
+    nbJoursRepas: 218,
+    nbTicketsRestoAnnee: 0,
+    valeurFacialeTicket: 8,
+    partEmployeurPct: 50,
+    indemnitesRepasHorsTR: 0,
+  });
 
-  const initialForm: FormState = {
-    nbRepasSansJustif: 0,
-    nbRepasAvecJustif: 0,
-    coutMoyenRepas: 0,
-    nbJoursRepas: 220,
-    modeBlanchissement: "factures",
-    totalFacturesPressing: 0,
-    surfaceBureau: 0,
-    surfaceLogement: 0,
-    chargesAnnuelles: 0,
-    tel: 0,
+  const [inputsBureau, setInputsBureau] = useState<InputsBureau>({
+    surfaceBureauM2: 0,
+    surfaceLogementM2: 0,
+    loyerOuInteretsEmprunt: 0,
+    chargesCoproAnnuelles: 0,
+    electriciteChauffageAnnuel: 0,
+    internetAnnuel: 0,
+    internetUsageProPct: 0,
+    assuranceHabitationAnnuelle: 0,
+    taxeFonciereAnnuelle: 0,
+    indemniteTeletravailEmployeur: 0,
+  });
+
+  const [modeBlanchissage, setModeBlanchissage] = useState<"factures" | "domicile">("factures");
+  const [totalFacturesPressing, setTotalFacturesPressing] = useState(0);
+  const [lingeLignes, setLingeLignes] = useState<(LignePressing & { vetement: string })[]>([]);
+
+  const [articles, setArticles] = useState<(ArticleMateriel & { description: string })[]>([]);
+
+  const [inputsAutresFrais, setInputsAutresFrais] = useState<InputsAutresFrais>({
+    telephoneAnnuel: 0,
+    telephoneUsageProPct: 100,
+    internetAnnuel: 0,
+    internetUsageProPct: 0,
+    fraisBancairesProServ: 0,
+    formationPro: 0,
+    cotisationsSyndicales: 0,
+    cotisationsProObligatoires: 0,
     doubleResidence: 0,
     demenagementPro: 0,
-    interetsEmprunt: 0,
-    cotisations: 0,
-    forfaitInternet: 0,
-    fraisBancaire: 0,
-    achatLogiciel: 0,
-    autresFrais: 0,
-    typeVehicule: "thermique",
-    puissanceCV: 5,
-    distanceAller: 0,
-    nbJoursTravailles: 220,
+    fraisRechercheEmploi: 0,
+    interetsEmpruntResidence: 0,
+    autresFraisJustifies: 0,
+  });
+
+  const [inputsOutreMer, setInputsOutreMer] = useState<InputsOutreMer>({
     fraisInterIles: 0,
+    fraisVoyagesDromMetropolePro: 0,
+  });
+
+  const [salaireNetImposable, setSalaireNetImposable] = useState(0);
+
+  // Internet déjà saisi à l'étape Bureau ?
+  const internetDejaBureau = inputsBureau.internetAnnuel > 0 && inputsBureau.internetUsageProPct > 0;
+
+  // ----- calculation -----
+  const inputsBlanchissage: InputsBlanchissage = {
+    modeCalcul: modeBlanchissage,
+    totalFactures: totalFacturesPressing,
+    lignes: lingeLignes,
   };
-  const initialSections: Sections = {
-    sectionA: 0,
-    sectionB: 0,
-    sectionC: 0,
-    sectionD: 0,
-    sectionE: 0,
-    sectionF: 0,
-    sectionG: 0,
-  };
 
-  const [form, setForm] = useState<FormState>(initialForm);
-  const [articles, setArticles] = useState<Article[]>([]);
-  const [lingeLignes, setLingeLignes] = useState<LingeLigne[]>([]);
-  const [sections, setSections] = useState<Sections>(initialSections);
+  const result = useMemo(() => {
+    if (!constants) return null;
+    try {
+      return calculerTotal(
+        {
+          km: inputsKm,
+          repas: inputsRepas,
+          bureau: inputsBureau,
+          blanchissage: inputsBlanchissage,
+          materiel: articles,
+          autresFrais: inputsAutresFrais,
+          outreMer: inputsOutreMer,
+          salaireNetImposable: salaireNetImposable ?? 0,
+        },
+        constants,
+      );
+    } catch {
+      return null;
+    }
+  }, [
+    constants,
+    inputsKm,
+    inputsRepas,
+    inputsBureau,
+    inputsBlanchissage,
+    articles,
+    inputsAutresFrais,
+    inputsOutreMer,
+    salaireNetImposable,
+  ]);
 
-  const addArticle = () => setArticles((a) => [...a, { description: "", prix: 0 }]);
-  const removeArticle = (i: number) => setArticles((a) => a.filter((_, idx) => idx !== i));
-  const updateArticle = (i: number, patch: Partial<Article>) =>
-    setArticles((a) => a.map((art, idx) => (idx === i ? { ...art, ...patch } : art)));
-
-  const addLigneLinge = () =>
-    setLingeLignes((l) => [...l, { vetement: "", nbPieces: 0, tarifPressing: 0, nbLavages: 0 }]);
-  const removeLigneLinge = (i: number) =>
-    setLingeLignes((l) => l.filter((_, idx) => idx !== i));
-  const updateLigneLinge = (i: number, patch: Partial<LingeLigne>) =>
-    setLingeLignes((l) => l.map((ln, idx) => (idx === i ? { ...ln, ...patch } : ln)));
+  // ----- helpers -----
+  const setKm = <K extends keyof InputsKm>(k: K, v: InputsKm[K]) =>
+    setInputsKm((s) => ({ ...s, [k]: v }));
+  const setRepas = <K extends keyof InputsRepas>(k: K, v: InputsRepas[K]) =>
+    setInputsRepas((s) => ({ ...s, [k]: v }));
+  const setBureau = <K extends keyof InputsBureau>(k: K, v: InputsBureau[K]) =>
+    setInputsBureau((s) => ({ ...s, [k]: v }));
+  const setAutres = <K extends keyof InputsAutresFrais>(k: K, v: InputsAutresFrais[K]) =>
+    setInputsAutresFrais((s) => ({ ...s, [k]: v }));
+  const setOM = <K extends keyof InputsOutreMer>(k: K, v: InputsOutreMer[K]) =>
+    setInputsOutreMer((s) => ({ ...s, [k]: v }));
 
   const handleReset = () => {
-    setForm(initialForm);
-    setSections(initialSections);
-    setArticles([]);
-    setLingeLignes([]);
-    setShowResults(false);
     setActiveStep(0);
-  };
-
-  const { quotePart, sectionDLive } = useMemo(() => {
-    const qp = form.surfaceLogement > 0 ? form.surfaceBureau / form.surfaceLogement : 0;
-    const d = qp * form.chargesAnnuelles;
-    return { quotePart: qp, sectionDLive: d };
-  }, [form.surfaceBureau, form.surfaceLogement, form.chargesAnnuelles]);
-
-  const setField = <K extends keyof FormState>(key: K, val: FormState[K]) =>
-    setForm((f) => ({ ...f, [key]: val }));
-
-  const computeSectionA = (c: Constants) => {
-    const valeurFoyer = c.repas_valeur_foyer;
-    const plafond = c.repas_plafond_jour;
-    const deductionMax = plafond - valeurFoyer;
-    const dedSansJustif = form.nbRepasSansJustif * form.nbJoursRepas * valeurFoyer;
-    const dedParRepasAvecJustif = Math.max(
-      0,
-      Math.min(form.coutMoyenRepas - valeurFoyer, deductionMax),
-    );
-    const dedAvecJustif = dedParRepasAvecJustif * form.nbRepasAvecJustif * form.nbJoursRepas;
-    return dedSansJustif + dedAvecJustif;
-  };
-
-  const computeSectionB = (c: Constants) => {
-    if (form.modeBlanchissement === "factures") {
-      return parseFloat(String(form.totalFacturesPressing)) || 0;
-    }
-    const decote = 1 - c.blanchissage_decote_domicile / 100;
-    return lingeLignes.reduce(
-      (sum, l) => sum + l.nbPieces * l.tarifPressing * l.nbLavages * decote,
-      0,
-    );
-  };
-
-  const computeSectionF = (c: Constants) => {
-    const distanceAnnuelle = form.distanceAller * 2 * form.nbJoursTravailles;
-    const cvKey = form.puissanceCV >= 7 ? 7 : form.puissanceCV;
-    const coefficient = c[`km_voiture_${cvKey}cv_seuil1` as keyof Constants];
-    let val = distanceAnnuelle * coefficient;
-    if (form.typeVehicule === "electrique") {
-      val = val * (1 + c.km_majoration_electrique / 100);
-    }
-    return val;
+    setInputsKm({
+      typeVehicule: "voiture", cv: 5, motorisation: "thermique",
+      distanceAllerSimple: 0, justificationEloignement: false,
+      nbAllerRetourParJour: 1, nbJoursTravailles: 218, kmMissionPro: 0,
+      peagesAnnuel: 0, parkingAnnuel: 0, indemnitesKmEmployeur: 0,
+    });
+    setInputsRepas({
+      nbRepasSansJustifParJour: 0, nbRepasAvecJustifParJour: 0,
+      coutMoyenRepasJustifie: 0, nbJoursRepas: 218,
+      nbTicketsRestoAnnee: 0, valeurFacialeTicket: 8, partEmployeurPct: 50,
+      indemnitesRepasHorsTR: 0,
+    });
+    setInputsBureau({
+      surfaceBureauM2: 0, surfaceLogementM2: 0, loyerOuInteretsEmprunt: 0,
+      chargesCoproAnnuelles: 0, electriciteChauffageAnnuel: 0,
+      internetAnnuel: 0, internetUsageProPct: 0,
+      assuranceHabitationAnnuelle: 0, taxeFonciereAnnuelle: 0,
+      indemniteTeletravailEmployeur: 0,
+    });
+    setModeBlanchissage("factures");
+    setTotalFacturesPressing(0);
+    setLingeLignes([]);
+    setArticles([]);
+    setInputsAutresFrais({
+      telephoneAnnuel: 0, telephoneUsageProPct: 100, internetAnnuel: 0, internetUsageProPct: 0,
+      fraisBancairesProServ: 0, formationPro: 0, cotisationsSyndicales: 0,
+      cotisationsProObligatoires: 0, doubleResidence: 0, demenagementPro: 0,
+      fraisRechercheEmploi: 0, interetsEmpruntResidence: 0, autresFraisJustifies: 0,
+    });
+    setInputsOutreMer({ fraisInterIles: 0, fraisVoyagesDromMetropolePro: 0 });
+    setSalaireNetImposable(0);
   };
 
   const handleNext = () => {
-    if (!constants) return;
-    if (activeStep === 0) {
-      setSections((s) => ({ ...s, sectionA: computeSectionA(constants) }));
-    }
-    if (activeStep === 1) {
-      setSections((s) => ({ ...s, sectionB: computeSectionB(constants) }));
-    }
-    if (activeStep === 2) {
-      const sectionC = articles.reduce((sum, item) => sum + (item.prix || 0), 0);
-      setSections((s) => ({ ...s, sectionC }));
-    }
-    if (activeStep === 3) {
-      setSections((s) => ({ ...s, sectionD: sectionDLive }));
-    }
-    if (activeStep === 4) {
-      const sectionE = STEP5_FIELDS.reduce(
-        (sum, f) => sum + (parseFloat(String(form[f.name])) || 0),
-        0,
-      );
-      setSections((s) => ({ ...s, sectionE }));
-    }
-    if (activeStep === 5) {
-      setSections((s) => ({ ...s, sectionF: computeSectionF(constants) }));
-    }
-    if (activeStep === 6) {
-      setSections((s) => ({ ...s, sectionG: parseFloat(String(form.fraisInterIles)) || 0 }));
-    }
-    if (activeStep < STEP_TITLES.length - 1) {
-      setActiveStep(activeStep + 1);
-      setShowResults(false);
-    } else {
-      setShowResults(true);
-    }
+    if (activeStep < STEP_TITLES.length - 1) setActiveStep(activeStep + 1);
   };
-
   const handleBack = () => {
     if (activeStep > 0) setActiveStep(activeStep - 1);
-    setShowResults(false);
   };
 
-  const total = Object.values(sections).reduce((a, b) => a + b, 0);
-  const totalArrondi = Math.round(total);
+  // articles helpers
+  const addArticle = () =>
+    setArticles((a) => [
+      ...a,
+      { description: "", type: "ordinateur" as TypeMateriel, prixTTC: 0, dateAchat: "", usageProPct: 100 },
+    ]);
+  const removeArticle = (i: number) => setArticles((a) => a.filter((_, idx) => idx !== i));
+  const updateArticle = (i: number, patch: Partial<(typeof articles)[number]>) =>
+    setArticles((a) => a.map((it, idx) => (idx === i ? { ...it, ...patch } : it)));
+
+  // linge helpers
+  const addLigne = () =>
+    setLingeLignes((l) => [...l, { vetement: "", nbPieces: 0, tarifPressing: 0, nbLavagesAnnuel: 0 }]);
+  const removeLigne = (i: number) => setLingeLignes((l) => l.filter((_, idx) => idx !== i));
+  const updateLigne = (i: number, patch: Partial<(typeof lingeLignes)[number]>) =>
+    setLingeLignes((l) => l.map((it, idx) => (idx === i ? { ...it, ...patch } : it)));
+
+  // ----- aside breakdown -----
+  const totalArrondi = result ? Math.round(result.totalFraisReels) : 0;
+  const breakdownRows = result
+    ? [
+        { label: "Frais kilométriques", value: Math.round(result.breakdown.km) },
+        { label: "Repas hors domicile", value: Math.round(result.breakdown.repas) },
+        { label: "Bureau à domicile", value: Math.round(result.breakdown.bureau) },
+        { label: "Vêtements & blanchissage", value: Math.round(result.breakdown.blanchissage) },
+        { label: "Matériel & logiciels", value: Math.round(result.breakdown.materiel) },
+        { label: "Autres frais pro", value: Math.round(result.breakdown.autresFrais) },
+        { label: "Outre-mer", value: Math.round(result.breakdown.outreMer) },
+      ].filter((r) => r.value > 0)
+    : [];
 
   return (
     <div className="space-y-6">
@@ -356,7 +368,7 @@ export default function SimulateurFraisPro() {
           Simulateur de <em className="accent-serif">frais réels</em>
         </h1>
         <p className="mt-2 text-muted-foreground">
-          Estimez vos frais réels — outil pédagogique. Barèmes applicables aux revenus {FISCAL_YEAR}.
+          Calculez vos frais réels selon les barèmes officiels DGFiP. Revenus {FISCAL_YEAR}, déclaration 2026.
         </p>
       </div>
 
@@ -365,125 +377,135 @@ export default function SimulateurFraisPro() {
         Non opposable à la DGFIP. Pour votre déclaration officielle, rendez-vous sur impots.gouv.fr ou consultez un professionnel du chiffre.
       </div>
 
-      <div className="space-y-6">
+      {constantsLoading && (
+        <div className="flex items-center gap-2 text-sm text-muted-foreground">
+          <Loader2 className="h-4 w-4 animate-spin" />
+          Chargement des barèmes officiels…
+        </div>
+      )}
+      {constantsError && (
+        <div className="rounded-lg border border-destructive/30 bg-destructive/5 p-4 text-sm text-destructive">
+          {constantsError}
+        </div>
+      )}
 
+      {!constantsLoading && constants && (
+      <div className="grid gap-6 lg:grid-cols-[360px_1fr]">
+        {/* ----- ASIDE ----- */}
+        <aside className="lg:sticky lg:top-6 self-start space-y-4">
+          <Card className="border-2 border-[#2D1B4E]/30 bg-[#FFF8E7] rounded-2xl shadow-lg">
+            <CardHeader className="pb-3">
+              <CardTitle className="text-base sm:text-lg text-[#2D1B4E]">
+                Estimation en cours
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="space-y-1.5">
+                <Label htmlFor="salaireNet" className="text-sm text-[#2D1B4E]">
+                  Salaire net imposable annuel (optionnel)
+                </Label>
+                <Input
+                  id="salaireNet"
+                  type="number"
+                  min={0}
+                  inputMode="decimal"
+                  value={salaireNetImposable || ""}
+                  onChange={(e) => setSalaireNetImposable(Number(e.target.value) || 0)}
+                  placeholder="Ex: 30000"
+                  className="bg-white"
+                />
+                <p className="text-[11px] text-foreground/60">
+                  Pour comparer avec l'abattement automatique de 10%.
+                </p>
+              </div>
 
-        {constantsLoading && (
-          <div className="flex items-center gap-2 text-sm text-muted-foreground">
-            <Loader2 className="h-4 w-4 animate-spin" />
-            Chargement des barèmes officiels…
-          </div>
-        )}
-        {constantsError && (
-          <div className="rounded-lg border border-destructive/30 bg-destructive/5 p-4 text-sm text-destructive">
-            {constantsError}
-          </div>
-        )}
+              <div className="rounded-xl bg-[#2D1B4E] text-white text-center px-4 py-6 shadow-inner">
+                <p className="text-xs sm:text-sm text-white/80">
+                  Total net déductible :
+                </p>
+                <p className="font-heading text-3xl sm:text-4xl font-extrabold text-[#F9E900] mt-2">
+                  {totalArrondi} €
+                </p>
+              </div>
 
-        <div className="grid gap-6 lg:grid-cols-[360px_1fr]">
-          <aside className="lg:sticky lg:top-6 self-start space-y-4">
-            {(() => {
-              const rows: { label: string; value: number }[] = [
-                { label: "Frais de repas hors domicile", value: Math.round(sections.sectionA) },
-                { label: "Frais de blanchissement", value: Math.round(sections.sectionB) },
-                { label: "Matériel professionnel", value: Math.round(sections.sectionC) },
-                { label: "Bureau à domicile", value: Math.round(sections.sectionD) },
-                { label: "Frais divers", value: Math.round(sections.sectionE) },
-                { label: "Frais kilométriques", value: Math.round(sections.sectionF) },
-                { label: "Frais inter-îles / inter-territoires (DROM)", value: Math.round(sections.sectionG) },
-              ];
-              const nonZero = rows.filter((r) => r.value > 0);
-              return (
-                <Card className="border-2 border-[#2D1B4E]/30 bg-[#FFF8E7] rounded-2xl shadow-lg">
-                  <CardHeader className="pb-3">
-                    <CardTitle className="text-base sm:text-lg text-[#2D1B4E]">
-                      {showResults ? "Résultat de votre simulation" : "Estimation en cours"}
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent className="space-y-4">
-                    <div className="rounded-xl bg-[#2D1B4E] text-white text-center px-4 py-6 shadow-inner">
-                      <p className="text-xs sm:text-sm text-white/80">
-                        Total estimé de vos frais réels :
-                      </p>
-                      <p className="font-heading text-3xl sm:text-4xl font-extrabold text-[#F9E900] mt-2">
-                        {totalArrondi} €
-                      </p>
-                    </div>
+              {breakdownRows.length > 0 ? (
+                <div className="rounded-lg border border-[#2D1B4E]/20 overflow-hidden bg-white">
+                  <table className="w-full text-xs sm:text-sm">
+                    <tbody>
+                      {breakdownRows.map((r) => (
+                        <tr key={r.label} className="border-t border-border first:border-t-0">
+                          <td className="px-3 py-2 text-foreground/80">{r.label}</td>
+                          <td className="px-3 py-2 text-right font-medium tabular-nums">{r.value} €</td>
+                        </tr>
+                      ))}
+                      <tr className="border-t-2 border-[#2D1B4E] bg-[#F9E900]/30 font-bold">
+                        <td className="px-3 py-2 text-[#2D1B4E]">TOTAL</td>
+                        <td className="px-3 py-2 text-right text-[#2D1B4E] tabular-nums">{totalArrondi} €</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              ) : (
+                <p className="text-xs text-muted-foreground text-center italic">
+                  Remplissez les étapes pour voir le détail apparaître ici.
+                </p>
+              )}
 
-                    {nonZero.length > 0 ? (
-                      <div className="rounded-lg border border-[#2D1B4E]/20 overflow-hidden bg-white">
-                        <table className="w-full text-xs sm:text-sm">
-                          <tbody>
-                            {nonZero.map((r) => (
-                              <tr key={r.label} className="border-t border-border first:border-t-0">
-                                <td className="px-3 py-2 text-foreground/80">{r.label}</td>
-                                <td className="px-3 py-2 text-right font-medium tabular-nums">{r.value} €</td>
-                              </tr>
-                            ))}
-                            <tr className="border-t-2 border-[#2D1B4E] bg-[#F9E900]/30 font-bold">
-                              <td className="px-3 py-2 text-[#2D1B4E]">TOTAL</td>
-                              <td className="px-3 py-2 text-right text-[#2D1B4E] tabular-nums">{totalArrondi} €</td>
-                            </tr>
-                          </tbody>
-                        </table>
-                      </div>
-                    ) : (
-                      <p className="text-xs text-muted-foreground text-center italic">
-                        Remplissez les étapes à droite pour voir le détail apparaître ici.
-                      </p>
-                    )}
-
-                    <p className="text-xs text-foreground/70">
-                      Cette somme se déduit de votre revenu imposable, pas directement de votre impôt.
-                      L'économie réelle dépend de votre TMI.
+              {result && salaireNetImposable > 0 && (
+                <div
+                  className={`rounded-lg border p-3 text-sm ${
+                    result.verdict === "frais_reels_avantageux"
+                      ? "border-green-300 bg-green-50 text-green-900"
+                      : "border-blue-200 bg-blue-50 text-blue-900"
+                  }`}
+                >
+                  <p className="font-medium">
+                    Abattement 10% : {Math.round(result.abattement10)} €
+                  </p>
+                  {result.verdict === "frais_reels_avantageux" ? (
+                    <p className="mt-1">
+                      ✅ Les frais réels seraient plus avantageux de{" "}
+                      <strong>{Math.round(result.difference)} €</strong>.
                     </p>
+                  ) : (
+                    <p className="mt-1">
+                      ℹ️ L'abattement automatique de 10% reste plus avantageux
+                      ({Math.round(-result.difference)} € d'écart).
+                    </p>
+                  )}
+                </div>
+              )}
 
-                    {sections.sectionG > 0 && (
-                      <div className="flex flex-col gap-2 rounded-lg border border-blue-200 bg-blue-50 p-3 text-xs text-blue-900">
-                        <p>
-                          Vous résidez en outre-mer ? Pour estimer votre impôt final tenant compte
-                          de la réfaction DROM ({constants?.refaction_drom_zone1 ?? 30}% ou {constants?.refaction_drom_zone2 ?? 40}%
-                          selon votre territoire), utilisez ensuite le simulateur IR Barème.
-                        </p>
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => navigate("/simulateur/ir-bareme")}
-                          className="self-start border-blue-300 text-blue-900 hover:bg-blue-100"
-                        >
-                          → Simulateur IR Barème
-                        </Button>
-                      </div>
-                    )}
+              <p className="text-xs text-foreground/70">
+                Cette somme se déduit de votre revenu imposable, pas directement de votre impôt.
+                L'économie réelle dépend de votre TMI.
+              </p>
 
-                    {showResults && (
-                      <div className="flex flex-col gap-2 pt-1">
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => navigate("/simulateur/ir-bareme")}
-                          className="border-[#2D1B4E] text-[#2D1B4E] hover:bg-[#2D1B4E] hover:text-white"
-                        >
-                          → Estimer mon impôt (IR Barème)
-                        </Button>
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={handleReset}
-                          className="border-[#2D1B4E] text-[#2D1B4E] hover:bg-[#2D1B4E] hover:text-white"
-                        >
-                          <RefreshCw className="h-4 w-4" />
-                          Recommencer
-                        </Button>
-                      </div>
-                    )}
-                  </CardContent>
-                </Card>
-              );
-            })()}
-          </aside>
+              <div className="flex flex-col gap-2 pt-1">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => navigate("/simulateur/ir-bareme")}
+                  className="border-[#2D1B4E] text-[#2D1B4E] hover:bg-[#2D1B4E] hover:text-white"
+                >
+                  → Estimer mon impôt (IR Barème)
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={handleReset}
+                  className="border-[#2D1B4E] text-[#2D1B4E] hover:bg-[#2D1B4E] hover:text-white"
+                >
+                  <RefreshCw className="h-4 w-4" />
+                  Recommencer
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        </aside>
 
-          <div className="space-y-3 min-w-0">
+        {/* ----- STEPS ----- */}
+        <div className="space-y-3 min-w-0">
           {STEP_TITLES.map((title, idx) => {
             const isActive = idx === activeStep;
             const isDone = idx < activeStep;
@@ -506,7 +528,6 @@ export default function SimulateurFraisPro() {
                         ? "bg-[#2D1B4E] text-white"
                         : "bg-muted text-muted-foreground"
                     }`}
-                    aria-label={`Étape ${idx + 1}`}
                   >
                     {isDone ? <Check className="h-5 w-5" /> : idx + 1}
                   </div>
@@ -517,53 +538,346 @@ export default function SimulateurFraisPro() {
 
                 {isActive && (
                   <CardContent className="space-y-5">
-                    {idx === 0 ? (
+                    {/* ===== STEP 1: KM ===== */}
+                    {idx === 0 && (
+                      <div className="space-y-4">
+                        <Alert className="bg-blue-50 border-blue-200 text-blue-900">
+                          <Info className="h-4 w-4" />
+                          <AlertDescription className="text-xs">
+                            Le barème couvre la dépréciation du véhicule, l'entretien, le carburant, l'assurance et les pneus.
+                            Les péages et le parking sont déductibles en plus, sur justificatifs.
+                            Les indemnités déjà versées par votre employeur sont automatiquement soustraites.
+                          </AlertDescription>
+                        </Alert>
+
+                        <div className="space-y-1.5">
+                          <Label className="text-sm">Type de véhicule</Label>
+                          <Select
+                            value={inputsKm.typeVehicule}
+                            onValueChange={(v) => setKm("typeVehicule", v as TypeVehicule)}
+                          >
+                            <SelectTrigger><SelectValue /></SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="voiture">Voiture</SelectItem>
+                              <SelectItem value="motocyclette">Motocyclette ({">"}50 cm³)</SelectItem>
+                              <SelectItem value="cyclomoteur">Cyclomoteur (≤50 cm³)</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
+
+                        <NumberInput
+                          id="cv"
+                          label="Puissance fiscale (CV)"
+                          hint="Sur votre carte grise, case P.6"
+                          value={inputsKm.cv}
+                          onChange={(v) => setKm("cv", Math.max(1, v))}
+                          integer
+                          min={1}
+                          max={15}
+                        />
+                        {inputsKm.typeVehicule === "voiture" && inputsKm.cv > 7 && (
+                          <Alert className="bg-blue-50 border-blue-200 text-blue-900">
+                            <Info className="h-4 w-4" />
+                            <AlertDescription className="text-xs">Plafonné à 7 CV pour le calcul.</AlertDescription>
+                          </Alert>
+                        )}
+                        {inputsKm.typeVehicule !== "voiture" && inputsKm.cv > 5 && (
+                          <Alert className="bg-blue-50 border-blue-200 text-blue-900">
+                            <Info className="h-4 w-4" />
+                            <AlertDescription className="text-xs">Plafonné à 5 CV pour le calcul.</AlertDescription>
+                          </Alert>
+                        )}
+
+                        <div className="space-y-2">
+                          <Label className="text-sm">Motorisation</Label>
+                          <RadioGroup
+                            value={inputsKm.motorisation}
+                            onValueChange={(v) => setKm("motorisation", v as Motorisation)}
+                            className="flex flex-col sm:flex-row gap-3"
+                          >
+                            <Label className="flex items-center gap-2 cursor-pointer">
+                              <RadioGroupItem value="thermique" />
+                              Thermique / Hybride
+                            </Label>
+                            <Label className="flex items-center gap-2 cursor-pointer">
+                              <RadioGroupItem value="electrique" />
+                              100% Électrique
+                            </Label>
+                          </RadioGroup>
+                          {inputsKm.motorisation === "electrique" && (
+                            <span className="inline-flex items-center gap-1 rounded-full bg-green-100 text-green-800 px-2 py-0.5 text-xs font-medium">
+                              <Zap className="h-3 w-3" /> +20% sur le barème
+                            </span>
+                          )}
+                        </div>
+
+                        <NumberInput
+                          id="distanceAller"
+                          label="Distance domicile-travail aller simple (km)"
+                          value={inputsKm.distanceAllerSimple}
+                          onChange={(v) => setKm("distanceAllerSimple", v)}
+                          max={200}
+                        />
+                        {inputsKm.distanceAllerSimple > 40 && (
+                          <div className="space-y-2">
+                            <Label className="flex items-start gap-2 cursor-pointer text-sm">
+                              <Checkbox
+                                checked={inputsKm.justificationEloignement}
+                                onCheckedChange={(c) => setKm("justificationEloignement", Boolean(c))}
+                              />
+                              <span>
+                                Je peux justifier d'une distance supérieure à 40 km (mutation, contraintes familiales, état de santé)
+                              </span>
+                            </Label>
+                            {!inputsKm.justificationEloignement && (
+                              <Alert className="bg-yellow-50 border-yellow-300 text-yellow-900">
+                                <AlertTriangle className="h-4 w-4" />
+                                <AlertDescription className="text-xs">
+                                  La déduction sera limitée à 40 km par défaut.
+                                </AlertDescription>
+                              </Alert>
+                            )}
+                          </div>
+                        )}
+
+                        <NumberInput
+                          id="nbAR"
+                          label="Nombre d'allers-retours par jour"
+                          value={inputsKm.nbAllerRetourParJour}
+                          onChange={(v) => setKm("nbAllerRetourParJour", Math.max(1, v))}
+                          integer
+                          min={1}
+                          max={4}
+                        />
+                        <NumberInput
+                          id="nbJoursTrav"
+                          label="Nombre de jours travaillés dans l'année"
+                          value={inputsKm.nbJoursTravailles}
+                          onChange={(v) => setKm("nbJoursTravailles", v)}
+                          integer
+                        />
+                        <NumberInput
+                          id="kmMission"
+                          label="Kilomètres parcourus en missions professionnelles"
+                          hint="Km hors trajet domicile-travail (visites clients, déplacements pro)."
+                          value={inputsKm.kmMissionPro}
+                          onChange={(v) => setKm("kmMissionPro", v)}
+                          integer
+                        />
+                        <div className="grid sm:grid-cols-2 gap-4">
+                          <NumberInput
+                            id="peages"
+                            label="Péages annuels (€)"
+                            value={inputsKm.peagesAnnuel}
+                            onChange={(v) => setKm("peagesAnnuel", v)}
+                          />
+                          <NumberInput
+                            id="parking"
+                            label="Parking annuel (€)"
+                            value={inputsKm.parkingAnnuel}
+                            onChange={(v) => setKm("parkingAnnuel", v)}
+                          />
+                        </div>
+                        <NumberInput
+                          id="indKm"
+                          label="Indemnités kilométriques perçues de l'employeur (€)"
+                          hint="Sera soustrait du total pour éviter une double déduction."
+                          value={inputsKm.indemnitesKmEmployeur}
+                          onChange={(v) => setKm("indemnitesKmEmployeur", v)}
+                        />
+                      </div>
+                    )}
+
+                    {/* ===== STEP 2: REPAS ===== */}
+                    {idx === 1 && (
                       <div className="space-y-4">
                         <NumberInput
                           id="nbRepasSansJustif"
                           label="Nombre de repas sans justificatif par jour"
                           hint="Forfait de 5,45 € par repas (suppose une preuve d'éloignement entre domicile et lieu de travail)."
-                          value={form.nbRepasSansJustif}
-                          onChange={(v) => setField("nbRepasSansJustif", v)}
+                          value={inputsRepas.nbRepasSansJustifParJour}
+                          onChange={(v) => setRepas("nbRepasSansJustifParJour", v)}
                           integer
                           max={3}
                         />
                         <NumberInput
                           id="nbRepasAvecJustif"
-                          label="Nombre de repas AVEC justificatif (factures conservées)"
-                          hint="Repas dont vous avez gardé les tickets."
-                          value={form.nbRepasAvecJustif}
-                          onChange={(v) => setField("nbRepasAvecJustif", v)}
+                          label="Nombre de repas AVEC justificatif par jour"
+                          hint="Repas dont vous avez gardé les tickets/factures."
+                          value={inputsRepas.nbRepasAvecJustifParJour}
+                          onChange={(v) => setRepas("nbRepasAvecJustifParJour", v)}
                           integer
+                          max={3}
                         />
                         <NumberInput
                           id="coutMoyenRepas"
                           label="Coût moyen d'un repas avec justificatif (€)"
-                          value={form.coutMoyenRepas}
-                          onChange={(v) => setField("coutMoyenRepas", v)}
+                          value={inputsRepas.coutMoyenRepasJustifie}
+                          onChange={(v) => setRepas("coutMoyenRepasJustifie", v)}
                         />
                         <NumberInput
                           id="nbJoursRepas"
                           label="Nombre de jours travaillés dans l'année"
                           hint="En général entre 210 et 230 jours."
-                          value={form.nbJoursRepas}
-                          onChange={(v) => setField("nbJoursRepas", v)}
+                          value={inputsRepas.nbJoursRepas}
+                          onChange={(v) => setRepas("nbJoursRepas", v)}
                           integer
                         />
-                        {constants && (
-                          <p className="text-xs text-muted-foreground">
-                            Barème {FISCAL_YEAR} : valeur du repas au foyer {constants.repas_valeur_foyer} €,
-                            plafond {constants.repas_plafond_jour} €. Source : impots.gouv.fr.
-                          </p>
+
+                        <div className="rounded-lg border border-border p-4 space-y-4 bg-muted/20">
+                          <p className="font-medium text-sm">Indemnisation employeur</p>
+                          <NumberInput
+                            id="nbTR"
+                            label="Nombre de tickets-restaurant utilisés dans l'année"
+                            value={inputsRepas.nbTicketsRestoAnnee}
+                            onChange={(v) => setRepas("nbTicketsRestoAnnee", v)}
+                            integer
+                          />
+                          <NumberInput
+                            id="valTR"
+                            label="Valeur faciale d'un ticket (€)"
+                            value={inputsRepas.valeurFacialeTicket}
+                            onChange={(v) => setRepas("valeurFacialeTicket", v)}
+                          />
+                          <PctSlider
+                            label="Part employeur"
+                            value={inputsRepas.partEmployeurPct}
+                            onChange={(v) => setRepas("partEmployeurPct", v)}
+                            min={50}
+                            max={60}
+                          />
+                          <NumberInput
+                            id="indRepas"
+                            label="Indemnités repas hors tickets (€)"
+                            hint="Panier-repas ou autres indemnités directes."
+                            value={inputsRepas.indemnitesRepasHorsTR}
+                            onChange={(v) => setRepas("indemnitesRepasHorsTR", v)}
+                          />
+                        </div>
+
+                        <p className="text-xs text-muted-foreground">
+                          Barème {FISCAL_YEAR} : valeur du repas au foyer {constants.repas_valeur_foyer ?? 5.45} €,
+                          plafond {constants.repas_plafond_jour ?? 21.10} € par repas.
+                        </p>
+                      </div>
+                    )}
+
+                    {/* ===== STEP 3: BUREAU ===== */}
+                    {idx === 2 && (
+                      <div className="space-y-4">
+                        <p className="text-sm text-muted-foreground">
+                          Section optionnelle. Pour les contribuables qui exercent en télétravail ou utilisent une partie de leur logement comme bureau professionnel.
+                        </p>
+                        <div className="grid sm:grid-cols-2 gap-4">
+                          <NumberInput
+                            id="surfBureau"
+                            label="Surface du bureau (m²)"
+                            value={inputsBureau.surfaceBureauM2}
+                            onChange={(v) => setBureau("surfaceBureauM2", v)}
+                          />
+                          <NumberInput
+                            id="surfLog"
+                            label="Surface totale du logement (m²)"
+                            value={inputsBureau.surfaceLogementM2}
+                            onChange={(v) => setBureau("surfaceLogementM2", v)}
+                          />
+                        </div>
+                        {inputsBureau.surfaceBureauM2 > inputsBureau.surfaceLogementM2 && inputsBureau.surfaceLogementM2 > 0 && (
+                          <Alert variant="destructive">
+                            <AlertTriangle className="h-4 w-4" />
+                            <AlertDescription className="text-xs">
+                              La surface du bureau ne peut pas excéder la surface du logement.
+                            </AlertDescription>
+                          </Alert>
+                        )}
+                        <NumberInput
+                          id="loyer"
+                          label="Loyer annuel ou intérêts d'emprunt (€)"
+                          value={inputsBureau.loyerOuInteretsEmprunt}
+                          onChange={(v) => setBureau("loyerOuInteretsEmprunt", v)}
+                        />
+                        <NumberInput
+                          id="copro"
+                          label="Charges de copropriété annuelles (€)"
+                          value={inputsBureau.chargesCoproAnnuelles}
+                          onChange={(v) => setBureau("chargesCoproAnnuelles", v)}
+                        />
+                        <NumberInput
+                          id="elec"
+                          label="Électricité + chauffage annuel (€)"
+                          value={inputsBureau.electriciteChauffageAnnuel}
+                          onChange={(v) => setBureau("electriciteChauffageAnnuel", v)}
+                        />
+                        <NumberInput
+                          id="assur"
+                          label="Assurance habitation annuelle (€)"
+                          value={inputsBureau.assuranceHabitationAnnuelle}
+                          onChange={(v) => setBureau("assuranceHabitationAnnuelle", v)}
+                        />
+                        <NumberInput
+                          id="taxefonc"
+                          label="Taxe foncière annuelle (€)"
+                          value={inputsBureau.taxeFonciereAnnuelle}
+                          onChange={(v) => setBureau("taxeFonciereAnnuelle", v)}
+                        />
+                        <div className="rounded-lg border border-border p-4 space-y-4 bg-muted/20">
+                          <p className="font-medium text-sm">Internet (si utilisé pour le travail)</p>
+                          <NumberInput
+                            id="netBureau"
+                            label="Internet annuel (€)"
+                            value={inputsBureau.internetAnnuel}
+                            onChange={(v) => setBureau("internetAnnuel", v)}
+                          />
+                          <PctSlider
+                            label="Usage professionnel internet"
+                            value={inputsBureau.internetUsageProPct}
+                            onChange={(v) => setBureau("internetUsageProPct", v)}
+                          />
+                        </div>
+                        <NumberInput
+                          id="indTT"
+                          label="Indemnité télétravail employeur (€)"
+                          hint="Forfait 2,70 €/jour ou 626,90 €/an."
+                          value={inputsBureau.indemniteTeletravailEmployeur}
+                          onChange={(v) => setBureau("indemniteTeletravailEmployeur", v)}
+                        />
+                        {result?.breakdown && (
+                          <div className="rounded-md border border-border bg-muted/40 p-4 text-sm space-y-1">
+                            <p>
+                              <span className="text-muted-foreground">Quote-part bureau : </span>
+                              <span className="font-semibold text-foreground">
+                                {(inputsBureau.surfaceLogementM2 > 0
+                                  ? Math.min(100, (inputsBureau.surfaceBureauM2 / inputsBureau.surfaceLogementM2) * 100)
+                                  : 0
+                                ).toFixed(1)}{" "}
+                                %
+                              </span>
+                            </p>
+                            <p>
+                              <span className="text-muted-foreground">Montant déductible : </span>
+                              <span className="font-semibold text-foreground">
+                                {Math.round(result.breakdown.bureau)} €
+                              </span>
+                            </p>
+                          </div>
                         )}
                       </div>
-                    ) : idx === 1 ? (
+                    )}
+
+                    {/* ===== STEP 4: BLANCHISSAGE ===== */}
+                    {idx === 3 && (
                       <div className="space-y-4">
+                        <Alert className="bg-blue-50 border-blue-200 text-blue-900">
+                          <Info className="h-4 w-4" />
+                          <AlertDescription className="text-xs">
+                            Uniquement les vêtements professionnels obligatoires : uniformes, blouses, robes d'avocat, tenues de chantier, EPI.
+                            Pas les costumes ni les chemises de ville, même portés au bureau.
+                          </AlertDescription>
+                        </Alert>
+
                         <RadioGroup
-                          value={form.modeBlanchissement}
-                          onValueChange={(v) =>
-                            setField("modeBlanchissement", v as "factures" | "domicile")
-                          }
+                          value={modeBlanchissage}
+                          onValueChange={(v) => setModeBlanchissage(v as "factures" | "domicile")}
                           className="space-y-2"
                         >
                           <Label className="flex items-center gap-2 cursor-pointer">
@@ -576,12 +890,12 @@ export default function SimulateurFraisPro() {
                           </Label>
                         </RadioGroup>
 
-                        {form.modeBlanchissement === "factures" ? (
+                        {modeBlanchissage === "factures" ? (
                           <NumberInput
-                            id="totalFacturesPressing"
+                            id="totalFactures"
                             label="Total annuel des factures (€)"
-                            value={form.totalFacturesPressing}
-                            onChange={(v) => setField("totalFacturesPressing", v)}
+                            value={totalFacturesPressing}
+                            onChange={setTotalFacturesPressing}
                           />
                         ) : (
                           <div className="space-y-3">
@@ -591,19 +905,16 @@ export default function SimulateurFraisPro() {
                               </p>
                             )}
                             {lingeLignes.map((ligne, i) => (
-                              <div
-                                key={i}
-                                className="space-y-2 rounded-md border border-border p-3"
-                              >
-                                <div className="grid gap-3 sm:grid-cols-[1fr_90px_170px_140px_auto] items-end">
+                              <div key={i} className="space-y-2 rounded-md border border-border p-3">
+                                <div className="grid gap-3 sm:grid-cols-[1fr_90px_140px_120px_auto] items-end">
                                   <div className="space-y-1.5">
                                     <Label htmlFor={`vet-${i}`}>Vêtement</Label>
                                     <Select
                                       value={ligne.vetement}
-                                      onValueChange={(v) => updateLigneLinge(i, { vetement: v })}
+                                      onValueChange={(v) => updateLigne(i, { vetement: v })}
                                     >
                                       <SelectTrigger id={`vet-${i}`}>
-                                        <SelectValue placeholder="Choisir un vêtement…" />
+                                        <SelectValue placeholder="Choisir…" />
                                       </SelectTrigger>
                                       <SelectContent>
                                         {VETEMENTS_PRO.map((v) => (
@@ -613,21 +924,19 @@ export default function SimulateurFraisPro() {
                                     </Select>
                                   </div>
                                   <div className="space-y-1.5">
-                                    <Label htmlFor={`nbp-${i}`}>Pièces</Label>
+                                    <Label htmlFor={`np-${i}`}>Pièces</Label>
                                     <Input
-                                      id={`nbp-${i}`}
+                                      id={`np-${i}`}
                                       type="number"
-                                      step="1"
                                       min={0}
-                                      inputMode="numeric"
                                       value={ligne.nbPieces || ""}
                                       onChange={(e) =>
-                                        updateLigneLinge(i, { nbPieces: Math.max(0, Math.floor(Number(e.target.value) || 0)) })
+                                        updateLigne(i, { nbPieces: Math.max(0, Math.floor(Number(e.target.value) || 0)) })
                                       }
                                     />
                                   </div>
                                   <div className="space-y-1.5">
-                                    <Label htmlFor={`tar-${i}`}>Tarif pressing réf. (€)</Label>
+                                    <Label htmlFor={`tar-${i}`}>Tarif pressing (€)</Label>
                                     <Input
                                       id={`tar-${i}`}
                                       type="number"
@@ -635,7 +944,7 @@ export default function SimulateurFraisPro() {
                                       min={0}
                                       value={ligne.tarifPressing || ""}
                                       onChange={(e) =>
-                                        updateLigneLinge(i, { tarifPressing: Number(e.target.value) || 0 })
+                                        updateLigne(i, { tarifPressing: Number(e.target.value) || 0 })
                                       }
                                     />
                                   </div>
@@ -644,12 +953,10 @@ export default function SimulateurFraisPro() {
                                     <Input
                                       id={`lav-${i}`}
                                       type="number"
-                                      step="1"
                                       min={0}
-                                      inputMode="numeric"
-                                      value={ligne.nbLavages || ""}
+                                      value={ligne.nbLavagesAnnuel || ""}
                                       onChange={(e) =>
-                                        updateLigneLinge(i, { nbLavages: Math.max(0, Math.floor(Number(e.target.value) || 0)) })
+                                        updateLigne(i, { nbLavagesAnnuel: Math.max(0, Math.floor(Number(e.target.value) || 0)) })
                                       }
                                     />
                                   </div>
@@ -657,320 +964,283 @@ export default function SimulateurFraisPro() {
                                     type="button"
                                     variant="outline"
                                     size="sm"
-                                    onClick={() => removeLigneLinge(i)}
+                                    onClick={() => removeLigne(i)}
                                   >
                                     <Trash2 className="h-4 w-4" />
                                   </Button>
                                 </div>
                                 <p className="text-[11px] text-muted-foreground">
-                                  Tarif pressing local utilisé comme base ; une décote de{" "}
-                                  {constants?.blanchissage_decote_domicile ?? 30}% est
-                                  automatiquement appliquée pour le lavage à domicile.
+                                  Décote automatique de {constants.blanchissage_decote_domicile ?? 30}% appliquée au lavage à domicile.
                                 </p>
                               </div>
                             ))}
-                            <Button type="button" variant="outline" onClick={addLigneLinge}>
+                            <Button type="button" variant="outline" onClick={addLigne}>
                               <Plus className="h-4 w-4" />
                               Ajouter une ligne
                             </Button>
-
-                            {constants && lingeLignes.some((l) => l.nbPieces > 0 && l.tarifPressing > 0 && l.nbLavages > 0) && (
-                              <div className="rounded-md border border-border bg-muted/30 p-3 space-y-2">
-                                <p className="text-sm font-medium">Récapitulatif détaillé</p>
-                                <div className="overflow-x-auto">
-                                  <table className="w-full text-xs">
-                                    <thead>
-                                      <tr className="border-b text-left text-muted-foreground">
-                                        <th className="py-2 pr-2 font-medium">Vêtement</th>
-                                        <th className="py-2 px-2 font-medium text-right">Base pressing</th>
-                                        <th className="py-2 px-2 font-medium text-right">Décote</th>
-                                        <th className="py-2 pl-2 font-medium text-right">Lavage à domicile</th>
-                                      </tr>
-                                    </thead>
-                                    <tbody>
-                                      {lingeLignes.map((l, i) => {
-                                        if (!l.nbPieces || !l.tarifPressing || !l.nbLavages) return null;
-                                        const base = l.nbPieces * l.tarifPressing * l.nbLavages;
-                                        const decotePct = constants.blanchissage_decote_domicile;
-                                        const decoteMontant = base * (decotePct / 100);
-                                        const final = base - decoteMontant;
-                                        return (
-                                          <tr key={i} className="border-b last:border-0">
-                                            <td className="py-2 pr-2">
-                                              {l.vetement || `Ligne ${i + 1}`}
-                                              <span className="block text-[10px] text-muted-foreground">
-                                                {l.nbPieces} × {l.tarifPressing.toFixed(2)} € × {l.nbLavages} lavages
-                                              </span>
-                                            </td>
-                                            <td className="py-2 px-2 text-right tabular-nums">{base.toFixed(2)} €</td>
-                                            <td className="py-2 px-2 text-right tabular-nums text-muted-foreground">
-                                              −{decotePct}% (−{decoteMontant.toFixed(2)} €)
-                                            </td>
-                                            <td className="py-2 pl-2 text-right tabular-nums font-medium">
-                                              {final.toFixed(2)} €
-                                            </td>
-                                          </tr>
-                                        );
-                                      })}
-                                    </tbody>
-                                    <tfoot>
-                                      <tr>
-                                        <td colSpan={3} className="py-2 pr-2 text-right font-medium">
-                                          Total déductible
-                                        </td>
-                                        <td className="py-2 pl-2 text-right tabular-nums font-semibold">
-                                          {lingeLignes
-                                            .reduce(
-                                              (s, l) =>
-                                                s +
-                                                l.nbPieces *
-                                                  l.tarifPressing *
-                                                  l.nbLavages *
-                                                  (1 - constants.blanchissage_decote_domicile / 100),
-                                              0,
-                                            )
-                                            .toFixed(2)}{" "}
-                                          €
-                                        </td>
-                                      </tr>
-                                    </tfoot>
-                                  </table>
-                                </div>
-                              </div>
-                            )}
                           </div>
-                        )}
-                        {constants && (
-                          <p className="text-xs text-muted-foreground">
-                            L'administration admet une évaluation forfaitaire basée sur les tarifs
-                            pressing minorés de {constants.blanchissage_decote_domicile}% pour le
-                            lavage à domicile. Conserver un devis pressing de référence en cas de
-                            contrôle.
-                          </p>
                         )}
                       </div>
-                    ) : idx === 2 ? (
+                    )}
+
+                    {/* ===== STEP 5: MATÉRIEL ===== */}
+                    {idx === 4 && (
                       <div className="space-y-4">
-                        <p className="text-sm text-muted-foreground">
-                          Section optionnelle. Ajoutez vos achats de matériel et documentation
-                          professionnels.
-                        </p>
+                        <Alert className="bg-blue-50 border-blue-200 text-blue-900">
+                          <Info className="h-4 w-4" />
+                          <AlertDescription className="text-xs">
+                            Pour information : tout matériel ≥ 500 € (en valeur usage pro) doit être amorti sur sa durée d'usage
+                            (3 ans pour informatique, 10 ans pour mobilier, 5 ans pour autres). En dessous, déduction immédiate.
+                          </AlertDescription>
+                        </Alert>
+
                         {articles.length === 0 && (
-                          <p className="text-sm text-muted-foreground italic">
-                            Aucun article ajouté.
-                          </p>
+                          <p className="text-sm text-muted-foreground italic">Aucun article ajouté.</p>
                         )}
-                        {articles.map((article, i) => (
-                          <div
-                            key={i}
-                            className="grid gap-3 sm:grid-cols-[1fr_140px_auto] items-end rounded-md border border-border p-3"
-                          >
-                            <div className="space-y-1.5">
-                              <Label htmlFor={`desc-${i}`}>Description du matériel</Label>
-                              <Input
-                                id={`desc-${i}`}
-                                value={article.description}
-                                onChange={(e) => updateArticle(i, { description: e.target.value })}
-                                placeholder="Ex : ordinateur portable"
+
+                        {articles.map((article, i) => {
+                          const seuil = constants.materiel_seuil_amortissement ?? 500;
+                          const dureeOrdi = constants.materiel_duree_ordinateur ?? 3;
+                          const dureeMobilier = constants.materiel_duree_mobilier ?? 10;
+                          const dureeAutre = constants.materiel_duree_autre ?? 5;
+                          const usage = article.usageProPct / 100;
+                          const prixAjuste = article.prixTTC * usage;
+                          const estAmorti = prixAjuste >= seuil;
+                          const duree =
+                            article.type === "ordinateur" || article.type === "smartphone"
+                              ? dureeOrdi
+                              : article.type === "mobilier"
+                              ? dureeMobilier
+                              : dureeAutre;
+                          const deductionAnnee = estAmorti ? prixAjuste / duree : prixAjuste;
+
+                          return (
+                            <div key={i} className="space-y-3 rounded-md border border-border p-4">
+                              <div className="grid gap-3 sm:grid-cols-2">
+                                <div className="space-y-1.5">
+                                  <Label htmlFor={`desc-${i}`}>Description</Label>
+                                  <Input
+                                    id={`desc-${i}`}
+                                    value={article.description}
+                                    onChange={(e) => updateArticle(i, { description: e.target.value })}
+                                    placeholder="Ex : ordinateur portable"
+                                  />
+                                </div>
+                                <div className="space-y-1.5">
+                                  <Label htmlFor={`type-${i}`}>Type</Label>
+                                  <Select
+                                    value={article.type}
+                                    onValueChange={(v) => updateArticle(i, { type: v as TypeMateriel })}
+                                  >
+                                    <SelectTrigger id={`type-${i}`}><SelectValue /></SelectTrigger>
+                                    <SelectContent>
+                                      <SelectItem value="ordinateur">Ordinateur</SelectItem>
+                                      <SelectItem value="smartphone">Smartphone</SelectItem>
+                                      <SelectItem value="mobilier">Mobilier</SelectItem>
+                                      <SelectItem value="logiciel">Logiciel</SelectItem>
+                                      <SelectItem value="documentation">Documentation</SelectItem>
+                                      <SelectItem value="outillage">Outillage</SelectItem>
+                                      <SelectItem value="autre">Autre</SelectItem>
+                                    </SelectContent>
+                                  </Select>
+                                </div>
+                              </div>
+                              <div className="grid gap-3 sm:grid-cols-2">
+                                <NumberInput
+                                  id={`prix-${i}`}
+                                  label="Prix TTC (€)"
+                                  value={article.prixTTC}
+                                  onChange={(v) => updateArticle(i, { prixTTC: v })}
+                                />
+                                <DateInput
+                                  id={`date-${i}`}
+                                  label="Date d'achat"
+                                  value={article.dateAchat}
+                                  onChange={(v) => updateArticle(i, { dateAchat: v })}
+                                />
+                              </div>
+                              <PctSlider
+                                label="Usage professionnel"
+                                value={article.usageProPct}
+                                onChange={(v) => updateArticle(i, { usageProPct: v })}
                               />
+                              {article.prixTTC > 0 && (
+                                <p className="text-xs text-foreground bg-muted/40 rounded px-3 py-2">
+                                  {estAmorti
+                                    ? `Cet article s'amortit sur ${duree} ans → ${deductionAnnee.toFixed(2)} € déductibles cette année.`
+                                    : `Déduction immédiate : ${deductionAnnee.toFixed(2)} €.`}
+                                </p>
+                              )}
+                              <Button
+                                type="button"
+                                variant="outline"
+                                size="sm"
+                                onClick={() => removeArticle(i)}
+                              >
+                                <Trash2 className="h-4 w-4" />
+                                Supprimer
+                              </Button>
                             </div>
-                            <div className="space-y-1.5">
-                              <Label htmlFor={`prix-${i}`}>Prix (€)</Label>
-                              <Input
-                                id={`prix-${i}`}
-                                type="number"
-                                step="0.01"
-                                min={0}
-                                value={article.prix || ""}
-                                onChange={(e) =>
-                                  updateArticle(i, { prix: Number(e.target.value) || 0 })
-                                }
-                                placeholder="0"
-                              />
-                            </div>
-                            <Button
-                              type="button"
-                              variant="outline"
-                              size="sm"
-                              onClick={() => removeArticle(i)}
-                            >
-                              <Trash2 className="h-4 w-4" />
-                              Supprimer
-                            </Button>
-                          </div>
-                        ))}
+                          );
+                        })}
                         <Button type="button" variant="outline" onClick={addArticle}>
                           <Plus className="h-4 w-4" />
                           Ajouter un article
                         </Button>
                       </div>
-                    ) : idx === 3 ? (
-                      <div className="space-y-4">
-                        <p className="text-sm text-muted-foreground">Cette section est optionnelle.</p>
-                        <NumberInput
-                          id="surfaceBureau"
-                          label="Surface du bureau professionnel (m²)"
-                          hint="Surface du local utilisé exclusivement comme bureau."
-                          value={form.surfaceBureau}
-                          onChange={(v) => setField("surfaceBureau", v)}
-                        />
-                        <NumberInput
-                          id="surfaceLogement"
-                          label="Surface totale du logement (m²)"
-                          hint="Surface totale habitable de votre logement."
-                          value={form.surfaceLogement}
-                          onChange={(v) => setField("surfaceLogement", v)}
-                        />
-                        <NumberInput
-                          id="chargesAnnuelles"
-                          label="Charges annuelles du logement — loyer + charges (€)"
-                          hint="Loyer annuel + charges (eau, électricité, chauffage…)."
-                          value={form.chargesAnnuelles}
-                          onChange={(v) => setField("chargesAnnuelles", v)}
-                        />
-                        <div className="rounded-md border border-border bg-muted/40 p-4 text-sm space-y-1">
-                          <p>
-                            <span className="text-muted-foreground">Quote-part bureau : </span>
-                            <span className="font-semibold text-foreground">
-                              {(quotePart * 100).toFixed(1)} %
-                            </span>
-                          </p>
-                          <p>
-                            <span className="text-muted-foreground">Montant déductible : </span>
-                            <span className="font-semibold text-foreground">
-                              {sectionDLive.toFixed(2)} €
-                            </span>
-                          </p>
-                        </div>
-                      </div>
-                    ) : idx === 4 ? (
+                    )}
+
+                    {/* ===== STEP 6: AUTRES ===== */}
+                    {idx === 5 && (
                       <div className="space-y-4">
                         <p className="text-sm text-muted-foreground">
-                          Cette section est optionnelle. Tous les champs sont facultatifs.
+                          Tous les champs sont facultatifs. Pour information : pour les frais à usage mixte,
+                          n'indiquer que la quote-part professionnelle.
                         </p>
-                        <div className="flex gap-3 rounded-md border border-blue-200 bg-blue-50 p-3 text-xs text-blue-900">
-                          <Info className="h-4 w-4 shrink-0 mt-0.5" />
-                          <p>
-                            Pour les frais à usage mixte (téléphone, internet, électricité),
-                            n'indiquer que la quote-part professionnelle. Exemple : forfait internet
-                            annuel 360 € utilisé à 50% pour le travail → indiquer 180 €.
-                          </p>
+
+                        <div className="rounded-lg border border-border p-4 space-y-4 bg-muted/20">
+                          <p className="font-medium text-sm">Téléphone</p>
+                          <NumberInput
+                            id="tel"
+                            label="Téléphone annuel (€)"
+                            value={inputsAutresFrais.telephoneAnnuel}
+                            onChange={(v) => setAutres("telephoneAnnuel", v)}
+                          />
+                          <PctSlider
+                            label="Usage professionnel téléphone"
+                            value={inputsAutresFrais.telephoneUsageProPct}
+                            onChange={(v) => setAutres("telephoneUsageProPct", v)}
+                          />
                         </div>
+
+                        <div className="rounded-lg border border-border p-4 space-y-4 bg-muted/20">
+                          <p className="font-medium text-sm">Internet</p>
+                          {internetDejaBureau && (
+                            <Alert className="bg-blue-50 border-blue-200 text-blue-900">
+                              <Info className="h-4 w-4" />
+                              <AlertDescription className="text-xs">
+                                Internet déjà saisi à l'étape Bureau. Saisie désactivée ici pour éviter une double déduction.
+                              </AlertDescription>
+                            </Alert>
+                          )}
+                          <NumberInput
+                            id="net"
+                            label="Internet annuel (€)"
+                            value={inputsAutresFrais.internetAnnuel}
+                            onChange={(v) => setAutres("internetAnnuel", v)}
+                            disabled={internetDejaBureau}
+                          />
+                          <PctSlider
+                            label="Usage professionnel internet"
+                            value={inputsAutresFrais.internetUsageProPct}
+                            onChange={(v) => setAutres("internetUsageProPct", v)}
+                          />
+                        </div>
+
                         <div className="grid gap-4 sm:grid-cols-2">
-                          {STEP5_FIELDS.map((f) => (
-                            <NumberInput
-                              key={f.name}
-                              id={f.name}
-                              label={f.label}
-                              hint={f.hint}
-                              value={form[f.name] as number}
-                              onChange={(v) => setField(f.name, v as never)}
-                            />
-                          ))}
-                        </div>
-                      </div>
-                    ) : idx === 5 ? (
-                      <div className="space-y-4">
-                        <div className="space-y-2">
-                          <Label className="text-sm">Type de véhicule</Label>
-                          <RadioGroup
-                            value={form.typeVehicule}
-                            onValueChange={(v) =>
-                              setField("typeVehicule", v as "thermique" | "electrique")
-                            }
-                            className="flex flex-col sm:flex-row gap-3"
-                          >
-                            <Label className="flex items-center gap-2 cursor-pointer">
-                              <RadioGroupItem value="thermique" />
-                              Voiture thermique/hybride
-                            </Label>
-                            <Label className="flex items-center gap-2 cursor-pointer">
-                              <RadioGroupItem value="electrique" />
-                              Voiture 100% électrique
-                            </Label>
-                          </RadioGroup>
+                          <NumberInput
+                            id="bnk"
+                            label="Frais bancaires compte pro (€)"
+                            value={inputsAutresFrais.fraisBancairesProServ}
+                            onChange={(v) => setAutres("fraisBancairesProServ", v)}
+                          />
+                          <NumberInput
+                            id="form"
+                            label="Formation professionnelle (€)"
+                            value={inputsAutresFrais.formationPro}
+                            onChange={(v) => setAutres("formationPro", v)}
+                          />
+                          <NumberInput
+                            id="synd"
+                            label="Cotisations syndicales (€)"
+                            value={inputsAutresFrais.cotisationsSyndicales}
+                            onChange={(v) => setAutres("cotisationsSyndicales", v)}
+                          />
+                          <NumberInput
+                            id="ordre"
+                            label="Cotisations pro obligatoires (€)"
+                            hint="Ordres professionnels, etc."
+                            value={inputsAutresFrais.cotisationsProObligatoires}
+                            onChange={(v) => setAutres("cotisationsProObligatoires", v)}
+                          />
+                          <NumberInput
+                            id="dr"
+                            label="Double résidence (€)"
+                            value={inputsAutresFrais.doubleResidence}
+                            onChange={(v) => setAutres("doubleResidence", v)}
+                          />
+                          <NumberInput
+                            id="demnt"
+                            label="Déménagement professionnel (€)"
+                            value={inputsAutresFrais.demenagementPro}
+                            onChange={(v) => setAutres("demenagementPro", v)}
+                          />
+                          <NumberInput
+                            id="rech"
+                            label="Frais de recherche d'emploi (€)"
+                            value={inputsAutresFrais.fraisRechercheEmploi}
+                            onChange={(v) => setAutres("fraisRechercheEmploi", v)}
+                          />
+                          <NumberInput
+                            id="empr"
+                            label="Intérêts d'emprunt résidence (€)"
+                            value={inputsAutresFrais.interetsEmpruntResidence}
+                            onChange={(v) => setAutres("interetsEmpruntResidence", v)}
+                          />
+                          <NumberInput
+                            id="autres"
+                            label="Autres frais justifiés (€)"
+                            value={inputsAutresFrais.autresFraisJustifies}
+                            onChange={(v) => setAutres("autresFraisJustifies", v)}
+                          />
                         </div>
 
-                        <div className="space-y-1.5">
-                          <Label htmlFor="puissanceCV" className="text-sm">
-                            Puissance fiscale (CV)
-                          </Label>
-                          <Select
-                            value={String(form.puissanceCV)}
-                            onValueChange={(v) =>
-                              setField("puissanceCV", Number(v) as FormState["puissanceCV"])
-                            }
-                          >
-                            <SelectTrigger id="puissanceCV">
-                              <SelectValue />
-                            </SelectTrigger>
-                            <SelectContent>
-                              <SelectItem value="3">3 CV</SelectItem>
-                              <SelectItem value="4">4 CV</SelectItem>
-                              <SelectItem value="5">5 CV</SelectItem>
-                              <SelectItem value="6">6 CV</SelectItem>
-                              <SelectItem value="7">7 CV et +</SelectItem>
-                            </SelectContent>
-                          </Select>
-                        </div>
-
-                        <NumberInput
-                          id="distanceAller"
-                          label="Distance domicile-travail aller simple (km)"
-                          value={form.distanceAller}
-                          onChange={(v) => setField("distanceAller", v)}
-                        />
-                        <NumberInput
-                          id="nbJoursTravailles"
-                          label="Nombre de jours travaillés dans l'année"
-                          value={form.nbJoursTravailles}
-                          onChange={(v) => setField("nbJoursTravailles", v)}
-                          integer
-                        />
-                        <p className="text-xs text-muted-foreground">
-                          Barème kilométrique {FISCAL_YEAR} (non revalorisé depuis 2023, simplifié
-                          pour la tranche 0-5 000 km). Pour un calcul précis avec 3 tranches, voir
-                          le simulateur officiel sur impots.gouv.fr.
-                        </p>
+                        {inputsAutresFrais.cotisationsSyndicales > 0 && (
+                          <Alert className="bg-yellow-50 border-yellow-300 text-yellow-900">
+                            <AlertTriangle className="h-4 w-4" />
+                            <AlertDescription className="text-xs">
+                              Si vous déduisez ici, vous perdez le crédit d'impôt de 66% sur ces cotisations.
+                              Vérifiez quel régime est plus favorable pour votre situation.
+                            </AlertDescription>
+                          </Alert>
+                        )}
                       </div>
-                    ) : idx === 6 ? (
+                    )}
+
+                    {/* ===== STEP 7: OUTRE-MER ===== */}
+                    {idx === 6 && (
                       <div className="space-y-4">
                         <p className="text-sm text-muted-foreground flex items-start gap-2">
                           <Palmtree className="h-4 w-4 mt-0.5 shrink-0" />
                           <span>
-                            Cette section concerne les contribuables résidant en Guadeloupe, Martinique,
-                            Guyane, La Réunion ou Mayotte. Section optionnelle.
+                            Pour les contribuables résidant en Guadeloupe, Martinique, Guyane,
+                            La Réunion ou Mayotte. Section optionnelle.
                           </span>
                         </p>
-                        <div className="flex gap-3 rounded-lg border border-blue-200 bg-blue-50 p-4 text-sm text-blue-900">
-                          <Info className="h-5 w-5 shrink-0 mt-0.5" />
-                          <div className="space-y-2">
-                            <p>
-                              <strong>Important</strong> — Si vous résidez dans un DROM, votre impôt sur
-                              le revenu bénéficie d'une réfaction appliquée sur l'impôt brut :
-                            </p>
-                            <ul className="list-disc pl-5 space-y-1">
-                              <li>{constants?.refaction_drom_zone1 ?? 30}% en Guadeloupe, Martinique et La Réunion</li>
-                              <li>{constants?.refaction_drom_zone2 ?? 40}% en Guyane et Mayotte</li>
-                            </ul>
-                            <p>
-                              Cette réfaction n'est pas un frais réel. Elle est calculée séparément
-                              sur l'impôt final, pas sur le revenu imposable. Le « surcoût de la vie » en
-                              outre-mer n'est pas déductible en frais réels — la réfaction DROM est
-                              précisément le mécanisme prévu par le législateur pour en tenir compte.
-                            </p>
-                          </div>
-                        </div>
+                        <Alert className="bg-blue-50 border-blue-200 text-blue-900">
+                          <Info className="h-4 w-4" />
+                          <AlertDescription className="text-xs">
+                            Pour information : la réfaction DROM ({constants.refaction_drom_zone1 ?? 30}% / {constants.refaction_drom_zone2 ?? 40}%)
+                            s'applique sur l'impôt brut, pas sur les frais réels. Utilisez ensuite le simulateur IR Barème.
+                          </AlertDescription>
+                        </Alert>
                         <NumberInput
-                          id="fraisInterIles"
-                          label="Frais de déplacements inter-îles ou inter-territoires engagés à titre professionnel (€/an)"
-                          value={form.fraisInterIles}
-                          onChange={(v) => setField("fraisInterIles", v)}
-                          hint="Total des billets d'avion, de bateau, etc. pour des déplacements liés à votre activité professionnelle (tournées clientèle, missions inter-îles pour libéraux, etc.). Sur justificatifs uniquement. N'inclure ni vos déplacements personnels, ni vos trajets domicile-travail réguliers (déjà déclarés en section 6)."
+                          id="interIles"
+                          label="Frais inter-îles ou inter-territoires professionnels (€)"
+                          hint="Billets d'avion, bateau, pour activité professionnelle. Sur justificatifs."
+                          value={inputsOutreMer.fraisInterIles}
+                          onChange={(v) => setOM("fraisInterIles", v)}
+                        />
+                        <NumberInput
+                          id="dromMet"
+                          label="Frais voyages DROM ↔ métropole pour activité pro (€)"
+                          value={inputsOutreMer.fraisVoyagesDromMetropolePro}
+                          onChange={(v) => setOM("fraisVoyagesDromMetropolePro", v)}
                         />
                       </div>
-                    ) : null}
+                    )}
 
+                    {/* nav */}
                     <div className="flex flex-col-reverse sm:flex-row sm:justify-between gap-3 pt-2">
                       {idx > 0 ? (
                         <Button variant="outline" onClick={handleBack} className="w-full sm:w-auto">
@@ -981,20 +1251,18 @@ export default function SimulateurFraisPro() {
                       )}
                       {idx === STEP_TITLES.length - 1 ? (
                         <Button
-                          onClick={handleNext}
-                          disabled={!constants || !!constantsError}
+                          onClick={() => setActiveStep(0)}
                           className="w-full sm:w-auto bg-[#F9A825] hover:bg-[#F57F17] text-[#2D1B4E] font-bold"
                         >
                           <Receipt className="h-4 w-4" />
-                          Calculer
+                          Voir le récap
                         </Button>
                       ) : (
                         <Button
                           onClick={handleNext}
-                          disabled={!constants || !!constantsError}
                           className="w-full sm:w-auto bg-[#2D1B4E] hover:bg-[#3d2466] text-white"
                         >
-                          {idx === 0 ? "Commencer" : "Suivant"}
+                          Suivant
                           <ChevronDown className="h-4 w-4" />
                         </Button>
                       )}
@@ -1004,9 +1272,15 @@ export default function SimulateurFraisPro() {
               </Card>
             );
           })}
-          </div>
         </div>
       </div>
+      )}
+
+      <footer className="mt-8 rounded-lg border border-border bg-muted/30 p-4 text-xs text-muted-foreground">
+        Estimation pédagogique basée sur les barèmes officiels DGFiP 2026 (revenus 2025).
+        Cette estimation ne constitue pas un calcul officiel d'impôt et ne se substitue pas à votre déclaration.
+        En cas de doute, contactez votre service des impôts.
+      </footer>
     </div>
   );
 }
