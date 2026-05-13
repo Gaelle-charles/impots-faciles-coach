@@ -39,6 +39,8 @@ const NumberField = ({
 );
 
 const SimulateurFraisContent = () => {
+  const navigate = useNavigate();
+  const { plan } = useAccess();
   const [salaireBrut, setSalaireBrut] = useState(35000);
   const [transport, setTransport] = useState(0);
   const [repas, setRepas] = useState(0);
