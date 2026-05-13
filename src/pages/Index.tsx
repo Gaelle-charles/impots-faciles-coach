@@ -509,6 +509,10 @@ const Index = () => {
           ref={ctaImgRef}
           src={ctaBg}
           alt=""
+          width="1920"
+          height="1080"
+          loading="lazy"
+          decoding="async"
           className="absolute -top-[15%] left-0 h-[130%] w-full object-cover will-change-transform"
         />
         <div className="absolute inset-0 bg-gradient-to-br from-[hsl(285,52%,15%/0.92)] to-[hsl(263,70%,30%/0.85)]" />
