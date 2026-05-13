@@ -23,7 +23,7 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from 'recharts';
-import { Users, BookOpen, Target, Activity, BookMarked, ArrowRight, Eye } from 'lucide-react';
+import { Users, Euro, TrendingUp, Activity, BookMarked, ArrowRight, Eye } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { PasseportFiscalCard } from '@/components/dashboard/PasseportFiscalCard';
 import type { Passeport } from '@/hooks/usePasseportFiscal';
@@ -92,6 +92,7 @@ const Admin = () => {
   const [passeports, setPasseports] = useState<Array<{ id: string; numero: number; nom: string; regime_fiscal: string; plan_minimum: string; is_active: boolean; ordre: number }>>([]);
   const [previewPasseport, setPreviewPasseport] = useState<Passeport | null>(null);
   const [previewLoading, setPreviewLoading] = useState(false);
+  const [stripeKpi, setStripeKpi] = useState<{ net: number; mrr: number; currency: string } | null>(null);
 
   const handlePreviewPasseport = async (id: string) => {
     setPreviewLoading(true);
@@ -147,7 +148,20 @@ const Admin = () => {
     };
 
     init();
+    // Fetch Stripe KPIs (CA net + MRR) for top cards
+    supabase.functions.invoke('stripe-revenue').then(({ data, error }) => {
+      if (error || !data || (data as any).error) return;
+      const d = data as any;
+      setStripeKpi({ net: d.net_revenue ?? 0, mrr: d.mrr ?? 0, currency: d.currency ?? 'eur' });
+    });
   }, [user, accessLoading, isAdmin]);
+
+  const fmtMoney = (cents: number) =>
+    new Intl.NumberFormat('fr-FR', {
+      style: 'currency',
+      currency: (stripeKpi?.currency ?? 'eur').toUpperCase(),
+      maximumFractionDigits: 0,
+    }).format(cents / 100);
 
   // Stats
   const totalUsers = profiles.length;
@@ -196,8 +210,8 @@ const Admin = () => {
 
   const stats = [
     { label: 'Utilisateurs', value: totalUsers, icon: Users },
-    { label: 'Modules complétés', value: completedTotal, icon: BookOpen },
-    { label: 'Score moyen', value: `${avgScore}%`, icon: Target },
+    { label: 'CA net', value: stripeKpi ? fmtMoney(stripeKpi.net) : '—', icon: Euro },
+    { label: 'MRR', value: stripeKpi ? fmtMoney(stripeKpi.mrr) : '—', icon: TrendingUp },
     { label: 'Actifs (7j)', value: activeUsers, icon: Activity },
   ];
 
