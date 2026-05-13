@@ -148,7 +148,20 @@ const Admin = () => {
     };
 
     init();
+    // Fetch Stripe KPIs (CA net + MRR) for top cards
+    supabase.functions.invoke('stripe-revenue').then(({ data, error }) => {
+      if (error || !data || (data as any).error) return;
+      const d = data as any;
+      setStripeKpi({ net: d.net_revenue ?? 0, mrr: d.mrr ?? 0, currency: d.currency ?? 'eur' });
+    });
   }, [user, accessLoading, isAdmin]);
+
+  const fmtMoney = (cents: number) =>
+    new Intl.NumberFormat('fr-FR', {
+      style: 'currency',
+      currency: (stripeKpi?.currency ?? 'eur').toUpperCase(),
+      maximumFractionDigits: 0,
+    }).format(cents / 100);
 
   // Stats
   const totalUsers = profiles.length;
