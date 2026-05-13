@@ -1,10 +1,13 @@
 import { useMemo, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { AccessGuard } from '@/components/AccessGuard';
 import SimulateurLayout from '@/components/simulateur/SimulateurLayout';
 import { Card } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import { useAccess } from '@/hooks/useAccess';
 import { abattementSalaires, fmtEur, MENTION_LEGALE_SIMULATEUR } from '@/lib/calculs-fiscaux';
 
 const NumberField = ({
