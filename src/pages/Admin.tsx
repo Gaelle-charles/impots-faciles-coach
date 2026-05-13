@@ -210,8 +210,8 @@ const Admin = () => {
 
   const stats = [
     { label: 'Utilisateurs', value: totalUsers, icon: Users },
-    { label: 'Modules complétés', value: completedTotal, icon: BookOpen },
-    { label: 'Score moyen', value: `${avgScore}%`, icon: Target },
+    { label: 'CA net', value: stripeKpi ? fmtMoney(stripeKpi.net) : '—', icon: Euro },
+    { label: 'MRR', value: stripeKpi ? fmtMoney(stripeKpi.mrr) : '—', icon: TrendingUp },
     { label: 'Actifs (7j)', value: activeUsers, icon: Activity },
   ];
 
