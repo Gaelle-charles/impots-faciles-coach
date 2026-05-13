@@ -92,6 +92,7 @@ const Admin = () => {
   const [passeports, setPasseports] = useState<Array<{ id: string; numero: number; nom: string; regime_fiscal: string; plan_minimum: string; is_active: boolean; ordre: number }>>([]);
   const [previewPasseport, setPreviewPasseport] = useState<Passeport | null>(null);
   const [previewLoading, setPreviewLoading] = useState(false);
+  const [stripeKpi, setStripeKpi] = useState<{ net: number; mrr: number; currency: string } | null>(null);
 
   const handlePreviewPasseport = async (id: string) => {
     setPreviewLoading(true);
