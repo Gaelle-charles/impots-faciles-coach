@@ -1,5 +1,5 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -134,10 +134,12 @@ const App = () => (
               <Route path="/dashboard" element={<Dashboard />} />
               <Route path="/mes-simulateurs" element={<MesSimulateurs />} />
               <Route path="/simulateur" element={<AccessGuard requires="expert"><Simulateur /></AccessGuard>} />
-              <Route path="/simulateur-de-frais" element={<SimulateurFrais />} />
-              <Route path="/simulateur-frais-pro" element={<AccessGuard requires="starter"><SimulateurFraisPro /></AccessGuard>} />
-              <Route path="/simulateur/frais-reels-pro" element={<AccessGuard requires="starter"><SimulateurFraisPro /></AccessGuard>} />
-              <Route path="/simulateur/frais-reels" element={<SimulateurFrais />}/>
+              <Route path="/simulateur/frais-reels-simple" element={<AccessGuard requires="authenticated"><SimulateurFrais /></AccessGuard>} />
+              <Route path="/simulateur-de-frais" element={<Navigate to="/simulateur/frais-reels-simple" replace />} />
+              <Route path="/simulateur/frais-reels" element={<Navigate to="/simulateur/frais-reels-simple" replace />} />
+              <Route path="/simulateur/frais-reels-complet" element={<AccessGuard requires="starter"><SimulateurFraisPro /></AccessGuard>} />
+              <Route path="/simulateur-frais-pro" element={<Navigate to="/simulateur/frais-reels-complet" replace />} />
+              <Route path="/simulateur/frais-reels-pro" element={<Navigate to="/simulateur/frais-reels-complet" replace />} />
               <Route path="/simulateur/ir-bareme" element={<AccessGuard requires="expert"><SimulateurIRBareme /></AccessGuard>} />
               <Route path="/simulateur/quotient-familial" element={<AccessGuard requires="expert"><SimulateurQuotientFamilial /></AccessGuard>} />
               <Route path="/simulateur/pas" element={<AccessGuard requires="expert"><SimulateurPAS /></AccessGuard>} />
