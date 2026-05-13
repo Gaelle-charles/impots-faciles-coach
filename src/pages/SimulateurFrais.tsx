@@ -147,6 +147,21 @@ const SimulateurFraisContent = () => {
             </div>
           </Card>
 
+          <Card className="p-5 space-y-3 border-primary/30 bg-primary/5">
+            <h3 className="font-heading text-base font-bold text-foreground">Aller plus loin</h3>
+            <p className="text-sm text-muted-foreground">
+              Cette estimation rapide compare le total que vous saisissez avec l'abattement automatique de 10 %.
+              Pour un calcul détaillé section par section (kilométriques avec barème officiel, repas, bureau à domicile,
+              matériel, vêtements professionnels, frais divers, spécificités outre-mer), accédez au simulateur complet.
+            </p>
+            <Button
+              className="w-full"
+              onClick={() => navigate(plan === 'nouveau' ? '/tarifs' : '/simulateur/frais-reels-complet')}
+            >
+              Accéder au simulateur complet →
+            </Button>
+          </Card>
+
           <Card className="p-5 space-y-3">
             <h3 className="font-heading text-base font-bold text-foreground">À vérifier avant déclaration</h3>
             <ul className="space-y-2 text-sm text-muted-foreground list-disc pl-5">
@@ -157,7 +172,9 @@ const SimulateurFraisContent = () => {
           </Card>
 
           <Card className="p-4 text-xs text-muted-foreground">
-            {MENTION_LEGALE_SIMULATEUR}
+            Estimation pédagogique basée sur les barèmes officiels DGFiP 2026 (revenus 2025).
+            Cette estimation ne constitue pas un calcul officiel d'impôt et ne se substitue pas à votre déclaration.
+            En cas de doute, contactez votre service des impôts.
           </Card>
         </div>
       </div>
@@ -174,10 +191,6 @@ function ResultRow({ label, value, muted = false }: { label: string; value: stri
   );
 }
 
-const SimulateurFrais = () => (
-  <AccessGuard requires="starter">
-    <SimulateurFraisContent />
-  </AccessGuard>
-);
+const SimulateurFrais = () => <SimulateurFraisContent />;
 
 export default SimulateurFrais;
