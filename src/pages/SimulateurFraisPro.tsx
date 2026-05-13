@@ -130,6 +130,7 @@ const NumberInput = ({
   onChange,
   hint,
   integer = false,
+  max,
 }: {
   id: string;
   label: string;
@@ -137,6 +138,7 @@ const NumberInput = ({
   onChange: (n: number) => void;
   hint?: string;
   integer?: boolean;
+  max?: number;
 }) => (
   <div className="space-y-1.5">
     <Label htmlFor={id} className="text-sm">{label}</Label>
@@ -145,11 +147,16 @@ const NumberInput = ({
       type="number"
       step={integer ? "1" : "0.01"}
       min={0}
+      max={max}
       inputMode={integer ? "numeric" : "decimal"}
       value={value || ""}
       onChange={(e) => {
-        const n = Number(e.target.value) || 0;
-        onChange(integer ? Math.max(0, Math.floor(n)) : n);
+        let n = Number(e.target.value) || 0;
+        if (integer) {
+          n = Math.max(0, Math.floor(n));
+          if (max !== undefined) n = Math.min(n, max);
+        }
+        onChange(n);
       }}
       placeholder="0"
     />
@@ -514,10 +521,12 @@ export default function SimulateurFraisPro() {
                       <div className="space-y-4">
                         <NumberInput
                           id="nbRepasSansJustif"
-                          label="Coût total d'un repas avec justificatif (€)"
-                          hint="Montant en euros."
+                          label="Nombre de repas sans justificatif par jour"
+                          hint="Forfait de 5,45 € par repas, sans facture nécessaire (suppose une preuve d'éloignement entre domicile et lieu de travail)."
                           value={form.nbRepasSansJustif}
                           onChange={(v) => setField("nbRepasSansJustif", v)}
+                          integer
+                          max={3}
                         />
                         <NumberInput
                           id="nbRepasAvecJustif"
