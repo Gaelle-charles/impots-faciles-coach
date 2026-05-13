@@ -522,7 +522,7 @@ export default function SimulateurFraisPro() {
                         <NumberInput
                           id="nbRepasSansJustif"
                           label="Nombre de repas sans justificatif par jour"
-                          hint="Forfait de 5,45 € par repas, sans facture nécessaire (suppose une preuve d'éloignement entre domicile et lieu de travail)."
+                          hint="Forfait de 5,45 € par repas (suppose une preuve d'éloignement entre domicile et lieu de travail)."
                           value={form.nbRepasSansJustif}
                           onChange={(v) => setField("nbRepasSansJustif", v)}
                           integer
