@@ -352,17 +352,91 @@ export default function SimulateurFraisPro() {
 
   // ----- aside breakdown -----
   const totalArrondi = result ? Math.round(result.totalFraisReels) : 0;
-  const breakdownRows = result
-    ? [
-        { label: "Frais kilométriques", value: Math.round(result.breakdown.km) },
-        { label: "Repas hors domicile", value: Math.round(result.breakdown.repas) },
-        { label: "Bureau à domicile", value: Math.round(result.breakdown.bureau) },
-        { label: "Vêtements & blanchissage", value: Math.round(result.breakdown.blanchissage) },
-        { label: "Matériel & logiciels", value: Math.round(result.breakdown.materiel) },
-        { label: "Autres frais pro", value: Math.round(result.breakdown.autresFrais) },
-        { label: "Outre-mer", value: Math.round(result.breakdown.outreMer) },
-      ].filter((r) => r.value > 0)
-    : [];
+
+  type SubLine = { label: string; value: number; variant?: "muted" | "subtotal" | "final" | "negative" };
+  type Section = { key: string; label: string; value: number; sub?: SubLine[] };
+
+  const sections: Section[] = useMemo(() => {
+    if (!result || !constants) return [];
+    const out: Section[] = [];
+
+    // --- KM ---
+    try {
+      const km = calculerFraisKilometriques(inputsKm, constants);
+      const { bareme, peages, parking, remboursements } = km.details;
+      const hasExtras = peages > 0 || parking > 0 || remboursements > 0;
+      if (hasExtras) {
+        const sub: SubLine[] = [
+          { label: "Barème kilométrique", value: Math.round(bareme) },
+        ];
+        if (peages > 0) sub.push({ label: "Péages", value: Math.round(peages) });
+        if (parking > 0) sub.push({ label: "Parking", value: Math.round(parking) });
+        sub.push({
+          label: "Sous-total brut",
+          value: Math.round(bareme + peages + parking),
+          variant: "subtotal",
+        });
+        if (remboursements > 0)
+          sub.push({ label: "Indemnités employeur", value: -Math.round(remboursements), variant: "negative" });
+        sub.push({ label: "Net kilométrique", value: Math.round(km.total), variant: "final" });
+        out.push({ key: "km", label: "Frais kilométriques", value: Math.round(km.total), sub });
+      } else if (km.total > 0) {
+        out.push({ key: "km", label: "Frais kilométriques", value: Math.round(km.total) });
+      }
+    } catch { /* ignore */ }
+
+    // --- Repas ---
+    try {
+      const repas = calculerFraisRepas(inputsRepas, constants);
+      const { deductionSansJustif, deductionAvecJustif, partEmployeurTR, indemnitesRepas } = repas.details;
+      const brut = deductionSansJustif + deductionAvecJustif;
+      const hasDetails = partEmployeurTR > 0 || indemnitesRepas > 0;
+      if (hasDetails && brut > 0) {
+        const sub: SubLine[] = [
+          { label: "Déduction repas", value: Math.round(brut) },
+          { label: "Sous-total brut", value: Math.round(brut), variant: "subtotal" },
+        ];
+        if (partEmployeurTR > 0)
+          sub.push({ label: "Part employeur tickets-resto", value: -Math.round(partEmployeurTR), variant: "negative" });
+        if (indemnitesRepas > 0)
+          sub.push({ label: "Indemnités repas employeur", value: -Math.round(indemnitesRepas), variant: "negative" });
+        sub.push({ label: "Net repas", value: Math.round(repas.total), variant: "final" });
+        out.push({ key: "repas", label: "Repas hors domicile", value: Math.round(repas.total), sub });
+      } else if (repas.total > 0) {
+        out.push({ key: "repas", label: "Repas hors domicile", value: Math.round(repas.total) });
+      }
+    } catch { /* ignore */ }
+
+    // --- Bureau ---
+    try {
+      const bureau = calculerBureauDomicile(inputsBureau);
+      const { deductionBrute, indemniteSoustraite } = bureau.details;
+      if (indemniteSoustraite > 0 && deductionBrute > 0) {
+        const sub: SubLine[] = [
+          { label: "Quote-part charges + internet", value: Math.round(deductionBrute) },
+          { label: "Sous-total brut", value: Math.round(deductionBrute), variant: "subtotal" },
+          { label: "Indemnité télétravail employeur", value: -Math.round(indemniteSoustraite), variant: "negative" },
+          { label: "Net bureau", value: Math.round(bureau.total), variant: "final" },
+        ];
+        out.push({ key: "bureau", label: "Bureau à domicile", value: Math.round(bureau.total), sub });
+      } else if (bureau.total > 0) {
+        out.push({ key: "bureau", label: "Bureau à domicile", value: Math.round(bureau.total) });
+      }
+    } catch { /* ignore */ }
+
+    // --- Other simple sections ---
+    const simple: Array<[string, string, number]> = [
+      ["blanchissage", "Vêtements & blanchissage", Math.round(result.breakdown.blanchissage)],
+      ["materiel", "Matériel & logiciels", Math.round(result.breakdown.materiel)],
+      ["autresFrais", "Autres frais pro", Math.round(result.breakdown.autresFrais)],
+      ["outreMer", "Outre-mer", Math.round(result.breakdown.outreMer)],
+    ];
+    for (const [key, label, value] of simple) {
+      if (value > 0) out.push({ key, label, value });
+    }
+
+    return out;
+  }, [result, constants, inputsKm, inputsRepas, inputsBureau]);
 
   return (
     <div className="space-y-6">
