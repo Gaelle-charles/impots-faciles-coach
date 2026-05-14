@@ -372,7 +372,7 @@ export default function SimulateurFraisPro() {
         if (peages > 0) sub.push({ label: "Péages", value: Math.round(peages) });
         if (parking > 0) sub.push({ label: "Parking", value: Math.round(parking) });
         sub.push({
-          label: "Sous-total brut",
+          label: "Sous-total",
           value: Math.round(bareme + peages + parking),
           variant: "subtotal",
         });
@@ -394,7 +394,7 @@ export default function SimulateurFraisPro() {
       if (hasDetails && brut > 0) {
         const sub: SubLine[] = [
           { label: "Déduction repas", value: Math.round(brut) },
-          { label: "Sous-total brut", value: Math.round(brut), variant: "subtotal" },
+          { label: "Sous-total", value: Math.round(brut), variant: "subtotal" },
         ];
         if (partEmployeurTR > 0)
           sub.push({ label: "Part employeur tickets-resto", value: -Math.round(partEmployeurTR), variant: "negative" });
@@ -414,7 +414,7 @@ export default function SimulateurFraisPro() {
       if (indemniteSoustraite > 0 && deductionBrute > 0) {
         const sub: SubLine[] = [
           { label: "Quote-part charges + internet", value: Math.round(deductionBrute) },
-          { label: "Sous-total brut", value: Math.round(deductionBrute), variant: "subtotal" },
+          { label: "Sous-total", value: Math.round(deductionBrute), variant: "subtotal" },
           { label: "Indemnité télétravail employeur", value: -Math.round(indemniteSoustraite), variant: "negative" },
           { label: "Net bureau", value: Math.round(bureau.total), variant: "final" },
         ];
@@ -531,8 +531,8 @@ export default function SimulateurFraisPro() {
                                   ? "font-bold text-[#2D1B4E]"
                                   : line.variant === "subtotal"
                                   ? "font-semibold text-foreground"
-                                  : line.variant === "negative"
-                                  ? "text-muted-foreground italic"
+                                : line.variant === "negative"
+                                  ? "text-muted-foreground"
                                   : "text-foreground/80";
                               return (
                                 <tr key={i} className="bg-[#2D1B4E]/5">
