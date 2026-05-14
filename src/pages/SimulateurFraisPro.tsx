@@ -509,9 +509,43 @@ export default function SimulateurFraisPro() {
                 <div className="rounded-lg border border-[#2D1B4E]/20 overflow-hidden bg-white">
                   <table className="w-full text-xs sm:text-sm">
                     <tbody>
-                      {sections.map((s) => (
-                        <FragmentSection key={s.key} section={s} />
-                      ))}
+                      {sections.map((s) => {
+                        if (!s.sub || s.sub.length === 0) {
+                          return (
+                            <tr key={s.key} className="border-t border-border first:border-t-0">
+                              <td className="px-3 py-2 text-foreground/80">{s.label}</td>
+                              <td className="px-3 py-2 text-right font-medium tabular-nums">{s.value} €</td>
+                            </tr>
+                          );
+                        }
+                        return (
+                          <Fragment key={s.key}>
+                            <tr className="border-t border-border first:border-t-0 bg-[#2D1B4E]/5">
+                              <td colSpan={2} className="px-3 pt-2 pb-1 text-[11px] uppercase tracking-wide font-semibold text-[#2D1B4E]">
+                                {s.label}
+                              </td>
+                            </tr>
+                            {s.sub.map((line, i) => {
+                              const cls =
+                                line.variant === "final"
+                                  ? "font-bold text-[#2D1B4E]"
+                                  : line.variant === "subtotal"
+                                  ? "font-semibold text-foreground"
+                                  : line.variant === "negative"
+                                  ? "text-muted-foreground italic"
+                                  : "text-foreground/80";
+                              return (
+                                <tr key={i} className="bg-[#2D1B4E]/5">
+                                  <td className={`px-3 py-1 pl-5 ${cls}`}>{line.label}</td>
+                                  <td className={`px-3 py-1 text-right tabular-nums ${cls}`}>
+                                    {line.value < 0 ? `– ${Math.abs(line.value)}` : line.value} €
+                                  </td>
+                                </tr>
+                              );
+                            })}
+                          </Fragment>
+                        );
+                      })}
                       <tr className="border-t-2 border-[#2D1B4E] bg-[#F9E900]/30 font-bold">
                         <td className="px-3 py-2 text-[#2D1B4E]">TOTAL</td>
                         <td className="px-3 py-2 text-right text-[#2D1B4E] tabular-nums">{totalArrondi} €</td>
