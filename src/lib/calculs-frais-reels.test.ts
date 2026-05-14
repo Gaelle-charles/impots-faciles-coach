@@ -117,6 +117,17 @@ describe('calculerFraisKilometriques — voiture', () => {
     expect(r.total).toBeCloseTo(sansIndem.total - 2000, 1)
   })
 
+  it('Soustrait les indemnités après ajout des péages et du parking', () => {
+    const r = calculerFraisKilometriques({
+      ...inputsKmBase,
+      peagesAnnuel: 200,
+      parkingAnnuel: 270,
+      indemnitesKmEmployeur: 1200
+    }, C)
+    const base = calculerFraisKilometriques(inputsKmBase, C)
+    expect(r.total).toBeCloseTo(base.total + 200 + 270 - 1200, 1)
+  })
+
   it('Péages et parking ajoutés', () => {
     const r = calculerFraisKilometriques({
       ...inputsKmBase,
