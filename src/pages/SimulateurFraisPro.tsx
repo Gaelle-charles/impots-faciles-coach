@@ -505,15 +505,12 @@ export default function SimulateurFraisPro() {
                 </p>
               </div>
 
-              {breakdownRows.length > 0 ? (
+              {sections.length > 0 ? (
                 <div className="rounded-lg border border-[#2D1B4E]/20 overflow-hidden bg-white">
                   <table className="w-full text-xs sm:text-sm">
                     <tbody>
-                      {breakdownRows.map((r) => (
-                        <tr key={r.label} className="border-t border-border first:border-t-0">
-                          <td className="px-3 py-2 text-foreground/80">{r.label}</td>
-                          <td className="px-3 py-2 text-right font-medium tabular-nums">{r.value} €</td>
-                        </tr>
+                      {sections.map((s) => (
+                        <FragmentSection key={s.key} section={s} />
                       ))}
                       <tr className="border-t-2 border-[#2D1B4E] bg-[#F9E900]/30 font-bold">
                         <td className="px-3 py-2 text-[#2D1B4E]">TOTAL</td>
