@@ -268,7 +268,7 @@ const Tarifs = () => {
                   isExpert
                     ? 'bg-primary text-primary-foreground lg:scale-105 lg:-my-2 shadow-2xl order-first lg:order-none'
                     : 'bg-background border border-border lg:scale-[0.97]',
-                  disabled && 'opacity-60'
+                  
                 )}
                 style={
                   isExpert
