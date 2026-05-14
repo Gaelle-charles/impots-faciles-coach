@@ -31,6 +31,9 @@ import {
 import { useFraisReelsConstants } from "@/hooks/useFraisReelsConstants";
 import {
   calculerTotal,
+  calculerFraisKilometriques,
+  calculerFraisRepas,
+  calculerBureauDomicile,
   type TypeVehicule,
   type Motorisation,
   type TypeMateriel,
