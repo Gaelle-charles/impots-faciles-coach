@@ -918,7 +918,7 @@ const Onboarding = () => {
                 </Button>
               )}
             </div>
-            <Button onClick={handleNext} disabled={!canGoNext() || saving}>
+            <Button onClick={handleNext} disabled={saving}>
               {saving
                 ? 'Enregistrement...'
                 : currentStep === 7
