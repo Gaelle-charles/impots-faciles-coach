@@ -611,7 +611,16 @@ const Onboarding = () => {
   };
 
   const handleNext = async () => {
-    if (!canGoNext()) return;
+    if (!canGoNext()) {
+      if (currentStep === 2 && formData.situation_principale === 'dirigeant') {
+        if (!formData.activite_type) {
+          toast.error("Sélectionnez la nature de votre activité pour continuer.");
+        } else if (!formData.forme_juridique) {
+          toast.error("Sélectionnez aussi la forme juridique de votre société (EURL, SASU, SARL/SAS ou SEL) pour continuer.");
+        }
+      }
+      return;
+    }
     setSaving(true);
     const ok = await persistStep();
     setSaving(false);
