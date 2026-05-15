@@ -612,13 +612,41 @@ const Onboarding = () => {
 
   const handleNext = async () => {
     if (!canGoNext()) {
-      if (currentStep === 2 && formData.situation_principale === 'dirigeant') {
-        if (!formData.activite_type) {
-          toast.error("Sélectionnez la nature de votre activité pour continuer.");
-        } else if (!formData.forme_juridique) {
-          toast.error("Sélectionnez aussi la forme juridique de votre société (EURL, SASU, SARL/SAS ou SEL) pour continuer.");
-        }
+      let msg = 'Complétez les champs requis pour continuer.';
+      switch (currentStep) {
+        case 1:
+          msg = 'Sélectionnez votre situation principale pour continuer.';
+          break;
+        case 2:
+          if (!formData.activite_type) {
+            msg = "Sélectionnez la nature de votre activité pour continuer.";
+          } else if (formData.situation_principale === 'dirigeant' && !formData.forme_juridique) {
+            msg = "Sélectionnez aussi la forme juridique de votre société (EURL, SASU, SARL/SAS ou SEL) pour continuer.";
+          }
+          break;
+        case 3:
+          if (!formData.metier_categorie) msg = 'Choisissez une catégorie de métier.';
+          else if (!formData.metier_id) msg = 'Choisissez votre métier précis pour continuer.';
+          break;
+        case 4:
+          if (!formData.situation_familiale) msg = 'Indiquez votre situation familiale.';
+          else if (!formData.a_enfants) msg = 'Indiquez si vous avez des enfants à charge.';
+          else if (formData.a_enfants === 'oui' && (!formData.nb_enfants_charge || formData.nb_enfants_charge < 1)) {
+            msg = "Indiquez le nombre d'enfants à charge.";
+          }
+          break;
+        case 5:
+          msg = 'Cochez au moins une situation, ou cochez « Aucun » pour continuer.';
+          break;
+        case 6:
+          if (!formData.situation_internationale) msg = 'Indiquez votre situation internationale.';
+          else msg = 'Ajoutez au moins un pays concerné pour continuer.';
+          break;
+        case 7:
+          msg = 'Sélectionnez votre tranche de revenus pour continuer.';
+          break;
       }
+      toast.error(msg);
       return;
     }
     setSaving(true);
