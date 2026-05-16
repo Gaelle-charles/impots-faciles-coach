@@ -311,7 +311,7 @@ export default function SimulateurFraisPro() {
     constants,
     kmInputs,
     repasInputs,
-    inputsBureau,
+    bureauInputs,
     inputsBlanchissage,
     articles,
     inputsAutresFrais,
