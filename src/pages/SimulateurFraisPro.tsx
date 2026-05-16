@@ -353,8 +353,26 @@ export default function SimulateurFraisPro() {
   // ----- aside breakdown -----
   const totalArrondi = result ? Math.round(result.totalFraisReels) : 0;
 
-  type SubLine = { label: string; value: number; variant?: "muted" | "subtotal" | "final" | "negative" };
+  type SubLine = { label: string; value: number; variant?: "muted" | "subtotal" | "final" | "negative"; note?: string };
   type Section = { key: string; label: string; value: number; sub?: SubLine[] };
+
+  const kmBreakdown = useMemo(() => {
+    if (!constants) return null;
+    try {
+      const km = calculerFraisKilometriques(inputsKm, constants);
+      const { bareme, peages, parking, remboursements } = km.details;
+      const sousTotal = bareme + peages + parking;
+      return {
+        sousTotal,
+        indemnites: remboursements,
+        excedent: Math.max(0, remboursements - sousTotal),
+        depasse: remboursements > sousTotal && sousTotal > 0,
+        netZeroParDepassement: km.total === 0 && remboursements > 0 && remboursements >= sousTotal,
+      };
+    } catch {
+      return null;
+    }
+  }, [inputsKm, constants]);
 
   const sections: Section[] = useMemo(() => {
     if (!result || !constants) return [];
@@ -378,7 +396,14 @@ export default function SimulateurFraisPro() {
         });
         if (remboursements > 0)
           sub.push({ label: "Indemnités employeur", value: -Math.round(remboursements), variant: "negative" });
-        sub.push({ label: "Net kilométrique", value: Math.round(km.total), variant: "final" });
+        sub.push({
+          label: "Net kilométrique",
+          value: Math.round(km.total),
+          variant: "final",
+          note: km.total === 0 && remboursements >= bareme + peages + parking && remboursements > 0
+            ? "Indemnités supérieures aux frais → rien à déduire (excédent à déclarer en revenus)"
+            : undefined,
+        });
         out.push({ key: "km", label: "Frais kilométriques", value: Math.round(km.total), sub });
       } else if (km.total > 0) {
         out.push({ key: "km", label: "Frais kilométriques", value: Math.round(km.total) });
@@ -535,12 +560,21 @@ export default function SimulateurFraisPro() {
                                   ? "text-muted-foreground"
                                   : "text-foreground/80";
                               return (
-                                <tr key={i} className="bg-[#2D1B4E]/5">
-                                  <td className={`px-3 py-1 pl-5 ${cls}`}>{line.label}</td>
-                                  <td className={`px-3 py-1 text-right tabular-nums ${cls}`}>
-                                    {line.value < 0 ? `– ${Math.abs(line.value)}` : line.value} €
-                                  </td>
-                                </tr>
+                                <Fragment key={i}>
+                                  <tr className="bg-[#2D1B4E]/5">
+                                    <td className={`px-3 py-1 pl-5 ${cls}`}>{line.label}</td>
+                                    <td className={`px-3 py-1 text-right tabular-nums ${cls}`}>
+                                      {line.value < 0 ? `– ${Math.abs(line.value)}` : line.value} €
+                                    </td>
+                                  </tr>
+                                  {line.note && (
+                                    <tr className="bg-[#2D1B4E]/5">
+                                      <td colSpan={2} className="px-3 pb-2 pl-5 text-[11px] italic text-muted-foreground">
+                                        {line.note}
+                                      </td>
+                                    </tr>
+                                  )}
+                                </Fragment>
                               );
                             })}
                           </Fragment>
@@ -793,6 +827,14 @@ export default function SimulateurFraisPro() {
                           value={inputsKm.indemnitesKmEmployeur}
                           onChange={(v) => setKm("indemnitesKmEmployeur", v)}
                         />
+                        {kmBreakdown?.depasse && (
+                          <Alert className="bg-orange-50 border-orange-300 text-orange-900">
+                            <AlertTriangle className="h-4 w-4" />
+                            <AlertDescription className="text-xs">
+                              ⚠️ Le montant d'indemnités saisi ({Math.round(kmBreakdown.indemnites).toLocaleString("fr-FR")} €) dépasse vos frais kilométriques calculés ({Math.round(kmBreakdown.sousTotal).toLocaleString("fr-FR")} €). Vérifiez le montant : si votre employeur vous a versé plus que le barème, l'excédent ({Math.round(kmBreakdown.excedent).toLocaleString("fr-FR")} €) doit être déclaré en revenus imposables dans la case 1AJ.
+                            </AlertDescription>
+                          </Alert>
+                        )}
                       </div>
                     )}
 
