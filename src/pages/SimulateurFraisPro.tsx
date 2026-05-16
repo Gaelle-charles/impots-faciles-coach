@@ -608,6 +608,8 @@ export default function SimulateurFraisPro() {
                                   ? "font-semibold text-foreground"
                                 : line.variant === "negative"
                                   ? "text-muted-foreground"
+                                : line.variant === "muted"
+                                  ? "italic text-muted-foreground"
                                   : "text-foreground/80";
                               return (
                                 <Fragment key={i}>
