@@ -823,9 +823,12 @@ export default function SimulateurFraisPro() {
                         <NumberInput
                           id="nbJoursTrav"
                           label="Nombre de jours travaillés dans l'année"
-                          value={inputsKm.nbJoursTravailles}
-                          onChange={(v) => setKm("nbJoursTravailles", v)}
+                          hint="Valeur partagée avec l'étape Repas. En général entre 210 et 230 jours."
+                          value={joursTravaillesAnnee}
+                          onChange={(v) => setJoursTravaillesAnnee(Math.max(1, Math.min(260, v)))}
                           integer
+                          min={1}
+                          max={260}
                           warnAbove={250}
                           warningMessage="Maximum 250 jours travaillés en moyenne par an, vérifiez."
                         />
