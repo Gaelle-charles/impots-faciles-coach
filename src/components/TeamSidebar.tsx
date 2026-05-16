@@ -89,6 +89,7 @@ export function TeamSidebar({
       {/* Logo + nom orga */}
       <Link
         to="/"
+        onClick={onNavigate}
         className="flex items-center gap-2 px-6 pt-5 pb-3 cursor-pointer transition-opacity hover:opacity-80"
         aria-label="Retour à l'accueil"
       >
