@@ -295,7 +295,7 @@ export default function SimulateurFraisPro() {
         {
           km: kmInputs,
           repas: repasInputs,
-          bureau: inputsBureau,
+          bureau: bureauInputs,
           blanchissage: inputsBlanchissage,
           materiel: articles,
           autresFrais: inputsAutresFrais,
