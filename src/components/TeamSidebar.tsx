@@ -181,7 +181,7 @@ export function TeamSidebar({
               const Icon = item.icon;
               const active = location.pathname === item.to;
               return (
-                <NavLink key={item.to} to={item.to}>
+                <NavLink key={item.to} to={item.to} onClick={onNavigate}>
                   <Button
                     variant="sidebar-item"
                     className={`gap-3 px-3 py-2.5 text-sm w-full justify-start ${
