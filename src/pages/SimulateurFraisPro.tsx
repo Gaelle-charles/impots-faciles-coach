@@ -269,6 +269,18 @@ export default function SimulateurFraisPro() {
   // Internet déjà saisi à l'étape Bureau ?
   const internetDejaBureau = inputsBureau.internetAnnuel > 0 && inputsBureau.internetUsageProPct > 0;
 
+  // Surface bureau invalide (> surface logement) : on force la déduction bureau à 0
+  const bureauInvalid =
+    inputsBureau.surfaceLogementM2 > 0 &&
+    inputsBureau.surfaceBureauM2 > inputsBureau.surfaceLogementM2;
+  const bureauInputs = useMemo<InputsBureau>(
+    () =>
+      bureauInvalid
+        ? { ...inputsBureau, surfaceBureauM2: 0, surfaceLogementM2: 0, internetAnnuel: 0, indemniteTeletravailEmployeur: 0 }
+        : inputsBureau,
+    [inputsBureau, bureauInvalid],
+  );
+
   // ----- calculation -----
   const inputsBlanchissage: InputsBlanchissage = {
     modeCalcul: modeBlanchissage,
@@ -283,7 +295,7 @@ export default function SimulateurFraisPro() {
         {
           km: kmInputs,
           repas: repasInputs,
-          bureau: inputsBureau,
+          bureau: bureauInputs,
           blanchissage: inputsBlanchissage,
           materiel: articles,
           autresFrais: inputsAutresFrais,
@@ -299,7 +311,7 @@ export default function SimulateurFraisPro() {
     constants,
     kmInputs,
     repasInputs,
-    inputsBureau,
+    bureauInputs,
     inputsBlanchissage,
     articles,
     inputsAutresFrais,
@@ -463,18 +475,27 @@ export default function SimulateurFraisPro() {
 
     // --- Bureau ---
     try {
-      const bureau = calculerBureauDomicile(inputsBureau);
-      const { deductionBrute, indemniteSoustraite } = bureau.details;
-      if (indemniteSoustraite > 0 && deductionBrute > 0) {
-        const sub: SubLine[] = [
-          { label: "Quote-part charges + internet", value: Math.round(deductionBrute) },
-          { label: "Sous-total", value: Math.round(deductionBrute), variant: "subtotal" },
-          { label: "Indemnité télétravail employeur", value: -Math.round(indemniteSoustraite), variant: "negative" },
-          { label: "Net bureau", value: Math.round(bureau.total), variant: "final" },
-        ];
-        out.push({ key: "bureau", label: "Bureau à domicile", value: Math.round(bureau.total), sub });
-      } else if (bureau.total > 0) {
-        out.push({ key: "bureau", label: "Bureau à domicile", value: Math.round(bureau.total) });
+      if (bureauInvalid) {
+        out.push({
+          key: "bureau",
+          label: "Bureau à domicile",
+          value: 0,
+          sub: [{ label: "Surface bureau invalide → 0 € déductible", value: 0, variant: "muted" }],
+        });
+      } else {
+        const bureau = calculerBureauDomicile(bureauInputs);
+        const { deductionBrute, indemniteSoustraite } = bureau.details;
+        if (indemniteSoustraite > 0 && deductionBrute > 0) {
+          const sub: SubLine[] = [
+            { label: "Quote-part charges + internet", value: Math.round(deductionBrute) },
+            { label: "Sous-total", value: Math.round(deductionBrute), variant: "subtotal" },
+            { label: "Indemnité télétravail employeur", value: -Math.round(indemniteSoustraite), variant: "negative" },
+            { label: "Net bureau", value: Math.round(bureau.total), variant: "final" },
+          ];
+          out.push({ key: "bureau", label: "Bureau à domicile", value: Math.round(bureau.total), sub });
+        } else if (bureau.total > 0) {
+          out.push({ key: "bureau", label: "Bureau à domicile", value: Math.round(bureau.total) });
+        }
       }
     } catch { /* ignore */ }
 
@@ -490,7 +511,7 @@ export default function SimulateurFraisPro() {
     }
 
     return out;
-  }, [result, constants, kmInputs, repasInputs, inputsBureau]);
+  }, [result, constants, kmInputs, repasInputs, inputsBureau, bureauInputs, bureauInvalid]);
 
   return (
     <div className="space-y-6">
@@ -587,6 +608,8 @@ export default function SimulateurFraisPro() {
                                   ? "font-semibold text-foreground"
                                 : line.variant === "negative"
                                   ? "text-muted-foreground"
+                                : line.variant === "muted"
+                                  ? "italic text-muted-foreground"
                                   : "text-foreground/80";
                               return (
                                 <Fragment key={i}>
@@ -1470,6 +1493,7 @@ export default function SimulateurFraisPro() {
                       ) : (
                         <Button
                           onClick={handleNext}
+                          disabled={idx === 2 && bureauInvalid}
                           className="w-full sm:w-auto bg-[#2D1B4E] hover:bg-[#3d2466] text-white"
                         >
                           Suivant
