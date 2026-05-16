@@ -88,6 +88,8 @@ const NumberInput = ({
   max,
   min = 0,
   disabled = false,
+  warnAbove,
+  warningMessage,
 }: {
   id: string;
   label: string;
@@ -98,30 +100,43 @@ const NumberInput = ({
   max?: number;
   min?: number;
   disabled?: boolean;
-}) => (
-  <div className="space-y-1.5">
-    <Label htmlFor={id} className="text-sm">{label}</Label>
-    <Input
-      id={id}
-      type="number"
-      step={integer ? "1" : "0.01"}
-      min={min}
-      max={max}
-      disabled={disabled}
-      inputMode={integer ? "numeric" : "decimal"}
-      value={value || ""}
-      onChange={(e) => {
-        let n = Number(e.target.value) || 0;
-        if (integer) n = Math.floor(n);
-        if (max !== undefined) n = Math.min(n, max);
-        if (n < min) n = min;
-        onChange(n);
-      }}
-      placeholder="0"
-    />
-    {hint ? <p className="text-xs text-muted-foreground">{hint}</p> : null}
-  </div>
-);
+  warnAbove?: number;
+  warningMessage?: string;
+}) => {
+  const showWarning = warnAbove !== undefined && value > warnAbove && !!warningMessage;
+  return (
+    <div className="space-y-1.5">
+      <Label htmlFor={id} className="text-sm">{label}</Label>
+      <Input
+        id={id}
+        type="number"
+        step={integer ? "1" : "0.01"}
+        min={min}
+        max={max}
+        disabled={disabled}
+        inputMode={integer ? "numeric" : "decimal"}
+        value={value || ""}
+        onChange={(e) => {
+          let n = Number(e.target.value) || 0;
+          if (integer) n = Math.floor(n);
+          if (max !== undefined) n = Math.min(n, max);
+          if (n < min) n = min;
+          onChange(n);
+        }}
+        placeholder="0"
+        className={showWarning ? "border-orange-400 focus-visible:ring-orange-300" : undefined}
+      />
+      {showWarning ? (
+        <p className="text-xs text-orange-700 flex items-start gap-1">
+          <AlertTriangle className="h-3.5 w-3.5 mt-0.5 shrink-0" />
+          <span>{warningMessage}</span>
+        </p>
+      ) : hint ? (
+        <p className="text-xs text-muted-foreground">{hint}</p>
+      ) : null}
+    </div>
+  );
+};
 
 const DateInput = ({
   id,
