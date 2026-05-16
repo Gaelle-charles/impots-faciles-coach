@@ -475,18 +475,27 @@ export default function SimulateurFraisPro() {
 
     // --- Bureau ---
     try {
-      const bureau = calculerBureauDomicile(inputsBureau);
-      const { deductionBrute, indemniteSoustraite } = bureau.details;
-      if (indemniteSoustraite > 0 && deductionBrute > 0) {
-        const sub: SubLine[] = [
-          { label: "Quote-part charges + internet", value: Math.round(deductionBrute) },
-          { label: "Sous-total", value: Math.round(deductionBrute), variant: "subtotal" },
-          { label: "Indemnité télétravail employeur", value: -Math.round(indemniteSoustraite), variant: "negative" },
-          { label: "Net bureau", value: Math.round(bureau.total), variant: "final" },
-        ];
-        out.push({ key: "bureau", label: "Bureau à domicile", value: Math.round(bureau.total), sub });
-      } else if (bureau.total > 0) {
-        out.push({ key: "bureau", label: "Bureau à domicile", value: Math.round(bureau.total) });
+      if (bureauInvalid) {
+        out.push({
+          key: "bureau",
+          label: "Bureau à domicile",
+          value: 0,
+          sub: [{ label: "Surface bureau invalide → 0 € déductible", value: 0, variant: "muted" }],
+        });
+      } else {
+        const bureau = calculerBureauDomicile(bureauInputs);
+        const { deductionBrute, indemniteSoustraite } = bureau.details;
+        if (indemniteSoustraite > 0 && deductionBrute > 0) {
+          const sub: SubLine[] = [
+            { label: "Quote-part charges + internet", value: Math.round(deductionBrute) },
+            { label: "Sous-total", value: Math.round(deductionBrute), variant: "subtotal" },
+            { label: "Indemnité télétravail employeur", value: -Math.round(indemniteSoustraite), variant: "negative" },
+            { label: "Net bureau", value: Math.round(bureau.total), variant: "final" },
+          ];
+          out.push({ key: "bureau", label: "Bureau à domicile", value: Math.round(bureau.total), sub });
+        } else if (bureau.total > 0) {
+          out.push({ key: "bureau", label: "Bureau à domicile", value: Math.round(bureau.total) });
+        }
       }
     } catch { /* ignore */ }
 
