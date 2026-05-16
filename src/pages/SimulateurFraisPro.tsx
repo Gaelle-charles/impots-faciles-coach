@@ -387,7 +387,7 @@ export default function SimulateurFraisPro() {
   const kmBreakdown = useMemo(() => {
     if (!constants) return null;
     try {
-      const km = calculerFraisKilometriques(inputsKm, constants);
+      const km = calculerFraisKilometriques(kmInputs, constants);
       const { bareme, peages, parking, remboursements } = km.details;
       const sousTotal = bareme + peages + parking;
       return {
@@ -400,7 +400,7 @@ export default function SimulateurFraisPro() {
     } catch {
       return null;
     }
-  }, [inputsKm, constants]);
+  }, [kmInputs, constants]);
 
   const sections: Section[] = useMemo(() => {
     if (!result || !constants) return [];
