@@ -176,7 +176,7 @@ const Index = () => {
             </p>
             <p className="mt-6 max-w-xl text-lg text-muted-foreground leading-relaxed">
               Une formation en ligne claire et progressive pour vous aider à
-              mieux déclarer de revenus, étape par étape.
+              mieux déclarer vos revenus, étape par étape.
             </p>
             <p className="mt-3 max-w-xl text-sm italic text-muted-foreground/80">
               Plateforme pédagogique destinée aux particuliers, ne se substitue
