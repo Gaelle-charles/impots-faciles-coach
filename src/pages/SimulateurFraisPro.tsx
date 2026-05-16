@@ -396,7 +396,14 @@ export default function SimulateurFraisPro() {
         });
         if (remboursements > 0)
           sub.push({ label: "Indemnités employeur", value: -Math.round(remboursements), variant: "negative" });
-        sub.push({ label: "Net kilométrique", value: Math.round(km.total), variant: "final" });
+        sub.push({
+          label: "Net kilométrique",
+          value: Math.round(km.total),
+          variant: "final",
+          note: km.total === 0 && remboursements >= bareme + peages + parking && remboursements > 0
+            ? "Indemnités supérieures aux frais → rien à déduire (excédent à déclarer en revenus)"
+            : undefined,
+        });
         out.push({ key: "km", label: "Frais kilométriques", value: Math.round(km.total), sub });
       } else if (km.total > 0) {
         out.push({ key: "km", label: "Frais kilométriques", value: Math.round(km.total) });
