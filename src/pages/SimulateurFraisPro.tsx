@@ -560,12 +560,21 @@ export default function SimulateurFraisPro() {
                                   ? "text-muted-foreground"
                                   : "text-foreground/80";
                               return (
-                                <tr key={i} className="bg-[#2D1B4E]/5">
-                                  <td className={`px-3 py-1 pl-5 ${cls}`}>{line.label}</td>
-                                  <td className={`px-3 py-1 text-right tabular-nums ${cls}`}>
-                                    {line.value < 0 ? `– ${Math.abs(line.value)}` : line.value} €
-                                  </td>
-                                </tr>
+                                <Fragment key={i}>
+                                  <tr className="bg-[#2D1B4E]/5">
+                                    <td className={`px-3 py-1 pl-5 ${cls}`}>{line.label}</td>
+                                    <td className={`px-3 py-1 text-right tabular-nums ${cls}`}>
+                                      {line.value < 0 ? `– ${Math.abs(line.value)}` : line.value} €
+                                    </td>
+                                  </tr>
+                                  {line.note && (
+                                    <tr className="bg-[#2D1B4E]/5">
+                                      <td colSpan={2} className="px-3 pb-2 pl-5 text-[11px] italic text-muted-foreground">
+                                        {line.note}
+                                      </td>
+                                    </tr>
+                                  )}
+                                </Fragment>
                               );
                             })}
                           </Fragment>
