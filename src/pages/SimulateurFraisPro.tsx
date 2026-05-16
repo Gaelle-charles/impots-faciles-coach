@@ -201,9 +201,6 @@ const PctSlider = ({
               <span className="block h-3 w-[2px] rounded bg-[#2D1B4E]/70" />
               <span className="block h-3 w-[2px] rounded bg-[#2D1B4E]/70" />
             </span>
-            <span className="pointer-events-none absolute -top-8 left-1/2 -translate-x-1/2 rounded-md bg-[#2D1B4E] px-2 py-0.5 text-[11px] font-semibold text-white shadow-md tabular-nums">
-              {value}%
-            </span>
           </SliderPrimitive.Thumb>
         </SliderPrimitive.Root>
         <div className="relative shrink-0">
