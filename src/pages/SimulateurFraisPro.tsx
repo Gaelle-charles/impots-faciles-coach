@@ -281,8 +281,8 @@ export default function SimulateurFraisPro() {
     try {
       return calculerTotal(
         {
-          km: inputsKm,
-          repas: inputsRepas,
+          km: kmInputs,
+          repas: repasInputs,
           bureau: inputsBureau,
           blanchissage: inputsBlanchissage,
           materiel: articles,
@@ -297,8 +297,8 @@ export default function SimulateurFraisPro() {
     }
   }, [
     constants,
-    inputsKm,
-    inputsRepas,
+    kmInputs,
+    repasInputs,
     inputsBureau,
     inputsBlanchissage,
     articles,
