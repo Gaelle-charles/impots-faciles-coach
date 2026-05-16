@@ -201,7 +201,7 @@ export function TeamSidebar({
 
       {/* Bottom */}
       <div className="border-t border-sidebar-border p-3 space-y-1">
-        <Link to="/">
+        <Link to="/" onClick={onNavigate}>
           <Button
             variant="sidebar-item"
             className="gap-3 px-3 py-2.5 text-sm w-full justify-start opacity-80 hover:opacity-100"
