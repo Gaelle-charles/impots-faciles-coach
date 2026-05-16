@@ -88,6 +88,8 @@ const NumberInput = ({
   max,
   min = 0,
   disabled = false,
+  warnAbove,
+  warningMessage,
 }: {
   id: string;
   label: string;
@@ -98,30 +100,43 @@ const NumberInput = ({
   max?: number;
   min?: number;
   disabled?: boolean;
-}) => (
-  <div className="space-y-1.5">
-    <Label htmlFor={id} className="text-sm">{label}</Label>
-    <Input
-      id={id}
-      type="number"
-      step={integer ? "1" : "0.01"}
-      min={min}
-      max={max}
-      disabled={disabled}
-      inputMode={integer ? "numeric" : "decimal"}
-      value={value || ""}
-      onChange={(e) => {
-        let n = Number(e.target.value) || 0;
-        if (integer) n = Math.floor(n);
-        if (max !== undefined) n = Math.min(n, max);
-        if (n < min) n = min;
-        onChange(n);
-      }}
-      placeholder="0"
-    />
-    {hint ? <p className="text-xs text-muted-foreground">{hint}</p> : null}
-  </div>
-);
+  warnAbove?: number;
+  warningMessage?: string;
+}) => {
+  const showWarning = warnAbove !== undefined && value > warnAbove && !!warningMessage;
+  return (
+    <div className="space-y-1.5">
+      <Label htmlFor={id} className="text-sm">{label}</Label>
+      <Input
+        id={id}
+        type="number"
+        step={integer ? "1" : "0.01"}
+        min={min}
+        max={max}
+        disabled={disabled}
+        inputMode={integer ? "numeric" : "decimal"}
+        value={value || ""}
+        onChange={(e) => {
+          let n = Number(e.target.value) || 0;
+          if (integer) n = Math.floor(n);
+          if (max !== undefined) n = Math.min(n, max);
+          if (n < min) n = min;
+          onChange(n);
+        }}
+        placeholder="0"
+        className={showWarning ? "border-orange-400 focus-visible:ring-orange-300" : undefined}
+      />
+      {showWarning ? (
+        <p className="text-xs text-orange-700 flex items-start gap-1">
+          <AlertTriangle className="h-3.5 w-3.5 mt-0.5 shrink-0" />
+          <span>{warningMessage}</span>
+        </p>
+      ) : hint ? (
+        <p className="text-xs text-muted-foreground">{hint}</p>
+      ) : null}
+    </div>
+  );
+};
 
 const DateInput = ({
   id,
@@ -758,7 +773,8 @@ export default function SimulateurFraisPro() {
                           label="Distance domicile-travail aller simple (km)"
                           value={inputsKm.distanceAllerSimple}
                           onChange={(v) => setKm("distanceAllerSimple", v)}
-                          max={200}
+                          warnAbove={200}
+                          warningMessage="Distance inhabituellement élevée, vérifiez la valeur."
                         />
                         {inputsKm.distanceAllerSimple > 40 && (
                           <div className="space-y-2">
@@ -797,6 +813,8 @@ export default function SimulateurFraisPro() {
                           value={inputsKm.nbJoursTravailles}
                           onChange={(v) => setKm("nbJoursTravailles", v)}
                           integer
+                          warnAbove={250}
+                          warningMessage="Maximum 250 jours travaillés en moyenne par an, vérifiez."
                         />
                         <NumberInput
                           id="kmMission"
@@ -812,12 +830,16 @@ export default function SimulateurFraisPro() {
                             label="Péages annuels (€)"
                             value={inputsKm.peagesAnnuel}
                             onChange={(v) => setKm("peagesAnnuel", v)}
+                            warnAbove={5000}
+                            warningMessage="Montant élevé, vérifiez."
                           />
                           <NumberInput
                             id="parking"
                             label="Parking annuel (€)"
                             value={inputsKm.parkingAnnuel}
                             onChange={(v) => setKm("parkingAnnuel", v)}
+                            warnAbove={3000}
+                            warningMessage="Montant élevé, vérifiez."
                           />
                         </div>
                         <NumberInput
@@ -826,6 +848,8 @@ export default function SimulateurFraisPro() {
                           hint="Sera soustrait du total pour éviter une double déduction."
                           value={inputsKm.indemnitesKmEmployeur}
                           onChange={(v) => setKm("indemnitesKmEmployeur", v)}
+                          warnAbove={10000}
+                          warningMessage="Montant élevé, vérifiez."
                         />
                         {kmBreakdown?.depasse && (
                           <Alert className="bg-orange-50 border-orange-300 text-orange-900">
