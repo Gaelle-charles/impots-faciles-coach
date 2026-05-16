@@ -356,6 +356,24 @@ export default function SimulateurFraisPro() {
   type SubLine = { label: string; value: number; variant?: "muted" | "subtotal" | "final" | "negative" };
   type Section = { key: string; label: string; value: number; sub?: SubLine[] };
 
+  const kmBreakdown = useMemo(() => {
+    if (!constants) return null;
+    try {
+      const km = calculerFraisKilometriques(inputsKm, constants);
+      const { bareme, peages, parking, remboursements } = km.details;
+      const sousTotal = bareme + peages + parking;
+      return {
+        sousTotal,
+        indemnites: remboursements,
+        excedent: Math.max(0, remboursements - sousTotal),
+        depasse: remboursements > sousTotal && sousTotal > 0,
+        netZeroParDepassement: km.total === 0 && remboursements > 0 && remboursements >= sousTotal,
+      };
+    } catch {
+      return null;
+    }
+  }, [inputsKm, constants]);
+
   const sections: Section[] = useMemo(() => {
     if (!result || !constants) return [];
     const out: Section[] = [];
