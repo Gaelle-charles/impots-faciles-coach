@@ -63,6 +63,7 @@ export default function ImpotsTeamDashboard() {
     params.get('tab') === 'membres' ? 'membres'
     : params.get('tab') === 'branding' ? 'branding' : 'abonnement';
   const [activeTab, setActiveTab] = useState<'abonnement' | 'membres' | 'branding'>(initialTab);
+  const [mobileNavOpen, setMobileNavOpen] = useState(false);
 
   const [loading, setLoading] = useState(true);
   const [org, setOrg] = useState<Org | null>(null);
