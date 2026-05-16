@@ -408,7 +408,7 @@ export default function SimulateurFraisPro() {
 
     // --- KM ---
     try {
-      const km = calculerFraisKilometriques(inputsKm, constants);
+      const km = calculerFraisKilometriques(kmInputs, constants);
       const { bareme, peages, parking, remboursements } = km.details;
       const hasExtras = peages > 0 || parking > 0 || remboursements > 0;
       if (hasExtras) {
