@@ -269,6 +269,18 @@ export default function SimulateurFraisPro() {
   // Internet déjà saisi à l'étape Bureau ?
   const internetDejaBureau = inputsBureau.internetAnnuel > 0 && inputsBureau.internetUsageProPct > 0;
 
+  // Surface bureau invalide (> surface logement) : on force la déduction bureau à 0
+  const bureauInvalid =
+    inputsBureau.surfaceLogementM2 > 0 &&
+    inputsBureau.surfaceBureauM2 > inputsBureau.surfaceLogementM2;
+  const bureauInputs = useMemo<InputsBureau>(
+    () =>
+      bureauInvalid
+        ? { ...inputsBureau, surfaceBureauM2: 0, surfaceLogementM2: 0, internetAnnuel: 0, indemniteTeletravailEmployeur: 0 }
+        : inputsBureau,
+    [inputsBureau, bureauInvalid],
+  );
+
   // ----- calculation -----
   const inputsBlanchissage: InputsBlanchissage = {
     modeCalcul: modeBlanchissage,
