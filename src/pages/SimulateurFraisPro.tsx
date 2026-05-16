@@ -352,6 +352,7 @@ export default function SimulateurFraisPro() {
     });
     setInputsOutreMer({ fraisInterIles: 0, fraisVoyagesDromMetropolePro: 0 });
     setSalaireNetImposable(0);
+    setJoursTravaillesAnnee(218);
   };
 
   const handleNext = () => {
