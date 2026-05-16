@@ -1491,6 +1491,7 @@ export default function SimulateurFraisPro() {
                       ) : (
                         <Button
                           onClick={handleNext}
+                          disabled={idx === 2 && bureauInvalid}
                           className="w-full sm:w-auto bg-[#2D1B4E] hover:bg-[#3d2466] text-white"
                         >
                           Suivant
