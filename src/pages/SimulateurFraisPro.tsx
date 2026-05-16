@@ -943,13 +943,18 @@ export default function SimulateurFraisPro() {
                             value={inputsRepas.valeurFacialeTicket}
                             onChange={(v) => setRepas("valeurFacialeTicket", v)}
                           />
-                          <PctSlider
-                            label="Part employeur"
-                            value={inputsRepas.partEmployeurPct}
-                            onChange={(v) => setRepas("partEmployeurPct", v)}
-                            min={50}
-                            max={60}
-                          />
+                          <div className="space-y-1">
+                            <PctSlider
+                              label="Part employeur"
+                              value={inputsRepas.partEmployeurPct}
+                              onChange={(v) => setRepas("partEmployeurPct", v)}
+                              min={50}
+                              max={60}
+                            />
+                            <p className="text-xs text-muted-foreground">
+                              Légalement entre 50 % et 60 %. Voir la mention sur votre bulletin de paie ou le règlement intérieur.
+                            </p>
+                          </div>
                           <NumberInput
                             id="indRepas"
                             label="Indemnités repas hors tickets (€)"
