@@ -440,7 +440,7 @@ export default function SimulateurFraisPro() {
 
     // --- Repas ---
     try {
-      const repas = calculerFraisRepas(inputsRepas, constants);
+      const repas = calculerFraisRepas(repasInputs, constants);
       const { deductionSansJustif, deductionAvecJustif, partEmployeurTR, indemnitesRepas } = repas.details;
       const brut = deductionSansJustif + deductionAvecJustif;
       const hasDetails = partEmployeurTR > 0 || indemnitesRepas > 0;
