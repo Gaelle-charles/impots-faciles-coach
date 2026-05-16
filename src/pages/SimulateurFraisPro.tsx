@@ -905,14 +905,28 @@ export default function SimulateurFraisPro() {
                           value={inputsRepas.coutMoyenRepasJustifie}
                           onChange={(v) => setRepas("coutMoyenRepasJustifie", v)}
                         />
-                        <NumberInput
-                          id="nbJoursRepas"
-                          label="Nombre de jours travaillés dans l'année"
-                          hint="En général entre 210 et 230 jours."
-                          value={inputsRepas.nbJoursRepas}
-                          onChange={(v) => setRepas("nbJoursRepas", v)}
-                          integer
-                        />
+                        <div className="rounded-md border border-dashed border-border bg-muted/30 px-3 py-2.5 space-y-1">
+                          <div className="flex items-center justify-between gap-2">
+                            <div>
+                              <p className="text-sm font-medium">
+                                Jours travaillés dans l'année :{" "}
+                                <span className="tabular-nums">{joursTravaillesAnnee}</span>
+                              </p>
+                              <p className="text-xs text-muted-foreground italic">
+                                Modifiable à l'étape Kilométrage
+                              </p>
+                            </div>
+                            <Button
+                              type="button"
+                              variant="ghost"
+                              size="sm"
+                              className="shrink-0"
+                              onClick={() => setActiveStep(0)}
+                            >
+                              Modifier
+                            </Button>
+                          </div>
+                        </div>
 
                         <div className="rounded-lg border border-border p-4 space-y-4 bg-muted/20">
                           <p className="font-medium text-sm">Indemnisation employeur</p>
