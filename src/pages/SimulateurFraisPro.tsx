@@ -489,7 +489,7 @@ export default function SimulateurFraisPro() {
     }
 
     return out;
-  }, [result, constants, inputsKm, inputsRepas, inputsBureau]);
+  }, [result, constants, kmInputs, repasInputs, inputsBureau]);
 
   return (
     <div className="space-y-6">
