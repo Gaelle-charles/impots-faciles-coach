@@ -253,6 +253,19 @@ export default function SimulateurFraisPro() {
 
   const [salaireNetImposable, setSalaireNetImposable] = useState(0);
 
+  // Nombre de jours travaillés dans l'année (centralisé, utilisé par km + repas)
+  const [joursTravaillesAnnee, setJoursTravaillesAnnee] = useState(218);
+
+  // Inputs effectifs (avec la valeur centralisée de jours travaillés)
+  const kmInputs = useMemo<InputsKm>(
+    () => ({ ...inputsKm, nbJoursTravailles: joursTravaillesAnnee }),
+    [inputsKm, joursTravaillesAnnee],
+  );
+  const repasInputs = useMemo<InputsRepas>(
+    () => ({ ...inputsRepas, nbJoursRepas: joursTravaillesAnnee }),
+    [inputsRepas, joursTravaillesAnnee],
+  );
+
   // Internet déjà saisi à l'étape Bureau ?
   const internetDejaBureau = inputsBureau.internetAnnuel > 0 && inputsBureau.internetUsageProPct > 0;
 
@@ -268,8 +281,8 @@ export default function SimulateurFraisPro() {
     try {
       return calculerTotal(
         {
-          km: inputsKm,
-          repas: inputsRepas,
+          km: kmInputs,
+          repas: repasInputs,
           bureau: inputsBureau,
           blanchissage: inputsBlanchissage,
           materiel: articles,
@@ -284,8 +297,8 @@ export default function SimulateurFraisPro() {
     }
   }, [
     constants,
-    inputsKm,
-    inputsRepas,
+    kmInputs,
+    repasInputs,
     inputsBureau,
     inputsBlanchissage,
     articles,
@@ -339,6 +352,7 @@ export default function SimulateurFraisPro() {
     });
     setInputsOutreMer({ fraisInterIles: 0, fraisVoyagesDromMetropolePro: 0 });
     setSalaireNetImposable(0);
+    setJoursTravaillesAnnee(218);
   };
 
   const handleNext = () => {
@@ -374,7 +388,7 @@ export default function SimulateurFraisPro() {
   const kmBreakdown = useMemo(() => {
     if (!constants) return null;
     try {
-      const km = calculerFraisKilometriques(inputsKm, constants);
+      const km = calculerFraisKilometriques(kmInputs, constants);
       const { bareme, peages, parking, remboursements } = km.details;
       const sousTotal = bareme + peages + parking;
       return {
@@ -387,7 +401,7 @@ export default function SimulateurFraisPro() {
     } catch {
       return null;
     }
-  }, [inputsKm, constants]);
+  }, [kmInputs, constants]);
 
   const sections: Section[] = useMemo(() => {
     if (!result || !constants) return [];
@@ -395,7 +409,7 @@ export default function SimulateurFraisPro() {
 
     // --- KM ---
     try {
-      const km = calculerFraisKilometriques(inputsKm, constants);
+      const km = calculerFraisKilometriques(kmInputs, constants);
       const { bareme, peages, parking, remboursements } = km.details;
       const hasExtras = peages > 0 || parking > 0 || remboursements > 0;
       if (hasExtras) {
@@ -427,7 +441,7 @@ export default function SimulateurFraisPro() {
 
     // --- Repas ---
     try {
-      const repas = calculerFraisRepas(inputsRepas, constants);
+      const repas = calculerFraisRepas(repasInputs, constants);
       const { deductionSansJustif, deductionAvecJustif, partEmployeurTR, indemnitesRepas } = repas.details;
       const brut = deductionSansJustif + deductionAvecJustif;
       const hasDetails = partEmployeurTR > 0 || indemnitesRepas > 0;
@@ -476,7 +490,7 @@ export default function SimulateurFraisPro() {
     }
 
     return out;
-  }, [result, constants, inputsKm, inputsRepas, inputsBureau]);
+  }, [result, constants, kmInputs, repasInputs, inputsBureau]);
 
   return (
     <div className="space-y-6">
@@ -810,9 +824,12 @@ export default function SimulateurFraisPro() {
                         <NumberInput
                           id="nbJoursTrav"
                           label="Nombre de jours travaillés dans l'année"
-                          value={inputsKm.nbJoursTravailles}
-                          onChange={(v) => setKm("nbJoursTravailles", v)}
+                          hint="Valeur partagée avec l'étape Repas. En général entre 210 et 230 jours."
+                          value={joursTravaillesAnnee}
+                          onChange={(v) => setJoursTravaillesAnnee(Math.max(1, Math.min(260, v)))}
                           integer
+                          min={1}
+                          max={260}
                           warnAbove={250}
                           warningMessage="Maximum 250 jours travaillés en moyenne par an, vérifiez."
                         />
@@ -889,14 +906,28 @@ export default function SimulateurFraisPro() {
                           value={inputsRepas.coutMoyenRepasJustifie}
                           onChange={(v) => setRepas("coutMoyenRepasJustifie", v)}
                         />
-                        <NumberInput
-                          id="nbJoursRepas"
-                          label="Nombre de jours travaillés dans l'année"
-                          hint="En général entre 210 et 230 jours."
-                          value={inputsRepas.nbJoursRepas}
-                          onChange={(v) => setRepas("nbJoursRepas", v)}
-                          integer
-                        />
+                        <div className="rounded-md border border-dashed border-border bg-muted/30 px-3 py-2.5 space-y-1">
+                          <div className="flex items-center justify-between gap-2">
+                            <div>
+                              <p className="text-sm font-medium">
+                                Jours travaillés dans l'année :{" "}
+                                <span className="tabular-nums">{joursTravaillesAnnee}</span>
+                              </p>
+                              <p className="text-xs text-muted-foreground italic">
+                                Modifiable à l'étape Kilométrage
+                              </p>
+                            </div>
+                            <Button
+                              type="button"
+                              variant="ghost"
+                              size="sm"
+                              className="shrink-0"
+                              onClick={() => setActiveStep(0)}
+                            >
+                              Modifier
+                            </Button>
+                          </div>
+                        </div>
 
                         <div className="rounded-lg border border-border p-4 space-y-4 bg-muted/20">
                           <p className="font-medium text-sm">Indemnisation employeur</p>
@@ -913,13 +944,18 @@ export default function SimulateurFraisPro() {
                             value={inputsRepas.valeurFacialeTicket}
                             onChange={(v) => setRepas("valeurFacialeTicket", v)}
                           />
-                          <PctSlider
-                            label="Part employeur"
-                            value={inputsRepas.partEmployeurPct}
-                            onChange={(v) => setRepas("partEmployeurPct", v)}
-                            min={50}
-                            max={60}
-                          />
+                          <div className="space-y-1">
+                            <PctSlider
+                              label="Part employeur"
+                              value={inputsRepas.partEmployeurPct}
+                              onChange={(v) => setRepas("partEmployeurPct", v)}
+                              min={50}
+                              max={60}
+                            />
+                            <p className="text-xs text-muted-foreground">
+                              Légalement entre 50 % et 60 %. Voir la mention sur votre bulletin de paie ou le règlement intérieur.
+                            </p>
+                          </div>
                           <NumberInput
                             id="indRepas"
                             label="Indemnités repas hors tickets (€)"
