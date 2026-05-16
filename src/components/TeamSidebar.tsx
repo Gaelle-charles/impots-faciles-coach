@@ -81,7 +81,7 @@ export function TeamSidebar({
   ];
 
   const asideClass = embedded
-    ? 'flex h-full w-full flex-col bg-primear text-primary-foreground'.replace('primear', 'primary')
+    ? 'flex h-full w-full flex-col bg-primary text-primary-foreground'
     : 'fixed left-0 top-0 z-40 flex h-screen w-sidebar flex-col bg-primary text-primary-foreground';
 
   return (
