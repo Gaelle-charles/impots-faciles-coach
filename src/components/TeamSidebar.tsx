@@ -157,14 +157,14 @@ export function TeamSidebar({
             // Si on est déjà sur le dashboard → simple changement de tab interne
             if (isOnDashboard && onTeamTabChange) {
               return (
-                <button key={t.key} type="button" onClick={() => onTeamTabChange(t.key)} className="block w-full text-left">
+                <button key={t.key} type="button" onClick={() => { onTeamTabChange(t.key); onNavigate?.(); }} className="block w-full text-left">
                   {content}
                 </button>
               );
             }
             // Sinon (sur /dashboard, /simulateur etc) → on revient au dashboard sur le bon tab
             return (
-              <Link key={t.key} to={`/impots-team/dashboard?tab=${t.key}`}>
+              <Link key={t.key} to={`/impots-team/dashboard?tab=${t.key}`} onClick={onNavigate}>
                 {content}
               </Link>
             );
