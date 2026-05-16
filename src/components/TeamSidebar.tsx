@@ -33,6 +33,10 @@ interface TeamSidebarProps {
   /** Active tab du dashboard de gestion (abonnement / membres / branding). */
   activeTeamTab?: 'abonnement' | 'membres' | 'branding';
   onTeamTabChange?: (tab: 'abonnement' | 'membres' | 'branding') => void;
+  /** Rendu dans un drawer (Sheet) plutôt qu'en sidebar fixe. */
+  embedded?: boolean;
+  /** Callback appelé quand l'utilisateur clique un lien (utile pour fermer le drawer). */
+  onNavigate?: () => void;
 }
 
 export function TeamSidebar({
@@ -43,6 +47,8 @@ export function TeamSidebar({
   hasB2CPlan = false,
   activeTeamTab,
   onTeamTabChange,
+  embedded = false,
+  onNavigate,
 }: TeamSidebarProps) {
   const { user, signOut } = useAuth();
   const location = useLocation();
