@@ -813,6 +813,8 @@ export default function SimulateurFraisPro() {
                           value={inputsKm.nbJoursTravailles}
                           onChange={(v) => setKm("nbJoursTravailles", v)}
                           integer
+                          warnAbove={250}
+                          warningMessage="Maximum 250 jours travaillés en moyenne par an, vérifiez."
                         />
                         <NumberInput
                           id="kmMission"
