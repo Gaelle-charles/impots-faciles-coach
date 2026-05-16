@@ -123,7 +123,7 @@ export function TeamSidebar({
       <nav className="flex-1 space-y-5 px-3 overflow-y-auto pb-4">
         {/* Accueil */}
         <div>
-          <NavLink to="/">
+          <NavLink to="/" onClick={onNavigate}>
             <Button
               variant="sidebar-item"
               className="gap-3 px-3 py-2.5 text-sm w-full justify-start opacity-80 hover:opacity-100"
