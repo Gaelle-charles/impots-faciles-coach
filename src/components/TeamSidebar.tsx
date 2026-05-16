@@ -80,8 +80,12 @@ export function TeamSidebar({
     { to: '/recommandations', label: 'Recommandations', icon: Heart },
   ];
 
+  const asideClass = embedded
+    ? 'flex h-full w-full flex-col bg-primear text-primary-foreground'.replace('primear', 'primary')
+    : 'fixed left-0 top-0 z-40 flex h-screen w-sidebar flex-col bg-primary text-primary-foreground';
+
   return (
-    <aside className="fixed left-0 top-0 z-40 flex h-screen w-sidebar flex-col bg-primary text-primary-foreground">
+    <aside className={asideClass}>
       {/* Logo + nom orga */}
       <Link
         to="/"
