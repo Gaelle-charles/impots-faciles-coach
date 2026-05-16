@@ -253,6 +253,19 @@ export default function SimulateurFraisPro() {
 
   const [salaireNetImposable, setSalaireNetImposable] = useState(0);
 
+  // Nombre de jours travaillés dans l'année (centralisé, utilisé par km + repas)
+  const [joursTravaillesAnnee, setJoursTravaillesAnnee] = useState(218);
+
+  // Inputs effectifs (avec la valeur centralisée de jours travaillés)
+  const kmInputs = useMemo<InputsKm>(
+    () => ({ ...inputsKm, nbJoursTravailles: joursTravaillesAnnee }),
+    [inputsKm, joursTravaillesAnnee],
+  );
+  const repasInputs = useMemo<InputsRepas>(
+    () => ({ ...inputsRepas, nbJoursRepas: joursTravaillesAnnee }),
+    [inputsRepas, joursTravaillesAnnee],
+  );
+
   // Internet déjà saisi à l'étape Bureau ?
   const internetDejaBureau = inputsBureau.internetAnnuel > 0 && inputsBureau.internetUsageProPct > 0;
 
