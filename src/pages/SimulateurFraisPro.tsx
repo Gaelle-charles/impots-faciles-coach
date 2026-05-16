@@ -169,15 +169,43 @@ const PctSlider = ({
   min?: number;
   max?: number;
   step?: number;
-}) => (
-  <div className="space-y-1.5">
-    <div className="flex items-center justify-between">
-      <Label className="text-sm">{label}</Label>
-      <span className="text-sm font-medium tabular-nums">{value}%</span>
+}) => {
+  const clamp = (n: number) => Math.min(max, Math.max(min, n));
+  return (
+    <div className="space-y-1.5">
+      <div className="flex items-center justify-between">
+        <Label className="text-sm">{label}</Label>
+      </div>
+      <div className="flex items-center gap-3">
+        <Slider
+          value={[value]}
+          min={min}
+          max={max}
+          step={step}
+          onValueChange={(v) => onChange(clamp(v[0]))}
+          className="flex-1 [&_[role=slider]]:h-6 [&_[role=slider]]:w-6 [&_[role=slider]]:border-2 [&_[role=slider]]:border-[#2D1B4E] [&_[role=slider]]:bg-white [&_[role=slider]]:shadow-md [&_[role=slider]]:transition-transform hover:[&_[role=slider]]:scale-110"
+        />
+        <div className="relative shrink-0">
+          <input
+            type="number"
+            inputMode="numeric"
+            min={min}
+            max={max}
+            step={step}
+            value={value}
+            onChange={(e) => {
+              const n = Number(e.target.value);
+              if (Number.isFinite(n)) onChange(clamp(n));
+            }}
+            className="h-9 w-20 rounded-md border border-input bg-background pl-2 pr-6 text-right text-sm tabular-nums focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+          />
+          <span className="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 text-xs text-muted-foreground">%</span>
+        </div>
+      </div>
+      <p className="text-[11px] italic text-muted-foreground">Faites glisser ou saisissez une valeur</p>
     </div>
-    <Slider value={[value]} min={min} max={max} step={step} onValueChange={(v) => onChange(v[0])} />
-  </div>
-);
+  );
+};
 
 // ---------- main component ----------
 export default function SimulateurFraisPro() {
