@@ -353,7 +353,7 @@ export default function SimulateurFraisPro() {
   // ----- aside breakdown -----
   const totalArrondi = result ? Math.round(result.totalFraisReels) : 0;
 
-  type SubLine = { label: string; value: number; variant?: "muted" | "subtotal" | "final" | "negative" };
+  type SubLine = { label: string; value: number; variant?: "muted" | "subtotal" | "final" | "negative"; note?: string };
   type Section = { key: string; label: string; value: number; sub?: SubLine[] };
 
   const kmBreakdown = useMemo(() => {
