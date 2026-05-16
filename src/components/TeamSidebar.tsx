@@ -33,6 +33,10 @@ interface TeamSidebarProps {
   /** Active tab du dashboard de gestion (abonnement / membres / branding). */
   activeTeamTab?: 'abonnement' | 'membres' | 'branding';
   onTeamTabChange?: (tab: 'abonnement' | 'membres' | 'branding') => void;
+  /** Rendu dans un drawer (Sheet) plutôt qu'en sidebar fixe. */
+  embedded?: boolean;
+  /** Callback appelé quand l'utilisateur clique un lien (utile pour fermer le drawer). */
+  onNavigate?: () => void;
 }
 
 export function TeamSidebar({
@@ -43,6 +47,8 @@ export function TeamSidebar({
   hasB2CPlan = false,
   activeTeamTab,
   onTeamTabChange,
+  embedded = false,
+  onNavigate,
 }: TeamSidebarProps) {
   const { user, signOut } = useAuth();
   const location = useLocation();
@@ -74,11 +80,16 @@ export function TeamSidebar({
     { to: '/recommandations', label: 'Recommandations', icon: Heart },
   ];
 
+  const asideClass = embedded
+    ? 'flex h-full w-full flex-col bg-primary text-primary-foreground'
+    : 'fixed left-0 top-0 z-40 flex h-screen w-sidebar flex-col bg-primary text-primary-foreground';
+
   return (
-    <aside className="fixed left-0 top-0 z-40 flex h-screen w-sidebar flex-col bg-primary text-primary-foreground">
+    <aside className={asideClass}>
       {/* Logo + nom orga */}
       <Link
         to="/"
+        onClick={onNavigate}
         className="flex items-center gap-2 px-6 pt-5 pb-3 cursor-pointer transition-opacity hover:opacity-80"
         aria-label="Retour à l'accueil"
       >
@@ -112,7 +123,7 @@ export function TeamSidebar({
       <nav className="flex-1 space-y-5 px-3 overflow-y-auto pb-4">
         {/* Accueil */}
         <div>
-          <NavLink to="/">
+          <NavLink to="/" onClick={onNavigate}>
             <Button
               variant="sidebar-item"
               className="gap-3 px-3 py-2.5 text-sm w-full justify-start opacity-80 hover:opacity-100"
@@ -146,14 +157,14 @@ export function TeamSidebar({
             // Si on est déjà sur le dashboard → simple changement de tab interne
             if (isOnDashboard && onTeamTabChange) {
               return (
-                <button key={t.key} type="button" onClick={() => onTeamTabChange(t.key)} className="block w-full text-left">
+                <button key={t.key} type="button" onClick={() => { onTeamTabChange(t.key); onNavigate?.(); }} className="block w-full text-left">
                   {content}
                 </button>
               );
             }
             // Sinon (sur /dashboard, /simulateur etc) → on revient au dashboard sur le bon tab
             return (
-              <Link key={t.key} to={`/impots-team/dashboard?tab=${t.key}`}>
+              <Link key={t.key} to={`/impots-team/dashboard?tab=${t.key}`} onClick={onNavigate}>
                 {content}
               </Link>
             );
@@ -170,7 +181,7 @@ export function TeamSidebar({
               const Icon = item.icon;
               const active = location.pathname === item.to;
               return (
-                <NavLink key={item.to} to={item.to}>
+                <NavLink key={item.to} to={item.to} onClick={onNavigate}>
                   <Button
                     variant="sidebar-item"
                     className={`gap-3 px-3 py-2.5 text-sm w-full justify-start ${
@@ -190,7 +201,7 @@ export function TeamSidebar({
 
       {/* Bottom */}
       <div className="border-t border-sidebar-border p-3 space-y-1">
-        <Link to="/">
+        <Link to="/" onClick={onNavigate}>
           <Button
             variant="sidebar-item"
             className="gap-3 px-3 py-2.5 text-sm w-full justify-start opacity-80 hover:opacity-100"
