@@ -811,6 +811,14 @@ export default function SimulateurFraisPro() {
                           value={inputsKm.indemnitesKmEmployeur}
                           onChange={(v) => setKm("indemnitesKmEmployeur", v)}
                         />
+                        {kmBreakdown?.depasse && (
+                          <Alert className="bg-orange-50 border-orange-300 text-orange-900">
+                            <AlertTriangle className="h-4 w-4" />
+                            <AlertDescription className="text-xs">
+                              ⚠️ Le montant d'indemnités saisi ({Math.round(kmBreakdown.indemnites).toLocaleString("fr-FR")} €) dépasse vos frais kilométriques calculés ({Math.round(kmBreakdown.sousTotal).toLocaleString("fr-FR")} €). Vérifiez le montant : si votre employeur vous a versé plus que le barème, l'excédent ({Math.round(kmBreakdown.excedent).toLocaleString("fr-FR")} €) doit être déclaré en revenus imposables dans la case 1AJ.
+                            </AlertDescription>
+                          </Alert>
+                        )}
                       </div>
                     )}
 
