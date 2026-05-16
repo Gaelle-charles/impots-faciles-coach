@@ -171,20 +171,41 @@ const PctSlider = ({
   step?: number;
 }) => {
   const clamp = (n: number) => Math.min(max, Math.max(min, n));
+  const pct = ((value - min) / (max - min)) * 100;
   return (
-    <div className="space-y-1.5">
+    <div className="space-y-2">
       <div className="flex items-center justify-between">
         <Label className="text-sm">{label}</Label>
+        <span className="text-xs text-muted-foreground">
+          {min}–{max}
+        </span>
       </div>
       <div className="flex items-center gap-3">
-        <Slider
+        <SliderPrimitive.Root
           value={[value]}
           min={min}
           max={max}
           step={step}
           onValueChange={(v) => onChange(clamp(v[0]))}
-          className="flex-1 [&_[role=slider]]:h-6 [&_[role=slider]]:w-6 [&_[role=slider]]:border-2 [&_[role=slider]]:border-[#2D1B4E] [&_[role=slider]]:bg-white [&_[role=slider]]:shadow-md [&_[role=slider]]:transition-transform hover:[&_[role=slider]]:scale-110"
-        />
+          className="relative flex flex-1 touch-none select-none items-center h-10 cursor-pointer"
+        >
+          <SliderPrimitive.Track className="relative h-3 w-full grow overflow-hidden rounded-full bg-muted border border-border">
+            <SliderPrimitive.Range className="absolute h-full bg-gradient-to-r from-[#2D1B4E] to-[#5B3A9E]" />
+          </SliderPrimitive.Track>
+          <SliderPrimitive.Thumb
+            aria-label={label}
+            className="group relative flex h-7 w-12 items-center justify-center rounded-full border-2 border-[#2D1B4E] bg-white shadow-lg ring-offset-background transition-transform hover:scale-105 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2D1B4E] focus-visible:ring-offset-2 cursor-grab active:cursor-grabbing"
+          >
+            <span className="flex gap-[3px]">
+              <span className="block h-3 w-[2px] rounded bg-[#2D1B4E]/70" />
+              <span className="block h-3 w-[2px] rounded bg-[#2D1B4E]/70" />
+              <span className="block h-3 w-[2px] rounded bg-[#2D1B4E]/70" />
+            </span>
+            <span className="pointer-events-none absolute -top-8 left-1/2 -translate-x-1/2 rounded-md bg-[#2D1B4E] px-2 py-0.5 text-[11px] font-semibold text-white shadow-md tabular-nums">
+              {value}%
+            </span>
+          </SliderPrimitive.Thumb>
+        </SliderPrimitive.Root>
         <div className="relative shrink-0">
           <input
             type="number"
@@ -197,12 +218,14 @@ const PctSlider = ({
               const n = Number(e.target.value);
               if (Number.isFinite(n)) onChange(clamp(n));
             }}
-            className="h-9 w-20 rounded-md border border-input bg-background pl-2 pr-6 text-right text-sm tabular-nums focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            className="h-9 w-20 rounded-md border-2 border-[#2D1B4E]/30 bg-background pl-2 pr-6 text-right text-sm font-semibold tabular-nums focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2D1B4E]"
           />
           <span className="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 text-xs text-muted-foreground">%</span>
         </div>
       </div>
-      <p className="text-[11px] italic text-muted-foreground">Faites glisser ou saisissez une valeur</p>
+      <p className="text-[11px] italic text-muted-foreground flex items-center gap-1">
+        <span aria-hidden>↔</span> Faites glisser la poignée ou saisissez une valeur ({pct.toFixed(0)}% de la plage)
+      </p>
     </div>
   );
 };
