@@ -830,12 +830,16 @@ export default function SimulateurFraisPro() {
                             label="Péages annuels (€)"
                             value={inputsKm.peagesAnnuel}
                             onChange={(v) => setKm("peagesAnnuel", v)}
+                            warnAbove={5000}
+                            warningMessage="Montant élevé, vérifiez."
                           />
                           <NumberInput
                             id="parking"
                             label="Parking annuel (€)"
                             value={inputsKm.parkingAnnuel}
                             onChange={(v) => setKm("parkingAnnuel", v)}
+                            warnAbove={3000}
+                            warningMessage="Montant élevé, vérifiez."
                           />
                         </div>
                         <NumberInput
@@ -844,6 +848,8 @@ export default function SimulateurFraisPro() {
                           hint="Sera soustrait du total pour éviter une double déduction."
                           value={inputsKm.indemnitesKmEmployeur}
                           onChange={(v) => setKm("indemnitesKmEmployeur", v)}
+                          warnAbove={10000}
+                          warningMessage="Montant élevé, vérifiez."
                         />
                         {kmBreakdown?.depasse && (
                           <Alert className="bg-orange-50 border-orange-300 text-orange-900">
