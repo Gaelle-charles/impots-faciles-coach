@@ -381,33 +381,7 @@ export default function ImpotsTeamDashboard() {
           onTeamTabChange={setActiveTab}
         />
       )}
-      {isMobile && (
-        <header className="sticky top-0 z-40 flex h-14 items-center gap-3 border-b bg-primary px-4 text-primary-foreground">
-          <Sheet open={mobileNavOpen} onOpenChange={setMobileNavOpen}>
-            <SheetTrigger asChild>
-              <Button variant="ghost" size="icon" className="text-primary-foreground hover:bg-sidebar-muted hover:text-primary-foreground" aria-label="Ouvrir le menu">
-                <Menu className="h-5 w-5" />
-              </Button>
-            </SheetTrigger>
-            <SheetContent side="left" className="w-[280px] border-0 bg-primary p-0 text-primary-foreground">
-              <TeamSidebar
-                orgName={org.raison_sociale}
-                orgLogoUrl={org.logo_url}
-                adminInitials={adminInitials}
-                hasLicense={adminHasLicense}
-                activeTeamTab={activeTab}
-                onTeamTabChange={setActiveTab}
-                embedded
-                onNavigate={() => setMobileNavOpen(false)}
-              />
-            </SheetContent>
-          </Sheet>
-          <div className="min-w-0 flex-1">
-            <p className="text-[10px] uppercase tracking-wide opacity-60">Impôts Team</p>
-            <p className="truncate font-heading text-sm font-bold">{org.raison_sociale}</p>
-          </div>
-        </header>
-      )}
+      {isMobile && <Header />}
       <main className={`min-h-screen ${isMobile ? '' : 'ml-sidebar'}`}>
         <div className={`mx-auto w-full max-w-4xl py-10 ${isMobile ? 'px-4 pb-24' : 'px-6 lg:px-8'}`}>
           <div className="mb-6 flex items-center justify-between gap-4">
