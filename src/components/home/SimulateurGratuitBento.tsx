@@ -344,7 +344,7 @@ export function SimulateurGratuitBento() {
                   </Button>
                 </Link>
                 <p className="mt-2 text-center text-xs text-primary-foreground/60">
-                  À partir de 49 €/an. Annulation à tout moment.
+                  À partir de 49 €/an.
                 </p>
               </div>
             </div>
