@@ -33,6 +33,7 @@ export function CalEmbed({ calLink, prefillEmail, prefillName }: CalEmbedProps) 
     <div className="w-full overflow-hidden rounded-2xl border border-border bg-card">
       <Cal
         calLink={calLink}
+        calOrigin="https://cal.eu"
         style={{ width: '100%', height: '700px', overflow: 'scroll' }}
         config={config}
       />
