@@ -47,7 +47,7 @@ export default function MesRendezVous() {
 
   return (
     <div className="mx-auto max-w-3xl px-4 py-8 md:px-8 md:py-12">
-      <Seo title="Mes rendez-vous d'accompagnement" description="Vos rendez-vous d'accompagnement fiscal pédagogique." />
+      <Seo title="Mes rendez-vous d'accompagnement" description="Vos rendez-vous d'accompagnement fiscal pédagogique." path="/mes-rendez-vous" noindex />
       <h1 className="mb-8 font-display text-3xl md:text-4xl">Mes rendez-vous</h1>
 
       {appointments === null ? (

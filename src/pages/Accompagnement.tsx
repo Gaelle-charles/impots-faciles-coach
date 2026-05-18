@@ -94,6 +94,7 @@ export default function Accompagnement() {
       <Seo
         title="Prendre rendez-vous avec un accompagnant fiscal pédagogique"
         description="60 minutes en visio avec Laure pour comprendre votre situation fiscale et utiliser au mieux Impôts Facile."
+        path="/accompagnement"
       />
 
       {/* Hero */}
