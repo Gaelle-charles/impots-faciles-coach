@@ -870,6 +870,8 @@ export default function SimulateurFraisPro() {
                           label="Distance domicile-travail aller simple (km)"
                           value={inputsKm.distanceAllerSimple}
                           onChange={(v) => setKm("distanceAllerSimple", v)}
+                          integer
+                          max={200}
                           warnAbove={200}
                           warningMessage="Distance inhabituellement élevée, vérifiez la valeur."
                         />
