@@ -991,6 +991,8 @@ export default function SimulateurFraisPro() {
                           label="Coût moyen d'un repas avec justificatif (€)"
                           value={inputsRepas.coutMoyenRepasJustifie}
                           onChange={(v) => setRepas("coutMoyenRepasJustifie", v)}
+                          step={0.5}
+                          max={50}
                         />
                         <div className="rounded-md border border-dashed border-border bg-muted/30 px-3 py-2.5 space-y-1">
                           <div className="flex items-center justify-between gap-2">
