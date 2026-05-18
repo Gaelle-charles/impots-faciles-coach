@@ -41,7 +41,9 @@ export function MobileBottomNav() {
         <button
           type="button"
           onClick={() => navigate('/impots-team/dashboard')}
-          className="flex min-w-0 flex-1 flex-col items-center gap-0.5 px-1 text-[11px] text-muted-foreground transition-colors"
+          className={`flex min-w-0 flex-1 flex-col items-center gap-0.5 px-1 text-[11px] transition-colors ${
+            location.pathname.startsWith('/impots-team') ? 'text-primary font-semibold' : 'text-muted-foreground'
+          }`}
         >
           <Briefcase className="h-5 w-5 shrink-0" />
           <span className="max-w-full truncate">Équipe</span>
