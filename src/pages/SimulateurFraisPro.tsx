@@ -611,7 +611,7 @@ export default function SimulateurFraisPro() {
       {!constantsLoading && constants && (
       <div className="grid gap-6 lg:grid-cols-[360px_1fr]">
         {/* ----- ASIDE ----- */}
-        <aside className="lg:sticky lg:top-6 self-start space-y-4">
+        <aside className="sticky top-0 z-30 lg:top-6 self-start space-y-4 -mx-4 px-4 lg:mx-0 lg:px-0 py-2 lg:py-0 bg-dashboard-bg/85 backdrop-blur supports-[backdrop-filter]:bg-dashboard-bg/70 lg:bg-transparent lg:backdrop-blur-0">
           <Card className="border-2 border-[#2D1B4E]/30 bg-[#FFF8E7] rounded-2xl shadow-lg">
             <CardHeader className="pb-3">
               <CardTitle className="text-base sm:text-lg text-[#2D1B4E]">
@@ -619,7 +619,7 @@ export default function SimulateurFraisPro() {
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              <div className="space-y-1.5">
+              <div className="space-y-1.5 hidden lg:block data-[open=true]:block" data-open={mobileDetailOpen}>
                 <Label htmlFor="salaireNet" className="text-sm text-[#2D1B4E]">
                   Salaire net imposable annuel (optionnel)
                 </Label>
