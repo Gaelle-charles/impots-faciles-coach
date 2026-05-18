@@ -191,11 +191,14 @@ const Index = () => {
                   <ArrowRight className="h-5 w-5" />
                 </Button>
               </Link>
-              <Link to="#simulateur">
-                <Button variant="outline-violet" size="lg" className="w-full sm:w-auto px-7 py-6 text-base">
-                  Simuler mes frais
-                </Button>
-              </Link>
+              <Button
+                variant="outline-violet"
+                size="lg"
+                className="w-full sm:w-auto px-7 py-6 text-base"
+                onClick={() => document.getElementById('simulateur')?.scrollIntoView({ behavior: 'smooth' })}
+              >
+                Simuler mes frais
+              </Button>
             </div>
 
             <ul className="mt-6 flex flex-wrap gap-x-5 gap-y-2 text-sm text-muted-foreground">
