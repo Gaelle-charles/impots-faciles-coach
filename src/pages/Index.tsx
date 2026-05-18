@@ -191,9 +191,9 @@ const Index = () => {
                   <ArrowRight className="h-5 w-5" />
                 </Button>
               </Link>
-              <Link to="/comment-ca-marche">
+              <Link to="#simulateur">
                 <Button variant="outline-violet" size="lg" className="w-full sm:w-auto px-7 py-6 text-base">
-                  Voir le programme
+                  Simuler mes frais
                 </Button>
               </Link>
             </div>
