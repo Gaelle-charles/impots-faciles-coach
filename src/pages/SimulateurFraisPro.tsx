@@ -242,7 +242,14 @@ const PctSlider = ({
 // ---------- main component ----------
 export default function SimulateurFraisPro() {
   const navigate = useNavigate();
-  const [activeStep, setActiveStep] = useState(0);
+  const [activeStep, _setActiveStep] = useState(0);
+  const [mobileDetailOpen, setMobileDetailOpen] = useState(false);
+  const setActiveStep = (n: number | ((prev: number) => number)) => {
+    _setActiveStep(n);
+    if (typeof window !== "undefined" && window.matchMedia("(max-width: 1023px)").matches) {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+  };
   const { constants, loading: constantsLoading, error: constantsError } = useFraisReelsConstants(FISCAL_YEAR);
 
   // ----- state -----
