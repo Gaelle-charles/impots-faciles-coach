@@ -20,6 +20,7 @@ import { useEffect, useRef } from 'react';
 import heroBg from '@/assets/hero-bg.jpg';
 import ctaBg from '@/assets/cta-bg.jpg';
 import { Footer } from '@/components/Footer';
+import { SimulateurGratuitBento } from '@/components/home/SimulateurGratuitBento';
 import { Seo } from '@/components/Seo';
 import { Eyebrow } from '@/components/ui/eyebrow';
 import { AccentText } from '@/components/ui/accent-text';
@@ -328,6 +329,11 @@ const Index = () => {
           </div>
         </div>
       </section>
+
+      {/* ============ SIMULATEUR GRATUIT (sans inscription) ============ */}
+      <SimulateurGratuitBento />
+
+
 
       {/* ============ BENTO AVANTAGES ============ */}
       <section className="px-6 py-20 md:py-28" style={{ background: 'hsl(285 30% 97%)' }}>
