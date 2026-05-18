@@ -925,6 +925,7 @@ export default function SimulateurFraisPro() {
                           value={inputsKm.kmMissionPro}
                           onChange={(v) => setKm("kmMissionPro", v)}
                           integer
+                          step={10}
                         />
                         <div className="grid sm:grid-cols-2 gap-4">
                           <NumberInput
