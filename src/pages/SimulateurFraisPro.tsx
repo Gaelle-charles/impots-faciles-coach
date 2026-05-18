@@ -87,6 +87,7 @@ const NumberInput = ({
   integer = false,
   max,
   min = 0,
+  step,
   disabled = false,
   warnAbove,
   warningMessage,
@@ -99,18 +100,21 @@ const NumberInput = ({
   integer?: boolean;
   max?: number;
   min?: number;
+  step?: number | string;
   disabled?: boolean;
   warnAbove?: number;
   warningMessage?: string;
 }) => {
   const showWarning = warnAbove !== undefined && value > warnAbove && !!warningMessage;
+  // Default step : entiers = 1, montants € = 10 (pas de centimes par défaut)
+  const effectiveStep = step !== undefined ? step : integer ? "1" : "10";
   return (
     <div className="space-y-1.5">
       <Label htmlFor={id} className="text-sm">{label}</Label>
       <Input
         id={id}
         type="number"
-        step={integer ? "1" : "0.01"}
+        step={effectiveStep}
         min={min}
         max={max}
         disabled={disabled}
@@ -118,10 +122,18 @@ const NumberInput = ({
         value={value || ""}
         onChange={(e) => {
           let n = Number(e.target.value) || 0;
-          if (integer) n = Math.floor(n);
           if (max !== undefined) n = Math.min(n, max);
           if (n < min) n = min;
           onChange(n);
+        }}
+        onBlur={(e) => {
+          if (!integer) return;
+          const raw = Number(e.target.value);
+          if (!Number.isFinite(raw)) return;
+          let n = Math.round(raw);
+          if (max !== undefined) n = Math.min(n, max);
+          if (n < min) n = min;
+          if (n !== value) onChange(n);
         }}
         placeholder="0"
         className={showWarning ? "border-orange-400 focus-visible:ring-orange-300" : undefined}
@@ -814,8 +826,8 @@ export default function SimulateurFraisPro() {
                           value={inputsKm.cv}
                           onChange={(v) => setKm("cv", Math.max(1, v))}
                           integer
-                          min={1}
-                          max={15}
+                          min={3}
+                          max={20}
                         />
                         {inputsKm.typeVehicule === "voiture" && inputsKm.cv > 7 && (
                           <Alert className="bg-blue-50 border-blue-200 text-blue-900">
@@ -858,6 +870,8 @@ export default function SimulateurFraisPro() {
                           label="Distance domicile-travail aller simple (km)"
                           value={inputsKm.distanceAllerSimple}
                           onChange={(v) => setKm("distanceAllerSimple", v)}
+                          integer
+                          max={200}
                           warnAbove={200}
                           warningMessage="Distance inhabituellement élevée, vérifiez la valeur."
                         />
@@ -911,6 +925,7 @@ export default function SimulateurFraisPro() {
                           value={inputsKm.kmMissionPro}
                           onChange={(v) => setKm("kmMissionPro", v)}
                           integer
+                          step={10}
                         />
                         <div className="grid sm:grid-cols-2 gap-4">
                           <NumberInput
@@ -976,6 +991,8 @@ export default function SimulateurFraisPro() {
                           label="Coût moyen d'un repas avec justificatif (€)"
                           value={inputsRepas.coutMoyenRepasJustifie}
                           onChange={(v) => setRepas("coutMoyenRepasJustifie", v)}
+                          step={0.5}
+                          max={50}
                         />
                         <div className="rounded-md border border-dashed border-border bg-muted/30 px-3 py-2.5 space-y-1">
                           <div className="flex items-center justify-between gap-2">
@@ -1014,6 +1031,8 @@ export default function SimulateurFraisPro() {
                             label="Valeur faciale d'un ticket (€)"
                             value={inputsRepas.valeurFacialeTicket}
                             onChange={(v) => setRepas("valeurFacialeTicket", v)}
+                            step={0.5}
+                            max={20}
                           />
                           <div className="space-y-1">
                             <PctSlider
@@ -1055,12 +1074,14 @@ export default function SimulateurFraisPro() {
                             label="Surface du bureau (m²)"
                             value={inputsBureau.surfaceBureauM2}
                             onChange={(v) => setBureau("surfaceBureauM2", v)}
+                            integer
                           />
                           <NumberInput
                             id="surfLog"
                             label="Surface totale du logement (m²)"
                             value={inputsBureau.surfaceLogementM2}
                             onChange={(v) => setBureau("surfaceLogementM2", v)}
+                            integer
                           />
                         </div>
                         {inputsBureau.surfaceBureauM2 > inputsBureau.surfaceLogementM2 && inputsBureau.surfaceLogementM2 > 0 && (
@@ -1209,6 +1230,7 @@ export default function SimulateurFraisPro() {
                                     <Input
                                       id={`np-${i}`}
                                       type="number"
+                                      step="1"
                                       min={0}
                                       value={ligne.nbPieces || ""}
                                       onChange={(e) =>
@@ -1221,7 +1243,7 @@ export default function SimulateurFraisPro() {
                                     <Input
                                       id={`tar-${i}`}
                                       type="number"
-                                      step="0.01"
+                                      step="0.5"
                                       min={0}
                                       value={ligne.tarifPressing || ""}
                                       onChange={(e) =>
@@ -1234,6 +1256,7 @@ export default function SimulateurFraisPro() {
                                     <Input
                                       id={`lav-${i}`}
                                       type="number"
+                                      step="1"
                                       min={0}
                                       value={ligne.nbLavagesAnnuel || ""}
                                       onChange={(e) =>
