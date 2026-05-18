@@ -826,8 +826,8 @@ export default function SimulateurFraisPro() {
                           value={inputsKm.cv}
                           onChange={(v) => setKm("cv", Math.max(1, v))}
                           integer
-                          min={1}
-                          max={15}
+                          min={3}
+                          max={20}
                         />
                         {inputsKm.typeVehicule === "voiture" && inputsKm.cv > 7 && (
                           <Alert className="bg-blue-50 border-blue-200 text-blue-900">
