@@ -20,7 +20,7 @@ export function RateLimitModal({ open, onOpenChange }: Props) {
             Continuez à explorer Impôts Facile
           </h2>
           <p className="mt-4 text-sm text-primary-foreground/85 leading-relaxed">
-            Pour ne pas surcharger nos serveurs, le simulateur gratuit est limité à 2 simulations par heure.
+            Le simulateur gratuit est limité à 2 simulations par heure.
             Créez un compte gratuit pour accéder à toutes nos fonctionnalités sans limite.
           </p>
 
