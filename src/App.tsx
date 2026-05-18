@@ -78,6 +78,8 @@ import ImpotsTeamBienvenue from "./pages/ImpotsTeamBienvenue";
 import ImpotsTeamDashboard from "./pages/ImpotsTeamDashboard";
 import InvitationAccept from "./pages/InvitationAccept";
 import VerifierCertificat from "./pages/VerifierCertificat";
+import Accompagnement from "./pages/Accompagnement";
+import MesRendezVous from "./pages/MesRendezVous";
 
 const queryClient = new QueryClient();
 
@@ -154,6 +156,8 @@ const App = () => (
               <Route path="/fiches-personnalisees" element={<FichesPersonnalisees />} />
               <Route path="/recommandations" element={<Recommandations />} />
               <Route path="/passeport-fiscal" element={<PasseportFiscal />} />
+              <Route path="/accompagnement" element={<Accompagnement />} />
+              <Route path="/mes-rendez-vous" element={<AccessGuard requires="starter"><MesRendezVous /></AccessGuard>} />
             </Route>
 
             {/* Module has its own layout */}

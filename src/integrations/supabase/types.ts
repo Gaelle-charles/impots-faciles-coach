@@ -14,6 +14,81 @@ export type Database = {
   }
   public: {
     Tables: {
+      appointments: {
+        Row: {
+          accompagnant_name: string
+          amount_cents: number
+          cal_booking_uid: string
+          cal_event_type_id: number | null
+          cancellation_reason: string | null
+          cancelled_at: string | null
+          completed_at: string | null
+          created_at: string
+          currency: string
+          duration_minutes: number
+          feedback_sent_at: string | null
+          followup_sent_at: string | null
+          id: string
+          meeting_url: string | null
+          resources_sent_at: string | null
+          scheduled_at: string
+          status: string
+          stripe_payment_intent_id: string | null
+          updated_at: string
+          user_email: string
+          user_id: string | null
+          user_name: string | null
+        }
+        Insert: {
+          accompagnant_name?: string
+          amount_cents?: number
+          cal_booking_uid: string
+          cal_event_type_id?: number | null
+          cancellation_reason?: string | null
+          cancelled_at?: string | null
+          completed_at?: string | null
+          created_at?: string
+          currency?: string
+          duration_minutes?: number
+          feedback_sent_at?: string | null
+          followup_sent_at?: string | null
+          id?: string
+          meeting_url?: string | null
+          resources_sent_at?: string | null
+          scheduled_at: string
+          status?: string
+          stripe_payment_intent_id?: string | null
+          updated_at?: string
+          user_email: string
+          user_id?: string | null
+          user_name?: string | null
+        }
+        Update: {
+          accompagnant_name?: string
+          amount_cents?: number
+          cal_booking_uid?: string
+          cal_event_type_id?: number | null
+          cancellation_reason?: string | null
+          cancelled_at?: string | null
+          completed_at?: string | null
+          created_at?: string
+          currency?: string
+          duration_minutes?: number
+          feedback_sent_at?: string | null
+          followup_sent_at?: string | null
+          id?: string
+          meeting_url?: string | null
+          resources_sent_at?: string | null
+          scheduled_at?: string
+          status?: string
+          stripe_payment_intent_id?: string | null
+          updated_at?: string
+          user_email?: string
+          user_id?: string | null
+          user_name?: string | null
+        }
+        Relationships: []
+      }
       certificats_parcours: {
         Row: {
           created_at: string

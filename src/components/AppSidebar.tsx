@@ -19,10 +19,20 @@ import {
   LogOut,
   BookMarked,
   FileText,
+  Calendar,
+  CalendarDays,
 } from 'lucide-react';
 import { SuggestionDialog } from '@/components/SuggestionDialog';
+import type { Plan } from '@/hooks/useAccess';
 
-const baseNavItems = [
+interface SidebarNavItem {
+  to: string;
+  label: string;
+  icon: typeof LayoutDashboard;
+  requiredPlans?: Plan[];
+}
+
+const baseNavItems: SidebarNavItem[] = [
   { to: '/dashboard', label: 'Accueil', icon: LayoutDashboard },
   { to: '/mes-modules', label: 'Mes formations', icon: BookOpen },
   { to: '/fiches-personnalisees', label: 'Mon parcours déclaration', icon: FileText },
@@ -32,6 +42,20 @@ const baseNavItems = [
   { to: '/profil', label: 'Mon profil', icon: User },
 ];
 
+const accompagnementItem: SidebarNavItem = {
+  to: '/accompagnement',
+  label: 'Prendre rendez-vous',
+  icon: Calendar,
+  requiredPlans: ['starter', 'expert', 'premium'],
+};
+
+const mesRdvItem: SidebarNavItem = {
+  to: '/mes-rendez-vous',
+  label: 'Mes rendez-vous',
+  icon: CalendarDays,
+  requiredPlans: ['starter', 'expert', 'premium'],
+};
+
 const passeportItem = { to: '/passeport-fiscal', label: 'Passeport fiscal', icon: BookMarked };
 
 export function AppSidebar({ collapsed = false }: { collapsed?: boolean }) {
@@ -39,6 +63,8 @@ export function AppSidebar({ collapsed = false }: { collapsed?: boolean }) {
   const location = useLocation();
   const [profile, setProfile] = useState<{ prenom: string | null; nom: string | null; plan: string } | null>(null);
   const [suggestionOpen, setSuggestionOpen] = useState(false);
+  const [scheduledCount, setScheduledCount] = useState(0);
+  const [hasAnyAppointment, setHasAnyAppointment] = useState(false);
   const { isOrgAdmin, hasLicense } = useOrgRole();
   const hasB2CPlan = !!profile?.plan && profile.plan !== 'nouveau';
   const showSwitcher = isOrgAdmin && (hasLicense || hasB2CPlan);
@@ -55,6 +81,18 @@ export function AppSidebar({ collapsed = false }: { collapsed?: boolean }) {
       });
   }, [user, location.pathname]);
 
+  useEffect(() => {
+    if (!user) return;
+    supabase
+      .from('appointments')
+      .select('id, status', { count: 'exact' })
+      .eq('user_id', user.id)
+      .then(({ data, count }) => {
+        setHasAnyAppointment((count ?? 0) > 0);
+        setScheduledCount((data ?? []).filter((a: any) => a.status === 'scheduled').length);
+      });
+  }, [user, location.pathname]);
+
   if (collapsed) {
     return (
       <aside className="fixed left-0 top-0 z-40 h-screen w-[20px] bg-primary" />
@@ -67,6 +105,25 @@ export function AppSidebar({ collapsed = false }: { collapsed?: boolean }) {
     }
     return location.pathname === to;
   };
+
+  const currentPlan = (profile?.plan ?? 'nouveau') as Plan;
+  const filterByPlan = (item: SidebarNavItem) =>
+    !item.requiredPlans || item.requiredPlans.includes(currentPlan);
+
+  // Compose nav order: base[0..4], accompagnement (+ mes-rdv si applicable), recommandations, profil
+  // baseNavItems = [Accueil, Formations, Parcours, Simulateurs, Recommandations, Profil]
+  // Premium : injecte passeport en position 4
+  const head = currentPlan === 'premium'
+    ? [...baseNavItems.slice(0, 4), passeportItem]
+    : baseNavItems.slice(0, 4);
+  const tail = baseNavItems.slice(4); // Recommandations, Profil
+
+  const navItems: SidebarNavItem[] = [
+    ...head,
+    accompagnementItem,
+    ...(hasAnyAppointment ? [mesRdvItem] : []),
+    ...tail,
+  ].filter(filterByPlan);
 
   return (
     <aside className="fixed left-0 top-0 z-40 flex h-screen w-sidebar flex-col bg-primary text-primary-foreground">
@@ -102,11 +159,9 @@ export function AppSidebar({ collapsed = false }: { collapsed?: boolean }) {
 
       {/* Navigation */}
       <nav className="flex-1 space-y-1 px-3 overflow-y-auto">
-        {(profile?.plan === 'premium'
-          ? [...baseNavItems.slice(0, 4), passeportItem, ...baseNavItems.slice(4)]
-          : baseNavItems
-        ).map((item) => {
+        {navItems.map((item) => {
           const active = isActive(item.to);
+          const showBadge = item.to === '/accompagnement' && scheduledCount > 0;
           return (
             <NavLink key={item.to} to={item.to}>
               <Button
@@ -118,7 +173,12 @@ export function AppSidebar({ collapsed = false }: { collapsed?: boolean }) {
                 }`}
               >
                 <item.icon className="h-[18px] w-[18px] shrink-0" />
-                <span className="truncate">{item.label}</span>
+                <span className="truncate flex-1 text-left">{item.label}</span>
+                {showBadge && (
+                  <Badge className="ml-auto bg-accent text-accent-foreground hover:bg-accent">
+                    {scheduledCount}
+                  </Badge>
+                )}
               </Button>
             </NavLink>
           );

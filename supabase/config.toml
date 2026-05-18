@@ -9,3 +9,5 @@ project_id = "pvybeguzibdqaybbxran"
     verify_jwt = true
   [functions.track-free-simulation]
     verify_jwt = false
+  [functions.cal-webhook]
+    verify_jwt = false
