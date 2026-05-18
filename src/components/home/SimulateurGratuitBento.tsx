@@ -137,7 +137,7 @@ export function SimulateurGratuitBento() {
             Essayez <AccentText>sans inscription.</AccentText>
           </h2>
           <p className="mt-4 max-w-xl mx-auto text-muted-foreground">
-            Estimez vos frais kilométriques en 30 secondes selon le barème officiel DGFiP 2026.
+            Estimez vos frais kilométriques en 30 secondes selon le barème officiel DGFiP — revenus 2025, déclaration 2026.
           </p>
         </div>
 
@@ -152,7 +152,7 @@ export function SimulateurGratuitBento() {
                 Vos frais kilométriques en <AccentText>30 secondes.</AccentText>
               </h3>
               <p className="mt-2 text-sm text-muted-foreground">
-                Calcul gratuit, sans inscription. Barème officiel DGFiP 2026.
+                Calcul gratuit, sans inscription. Barème officiel DGFiP — revenus 2025, déclaration 2026.
               </p>
 
               <div className="mt-6 grid gap-4">
@@ -309,7 +309,7 @@ export function SimulateurGratuitBento() {
                   <div
                     className={`mt-5 rounded-xl p-3 text-sm ${
                       result.verdict === 'frais_reels_avantageux'
-                        ? 'bg-yellow-vivid/15 text-yellow-vivid'
+                        ? 'bg-yellow-vivid/15 text-white'
                         : 'bg-primary-foreground/10 text-primary-foreground/90'
                     }`}
                   >
@@ -351,7 +351,7 @@ export function SimulateurGratuitBento() {
           </div>
 
           <p className="mt-8 text-center text-xs text-muted-foreground max-w-3xl mx-auto leading-relaxed">
-            Estimation pédagogique basée sur les barèmes officiels DGFiP 2026 (revenus 2025).
+            Estimation pédagogique basée sur les barèmes officiels DGFiP (revenus 2025, déclaration 2026).
             Cette estimation ne constitue pas un calcul officiel d\u2019impôt et ne se substitue
             pas à votre déclaration. En cas de doute, contactez votre service des impôts.
           </p>
