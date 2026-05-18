@@ -8,7 +8,7 @@
  */
 export const CAL_EVENT_LINK =
   import.meta.env.VITE_CAL_EVENT_LINK ||
-  'laure-impotsfacile/accompagnement-60min';
+  'impots-facile/accompagnement-fiscal';
 
 export const CAL_BRAND_COLOR =
   import.meta.env.VITE_CAL_BRAND_COLOR || '#2C1338';
