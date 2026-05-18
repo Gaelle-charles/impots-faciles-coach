@@ -1074,12 +1074,14 @@ export default function SimulateurFraisPro() {
                             label="Surface du bureau (m²)"
                             value={inputsBureau.surfaceBureauM2}
                             onChange={(v) => setBureau("surfaceBureauM2", v)}
+                            integer
                           />
                           <NumberInput
                             id="surfLog"
                             label="Surface totale du logement (m²)"
                             value={inputsBureau.surfaceLogementM2}
                             onChange={(v) => setBureau("surfaceLogementM2", v)}
+                            integer
                           />
                         </div>
                         {inputsBureau.surfaceBureauM2 > inputsBureau.surfaceLogementM2 && inputsBureau.surfaceLogementM2 > 0 && (
