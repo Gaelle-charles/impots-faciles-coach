@@ -57,6 +57,7 @@ interface Invitation {
 
 export default function ImpotsTeamDashboard() {
   const { user, loading: authLoading } = useAuth();
+  const navigate = useNavigate();
   const { toast } = useToast();
   const isMobile = useIsMobile();
   const [params] = useSearchParams();
