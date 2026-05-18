@@ -1031,6 +1031,8 @@ export default function SimulateurFraisPro() {
                             label="Valeur faciale d'un ticket (€)"
                             value={inputsRepas.valeurFacialeTicket}
                             onChange={(v) => setRepas("valeurFacialeTicket", v)}
+                            step={0.5}
+                            max={20}
                           />
                           <div className="space-y-1">
                             <PctSlider
