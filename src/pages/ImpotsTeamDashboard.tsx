@@ -423,11 +423,12 @@ export default function ImpotsTeamDashboard() {
           </div>
 
           <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as 'abonnement' | 'membres' | 'branding')} className="w-full">
-            <TabsList className={isMobile ? '' : 'hidden'}>
+            <TabsList className="hidden">
               <TabsTrigger value="abonnement">Mon abonnement</TabsTrigger>
               <TabsTrigger value="membres">Mes collaborateurs</TabsTrigger>
               <TabsTrigger value="branding">Personnalisation</TabsTrigger>
             </TabsList>
+
 
             <TabsContent value="abonnement">
               <Card>
