@@ -524,7 +524,7 @@ const Index = () => {
           decoding="async"
           className="absolute -top-[15%] left-0 h-[130%] w-full object-cover will-change-transform"
         />
-        <div className="absolute inset-0 bg-gradient-to-br from-[hsl(285_52%_15%_/_0.92)] to-[hsl(263_70%_30%_/_0.85)]" />
+        <div className="absolute inset-0 bg-gradient-to-br from-[hsl(285_52%_15%_/_0.72)] to-[hsl(263_70%_30%_/_0.65)]" />
         <div className="relative z-10 mx-auto max-w-3xl text-center">
           <Eyebrow variant="white"><Rocket className="mr-1.5 inline h-3.5 w-3.5" />Prêt(e) à commencer ?</Eyebrow>
           <h2 className="font-display mt-6 text-4xl md:text-6xl text-white leading-tight">
