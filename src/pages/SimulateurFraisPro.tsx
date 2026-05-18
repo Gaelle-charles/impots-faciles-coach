@@ -87,6 +87,7 @@ const NumberInput = ({
   integer = false,
   max,
   min = 0,
+  step,
   disabled = false,
   warnAbove,
   warningMessage,
@@ -99,18 +100,21 @@ const NumberInput = ({
   integer?: boolean;
   max?: number;
   min?: number;
+  step?: number | string;
   disabled?: boolean;
   warnAbove?: number;
   warningMessage?: string;
 }) => {
   const showWarning = warnAbove !== undefined && value > warnAbove && !!warningMessage;
+  // Default step : entiers = 1, montants € = 10 (pas de centimes par défaut)
+  const effectiveStep = step !== undefined ? step : integer ? "1" : "10";
   return (
     <div className="space-y-1.5">
       <Label htmlFor={id} className="text-sm">{label}</Label>
       <Input
         id={id}
         type="number"
-        step={integer ? "1" : "0.01"}
+        step={effectiveStep}
         min={min}
         max={max}
         disabled={disabled}
@@ -118,10 +122,18 @@ const NumberInput = ({
         value={value || ""}
         onChange={(e) => {
           let n = Number(e.target.value) || 0;
-          if (integer) n = Math.floor(n);
           if (max !== undefined) n = Math.min(n, max);
           if (n < min) n = min;
           onChange(n);
+        }}
+        onBlur={(e) => {
+          if (!integer) return;
+          const raw = Number(e.target.value);
+          if (!Number.isFinite(raw)) return;
+          let n = Math.round(raw);
+          if (max !== undefined) n = Math.min(n, max);
+          if (n < min) n = min;
+          if (n !== value) onChange(n);
         }}
         placeholder="0"
         className={showWarning ? "border-orange-400 focus-visible:ring-orange-300" : undefined}
