@@ -619,26 +619,7 @@ export default function SimulateurFraisPro() {
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              <div className="space-y-1.5 hidden lg:block data-[open=true]:block" data-open={mobileDetailOpen}>
-                <Label htmlFor="salaireNet" className="text-sm text-[#2D1B4E]">
-                  Salaire net imposable annuel (optionnel)
-                </Label>
-                <Input
-                  id="salaireNet"
-                  type="number"
-                  min={0}
-                  inputMode="decimal"
-                  value={salaireNetImposable || ""}
-                  onChange={(e) => setSalaireNetImposable(Number(e.target.value) || 0)}
-                  placeholder="Ex: 30000"
-                  className="bg-white"
-                />
-                <p className="text-[11px] text-foreground/60">
-                  Pour comparer avec l'abattement automatique de 10%.
-                </p>
-              </div>
-
-              <div className="rounded-xl bg-[#2D1B4E] text-white text-center px-4 py-6 shadow-inner">
+              <div className="rounded-xl bg-[#2D1B4E] text-white text-center px-4 py-4 sm:py-6 shadow-inner">
                 <p className="text-xs sm:text-sm text-white/80">
                   Total net déductible :
                 </p>
@@ -647,119 +628,151 @@ export default function SimulateurFraisPro() {
                 </p>
               </div>
 
-              {sections.length > 0 ? (
-                <div className="rounded-lg border border-[#2D1B4E]/20 overflow-hidden bg-white">
-                  <table className="w-full text-xs sm:text-sm">
-                    <tbody>
-                      {sections.map((s) => {
-                        if (!s.sub || s.sub.length === 0) {
+              {/* Toggle "Voir le détail" — mobile/tablet uniquement */}
+              <button
+                type="button"
+                onClick={() => setMobileDetailOpen((v) => !v)}
+                className="lg:hidden w-full flex items-center justify-center gap-1.5 text-sm font-medium text-[#2D1B4E] underline-offset-2 hover:underline"
+                aria-expanded={mobileDetailOpen}
+              >
+                {mobileDetailOpen ? "Masquer le détail" : "Voir le détail"}
+                <ChevronDown className={`h-4 w-4 transition-transform ${mobileDetailOpen ? "rotate-180" : ""}`} />
+              </button>
+
+              <div className={`${mobileDetailOpen ? "block" : "hidden"} lg:block space-y-4`}>
+                <div className="space-y-1.5">
+                  <Label htmlFor="salaireNet" className="text-sm text-[#2D1B4E]">
+                    Salaire net imposable annuel (optionnel)
+                  </Label>
+                  <Input
+                    id="salaireNet"
+                    type="number"
+                    min={0}
+                    inputMode="decimal"
+                    value={salaireNetImposable || ""}
+                    onChange={(e) => setSalaireNetImposable(Number(e.target.value) || 0)}
+                    placeholder="Ex: 30000"
+                    className="bg-white"
+                  />
+                  <p className="text-[11px] text-foreground/60">
+                    Pour comparer avec l'abattement automatique de 10%.
+                  </p>
+                </div>
+
+                {sections.length > 0 ? (
+                  <div className="rounded-lg border border-[#2D1B4E]/20 overflow-hidden bg-white">
+                    <table className="w-full text-xs sm:text-sm">
+                      <tbody>
+                        {sections.map((s) => {
+                          if (!s.sub || s.sub.length === 0) {
+                            return (
+                              <tr key={s.key} className="border-t border-border first:border-t-0">
+                                <td className="px-3 py-2 text-foreground/80">{s.label}</td>
+                                <td className="px-3 py-2 text-right font-medium tabular-nums">{s.value} €</td>
+                              </tr>
+                            );
+                          }
                           return (
-                            <tr key={s.key} className="border-t border-border first:border-t-0">
-                              <td className="px-3 py-2 text-foreground/80">{s.label}</td>
-                              <td className="px-3 py-2 text-right font-medium tabular-nums">{s.value} €</td>
-                            </tr>
-                          );
-                        }
-                        return (
-                          <Fragment key={s.key}>
-                            <tr className="border-t border-border first:border-t-0 bg-[#2D1B4E]/5">
-                              <td colSpan={2} className="px-3 pt-2 pb-1 text-[11px] uppercase tracking-wide font-semibold text-[#2D1B4E]">
-                                {s.label}
-                              </td>
-                            </tr>
-                            {s.sub.map((line, i) => {
-                              const cls =
-                                line.variant === "final"
-                                  ? "font-bold text-[#2D1B4E]"
-                                  : line.variant === "subtotal"
-                                  ? "font-semibold text-foreground"
-                                : line.variant === "negative"
-                                  ? "text-muted-foreground"
-                                : line.variant === "muted"
-                                  ? "italic text-muted-foreground"
-                                  : "text-foreground/80";
-                              return (
-                                <Fragment key={i}>
-                                  <tr className="bg-[#2D1B4E]/5">
-                                    <td className={`px-3 py-1 pl-5 ${cls}`}>{line.label}</td>
-                                    <td className={`px-3 py-1 text-right tabular-nums ${cls}`}>
-                                      {line.value < 0 ? `– ${Math.abs(line.value)}` : line.value} €
-                                    </td>
-                                  </tr>
-                                  {line.note && (
+                            <Fragment key={s.key}>
+                              <tr className="border-t border-border first:border-t-0 bg-[#2D1B4E]/5">
+                                <td colSpan={2} className="px-3 pt-2 pb-1 text-[11px] uppercase tracking-wide font-semibold text-[#2D1B4E]">
+                                  {s.label}
+                                </td>
+                              </tr>
+                              {s.sub.map((line, i) => {
+                                const cls =
+                                  line.variant === "final"
+                                    ? "font-bold text-[#2D1B4E]"
+                                    : line.variant === "subtotal"
+                                    ? "font-semibold text-foreground"
+                                  : line.variant === "negative"
+                                    ? "text-muted-foreground"
+                                  : line.variant === "muted"
+                                    ? "italic text-muted-foreground"
+                                    : "text-foreground/80";
+                                return (
+                                  <Fragment key={i}>
                                     <tr className="bg-[#2D1B4E]/5">
-                                      <td colSpan={2} className="px-3 pb-2 pl-5 text-[11px] italic text-muted-foreground">
-                                        {line.note}
+                                      <td className={`px-3 py-1 pl-5 ${cls}`}>{line.label}</td>
+                                      <td className={`px-3 py-1 text-right tabular-nums ${cls}`}>
+                                        {line.value < 0 ? `– ${Math.abs(line.value)}` : line.value} €
                                       </td>
                                     </tr>
-                                  )}
-                                </Fragment>
-                              );
-                            })}
-                          </Fragment>
-                        );
-                      })}
-                      <tr className="border-t-2 border-[#2D1B4E] bg-[#F9E900]/30 font-bold">
-                        <td className="px-3 py-2 text-[#2D1B4E]">TOTAL</td>
-                        <td className="px-3 py-2 text-right text-[#2D1B4E] tabular-nums">{totalArrondi} €</td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </div>
-              ) : (
-                <p className="text-xs text-muted-foreground text-center italic">
-                  Remplissez les étapes pour voir le détail apparaître ici.
-                </p>
-              )}
-
-              {result && salaireNetImposable > 0 && (
-                <div
-                  className={`rounded-lg border p-3 text-sm ${
-                    result.verdict === "frais_reels_avantageux"
-                      ? "border-green-300 bg-green-50 text-green-900"
-                      : "border-blue-200 bg-blue-50 text-blue-900"
-                  }`}
-                >
-                  <p className="font-medium">
-                    Abattement 10% : {Math.round(result.abattement10)} €
+                                    {line.note && (
+                                      <tr className="bg-[#2D1B4E]/5">
+                                        <td colSpan={2} className="px-3 pb-2 pl-5 text-[11px] italic text-muted-foreground">
+                                          {line.note}
+                                        </td>
+                                      </tr>
+                                    )}
+                                  </Fragment>
+                                );
+                              })}
+                            </Fragment>
+                          );
+                        })}
+                        <tr className="border-t-2 border-[#2D1B4E] bg-[#F9E900]/30 font-bold">
+                          <td className="px-3 py-2 text-[#2D1B4E]">TOTAL</td>
+                          <td className="px-3 py-2 text-right text-[#2D1B4E] tabular-nums">{totalArrondi} €</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                ) : (
+                  <p className="text-xs text-muted-foreground text-center italic">
+                    Remplissez les étapes pour voir le détail apparaître ici.
                   </p>
-                  {result.verdict === "frais_reels_avantageux" ? (
-                    <p className="mt-1">
-                      ✅ Les frais réels seraient plus avantageux de{" "}
-                      <strong>{Math.round(result.difference)} €</strong>.
+                )}
+
+                {result && salaireNetImposable > 0 && (
+                  <div
+                    className={`rounded-lg border p-3 text-sm ${
+                      result.verdict === "frais_reels_avantageux"
+                        ? "border-green-300 bg-green-50 text-green-900"
+                        : "border-blue-200 bg-blue-50 text-blue-900"
+                    }`}
+                  >
+                    <p className="font-medium">
+                      Abattement 10% : {Math.round(result.abattement10)} €
                     </p>
-                  ) : (
-                    <p className="mt-1">
-                      ℹ️ L'abattement automatique de 10% reste plus avantageux
-                      ({Math.round(-result.difference)} € d'écart).
-                    </p>
-                  )}
+                    {result.verdict === "frais_reels_avantageux" ? (
+                      <p className="mt-1">
+                        ✅ Les frais réels seraient plus avantageux de{" "}
+                        <strong>{Math.round(result.difference)} €</strong>.
+                      </p>
+                    ) : (
+                      <p className="mt-1">
+                        ℹ️ L'abattement automatique de 10% reste plus avantageux
+                        ({Math.round(-result.difference)} € d'écart).
+                      </p>
+                    )}
+                  </div>
+                )}
+
+                <p className="text-xs text-foreground/70">
+                  Cette somme se déduit de votre revenu imposable, pas directement de votre impôt.
+                  L'économie réelle dépend de votre TMI.
+                </p>
+
+                <div className="flex flex-col gap-2 pt-1">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => navigate("/simulateur/ir-bareme")}
+                    className="border-[#2D1B4E] text-[#2D1B4E] hover:bg-[#2D1B4E] hover:text-white"
+                  >
+                    → Estimer mon impôt (IR Barème)
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={handleReset}
+                    className="border-[#2D1B4E] text-[#2D1B4E] hover:bg-[#2D1B4E] hover:text-white"
+                  >
+                    <RefreshCw className="h-4 w-4" />
+                    Recommencer
+                  </Button>
                 </div>
-              )}
-
-              <p className="text-xs text-foreground/70">
-                Cette somme se déduit de votre revenu imposable, pas directement de votre impôt.
-                L'économie réelle dépend de votre TMI.
-              </p>
-
-              <div className="flex flex-col gap-2 pt-1">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => navigate("/simulateur/ir-bareme")}
-                  className="border-[#2D1B4E] text-[#2D1B4E] hover:bg-[#2D1B4E] hover:text-white"
-                >
-                  → Estimer mon impôt (IR Barème)
-                </Button>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={handleReset}
-                  className="border-[#2D1B4E] text-[#2D1B4E] hover:bg-[#2D1B4E] hover:text-white"
-                >
-                  <RefreshCw className="h-4 w-4" />
-                  Recommencer
-                </Button>
               </div>
             </CardContent>
           </Card>
