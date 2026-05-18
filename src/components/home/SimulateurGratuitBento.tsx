@@ -126,7 +126,7 @@ export function SimulateurGratuitBento() {
   };
 
   return (
-    <section className="px-4 sm:px-6 py-16 md:py-24">
+    <section id="simulateur" className="px-4 sm:px-6 py-16 md:py-24">
       <div className="mx-auto max-w-6xl">
         <div className="text-center mb-10">
           <Eyebrow variant="violet">
