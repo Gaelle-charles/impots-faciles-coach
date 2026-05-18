@@ -19,10 +19,20 @@ import {
   LogOut,
   BookMarked,
   FileText,
+  Calendar,
+  CalendarDays,
 } from 'lucide-react';
 import { SuggestionDialog } from '@/components/SuggestionDialog';
+import type { Plan } from '@/hooks/useAccess';
 
-const baseNavItems = [
+interface SidebarNavItem {
+  to: string;
+  label: string;
+  icon: typeof LayoutDashboard;
+  requiredPlans?: Plan[];
+}
+
+const baseNavItems: SidebarNavItem[] = [
   { to: '/dashboard', label: 'Accueil', icon: LayoutDashboard },
   { to: '/mes-modules', label: 'Mes formations', icon: BookOpen },
   { to: '/fiches-personnalisees', label: 'Mon parcours déclaration', icon: FileText },
@@ -31,6 +41,20 @@ const baseNavItems = [
   { to: '/recommandations', label: 'Recommandations', icon: Heart },
   { to: '/profil', label: 'Mon profil', icon: User },
 ];
+
+const accompagnementItem: SidebarNavItem = {
+  to: '/accompagnement',
+  label: 'Prendre rendez-vous',
+  icon: Calendar,
+  requiredPlans: ['starter', 'expert', 'premium'],
+};
+
+const mesRdvItem: SidebarNavItem = {
+  to: '/mes-rendez-vous',
+  label: 'Mes rendez-vous',
+  icon: CalendarDays,
+  requiredPlans: ['starter', 'expert', 'premium'],
+};
 
 const passeportItem = { to: '/passeport-fiscal', label: 'Passeport fiscal', icon: BookMarked };
 
