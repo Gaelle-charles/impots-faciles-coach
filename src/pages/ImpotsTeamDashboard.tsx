@@ -678,6 +678,31 @@ export default function ImpotsTeamDashboard() {
         </AlertDialogContent>
       </AlertDialog>
 
+      {isMobile && (
+        <nav className="fixed bottom-0 left-0 right-0 z-50 flex h-16 items-center justify-around border-t border-border bg-background lg:hidden">
+          {([
+            { key: 'abonnement', label: 'Abonnement', Icon: CreditCard },
+            { key: 'membres', label: 'Collaborateurs', Icon: Users },
+            { key: 'branding', label: 'Personnalisation', Icon: Palette },
+          ] as const).map(({ key, label, Icon }) => {
+            const active = activeTab === key;
+            return (
+              <button
+                key={key}
+                type="button"
+                onClick={() => setActiveTab(key)}
+                className={`flex min-w-0 flex-1 flex-col items-center gap-0.5 px-1 text-[11px] transition-colors ${
+                  active ? 'text-primary font-semibold' : 'text-muted-foreground'
+                }`}
+              >
+                <Icon className="h-5 w-5 shrink-0" />
+                <span className="max-w-full truncate">{label}</span>
+              </button>
+            );
+          })}
+        </nav>
+      )}
+
       <Footer />
     </div>
   );
