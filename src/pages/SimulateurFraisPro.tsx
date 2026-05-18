@@ -1230,6 +1230,7 @@ export default function SimulateurFraisPro() {
                                     <Input
                                       id={`np-${i}`}
                                       type="number"
+                                      step="1"
                                       min={0}
                                       value={ligne.nbPieces || ""}
                                       onChange={(e) =>
@@ -1242,7 +1243,7 @@ export default function SimulateurFraisPro() {
                                     <Input
                                       id={`tar-${i}`}
                                       type="number"
-                                      step="0.01"
+                                      step="0.5"
                                       min={0}
                                       value={ligne.tarifPressing || ""}
                                       onChange={(e) =>
@@ -1255,6 +1256,7 @@ export default function SimulateurFraisPro() {
                                     <Input
                                       id={`lav-${i}`}
                                       type="number"
+                                      step="1"
                                       min={0}
                                       value={ligne.nbLavagesAnnuel || ""}
                                       onChange={(e) =>
