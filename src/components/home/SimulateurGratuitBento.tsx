@@ -76,16 +76,18 @@ export function SimulateurGratuitBento() {
 
   const result = limitReached ? frozenResult : liveResult;
 
-  // Tracker une fois quand l'utilisateur a un résultat valide et a interagi
+  // Tracker uniquement quand l'utilisateur fait une nouvelle interaction
+  // (pas au chargement initial ni au refresh de la page)
+  const [interactionCount, setInteractionCount] = useState(0);
   useEffect(() => {
-    if (tracked || !liveResult || limitReached) return;
+    if (interactionCount === 0 || limitReached) return;
     const t = setTimeout(async () => {
       try {
         const { data, error } = await supabase.functions.invoke('track-free-simulation', {
           body: {},
         });
         if (error) return;
-        if (data?.limit_reached) {
+        if (data?.limit_reached && liveResult) {
           setFrozenResult(liveResult);
           setLimitReached(true);
           setShowModal(true);
@@ -94,35 +96,13 @@ export function SimulateurGratuitBento() {
       } catch {
         // silencieux
       }
-    }, 1500);
+    }, 2000);
     return () => clearTimeout(t);
-  }, [liveResult, tracked, limitReached]);
-
-  // Tracker une 2e simulation si l'utilisateur modifie après coup
-  const [interactionCount, setInteractionCount] = useState(0);
-  useEffect(() => {
-    if (!tracked || limitReached) return;
-    if (interactionCount === 0) return;
-    const t = setTimeout(async () => {
-      try {
-        const { data } = await supabase.functions.invoke('track-free-simulation', {
-          body: {},
-        });
-        if (data?.limit_reached && liveResult) {
-          setFrozenResult(liveResult);
-          setLimitReached(true);
-          setShowModal(true);
-        }
-      } catch {
-        // silencieux
-      }
-    }, 2500);
-    return () => clearTimeout(t);
-  }, [interactionCount, tracked, limitReached, liveResult]);
+  }, [interactionCount, limitReached, liveResult]);
 
   const handleChange = <T,>(setter: (v: T) => void) => (v: T) => {
     setter(v);
-    if (tracked) setInteractionCount((c) => c + 1);
+    setInteractionCount((c) => c + 1);
   };
 
   return (
