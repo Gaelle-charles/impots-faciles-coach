@@ -54,7 +54,7 @@ const plans = [
     features: [
       'Formule Starter inclus',
       'Fiches pays',
-      'Coaching pédagogique personnalisé',
+      'Accès aux 12 simulateurs',
       'Vidéos explicatives exclusives',
     ],
     footerNote: 'Accompagnement renforcé toute l\'année',
