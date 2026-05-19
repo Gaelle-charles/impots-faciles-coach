@@ -87,7 +87,7 @@ export function SuggestionDialog({ open, onOpenChange }: SuggestionDialogProps) 
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-md">
         <DialogHeader>
-          <DialogTitle>Votre suggestion</DialogTitle>
+          <DialogTitle>Vos suggestions</DialogTitle>
           <DialogDescription>
             Aidez-nous à améliorer Impôts Facile en partageant un bug ou une idée.
           </DialogDescription>
