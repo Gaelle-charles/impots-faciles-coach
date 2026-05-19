@@ -102,7 +102,7 @@ export default function Accompagnement() {
         <h1 className="font-display text-3xl leading-tight md:text-5xl">
           Prenez rendez-vous avec un{' '}
           <span className="font-display italic" style={{ background: 'linear-gradient(transparent 60%, #F9E900 60%)' }}>
-            accompagnant fiscal pédagogique
+            accompagnant pédagogique
           </span>
         </h1>
         <p className="mx-auto mt-6 max-w-2xl text-lg text-muted-foreground">
