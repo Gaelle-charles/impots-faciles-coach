@@ -1,13 +1,45 @@
-import { describe, it, expect } from "vitest";
+import { describe, it, expect, vi } from "vitest";
 import {
   appliquerBareme,
   calculerDecote,
   calculerIR,
   calculerNbParts,
   calculerTMI,
+  detaillerImpositionParTranche,
   type BaremeIR,
   type FoyerFiscal,
 } from "./calcul-ir";
+
+// Mock Supabase for the loader integration test
+vi.mock("@/integrations/supabase/client", () => {
+  const rows = [
+    { constant_key: "ir_tranche_1_plafond", value: 11600 },
+    { constant_key: "ir_tranche_1_taux", value: 0 },
+    { constant_key: "ir_tranche_2_plafond", value: 29579 },
+    { constant_key: "ir_tranche_2_taux", value: 11 },
+    { constant_key: "ir_tranche_3_plafond", value: 84577 },
+    { constant_key: "ir_tranche_3_taux", value: 30 },
+    { constant_key: "ir_tranche_4_plafond", value: 181917 },
+    { constant_key: "ir_tranche_4_taux", value: 41 },
+    { constant_key: "ir_tranche_5_taux", value: 45 },
+    { constant_key: "decote_celibataire_plafond_ir_brut", value: 1982 },
+    { constant_key: "decote_couple_plafond_ir_brut", value: 3277 },
+    { constant_key: "decote_celibataire_forfait", value: 897 },
+    { constant_key: "decote_couple_forfait", value: 1483 },
+    { constant_key: "decote_taux_attenuation", value: 45.25 },
+    { constant_key: "quotient_familial_plafond_demi_part", value: 1807 },
+  ];
+  const builder = {
+    select: () => builder,
+    eq: () => builder,
+    then: (resolve: (v: { data: typeof rows; error: null }) => unknown) =>
+      Promise.resolve({ data: rows, error: null }).then(resolve),
+  };
+  return {
+    supabase: { from: () => builder },
+  };
+});
+
 
 const BAREME_2025_FIXTURE: BaremeIR = {
   fiscalYear: 2025,
