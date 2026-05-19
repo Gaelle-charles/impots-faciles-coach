@@ -34,6 +34,7 @@ const Quizz = () => {
 
   const [moduleTitle, setModuleTitle] = useState('');
   const [moduleId, setModuleId] = useState<string | null>(null);
+  const [nextModuleSlug, setNextModuleSlug] = useState<string | null>(null);
   const [moduleTexts, setModuleTexts] = useState<{
     faible: string | null; moyen: string | null; expert: string | null;
   }>({ faible: null, moyen: null, expert: null });
@@ -59,7 +60,7 @@ const Quizz = () => {
 
     const { data: mod, error: modErr } = await supabase
       .from('modules')
-      .select('id, titre, module_slug, text_resultat_faible, text_resultat_moyen, text_resultat_expert')
+      .select('id, titre, module_slug, order, text_resultat_faible, text_resultat_moyen, text_resultat_expert')
       .eq('module_slug', slug)
       .maybeSingle();
 
@@ -73,6 +74,19 @@ const Quizz = () => {
       moyen: mod.text_resultat_moyen,
       expert: mod.text_resultat_expert,
     });
+
+    // Récupérer le module suivant (par ordre)
+    if (mod.order != null) {
+      const { data: nextMod } = await supabase
+        .from('modules')
+        .select('module_slug, order')
+        .eq('is_published', true)
+        .gt('order', mod.order)
+        .order('order', { ascending: true })
+        .limit(1)
+        .maybeSingle();
+      setNextModuleSlug(nextMod?.module_slug ?? null);
+    }
 
     const [qRes, rRes] = await Promise.all([
       supabase
@@ -327,12 +341,20 @@ const Quizz = () => {
             })}
           </div>
 
-          <div className="flex flex-col gap-3 sm:flex-row sm:justify-center">
+          <div className="flex flex-col gap-3 sm:flex-row sm:justify-center sm:flex-wrap">
             {!noMoreAttempts && (
               <Button onClick={handleRestart}>
                 {hasPassed
                   ? `Repasser le quiz (tentative ${currentAttemptNumber}/${MAX_ATTEMPTS})`
                   : `Nouvelle tentative (${currentAttemptNumber}/${MAX_ATTEMPTS})`}
+              </Button>
+            )}
+            {nextModuleSlug && (
+              <Button
+                className="bg-rose-dynamic hover:bg-rose-dynamic/90 text-white"
+                onClick={() => navigate(`/module/${nextModuleSlug}`)}
+              >
+                Module suivant →
               </Button>
             )}
             <Button variant="outline" onClick={() => navigate('/dashboard')}>Retour au dashboard</Button>
@@ -402,8 +424,17 @@ const Quizz = () => {
             <p className="text-xs text-destructive">⚠️ {submitError}</p>
           )}
 
-          <div className="flex flex-col gap-3 sm:flex-row sm:justify-center">
+          <div className="flex flex-col gap-3 sm:flex-row sm:justify-center sm:flex-wrap">
             <Button onClick={() => navigate(`/module/${slug}`)}>← Revenir au module</Button>
+            {nextModuleSlug && (
+              <Button
+                variant="default"
+                className="bg-rose-dynamic hover:bg-rose-dynamic/90 text-white"
+                onClick={() => navigate(`/module/${nextModuleSlug}`)}
+              >
+                Module suivant →
+              </Button>
+            )}
             <Button variant="outline" onClick={() => navigate('/dashboard')}>Retour au dashboard</Button>
           </div>
 
