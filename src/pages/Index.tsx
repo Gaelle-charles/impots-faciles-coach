@@ -348,7 +348,7 @@ const Index = () => {
                   </div>
                   <div>
                     <p className="font-display text-2xl">{ACCOMPAGNANT_NAME}</p>
-                    <p className="text-xs uppercase tracking-wider opacity-70">Accompagnante fiscale pédagogique</p>
+                    <p className="text-xs uppercase tracking-wider opacity-70">ACCOMPAGNANTE PÉDAGOGIQUE</p>
                   </div>
                 </div>
                 <div className="mt-8 space-y-4">
