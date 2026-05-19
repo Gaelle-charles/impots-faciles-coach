@@ -68,7 +68,7 @@ const slideInLeft: Variants = {
 /* ─── Data ─── */
 
 const problemCards = [
-  { Icon: AlertCircle, title: "La déclaration, c'est du chinois", text: "Tranches, parts fiscales, cases à remplir… vous ne savez pas par où commencer." },
+  { Icon: AlertCircle, title: "La déclaration, c'est du charabia", text: "Tranches, parts fiscales, cases à remplir… vous ne savez pas par où commencer." },
   { Icon: TrendingDown, title: "Vous ratez peut-être des économies", text: "Frais réels, crédits d'impôt, réductions… des centaines d'euros peuvent vous échapper chaque année." },
   { Icon: Clock, title: "Vous attendez la dernière minute", text: "Parce que vous ne savez pas vraiment quoi faire, vous repoussez… jusqu'au stress de juin." },
 ];
