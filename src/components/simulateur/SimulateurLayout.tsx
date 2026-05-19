@@ -26,7 +26,7 @@ export default function SimulateurLayout({ emoji, title, subtitle, children }: P
   }, [location.pathname, location.search]);
 
   return (
-    <div className="space-y-6">
+    <div className="simulateur-root space-y-6">
       <Link
         to="/mes-simulateurs"
         className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-primary transition-colors"
