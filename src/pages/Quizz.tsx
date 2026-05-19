@@ -34,6 +34,7 @@ const Quizz = () => {
 
   const [moduleTitle, setModuleTitle] = useState('');
   const [moduleId, setModuleId] = useState<string | null>(null);
+  const [nextModuleSlug, setNextModuleSlug] = useState<string | null>(null);
   const [moduleTexts, setModuleTexts] = useState<{
     faible: string | null; moyen: string | null; expert: string | null;
   }>({ faible: null, moyen: null, expert: null });
