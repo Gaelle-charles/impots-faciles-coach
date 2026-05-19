@@ -192,7 +192,7 @@ export default function Accompagnement() {
                   </DialogTitle>
                   <DialogDescription>
                     {isFreemium
-                      ? "L'accompagnement fiscal pédagogique est inclus à partir du plan Starter (49 €/an)."
+                      ? "L'accompagnement pédagogique est inclus à partir du plan Starter (49 €/an)."
                       : "Cet accompagnement est réservé aux abonnements individuels en V1. Prenez un abonnement Starter pour réserver."}
                   </DialogDescription>
                 </DialogHeader>
