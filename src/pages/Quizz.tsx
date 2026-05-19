@@ -416,8 +416,17 @@ const Quizz = () => {
             <p className="text-xs text-destructive">⚠️ {submitError}</p>
           )}
 
-          <div className="flex flex-col gap-3 sm:flex-row sm:justify-center">
+          <div className="flex flex-col gap-3 sm:flex-row sm:justify-center sm:flex-wrap">
             <Button onClick={() => navigate(`/module/${slug}`)}>← Revenir au module</Button>
+            {nextModuleSlug && (
+              <Button
+                variant="default"
+                className="bg-rose-dynamic hover:bg-rose-dynamic/90 text-white"
+                onClick={() => navigate(`/module/${nextModuleSlug}`)}
+              >
+                Module suivant →
+              </Button>
+            )}
             <Button variant="outline" onClick={() => navigate('/dashboard')}>Retour au dashboard</Button>
           </div>
 
