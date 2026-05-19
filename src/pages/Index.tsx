@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom';
+import { ACCOMPAGNANT_NAME, APPOINTMENT_PRICE_EUR, APPOINTMENT_DURATION_MIN } from '@/lib/cal-config';
 import { Button } from '@/components/ui/button';
 import {
   ArrowRight,
@@ -8,12 +9,15 @@ import {
   Wrench,
   Euro,
   BookOpen,
+  Calendar,
   Check,
   ChevronDown,
+  Clock,
   GraduationCap,
   Map,
   Users,
   Rocket,
+  Video,
 } from 'lucide-react';
 import { Header } from '@/components/Header';
 import { useEffect, useRef } from 'react';
@@ -286,6 +290,93 @@ const Index = () => {
               </p>
             </div>
           ))}
+        </div>
+      </section>
+
+      {/* ============ ACCOMPAGNEMENT PERSONNALISÉ ============ */}
+      <section className="px-6 py-20 md:py-28">
+        <div className="mx-auto max-w-6xl">
+          <div className="grid gap-10 lg:grid-cols-2 lg:items-center">
+            {/* Texte */}
+            <div>
+              <Eyebrow variant="violet"><Calendar className="mr-1.5 inline h-3.5 w-3.5" />Accompagnement sur mesure</Eyebrow>
+              <h2 className="font-display mt-5 text-4xl md:text-5xl text-foreground leading-tight">
+                Un coup de pouce de{' '}
+                <AccentText>{APPOINTMENT_DURATION_MIN} minutes</AccentText> en visio
+              </h2>
+              <p className="mt-5 text-muted-foreground max-w-lg leading-relaxed">
+                Besoin d'aide pour comprendre votre situation fiscale ? Réservez un créneau
+                avec {ACCOMPAGNANT_NAME}, notre accompagnante fiscale pédagogique.
+              </p>
+
+              <ul className="mt-8 grid gap-4 sm:grid-cols-2">
+                {[
+                  { icon: BookOpen, text: 'Explication pédagogique de vos règles fiscales' },
+                  { icon: Map, text: 'Orientation sur les modules et simulateurs pertinents' },
+                  { icon: Video, text: `Visioconférence ${APPOINTMENT_DURATION_MIN} min avec ${ACCOMPAGNANT_NAME}` },
+                  { icon: Check, text: "Décryptage de votre avis d'imposition" },
+                ].map((item) => (
+                  <li key={item.text} className="flex items-start gap-3 rounded-2xl bg-[hsl(285_30%_97%)] p-4">
+                    <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-primary text-primary-foreground">
+                      <item.icon className="h-4 w-4" />
+                    </div>
+                    <p className="text-sm text-foreground leading-snug">{item.text}</p>
+                  </li>
+                ))}
+              </ul>
+
+              <div className="mt-8 flex flex-col sm:flex-row items-stretch sm:items-center gap-4">
+                <Link to="/accompagnement">
+                  <Button variant="cta-pill" size="lg" className="w-full sm:w-auto px-7 py-6 text-base">
+                    Réserver mon créneau
+                    <ArrowRight className="h-5 w-5" />
+                  </Button>
+                </Link>
+                <p className="text-sm text-muted-foreground">
+                  <span className="font-display text-2xl text-foreground">{APPOINTMENT_PRICE_EUR} €</span>
+                  <span className="ml-1">· Paiement sécurisé</span>
+                </p>
+              </div>
+            </div>
+
+            {/* Visuel carte profil */}
+            <div className="relative">
+              <div className="rounded-3xl bg-primary p-8 md:p-10 text-primary-foreground">
+                <div className="flex items-center gap-5">
+                  <div className="flex h-20 w-20 shrink-0 items-center justify-center rounded-full bg-accent text-3xl font-bold text-accent-foreground">
+                    {ACCOMPAGNANT_NAME.charAt(0)}
+                  </div>
+                  <div>
+                    <p className="font-display text-2xl">{ACCOMPAGNANT_NAME}</p>
+                    <p className="text-xs uppercase tracking-wider opacity-70">Accompagnante fiscale pédagogique</p>
+                  </div>
+                </div>
+                <div className="mt-8 space-y-4">
+                  <div className="flex items-center gap-3 rounded-2xl bg-primary-foreground/10 px-5 py-4">
+                    <Clock className="h-5 w-5 text-yellow-vivid shrink-0" />
+                    <div>
+                      <p className="text-sm font-semibold">{APPOINTMENT_DURATION_MIN} minutes</p>
+                      <p className="text-xs opacity-70">En visioconférence (Google Meet)</p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-3 rounded-2xl bg-primary-foreground/10 px-5 py-4">
+                    <Calendar className="h-5 w-5 text-yellow-vivid shrink-0" />
+                    <div>
+                      <p className="text-sm font-semibold">Créneaux disponibles</p>
+                      <p className="text-xs opacity-70">Du lundi au vendredi, de 9h à 18h</p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-3 rounded-2xl bg-primary-foreground/10 px-5 py-4">
+                    <Video className="h-5 w-5 text-yellow-vivid shrink-0" />
+                    <div>
+                      <p className="text-sm font-semibold">Paiement sécurisé</p>
+                      <p className="text-xs opacity-70">Carte bancaire via Stripe</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </section>
 
