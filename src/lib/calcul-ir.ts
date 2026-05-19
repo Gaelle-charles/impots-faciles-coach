@@ -193,21 +193,62 @@ export function calculerIR(foyer: FoyerFiscal, bareme: BaremeIR): ResultatIR {
 }
 
 // ============================================================
+// DÉTAIL DE L'IMPOSITION PAR TRANCHE (pour graphique)
+// ============================================================
+
+export interface DetailTrancheImpot {
+  ordre: number;
+  taux: number;
+  revenuImpose: number; // au niveau du foyer (× nbParts)
+  impot: number;        // au niveau du foyer (× nbParts)
+}
+
+export function detaillerImpositionParTranche(
+  foyer: FoyerFiscal,
+  bareme: BaremeIR
+): DetailTrancheImpot[] {
+  const nbParts = calculerNbParts(foyer);
+  const revenu = Math.max(0, foyer.revenuNetImposable);
+  const qf = nbParts > 0 ? revenu / nbParts : 0;
+
+  const tranches = [...bareme.tranches].sort((a, b) => a.ordre - b.ordre);
+  const result: DetailTrancheImpot[] = [];
+  let borneBas = 0;
+
+  for (const t of tranches) {
+    const borneHaut = t.plafond ?? Infinity;
+    const haut = Math.min(qf, borneHaut);
+    const revenuParPartDansTranche = Math.max(0, haut - borneBas);
+    const revenuImpose = revenuParPartDansTranche * nbParts;
+    const impot = revenuImpose * (t.taux / 100);
+    result.push({
+      ordre: t.ordre,
+      taux: t.taux,
+      revenuImpose,
+      impot,
+    });
+    borneBas = borneHaut;
+  }
+
+  return result;
+}
+
+// ============================================================
 // CHARGEMENT DES CONSTANTES (Supabase)
 // ============================================================
 
 const REQUIRED_KEYS = [
-  "ir.tranche.1.plafond", "ir.tranche.1.taux",
-  "ir.tranche.2.plafond", "ir.tranche.2.taux",
-  "ir.tranche.3.plafond", "ir.tranche.3.taux",
-  "ir.tranche.4.plafond", "ir.tranche.4.taux",
-  "ir.tranche.5.taux",
-  "ir.decote.plafond_celib",
-  "ir.decote.plafond_couple",
-  "ir.decote.forfait_celib",
-  "ir.decote.forfait_couple",
-  "ir.decote.taux_attenuation",
-  "ir.qf.plafond_demi_part",
+  "ir_tranche_1_plafond", "ir_tranche_1_taux",
+  "ir_tranche_2_plafond", "ir_tranche_2_taux",
+  "ir_tranche_3_plafond", "ir_tranche_3_taux",
+  "ir_tranche_4_plafond", "ir_tranche_4_taux",
+  "ir_tranche_5_taux",
+  "decote_celibataire_plafond_ir_brut",
+  "decote_couple_plafond_ir_brut",
+  "decote_celibataire_forfait",
+  "decote_couple_forfait",
+  "decote_taux_attenuation",
+  "quotient_familial_plafond_demi_part",
 ] as const;
 
 export async function chargerBaremeIR(fiscalYear: number): Promise<BaremeIR> {
@@ -233,23 +274,24 @@ export async function chargerBaremeIR(fiscalYear: number): Promise<BaremeIR> {
   }
 
   const tranches: TrancheIR[] = [
-    { ordre: 1, plafond: map.get("ir.tranche.1.plafond")!, taux: map.get("ir.tranche.1.taux")! },
-    { ordre: 2, plafond: map.get("ir.tranche.2.plafond")!, taux: map.get("ir.tranche.2.taux")! },
-    { ordre: 3, plafond: map.get("ir.tranche.3.plafond")!, taux: map.get("ir.tranche.3.taux")! },
-    { ordre: 4, plafond: map.get("ir.tranche.4.plafond")!, taux: map.get("ir.tranche.4.taux")! },
-    { ordre: 5, plafond: null, taux: map.get("ir.tranche.5.taux")! },
+    { ordre: 1, plafond: map.get("ir_tranche_1_plafond")!, taux: map.get("ir_tranche_1_taux")! },
+    { ordre: 2, plafond: map.get("ir_tranche_2_plafond")!, taux: map.get("ir_tranche_2_taux")! },
+    { ordre: 3, plafond: map.get("ir_tranche_3_plafond")!, taux: map.get("ir_tranche_3_taux")! },
+    { ordre: 4, plafond: map.get("ir_tranche_4_plafond")!, taux: map.get("ir_tranche_4_taux")! },
+    { ordre: 5, plafond: null, taux: map.get("ir_tranche_5_taux")! },
   ];
 
   return {
     fiscalYear,
     tranches,
     decote: {
-      plafondCelib: map.get("ir.decote.plafond_celib")!,
-      plafondCouple: map.get("ir.decote.plafond_couple")!,
-      forfaitCelib: map.get("ir.decote.forfait_celib")!,
-      forfaitCouple: map.get("ir.decote.forfait_couple")!,
-      tauxAttenuation: map.get("ir.decote.taux_attenuation")!,
+      plafondCelib: map.get("decote_celibataire_plafond_ir_brut")!,
+      plafondCouple: map.get("decote_couple_plafond_ir_brut")!,
+      forfaitCelib: map.get("decote_celibataire_forfait")!,
+      forfaitCouple: map.get("decote_couple_forfait")!,
+      tauxAttenuation: map.get("decote_taux_attenuation")!,
     },
-    plafondQuotientFamilial: map.get("ir.qf.plafond_demi_part")!,
+    plafondQuotientFamilial: map.get("quotient_familial_plafond_demi_part")!,
   };
 }
+

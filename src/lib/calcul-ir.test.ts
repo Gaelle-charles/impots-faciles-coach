@@ -1,13 +1,45 @@
-import { describe, it, expect } from "vitest";
+import { describe, it, expect, vi } from "vitest";
 import {
   appliquerBareme,
   calculerDecote,
   calculerIR,
   calculerNbParts,
   calculerTMI,
+  detaillerImpositionParTranche,
   type BaremeIR,
   type FoyerFiscal,
 } from "./calcul-ir";
+
+// Mock Supabase for the loader integration test
+vi.mock("@/integrations/supabase/client", () => {
+  const rows = [
+    { constant_key: "ir_tranche_1_plafond", value: 11600 },
+    { constant_key: "ir_tranche_1_taux", value: 0 },
+    { constant_key: "ir_tranche_2_plafond", value: 29579 },
+    { constant_key: "ir_tranche_2_taux", value: 11 },
+    { constant_key: "ir_tranche_3_plafond", value: 84577 },
+    { constant_key: "ir_tranche_3_taux", value: 30 },
+    { constant_key: "ir_tranche_4_plafond", value: 181917 },
+    { constant_key: "ir_tranche_4_taux", value: 41 },
+    { constant_key: "ir_tranche_5_taux", value: 45 },
+    { constant_key: "decote_celibataire_plafond_ir_brut", value: 1982 },
+    { constant_key: "decote_couple_plafond_ir_brut", value: 3277 },
+    { constant_key: "decote_celibataire_forfait", value: 897 },
+    { constant_key: "decote_couple_forfait", value: 1483 },
+    { constant_key: "decote_taux_attenuation", value: 45.25 },
+    { constant_key: "quotient_familial_plafond_demi_part", value: 1807 },
+  ];
+  const builder = {
+    select: () => builder,
+    eq: () => builder,
+    then: (resolve: (v: { data: typeof rows; error: null }) => unknown) =>
+      Promise.resolve({ data: rows, error: null }).then(resolve),
+  };
+  return {
+    supabase: { from: () => builder },
+  };
+});
+
 
 const BAREME_2025_FIXTURE: BaremeIR = {
   fiscalYear: 2025,
@@ -168,3 +200,46 @@ describe("Sanity — fonctions unitaires", () => {
     expect(calculerNbParts(foyer({}))).toBe(1);
   });
 });
+
+describe("F. detaillerImpositionParTranche", () => {
+  it("Célibataire 30 000 € : tranches 1 et 2 imposées, tranches 3-5 à 0", () => {
+    const detail = detaillerImpositionParTranche(
+      foyer({ revenuNetImposable: 30_000 }),
+      B
+    );
+    expect(detail).toHaveLength(5);
+    expect(detail[0].revenuImpose).toBeCloseTo(11_600, 2); // tranche 1 pleine
+    expect(detail[0].impot).toBe(0);
+    expect(detail[1].revenuImpose).toBeCloseTo(17_979, 2); // tranche 2 pleine
+    expect(detail[1].impot).toBeCloseTo(1977.69, 2);
+    expect(detail[2].revenuImpose).toBeCloseTo(421, 2);    // tranche 3 partielle
+    expect(detail[2].impot).toBeCloseTo(126.3, 2);
+    expect(detail[3].revenuImpose).toBe(0);
+    expect(detail[4].revenuImpose).toBe(0);
+  });
+
+  it("Couple 60 000 € + 1 enfant : montants × 2,5 parts", () => {
+    const detail = detaillerImpositionParTranche(
+      foyer({ revenuNetImposable: 60_000, situation: "couple", nbEnfants: 1 }),
+      B
+    );
+    // QF = 24000 → tranche 1 pleine (11600) puis tranche 2 partielle (12400)
+    expect(detail[0].revenuImpose).toBeCloseTo(11_600 * 2.5, 2);
+    expect(detail[1].revenuImpose).toBeCloseTo(12_400 * 2.5, 2);
+    expect(detail[1].impot).toBeCloseTo(12_400 * 2.5 * 0.11, 2);
+    expect(detail[2].revenuImpose).toBe(0);
+  });
+});
+
+describe("G. chargerBaremeIR (intégration mock Supabase)", () => {
+  it("construit un BaremeIR cohérent depuis le mock", async () => {
+    const { chargerBaremeIR } = await import("./calcul-ir");
+    const bareme = await chargerBaremeIR(2025);
+    expect(bareme.fiscalYear).toBe(2025);
+    expect(bareme.tranches).toHaveLength(5);
+    expect(bareme.tranches[4].plafond).toBeNull();
+    expect(bareme.decote.tauxAttenuation).toBe(45.25);
+    expect(bareme.plafondQuotientFamilial).toBe(1807);
+  });
+});
+
