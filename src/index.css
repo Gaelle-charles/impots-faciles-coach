@@ -194,4 +194,20 @@
     pointer-events: none;
     z-index: 0;
   }
+
+  /* === Simulateurs : labels (options radio) & cases à cocher remplis en blanc === */
+  .simulateur-root label.cursor-pointer {
+    background-color: #ffffff;
+  }
+  .simulateur-root label.cursor-pointer:has(:checked) {
+    background-color: hsl(var(--primary) / 0.05);
+  }
+  .simulateur-root button[role="checkbox"],
+  .simulateur-root button[role="radio"] {
+    background-color: #ffffff;
+  }
+  .simulateur-root button[role="checkbox"][data-state="checked"],
+  .simulateur-root button[role="radio"][data-state="checked"] {
+    background-color: hsl(var(--primary));
+  }
 }
