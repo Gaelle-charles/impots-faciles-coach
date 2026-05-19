@@ -177,7 +177,7 @@ const Index = () => {
               <AccentText>Sans jargon.</AccentText>
             </h1>
             <p className="mt-4 font-display text-2xl md:text-3xl text-rose-dynamic">
-              Récupérez votre argent
+              Économisez, récupérer le trop prélevé
             </p>
             <p className="mt-6 max-w-xl text-lg text-muted-foreground leading-relaxed">
               Une formation en ligne claire et progressive pour vous aider à
