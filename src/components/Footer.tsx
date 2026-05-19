@@ -104,6 +104,17 @@ export function Footer() {
             </a>{' '}
             — agréée CECMC.
           </p>
+          <p>
+            Site réalisé avec ❤︎ par{' '}
+            <a
+              href="https://gaellecode.fr/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="underline underline-offset-2 hover:text-primary-foreground"
+            >
+              Gaelle code
+            </a>
+          </p>
           <p>© {new Date().getFullYear()} Impôts Facile — Édité par ANNUL IMPOTS — Tous droits réservés</p>
         </div>
       </div>
