@@ -222,7 +222,7 @@ export default function Accompagnement() {
 
       <p className="mt-12 text-center text-xs text-muted-foreground">
         Impôts Facile édité par ANNUL IMPOTS (SARL, SIREN 895 319 226).
-        L'accompagnement fiscal pédagogique est un service d'information et d'éducation.
+        L'accompagnement pédagogique est un service d'information et d'éducation.
         Il ne constitue pas un conseil fiscal au sens réglementaire.
       </p>
     </div>
