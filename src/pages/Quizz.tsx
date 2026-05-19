@@ -60,7 +60,7 @@ const Quizz = () => {
 
     const { data: mod, error: modErr } = await supabase
       .from('modules')
-      .select('id, titre, module_slug, text_resultat_faible, text_resultat_moyen, text_resultat_expert')
+      .select('id, titre, module_slug, order, text_resultat_faible, text_resultat_moyen, text_resultat_expert')
       .eq('module_slug', slug)
       .maybeSingle();
 
@@ -74,6 +74,19 @@ const Quizz = () => {
       moyen: mod.text_resultat_moyen,
       expert: mod.text_resultat_expert,
     });
+
+    // Récupérer le module suivant (par ordre)
+    if (mod.order != null) {
+      const { data: nextMod } = await supabase
+        .from('modules')
+        .select('module_slug, order')
+        .eq('is_published', true)
+        .gt('order', mod.order)
+        .order('order', { ascending: true })
+        .limit(1)
+        .maybeSingle();
+      setNextModuleSlug(nextMod?.module_slug ?? null);
+    }
 
     const [qRes, rRes] = await Promise.all([
       supabase
