@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom';
+import { ACCOMPAGNANT_NAME, APPOINTMENT_PRICE_EUR, APPOINTMENT_DURATION_MIN } from '@/lib/cal-config';
 import { Button } from '@/components/ui/button';
 import {
   ArrowRight,
