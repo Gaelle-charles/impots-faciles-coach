@@ -119,10 +119,10 @@ export default function Accompagnement() {
           <div className="text-center md:text-left">
             <h2 className="font-display text-2xl">{ACCOMPAGNANT_NAME}</h2>
             <p className="mt-1 text-sm uppercase tracking-wider opacity-70">
-              Accompagnante fiscale pédagogique
+              ACCOMPAGNANTE PÉDAGOGIQUE
             </p>
             <p className="mt-3 text-sm leading-relaxed opacity-90">
-              Spécialiste de l'accompagnement fiscal pédagogique, {ACCOMPAGNANT_NAME} aide les
+              Spécialiste de l'accompagnement pédagogique, {ACCOMPAGNANT_NAME} aide les
               particuliers et indépendants à comprendre leur fiscalité et à utiliser au mieux
               les ressources d'Impôts Facile.
             </p>
