@@ -341,12 +341,20 @@ const Quizz = () => {
             })}
           </div>
 
-          <div className="flex flex-col gap-3 sm:flex-row sm:justify-center">
+          <div className="flex flex-col gap-3 sm:flex-row sm:justify-center sm:flex-wrap">
             {!noMoreAttempts && (
               <Button onClick={handleRestart}>
                 {hasPassed
                   ? `Repasser le quiz (tentative ${currentAttemptNumber}/${MAX_ATTEMPTS})`
                   : `Nouvelle tentative (${currentAttemptNumber}/${MAX_ATTEMPTS})`}
+              </Button>
+            )}
+            {nextModuleSlug && (
+              <Button
+                className="bg-rose-dynamic hover:bg-rose-dynamic/90 text-white"
+                onClick={() => navigate(`/module/${nextModuleSlug}`)}
+              >
+                Module suivant →
               </Button>
             )}
             <Button variant="outline" onClick={() => navigate('/dashboard')}>Retour au dashboard</Button>
