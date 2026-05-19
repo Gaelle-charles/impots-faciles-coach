@@ -195,13 +195,7 @@
     z-index: 0;
   }
 
-  /* === Simulateurs : labels (options radio) & cases à cocher remplis en blanc === */
-  .simulateur-root label.cursor-pointer {
-    background-color: #ffffff;
-  }
-  .simulateur-root label.cursor-pointer:has(:checked) {
-    background-color: hsl(var(--primary) / 0.05);
-  }
+  /* === Simulateurs : cases à cocher remplies en blanc === */
   .simulateur-root button[role="checkbox"],
   .simulateur-root button[role="radio"] {
     background-color: #ffffff;
