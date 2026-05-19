@@ -9,12 +9,15 @@ import {
   Wrench,
   Euro,
   BookOpen,
+  Calendar,
   Check,
   ChevronDown,
+  Clock,
   GraduationCap,
   Map,
   Users,
   Rocket,
+  Video,
 } from 'lucide-react';
 import { Header } from '@/components/Header';
 import { useEffect, useRef } from 'react';
