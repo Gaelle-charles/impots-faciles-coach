@@ -106,7 +106,7 @@ export default function Accompagnement() {
           </span>
         </h1>
         <p className="mx-auto mt-6 max-w-2xl text-lg text-muted-foreground">
-          60 minutes en visio pour comprendre votre situation fiscale et utiliser au mieux Impôts Facile.
+          60 minutes en visio pour comprendre votre situation et utiliser au mieux Impôts Facile.
         </p>
       </section>
 
