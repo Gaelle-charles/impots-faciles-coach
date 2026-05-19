@@ -74,7 +74,7 @@ const problemCards = [
 ];
 
 const steps = [
-  { num: '01', Icon: UserPlus, title: "Vous créez votre compte en 30 secondes", text: "Prénom, email, mot de passe. C'est tout.\nPas de carte bancaire requise pour commencer." },
+  { num: '01', Icon: UserPlus, title: "Vous créez votre compte en 30 secondes", text: "Prénom, email, mot de passe. C'est tout.\n" },
   { num: '02', Icon: BookOpen, title: "Vous suivez les modules à votre rythme", text: "8 modules progressifs couvrent tout : revenus, frais déductibles, crédits d'impôt, profils spécifiques… Chaque module prend 10 à 20 minutes. Vous reprenez exactement où vous vous êtes arrêté." },
   { num: '03', Icon: HelpCircle, title: "Vous validez avec des quiz interactifs", text: "À la fin de chaque module, un quiz vous permet de tester ce que vous avez retenu. Vous recevez un score, des explications pour chaque bonne réponse, et un message personnalisé selon votre niveau." },
   { num: '04', Icon: Target, title: "Vous déclarez en toute confiance", text: "Grâce à votre parcours personnalisé, vous savez exactement quoi remplir, où et pourquoi. Plus de stress, plus d'erreurs, plus d'oublis." },
