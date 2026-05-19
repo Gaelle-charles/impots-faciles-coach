@@ -171,7 +171,7 @@ const Tarifs = () => {
       <main className="mx-auto w-full max-w-6xl flex-1 px-6 py-16 sm:py-20">
         {/* Hero tarifs */}
         <div className="text-center">
-          <Eyebrow><Sparkles className="mr-1.5 inline h-3.5 w-3.5" />Sans engagement · Résiliable à tout moment</Eyebrow>
+          <Eyebrow><Sparkles className="mr-1.5 inline h-3.5 w-3.5" />&nbsp; &nbsp;RÉSILIABLE À TOUT MOMENT</Eyebrow>
           <h1 className="font-display mt-6 text-5xl md:text-6xl text-foreground leading-tight">
             Le bon plan pour vos <AccentText>impôts.</AccentText>
           </h1>
