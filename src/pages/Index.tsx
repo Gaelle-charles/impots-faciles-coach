@@ -305,8 +305,8 @@ const Index = () => {
                 <AccentText>{APPOINTMENT_DURATION_MIN} minutes</AccentText> en visio
               </h2>
               <p className="mt-5 text-muted-foreground max-w-lg leading-relaxed">
-                Besoin d'aide pour comprendre votre situation fiscale ? Réservez un créneau
-                avec {ACCOMPAGNANT_NAME}, notre accompagnante fiscale pédagogique.
+                Besoin d'aide ? Réservez un créneau
+                avec {ACCOMPAGNANT_NAME}, notre accompagnante pédagogique.
               </p>
 
               <ul className="mt-8 grid gap-4 sm:grid-cols-2">
@@ -348,7 +348,7 @@ const Index = () => {
                   </div>
                   <div>
                     <p className="font-display text-2xl">{ACCOMPAGNANT_NAME}</p>
-                    <p className="text-xs uppercase tracking-wider opacity-70">Accompagnante fiscale pédagogique</p>
+                    <p className="text-xs uppercase tracking-wider opacity-70">ACCOMPAGNANTE PÉDAGOGIQUE</p>
                   </div>
                 </div>
                 <div className="mt-8 space-y-4">

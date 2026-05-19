@@ -92,8 +92,8 @@ export default function Accompagnement() {
   return (
     <div className="mx-auto max-w-[1200px] px-4 py-8 md:px-8 md:py-12">
       <Seo
-        title="Prendre rendez-vous avec un accompagnant fiscal pédagogique"
-        description="60 minutes en visio avec Laure pour comprendre votre situation fiscale et utiliser au mieux Impôts Facile."
+        title="Prendre rendez-vous avec un accompagnant pédagogique"
+        description="60 minutes en visio avec Laure pour comprendre votre situation et utiliser au mieux Impôts Facile."
         path="/accompagnement"
       />
 
@@ -102,11 +102,11 @@ export default function Accompagnement() {
         <h1 className="font-display text-3xl leading-tight md:text-5xl">
           Prenez rendez-vous avec un{' '}
           <span className="font-display italic" style={{ background: 'linear-gradient(transparent 60%, #F9E900 60%)' }}>
-            accompagnant fiscal pédagogique
+            accompagnant pédagogique
           </span>
         </h1>
         <p className="mx-auto mt-6 max-w-2xl text-lg text-muted-foreground">
-          60 minutes en visio pour comprendre votre situation fiscale et utiliser au mieux Impôts Facile.
+          60 minutes en visio pour comprendre votre situation et utiliser au mieux Impôts Facile.
         </p>
       </section>
 
@@ -119,10 +119,10 @@ export default function Accompagnement() {
           <div className="text-center md:text-left">
             <h2 className="font-display text-2xl">{ACCOMPAGNANT_NAME}</h2>
             <p className="mt-1 text-sm uppercase tracking-wider opacity-70">
-              Accompagnante fiscale pédagogique
+              ACCOMPAGNANTE PÉDAGOGIQUE
             </p>
             <p className="mt-3 text-sm leading-relaxed opacity-90">
-              Spécialiste de l'accompagnement fiscal pédagogique, {ACCOMPAGNANT_NAME} aide les
+              Spécialiste de l'accompagnement pédagogique, {ACCOMPAGNANT_NAME} aide les
               particuliers et indépendants à comprendre leur fiscalité et à utiliser au mieux
               les ressources d'Impôts Facile.
             </p>
@@ -192,7 +192,7 @@ export default function Accompagnement() {
                   </DialogTitle>
                   <DialogDescription>
                     {isFreemium
-                      ? "L'accompagnement fiscal pédagogique est inclus à partir du plan Starter (49 €/an)."
+                      ? "L'accompagnement pédagogique est inclus à partir du plan Starter (49 €/an)."
                       : "Cet accompagnement est réservé aux abonnements individuels en V1. Prenez un abonnement Starter pour réserver."}
                   </DialogDescription>
                 </DialogHeader>
@@ -222,7 +222,7 @@ export default function Accompagnement() {
 
       <p className="mt-12 text-center text-xs text-muted-foreground">
         Impôts Facile édité par ANNUL IMPOTS (SARL, SIREN 895 319 226).
-        L'accompagnement fiscal pédagogique est un service d'information et d'éducation.
+        L'accompagnement pédagogique est un service d'information et d'éducation.
         Il ne constitue pas un conseil fiscal au sens réglementaire.
       </p>
     </div>
