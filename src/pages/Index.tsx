@@ -381,7 +381,7 @@ const Index = () => {
       </section>
 
       {/* ============ COMMENT ÇA MARCHE ============ */}
-      <section className="px-6 py-20 md:py-28">
+      <section className="px-6 py-20 md:py-28 bg-secondary">
         <div className="mx-auto max-w-6xl">
           <div className="text-center">
             <Eyebrow><Map className="mr-1.5 inline h-3.5 w-3.5" />Votre parcours</Eyebrow>
