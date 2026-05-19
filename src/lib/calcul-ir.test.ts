@@ -200,3 +200,46 @@ describe("Sanity — fonctions unitaires", () => {
     expect(calculerNbParts(foyer({}))).toBe(1);
   });
 });
+
+describe("F. detaillerImpositionParTranche", () => {
+  it("Célibataire 30 000 € : tranches 1 et 2 imposées, tranches 3-5 à 0", () => {
+    const detail = detaillerImpositionParTranche(
+      foyer({ revenuNetImposable: 30_000 }),
+      B
+    );
+    expect(detail).toHaveLength(5);
+    expect(detail[0].revenuImpose).toBeCloseTo(11_600, 2); // tranche 1 pleine
+    expect(detail[0].impot).toBe(0);
+    expect(detail[1].revenuImpose).toBeCloseTo(17_979, 2); // tranche 2 pleine
+    expect(detail[1].impot).toBeCloseTo(1977.69, 2);
+    expect(detail[2].revenuImpose).toBeCloseTo(421, 2);    // tranche 3 partielle
+    expect(detail[2].impot).toBeCloseTo(126.3, 2);
+    expect(detail[3].revenuImpose).toBe(0);
+    expect(detail[4].revenuImpose).toBe(0);
+  });
+
+  it("Couple 60 000 € + 1 enfant : montants × 2,5 parts", () => {
+    const detail = detaillerImpositionParTranche(
+      foyer({ revenuNetImposable: 60_000, situation: "couple", nbEnfants: 1 }),
+      B
+    );
+    // QF = 24000 → tranche 1 pleine (11600) puis tranche 2 partielle (12400)
+    expect(detail[0].revenuImpose).toBeCloseTo(11_600 * 2.5, 2);
+    expect(detail[1].revenuImpose).toBeCloseTo(12_400 * 2.5, 2);
+    expect(detail[1].impot).toBeCloseTo(12_400 * 2.5 * 0.11, 2);
+    expect(detail[2].revenuImpose).toBe(0);
+  });
+});
+
+describe("G. chargerBaremeIR (intégration mock Supabase)", () => {
+  it("construit un BaremeIR cohérent depuis le mock", async () => {
+    const { chargerBaremeIR } = await import("./calcul-ir");
+    const bareme = await chargerBaremeIR(2025);
+    expect(bareme.fiscalYear).toBe(2025);
+    expect(bareme.tranches).toHaveLength(5);
+    expect(bareme.tranches[4].plafond).toBeNull();
+    expect(bareme.decote.tauxAttenuation).toBe(45.25);
+    expect(bareme.plafondQuotientFamilial).toBe(1807);
+  });
+});
+
