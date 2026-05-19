@@ -193,7 +193,7 @@ export function AppSidebar({ collapsed = false }: { collapsed?: boolean }) {
           className="gap-3 rounded-full px-4 py-2.5 text-sm opacity-70 hover:bg-white/5 hover:opacity-100"
         >
           <Lightbulb className="h-[18px] w-[18px]" />
-          <span>Suggestion</span>
+          <span>Vos suggestions</span>
         </Button>
         <Button
           variant="sidebar-item"
