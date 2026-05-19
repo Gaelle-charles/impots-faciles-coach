@@ -31,6 +31,7 @@ import SimulateurIRBareme from "./pages/SimulateurIRBareme";
 import SimulateurQuotientFamilial from "./pages/SimulateurQuotientFamilial";
 import SimulateurCreditsReductions from "./pages/SimulateurCreditsReductions";
 import SimulateurTMI from "./pages/SimulateurTMI";
+import SimulateurPER from "./pages/SimulateurPER";
 
 import FicheMetier from "./pages/FicheMetier";
 import Fiche from "./pages/Fiche";
@@ -149,6 +150,7 @@ const App = () => (
               <Route path="/simulateur/pas" element={<AccessGuard requires="expert"><SimulateurPAS /></AccessGuard>} />
               <Route path="/simulateur/credits-reductions" element={<AccessGuard requires="expert"><SimulateurCreditsReductions /></AccessGuard>} />
               <Route path="/simulateur/tmi-taux-effectif" element={<AccessGuard requires="expert"><SimulateurTMI /></AccessGuard>} />
+              <Route path="/simulateur/per" element={<AccessGuard requires="expert"><SimulateurPER /></AccessGuard>} />
 
               <Route path="/fiche-metier/:id" element={<FicheMetier />} />
               <Route path="/fiches/:type/:slug" element={<Fiche />} />
