@@ -92,8 +92,8 @@ export default function Accompagnement() {
   return (
     <div className="mx-auto max-w-[1200px] px-4 py-8 md:px-8 md:py-12">
       <Seo
-        title="Prendre rendez-vous avec un accompagnant fiscal pédagogique"
-        description="60 minutes en visio avec Laure pour comprendre votre situation fiscale et utiliser au mieux Impôts Facile."
+        title="Prendre rendez-vous avec un accompagnant pédagogique"
+        description="60 minutes en visio avec Laure pour comprendre votre situation et utiliser au mieux Impôts Facile."
         path="/accompagnement"
       />
 
