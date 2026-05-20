@@ -127,6 +127,7 @@ export default function SimulateurPlusValues() {
     <SimulateurLayout
       title="Simulateur Plus-values mobilières"
       subtitle="Comparez PFU (flat tax 31,4 %) vs option barème IR avec abattement pour durée de détention"
+      emoji="📈"
     >
       <div className="space-y-6">
         <div className="flex flex-wrap gap-2">
