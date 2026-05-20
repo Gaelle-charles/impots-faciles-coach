@@ -37,6 +37,10 @@ import SimulateurPAS from '@/pages/SimulateurPAS';
 import SimulateurCreditsReductions from '@/pages/SimulateurCreditsReductions';
 import SimulateurFrais from '@/pages/SimulateurFrais';
 import SimulateurFraisPro from '@/pages/SimulateurFraisPro';
+import SimulateurTMI from '@/pages/SimulateurTMI';
+import SimulateurPER from '@/pages/SimulateurPER';
+import SimulateurOptimisationCouple from '@/pages/SimulateurOptimisationCouple';
+import SimulateurPlusValues from '@/pages/SimulateurPlusValues';
 
 const SIMULATOR_COMPONENTS: Record<string, React.ComponentType> = {
   'ir-bareme': SimulateurIRBareme,
@@ -45,6 +49,10 @@ const SIMULATOR_COMPONENTS: Record<string, React.ComponentType> = {
   'credits-reductions': SimulateurCreditsReductions,
   'frais-reels': SimulateurFrais,
   'frais-reels-pro': SimulateurFraisPro,
+  'tmi-taux-effectif': SimulateurTMI,
+  'per': SimulateurPER,
+  'optimisation-couple': SimulateurOptimisationCouple,
+  'plus-values': SimulateurPlusValues,
 };
 import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from '@/components/ui/tooltip';
 import { toast } from 'sonner';
