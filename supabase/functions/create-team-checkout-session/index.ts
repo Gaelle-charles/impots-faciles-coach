@@ -299,7 +299,7 @@ Deno.serve(async (req) => {
       custom_fields: [
         {
           key: "denominationsociale",
-          label: { type: "custom" as const, custom: "Dénomination sociale" },
+          label: { type: "custom" as const, custom: "Dénomination sociale (optionnel)" },
           type: "text" as const,
           optional: true,
         },
