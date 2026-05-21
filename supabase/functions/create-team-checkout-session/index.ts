@@ -296,6 +296,14 @@ Deno.serve(async (req) => {
       customer_email: user.email,
       client_reference_id: orgId!,
       billing_address_collection: "required" as const,
+      custom_fields: [
+        {
+          key: "denominationsociale",
+          label: { type: "custom" as const, custom: "Dénomination sociale" },
+          type: "text" as const,
+          optional: true,
+        },
+      ],
       metadata: { organization_id: orgId!, type: "b2b", plan },
       subscription_data: {
         metadata: { organization_id: orgId!, type: "b2b", plan },
