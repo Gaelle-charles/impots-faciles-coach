@@ -134,6 +134,14 @@ Deno.serve(async (req) => {
       subscription_data: {
         metadata: { plan, user_id: user.id },
       },
+      custom_fields: [
+        {
+          key: "denominationsociale",
+          label: { type: "custom", custom: "Dénomination sociale (optionnel)" },
+          type: "text",
+          optional: true,
+        },
+      ],
     };
 
     if (appliedPromoCodeId) {
