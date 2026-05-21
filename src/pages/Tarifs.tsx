@@ -52,7 +52,7 @@ const plans = [
     perMonth: 'Soit moins de 13,25€ par mois',
     popular: false,
     features: [
-      'Formule Starter inclus',
+      'Formule Expert inclus',
       'Fiches pays',
       'Accès aux 12 simulateurs',
       'Vidéos explicatives exclusives',
