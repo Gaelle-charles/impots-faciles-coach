@@ -363,7 +363,7 @@ const Index = () => {
                     <Calendar className="h-5 w-5 text-yellow-vivid shrink-0" />
                     <div>
                       <p className="text-sm font-semibold">Créneaux disponibles</p>
-                      <p className="text-xs opacity-70">Du lundi au vendredi, de 9h à 18h</p>
+                      <p className="text-xs opacity-70 whitespace-pre-line">Fuseau UTC - 4{"\n"}Du lundi au vendredi, de 9h à 18h</p>
                     </div>
                   </div>
                   <div className="flex items-center gap-3 rounded-2xl bg-primary-foreground/10 px-5 py-4">
